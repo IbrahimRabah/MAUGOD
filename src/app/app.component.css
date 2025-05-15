@@ -1,0 +1,35 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 1rem;
+  position: relative;
+  z-index: 1;
+  transition: margin-right 0.3s ease;
+}
+
+/* For larger screens */
+@media (min-width: 769px) {
+  .main-content {
+    margin-right: 60px; /* Mini sidebar width */
+  }
+
+  .sidebar-expanded .main-content {
+    margin-right: 280px; /* Full sidebar width */
+  }
+}
+
+/* For mobile screens */
+@media (max-width: 768px) {
+  .main-content {
+    margin-right: 0;
+  }
+
+  .sidebar-expanded .main-content {
+    margin-right: 0;
+  }
+}
