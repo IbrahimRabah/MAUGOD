@@ -1,0 +1,305 @@
+<div class="sidebar" [class.expanded]="sidebarService.isExpanded$ | async">
+  <div class="sidebar-content">
+    <ul class="nav flex-column main-menu">
+      <!-- 1. الرئيسية -->
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fas fa-home"></i>
+          <span>الرئيسية</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fa fa-dashboard"></i>
+          <span>الرسومات البيانيه</span>
+        </a>
+      </li>
+
+      <!-- 2. مشاهدة الحضور -->
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fas fa-table-list"></i>
+          <span>مشاهدة الحضور</span>
+        </a>
+      </li>
+
+      <!-- 3. تطبيق موجود -->
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fa fa-mobile-alt"></i>
+          <span>تطبيق موجود</span>
+        </a>
+      </li>
+
+      <!-- 4. التقارير -->
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fa fa fa-print"></i>
+          <span>التقارير</span>
+        </a>
+      </li>
+
+      <!-- 5. بيانات الحضور -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('attendance')" [class.expanded]="isSubmenuOpen('attendance')">
+          <i class="fa-regular fa-check-square"></i>
+          <span>بيانات الحضور</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('attendance')">
+          <li><a class="nav-link" href="#"><span>سجل البصمات</span></a></li>
+          <li><a class="nav-link" href="#"><span>مشاهدة الحضور</span></a></li>
+          <li><a class="nav-link" href="#"><span>تعديل بيانات الحضور مباشرة</span></a></li>
+        </ul>
+      </li>
+
+      <!-- 6. فترات الدوام -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('shifts')" [class.expanded]="isSubmenuOpen('shifts')">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span>فترات الدوام</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('shifts')">
+          <li><a class="nav-link" href="#">الورديات</a></li>
+          <li><a class="nav-link" href="#">التوقيع الالي</a></li>
+          <li><a class="nav-link" href="#">اسناد الورديات</a></li>
+          <li><a class="nav-link" href="#">الايام المفقودة بدون اسناد فترة</a></li>
+          <li><a class="nav-link" href="#">اغلاق الفترات</a></li>
+        </ul>
+      </li>
+
+      <!-- 7. الاجازات والمهام -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('leaves')" [class.expanded]="isSubmenuOpen('leaves')">
+          <i class="fa fa fa-tasks"></i>
+          <span>الاجازات والمهام</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
+          <li><a class="nav-link" href="#">تصنيف حالات الحضور</a></li>
+          <li><a class="nav-link" href="#">حالات الحضور</a></li>
+          <li><a class="nav-link" href="#">ترتيب اولاويات الحالات</a></li>
+          <li><a class="nav-link" href="#">الاجازات والمهام</a></li>
+          <li><a class="nav-link" href="#">ارصدة الموظفين من الحالات</a></li>
+          <li><a class="nav-link" href="#">ارصدتي</a></li>
+        </ul>
+      </li>
+
+      <!-- 8. الطلبات و الموافقات -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('requests')" [class.expanded]="isSubmenuOpen('requests')">
+          <i class="fas fa-check-square"></i>
+          <span>الطلبات و الموافقات</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('requests')">
+          <li><a class="nav-link" href="#">خطوات تعديل الوقت</a></li>
+          <li><a class="nav-link" href="#">طلب تعديل اوقات الحضور</a></li>
+          <li><a class="nav-link" href="#">رفع الطلب</a></li>
+          <li><a class="nav-link" href="#">خطوات الموافقة علي الطلبات</a></li>
+          <li><a class="nav-link" href="#">حذف الطلبات المكتمله</a></li>
+        </ul>
+      </li>
+
+      <!-- 9. تتبع المواقع -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('locations')" [class.expanded]="isSubmenuOpen('locations')">
+          <i class="fa-solid fa-location-arrow"></i>
+          <span>تتبع المواقع</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('locations')">
+          <li><a class="nav-link" href="#">تفاصيل تتبع المواقع</a></li>
+          <li><a class="nav-link" href="#">حركات تتبع المواقع</a></li>
+        </ul>
+      </li>
+
+      <!-- 10. الجوال و التطبيق -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('mobile')" [class.expanded]="isSubmenuOpen('mobile')">
+          <i class="fas fa-mobile-alt"></i>
+          <span>الجوال و التطبيق</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('mobile')">
+          <li><a class="nav-link" href="#">تطبيق موجود</a></li>
+          <li><a class="nav-link" href="#">ارسال رمز الدخول للطبيق</a></li>
+          <li><a class="nav-link" href="#">اسناد موقع بصمة الجوال</a></li>
+          <li><a class="nav-link" href="#">حركات التوقيع بأستخدام الجوال</a></li>
+          <li><a class="nav-link" href="#">مواقع التبصيم بأستخدام الجوال</a></li>
+        </ul>
+      </li>
+
+      <!-- 11. الرواتب -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('salaries')" [class.expanded]="isSubmenuOpen('salaries')">
+          <i class="fas fa-money-bill-alt"></i>
+          <span>الرواتب</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('salaries')">
+          <li><a class="nav-link" href="#">أسناد أضافات / خصومات الرواتب</a></li>
+          <li><a class="nav-link" href="#">أضافات / خصومات الراتب</a></li>
+          <li><a class="nav-link" href="#">أحتساب الرواتب</a></li>
+          <li><a class="nav-link" href="#">راتبي</a></li>
+          <li><a class="nav-link" href="#">تفاصيل الرواتب</a></li>
+        </ul>
+      </li>
+
+      <!-- 12. البيانات الاساسية -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('basicData')" [class.expanded]="isSubmenuOpen('basicData')">
+          <i class="fas fa-info"></i>
+          <span>البيانات الاساسية</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('basicData')">
+          <!-- 12.1 البيانات العامه -->
+          <li>
+            <a class="nav-link" (click)="toggleSubmenu('generalData')" [class.expanded]="isSubmenuOpen('generalData')">
+              <i class="fas fa-database"></i>
+              <span>البيانات العامه</span>
+              <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+            <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('generalData')">
+              <li><a class="nav-link" href="#"><i class="fas fa-building"></i><span>الفروع</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-sitemap"></i><span>الاقسام</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-users"></i><span>الموظفين</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-flag"></i><span>الجنسيات</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-university"></i><span>البنوك</span></a></li>
+            </ul>
+          </li>
+          <!-- 12.2 بيانات موجود -->
+          <li>
+            <a class="nav-link" (click)="toggleSubmenu('mawjoodData')" [class.expanded]="isSubmenuOpen('mawjoodData')">
+              <i class="fas fa-file-alt"></i>
+              <span>بيانات موجود</span>
+              <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+            <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('mawjoodData')">
+              <li><a class="nav-link" href="#"><i class="fas fa-user-check"></i><span>حالات الموظفين</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-briefcase"></i><span>الوظائف</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-file-signature"></i><span>مستند الموظفين</span></a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+      <!-- 13. الرسائل والاشعارات -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('notifications')" [class.expanded]="isSubmenuOpen('notifications')">
+          <i class="fas fa-envelope"></i>
+          <span>الرسائل والاشعارات</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('notifications')">
+          <li><a class="nav-link" href="#">رسائل النظام</a></li>
+          <li><a class="nav-link" href="#">نصوص الاشعار</a></li>
+          <li><a class="nav-link" href="#">الاخبار</a></li>
+          <li><a class="nav-link" href="#">أرسال الاشعارات</a></li>
+          <li><a class="nav-link" href="#">اعدادات الاشعارات</a></li>
+        </ul>
+      </li>
+
+      <!-- 14. ادارة الصلاحيات -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('permissions')" [class.expanded]="isSubmenuOpen('permissions')">
+          <i class="fa-solid fa-users"></i>
+          <span>ادارة الصلاحيات</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('permissions')">
+          <!-- 14.1 الصلاحيات علي النظام -->
+          <li>
+            <a class="nav-link" (click)="toggleSubmenu('systemPermissions')" [class.expanded]="isSubmenuOpen('systemPermissions')">
+              <i class="fas fa-shield-alt"></i>
+              <span>الصلاحيات علي النظام</span>
+              <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+            <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemPermissions')">
+              <li><a class="nav-link" href="#"><i class="fas fa-user-tag"></i><span>ادوار المستخدمين</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-user-shield"></i><span>اسناد الادوار للمستخدمين</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-chart-line"></i><span>صلاحيات الرسومات البيانية</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-key"></i><span>منح صلاحيات للادوار</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-file-alt"></i><span>الصلاحيات علي التقارير</span></a></li>
+            </ul>
+          </li>
+          <!-- 14.2 عناصر النظام الاساسي -->
+          <li>
+            <a class="nav-link" (click)="toggleSubmenu('systemElements')" [class.expanded]="isSubmenuOpen('systemElements')">
+              <span>عناصر النظام الاساسي</span>
+              <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+            <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemElements')">
+              <li><a class="nav-link" href="#">قائمة الرسومات البيانية</a></li>
+              <li><a class="nav-link" href="#">قائمة التقارير</a></li>
+              <li><a class="nav-link" href="#">قوائم النظام</a></li>
+              <li><a class="nav-link" href="#">شاشات النظام</a></li>
+            </ul>
+          </li>
+          <!-- 14.3 الصلاحيات علي البيانات -->
+          <li>
+            <a class="nav-link" (click)="toggleSubmenu('dataPermissions')" [class.expanded]="isSubmenuOpen('dataPermissions')">
+              <span>الصلاحيات علي البيانات</span>
+              <i class="fas fa-chevron-down submenu-arrow"></i>
+            </a>
+            <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('dataPermissions')">
+              <li><a class="nav-link" href="#">الصلاحيات علي البيانات</a></li>
+              <li><a class="nav-link" href="#">ملخص الصلاحيات علي البيانات</a></li>
+              <li><a class="nav-link" href="#">صلاحيات رفع الطلبات</a></li>
+              <li><a class="nav-link" href="#">التفويض علي الصلاحيات</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+      <!-- 15. التدقيق و المتابعة -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('audit')" [class.expanded]="isSubmenuOpen('audit')">
+          <i class="fa-regular fa-rectangle-list"></i>
+          <span>التدقيق و المتابعة</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('audit')">
+          <li><a class="nav-link" href="#">متابعة التغييرات</a></li>
+          <li><a class="nav-link" href="#">بيانات الدخول علي النظام</a></li>
+          <li><a class="nav-link" href="#">سجلات الاخطاء</a></li>
+          <li><a class="nav-link" href="#">اعدادات تتبع تغييرات الجدول</a></li>
+        </ul>
+      </li>
+
+      <!-- 16. ادارة النظام -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('systemManagement')" [class.expanded]="isSubmenuOpen('systemManagement')">
+          <i class="fas fa-cogs"></i>
+          <span>ادارة النظام</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('systemManagement')">
+          <li><a class="nav-link" href="#">جدول الاعدادات</a></li>
+          <li><a class="nav-link" href="#">بيانات التاريخ الهجري</a></li>
+          <li><a class="nav-link" href="#">بيانات اللغة</a></li>
+          <li><a class="nav-link" href="#">الملف الشخصي</a></li>
+          <li><a class="nav-link" href="#">ادارة جلسات الاتصال</a></li>
+        </ul>
+      </li>
+
+      <!-- 17. الرقابه -->
+      <li class="nav-item">
+        <a class="nav-link" (click)="toggleSubmenu('supervision')" [class.expanded]="isSubmenuOpen('supervision')">
+          <i class="fa-solid fa-list-check"></i>
+          <span>الرقابه</span>
+          <i class="fas fa-chevron-down submenu-arrow"></i>
+        </a>
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('supervision')">
+          <li><a class="nav-link" href="#">الجولات الرقابية</a></li>
+          <li><a class="nav-link" href="#">الجولات الرقابية</a></li>
+          <li><a class="nav-link" href="#">الانذارات</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="sidebar-overlay" *ngIf="sidebarService.isExpanded$ | async" (click)="sidebarService.collapse()"></div>
+</div>
