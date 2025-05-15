@@ -1,5 +1,10 @@
-<app-navbar></app-navbar>
-<div class="container">
-  <router-outlet></router-outlet>
+<div class="app-container" [class.sidebar-expanded]="sidebarService.isExpanded$ | async">
+  <app-navbar></app-navbar>
+  <app-sidebar></app-sidebar>
+  <main class="main-content">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+  <app-footer></app-footer>
 </div>
-<app-footer></app-footer>

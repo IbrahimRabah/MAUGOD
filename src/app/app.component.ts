@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
+import { SidebarService } from './shared/services/sidebar.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'mawgoud';
+
+  constructor(public sidebarService: SidebarService) {}
 }
