@@ -17,5 +17,11 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
   imports: [
     CommonModule
   ]
+  , exports: [
+    NavbarComponent,
+    FooterComponent,
+    NotfoundComponent,
+    SpinnerComponent
+  ]
 })
 export class SharedModule { }
