@@ -3,22 +3,22 @@
     <ul class="nav flex-column main-menu">
       <!-- 1. الرئيسية -->
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active">
           <i class="fas fa-home"></i>
           <span>الرئيسية</span>
         </a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active">
           <i class="fa fa-dashboard"></i>
-          <span>الرسومات البيانيه</span>
+          <span>مشاهدة الحضور</span>
         </a>
       </li>
 
       <!-- 2. مشاهدة الحضور -->
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" [routerLink]="['/attendance']" routerLinkActive="active">
           <i class="fas fa-table-list"></i>
           <span>مشاهدة الحضور</span>
         </a>
@@ -26,7 +26,7 @@
 
       <!-- 3. تطبيق موجود -->
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" [routerLink]="['/existing-app']" routerLinkActive="active">
           <i class="fa fa-mobile-alt"></i>
           <span>تطبيق موجود</span>
         </a>
@@ -34,7 +34,7 @@
 
       <!-- 4. التقارير -->
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" [routerLink]="['/reports']" routerLinkActive="active">
           <i class="fa fa fa-print"></i>
           <span>التقارير</span>
         </a>
@@ -80,7 +80,7 @@
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
           <li><a class="nav-link" href="#">تصنيف حالات الحضور</a></li>
           <li><a class="nav-link" href="#">حالات الحضور</a></li>
-          <li><a class="nav-link" href="#">ترتيب اولاويات الحالات</a></li>
+          <li><a class="nav-link" href="#">ترتيب اولايات الحالات</a></li>
           <li><a class="nav-link" href="#">الاجازات والمهام</a></li>
           <li><a class="nav-link" href="#">ارصدة الموظفين من الحالات</a></li>
           <li><a class="nav-link" href="#">ارصدتي</a></li>
