@@ -12,13 +12,13 @@
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active">
           <i class="fa fa-dashboard"></i>
-          <span>مشاهدة الحضور</span>
+          <span>الرسومات البيانية</span>
         </a>
       </li>
 
       <!-- 2. مشاهدة الحضور -->
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/attendance']" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active">
           <i class="fas fa-table-list"></i>
           <span>مشاهدة الحضور</span>
         </a>
@@ -41,49 +41,68 @@
       </li>
 
       <!-- 5. بيانات الحضور -->
-      <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('attendance')" [class.expanded]="isSubmenuOpen('attendance')">
-          <i class="fa-regular fa-check-square"></i>
-          <span>بيانات الحضور</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('attendance')">
-          <li><a class="nav-link" href="#"><span>سجل البصمات</span></a></li>
-          <li><a class="nav-link" href="#"><span>مشاهدة الحضور</span></a></li>
-          <li><a class="nav-link" href="#"><span>تعديل بيانات الحضور مباشرة</span></a></li>
-        </ul>
-      </li>
+      <li class="nav-item" routerLinkActive="active">
+        <div [routerLink]="['/attendance/data']">
+          <a class="nav-link" (click)="toggleSubmenu('attendance')" [class.expanded]="isSubmenuOpen('attendance')">
+            <i class="fa-regular fa-check-square"></i>
+            <span>بيانات الحضور</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
 
-      <!-- 6. فترات الدوام -->
+        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('attendance')">
+          <li><a class="nav-link" [routerLink]="['/attendance/punch-in-transactions']"
+              routerLinkActive="active"><span>سجل البصمات</span></a></li>
+          <li><a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active"><span>مشاهدة
+                الحضور</span></a></li>
+          <li><a class="nav-link" [routerLink]="['/attendance/change-attendance-time']"
+              routerLinkActive="active"><span>تعديل بيانات الحضور مباشرة</span></a></li>
+        </ul>
+      </li> <!-- 6. فترات الدوام -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('shifts')" [class.expanded]="isSubmenuOpen('shifts')">
-          <i class="fa-regular fa-calendar-days"></i>
-          <span>فترات الدوام</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/shifts-section']">
+          <a class="nav-link" (click)="toggleSubmenu('shifts')" [class.expanded]="isSubmenuOpen('shifts')">
+            <i class="fa-regular fa-calendar-days"></i>
+            <span>فترات الدوام</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('shifts')">
-          <li><a class="nav-link" href="#">الورديات</a></li>
-          <li><a class="nav-link" href="#">التوقيع الالي</a></li>
-          <li><a class="nav-link" href="#">اسناد الورديات</a></li>
-          <li><a class="nav-link" href="#">الايام المفقودة بدون اسناد فترة</a></li>
-          <li><a class="nav-link" href="#">اغلاق الفترات</a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts']" routerLinkActive="active">الورديات</a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/automatic-sign']" routerLinkActive="active">التوقيع
+              الالي</a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts-assign']" routerLinkActive="active">اسناد
+              الورديات</a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/missing-days']" routerLinkActive="active">الايام
+              المفقودة بدون اسناد فترة</a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/timtran-lock']" routerLinkActive="active">اغلاق
+              الفترات</a></li>
         </ul>
       </li>
 
       <!-- 7. الاجازات والمهام -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('leaves')" [class.expanded]="isSubmenuOpen('leaves')">
-          <i class="fa fa fa-tasks"></i>
-          <span>الاجازات والمهام</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/vacation/vacation-tasks']">
+
+          <a class="nav-link" (click)="toggleSubmenu('leaves')" [class.expanded]="isSubmenuOpen('leaves')">
+            <i class="fa fa fa-tasks"></i>
+            <span>الاجازات والمهام</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
-          <li><a class="nav-link" href="#">تصنيف حالات الحضور</a></li>
-          <li><a class="nav-link" href="#">حالات الحضور</a></li>
-          <li><a class="nav-link" href="#">ترتيب اولايات الحالات</a></li>
-          <li><a class="nav-link" href="#">الاجازات والمهام</a></li>
-          <li><a class="nav-link" href="#">ارصدة الموظفين من الحالات</a></li>
-          <li><a class="nav-link" href="#">ارصدتي</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation/attendance-status-classifications']"
+              routerLinkActive="active">تصنيف حالات الحضور</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation/attendance-statuses']" routerLinkActive="active">حالات
+              الحضور</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation/handle-statuses-priority']" routerLinkActive="active">ترتيب
+              اولايات الحالات</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation/days-handle']" routerLinkActive="active">الاجازات
+              والمهام</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation/handle-statuses-employee-balance']"
+              routerLinkActive="active">ارصدة الموظفين من الحالات</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation/my-balance']" routerLinkActive="active">ارصدتي</a></li>
         </ul>
       </li>
 
@@ -213,22 +232,27 @@
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('permissions')">
           <!-- 14.1 الصلاحيات علي النظام -->
           <li>
-            <a class="nav-link" (click)="toggleSubmenu('systemPermissions')" [class.expanded]="isSubmenuOpen('systemPermissions')">
+            <a class="nav-link" (click)="toggleSubmenu('systemPermissions')"
+              [class.expanded]="isSubmenuOpen('systemPermissions')">
               <i class="fas fa-shield-alt"></i>
               <span>الصلاحيات علي النظام</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemPermissions')">
               <li><a class="nav-link" href="#"><i class="fas fa-user-tag"></i><span>ادوار المستخدمين</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-user-shield"></i><span>اسناد الادوار للمستخدمين</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-chart-line"></i><span>صلاحيات الرسومات البيانية</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-user-shield"></i><span>اسناد الادوار
+                    للمستخدمين</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-chart-line"></i><span>صلاحيات الرسومات
+                    البيانية</span></a></li>
               <li><a class="nav-link" href="#"><i class="fas fa-key"></i><span>منح صلاحيات للادوار</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-file-alt"></i><span>الصلاحيات علي التقارير</span></a></li>
+              <li><a class="nav-link" href="#"><i class="fas fa-file-alt"></i><span>الصلاحيات علي التقارير</span></a>
+              </li>
             </ul>
           </li>
           <!-- 14.2 عناصر النظام الاساسي -->
           <li>
-            <a class="nav-link" (click)="toggleSubmenu('systemElements')" [class.expanded]="isSubmenuOpen('systemElements')">
+            <a class="nav-link" (click)="toggleSubmenu('systemElements')"
+              [class.expanded]="isSubmenuOpen('systemElements')">
               <span>عناصر النظام الاساسي</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
@@ -241,7 +265,8 @@
           </li>
           <!-- 14.3 الصلاحيات علي البيانات -->
           <li>
-            <a class="nav-link" (click)="toggleSubmenu('dataPermissions')" [class.expanded]="isSubmenuOpen('dataPermissions')">
+            <a class="nav-link" (click)="toggleSubmenu('dataPermissions')"
+              [class.expanded]="isSubmenuOpen('dataPermissions')">
               <span>الصلاحيات علي البيانات</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
@@ -272,7 +297,8 @@
 
       <!-- 16. ادارة النظام -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('systemManagement')" [class.expanded]="isSubmenuOpen('systemManagement')">
+        <a class="nav-link" (click)="toggleSubmenu('systemManagement')"
+          [class.expanded]="isSubmenuOpen('systemManagement')">
           <i class="fas fa-cogs"></i>
           <span>ادارة النظام</span>
           <i class="fas fa-chevron-down submenu-arrow"></i>
