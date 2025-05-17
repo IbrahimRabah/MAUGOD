@@ -18,6 +18,17 @@ const routes: Routes = [
   {
     path: 'reports',
     loadChildren: () => import('./modules/reports/reports.module').then(m => m.ReportsModule)
+  },  {
+    path: 'attendance',
+    loadChildren: () => import('./modules/attendace/attendace.module').then(m => m.AttendaceModule)
+  },
+  {
+    path: 'shifts-section',
+    loadChildren: () => import('./modules/shifts/shifts.module').then(m => m.ShiftsModule)
+  },
+  {
+    path: 'vacation',
+    loadChildren: () => import('./modules/vacarion-and-tasks/vacarion-and-tasks.module').then(m => m.VacarionAndTasksModule)
   }
 ];
 
