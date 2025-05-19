@@ -26,7 +26,7 @@
 
       <!-- 3. تطبيق موجود -->
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/existing-app']" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">
           <i class="fa fa-mobile-alt"></i>
           <span>تطبيق موجود</span>
         </a>
@@ -82,247 +82,338 @@
 
       <!-- 7. الاجازات والمهام -->
       <li class="nav-item">
-        <div [routerLink]="['/vacation/vacation-tasks']">
+        <div [routerLink]="['/vacation-tasks']">
 
           <a class="nav-link" (click)="toggleSubmenu('leaves')" [class.expanded]="isSubmenuOpen('leaves')">
             <i class="fa fa fa-tasks"></i>
             <span>الاجازات والمهام</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
-
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
-          <li><a class="nav-link" [routerLink]="['/vacation/attendance-status-classifications']"
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-status-classifications']"
               routerLinkActive="active">تصنيف حالات الحضور</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation/attendance-statuses']" routerLinkActive="active">حالات
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-statuses']" routerLinkActive="active">حالات
               الحضور</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation/handle-statuses-priority']" routerLinkActive="active">ترتيب
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-priority']" routerLinkActive="active">ترتيب
               اولايات الحالات</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation/days-handle']" routerLinkActive="active">الاجازات
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/days-handle']" routerLinkActive="active">الاجازات
               والمهام</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation/handle-statuses-employee-balance']"
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-employee-balance']"
               routerLinkActive="active">ارصدة الموظفين من الحالات</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation/my-balance']" routerLinkActive="active">ارصدتي</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/my-balance']" routerLinkActive="active">ارصدتي</a></li>
         </ul>
       </li>
 
       <!-- 8. الطلبات و الموافقات -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('requests')" [class.expanded]="isSubmenuOpen('requests')">
-          <i class="fas fa-check-square"></i>
-          <span>الطلبات و الموافقات</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/requests-and-approvals']">
+          <a class="nav-link" (click)="toggleSubmenu('requests')" [class.expanded]="isSubmenuOpen('requests')">
+            <i class="fas fa-check-square"></i>
+            <span>الطلبات و الموافقات</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('requests')">
-          <li><a class="nav-link" href="#">خطوات تعديل الوقت</a></li>
-          <li><a class="nav-link" href="#">طلب تعديل اوقات الحضور</a></li>
-          <li><a class="nav-link" href="#">رفع الطلب</a></li>
-          <li><a class="nav-link" href="#">خطوات الموافقة علي الطلبات</a></li>
-          <li><a class="nav-link" href="#">حذف الطلبات المكتمله</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" routerLinkActive="active">خطوات تعديل الوقت</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/attendance-time-change-request']" routerLinkActive="active">طلب تعديل اوقات الحضور</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/post-request']" routerLinkActive="active">رفع الطلب</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-route']" routerLinkActive="active">خطوات الموافقة علي الطلبات</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-vacations']" routerLinkActive="active">الموافقة علي الطلبات</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/delete-completed-request']" routerLinkActive="active">حذف الطلبات المكتمله</a></li>
         </ul>
-      </li>
-
-      <!-- 9. تتبع المواقع -->
+      </li>      <!-- 9. تتبع المواقع -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('locations')" [class.expanded]="isSubmenuOpen('locations')">
-          <i class="fa-solid fa-location-arrow"></i>
-          <span>تتبع المواقع</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/tracking-locations']">
+          <a class="nav-link" (click)="toggleSubmenu('locations')" [class.expanded]="isSubmenuOpen('locations')">
+            <i class="fa-solid fa-location-arrow"></i>
+            <span>تتبع المواقع</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('locations')">
-          <li><a class="nav-link" href="#">تفاصيل تتبع المواقع</a></li>
-          <li><a class="nav-link" href="#">حركات تتبع المواقع</a></li>
+          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-details']" routerLinkActive="active">تفاصيل تتبع المواقع</a></li>
+          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-transactions']" routerLinkActive="active">حركات تتبع المواقع</a></li>
         </ul>
-      </li>
-
-      <!-- 10. الجوال و التطبيق -->
+      </li>      <!-- 10. الجوال و التطبيق -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('mobile')" [class.expanded]="isSubmenuOpen('mobile')">
-          <i class="fas fa-mobile-alt"></i>
-          <span>الجوال و التطبيق</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/mobile-and-app']">
+          <a class="nav-link" (click)="toggleSubmenu('mobile')" [class.expanded]="isSubmenuOpen('mobile')">
+            <i class="fas fa-mobile-alt"></i>
+            <span>الجوال و التطبيق</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('mobile')">
-          <li><a class="nav-link" href="#">تطبيق موجود</a></li>
-          <li><a class="nav-link" href="#">ارسال رمز الدخول للطبيق</a></li>
-          <li><a class="nav-link" href="#">اسناد موقع بصمة الجوال</a></li>
-          <li><a class="nav-link" href="#">حركات التوقيع بأستخدام الجوال</a></li>
-          <li><a class="nav-link" href="#">مواقع التبصيم بأستخدام الجوال</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">تطبيق موجود</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/send-app-qr-code']" routerLinkActive="active">ارسال رمز الدخول للطبيق</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-location-assign']" routerLinkActive="active">اسناد موقع بصمة الجوال</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-locations']" routerLinkActive="active">حركات التوقيع بأستخدام الجوال</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-transaction']" routerLinkActive="active">مواقع التبصيم بأستخدام الجوال</a></li>
         </ul>
-      </li>
-
-      <!-- 11. الرواتب -->
+      </li>      <!-- 11. الرواتب -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('salaries')" [class.expanded]="isSubmenuOpen('salaries')">
-          <i class="fas fa-money-bill-alt"></i>
-          <span>الرواتب</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/salaries']">
+          <a class="nav-link" (click)="toggleSubmenu('salaries')" [class.expanded]="isSubmenuOpen('salaries')">
+            <i class="fas fa-money-bill-alt"></i>
+            <span>الرواتب</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('salaries')">
-          <li><a class="nav-link" href="#">أسناد أضافات / خصومات الرواتب</a></li>
-          <li><a class="nav-link" href="#">أضافات / خصومات الراتب</a></li>
-          <li><a class="nav-link" href="#">أحتساب الرواتب</a></li>
-          <li><a class="nav-link" href="#">راتبي</a></li>
-          <li><a class="nav-link" href="#">تفاصيل الرواتب</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-deducts']" routerLinkActive="active">أسناد أضافات / خصومات الرواتب</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-ons-deducts']" routerLinkActive="active">أضافات / خصومات الراتب</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salaries-calculation']" routerLinkActive="active">أحتساب الرواتب</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/my-salary']" routerLinkActive="active">راتبي</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salaries-details']" routerLinkActive="active">تفاصيل الرواتب</a></li>
         </ul>
       </li>
-
       <!-- 12. البيانات الاساسية -->
       <li class="nav-item">
+        <div [routerLink]="['/primary-data']">
         <a class="nav-link" (click)="toggleSubmenu('basicData')" [class.expanded]="isSubmenuOpen('basicData')">
           <i class="fas fa-info"></i>
           <span>البيانات الاساسية</span>
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('basicData')">
           <!-- 12.1 البيانات العامه -->
           <li>
+            <div [routerLink]="['/primary-data/general-data']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('generalData')" [class.expanded]="isSubmenuOpen('generalData')">
               <i class="fas fa-database"></i>
               <span>البيانات العامه</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
+            </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('generalData')">
-              <li><a class="nav-link" href="#"><i class="fas fa-building"></i><span>الفروع</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-sitemap"></i><span>الاقسام</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-users"></i><span>الموظفين</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-flag"></i><span>الجنسيات</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-university"></i><span>البنوك</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/branches']" routerLinkActive="active"><i class="fas fa-building"></i><span>الفروع</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/departments']" routerLinkActive="active"><i class="fas fa-sitemap"></i><span>الاقسام</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/employees']" routerLinkActive="active"><i class="fas fa-users"></i><span>الموظفين</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/nationalities']" routerLinkActive="active"><i class="fas fa-flag"></i><span>الجنسيات</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/banks']" routerLinkActive="active"><i class="fas fa-university"></i><span>البنوك</span></a></li>
             </ul>
           </li>
           <!-- 12.2 بيانات موجود -->
           <li>
+          <div [routerLink]="['/primary-data/mawjood-data']">
             <a class="nav-link" (click)="toggleSubmenu('mawjoodData')" [class.expanded]="isSubmenuOpen('mawjoodData')">
               <i class="fas fa-file-alt"></i>
               <span>بيانات موجود</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
+            </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('mawjoodData')">
-              <li><a class="nav-link" href="#"><i class="fas fa-user-check"></i><span>حالات الموظفين</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-briefcase"></i><span>الوظائف</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-file-signature"></i><span>مستند الموظفين</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/employees-statuses']"><i class="fas fa-user-check"></i><span>حالات الموظفين</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/jobs']"><i class="fas fa-briefcase"></i><span>الوظائف</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/employees-documents']"><i class="fas fa-file-signature"></i><span>مستند الموظفين</span></a></li>
             </ul>
           </li>
         </ul>
-      </li>
-
-      <!-- 13. الرسائل والاشعارات -->
+      </li>      <!-- 13. الرسائل والاشعارات -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('notifications')" [class.expanded]="isSubmenuOpen('notifications')">
-          <i class="fas fa-envelope"></i>
-          <span>الرسائل والاشعارات</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/messages-and-notifications']">
+          <a class="nav-link" (click)="toggleSubmenu('notifications')" [class.expanded]="isSubmenuOpen('notifications')">
+            <i class="fas fa-envelope"></i>
+            <span>الرسائل والاشعارات</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('notifications')">
-          <li><a class="nav-link" href="#">رسائل النظام</a></li>
-          <li><a class="nav-link" href="#">نصوص الاشعار</a></li>
-          <li><a class="nav-link" href="#">الاخبار</a></li>
-          <li><a class="nav-link" href="#">أرسال الاشعارات</a></li>
-          <li><a class="nav-link" href="#">اعدادات الاشعارات</a></li>
+          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/system-messages']" routerLinkActive="active">
+            <i class="fas fa-message"></i>
+            رسائل النظام
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-text']" routerLinkActive="active">
+            <i class="fas fa-bell-concierge"></i>
+            نصوص الاشعار
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/news']" routerLinkActive="active">
+            <i class="fas fa-newspaper"></i>
+            الاخبار
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/send-notifications']" routerLinkActive="active">
+            <i class="fas fa-paper-plane"></i>
+            أرسال الاشعارات
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-settings']" routerLinkActive="active">
+            <i class="fas fa-gear"></i>
+            اعدادات الاشعارات
+          </a></li>
         </ul>
       </li>
 
       <!-- 14. ادارة الصلاحيات -->
       <li class="nav-item">
+        <div [routerLink]="['/permission-managements']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('permissions')" [class.expanded]="isSubmenuOpen('permissions')">
           <i class="fa-solid fa-users"></i>
           <span>ادارة الصلاحيات</span>
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('permissions')">
           <!-- 14.1 الصلاحيات علي النظام -->
           <li>
+            <div [routerLink]="['/permission-managements/premissions-on-system']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('systemPermissions')"
               [class.expanded]="isSubmenuOpen('systemPermissions')">
               <i class="fas fa-shield-alt"></i>
               <span>الصلاحيات علي النظام</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
+            </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemPermissions')">
-              <li><a class="nav-link" href="#"><i class="fas fa-user-tag"></i><span>ادوار المستخدمين</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-user-shield"></i><span>اسناد الادوار
+              <li><a class="nav-link" [routerLink]="['/permission-managements/user-roles']"><i class="fas fa-user-tag"></i><span>ادوار المستخدمين</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/user-role-assignment']"><i class="fas fa-user-shield"></i><span>اسناد الادوار
                     للمستخدمين</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-chart-line"></i><span>صلاحيات الرسومات
+              <li><a class="nav-link" [routerLink]="['/permission-managements/role-chart-rights']"><i class="fas fa-chart-line"></i><span>صلاحيات الرسومات
                     البيانية</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-key"></i><span>منح صلاحيات للادوار</span></a></li>
-              <li><a class="nav-link" href="#"><i class="fas fa-file-alt"></i><span>الصلاحيات علي التقارير</span></a>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/role-module-rights']"><i class="fas fa-key"></i><span>منح صلاحيات للادوار</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/role-report-rights']"><i class="fas fa-file-alt"></i><span>الصلاحيات علي التقارير</span></a>
               </li>
             </ul>
           </li>
           <!-- 14.2 عناصر النظام الاساسي -->
           <li>
+            <div [routerLink]="['/permission-managements/basic-system-items']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('systemElements')"
               [class.expanded]="isSubmenuOpen('systemElements')">
               <span>عناصر النظام الاساسي</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
+            </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemElements')">
-              <li><a class="nav-link" href="#">قائمة الرسومات البيانية</a></li>
-              <li><a class="nav-link" href="#">قائمة التقارير</a></li>
-              <li><a class="nav-link" href="#">قوائم النظام</a></li>
-              <li><a class="nav-link" href="#">شاشات النظام</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/charts-list']">قائمة الرسومات البيانية</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/report-list']">قائمة التقارير</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/system-menus']">قوائم النظام</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/system-modules']">شاشات النظام</a></li>
             </ul>
           </li>
           <!-- 14.3 الصلاحيات علي البيانات -->
           <li>
+            <div [routerLink]="['/permission-managements/permission-on-data']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('dataPermissions')"
               [class.expanded]="isSubmenuOpen('dataPermissions')">
               <span>الصلاحيات علي البيانات</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
+            </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('dataPermissions')">
-              <li><a class="nav-link" href="#">الصلاحيات علي البيانات</a></li>
-              <li><a class="nav-link" href="#">ملخص الصلاحيات علي البيانات</a></li>
-              <li><a class="nav-link" href="#">صلاحيات رفع الطلبات</a></li>
-              <li><a class="nav-link" href="#">التفويض علي الصلاحيات</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions']">الصلاحيات علي البيانات</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions-summary']">ملخص الصلاحيات علي البيانات</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/request-post-premisions']">صلاحيات رفع الطلبات</a></li>
+              <li><a class="nav-link"  [routerLink]="['/permission-managements/permissions-delegations']">التفويض علي الصلاحيات</a></li>
             </ul>
           </li>
         </ul>
-      </li>
-
-      <!-- 15. التدقيق و المتابعة -->
+      </li>      <!-- 15. التدقيق و المتابعة -->
       <li class="nav-item">
+        <div [routerLink]="['/audit-and-tracing']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('audit')" [class.expanded]="isSubmenuOpen('audit')">
           <i class="fa-regular fa-rectangle-list"></i>
           <span>التدقيق و المتابعة</span>
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('audit')">
-          <li><a class="nav-link" href="#">متابعة التغييرات</a></li>
-          <li><a class="nav-link" href="#">بيانات الدخول علي النظام</a></li>
-          <li><a class="nav-link" href="#">سجلات الاخطاء</a></li>
-          <li><a class="nav-link" href="#">اعدادات تتبع تغييرات الجدول</a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/track-changes']" routerLinkActive="active">
+            <i class="fas fa-history"></i>
+            <span>متابعة التغييرات</span>
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/login-trace']" routerLinkActive="active">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>بيانات الدخول علي النظام</span>
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/error-logs']" routerLinkActive="active">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>سجلات الاخطاء</span>
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
+            <i class="fas fa-table"></i>
+            <span>اعدادات تتبع تغييرات الجدول</span>
+          </a></li>
         </ul>
       </li>
 
       <!-- 16. ادارة النظام -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('systemManagement')"
-          [class.expanded]="isSubmenuOpen('systemManagement')">
-          <i class="fas fa-cogs"></i>
-          <span>ادارة النظام</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/system-management']">
+          <a class="nav-link" (click)="toggleSubmenu('systemManagement')" [class.expanded]="isSubmenuOpen('systemManagement')">
+            <i class="fas fa-cogs"></i>
+            <span>ادارة النظام</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('systemManagement')">
-          <li><a class="nav-link" href="#">جدول الاعدادات</a></li>
-          <li><a class="nav-link" href="#">بيانات التاريخ الهجري</a></li>
-          <li><a class="nav-link" href="#">بيانات اللغة</a></li>
-          <li><a class="nav-link" href="#">الملف الشخصي</a></li>
-          <li><a class="nav-link" href="#">ادارة جلسات الاتصال</a></li>
+          <li>
+            <a class="nav-link" [routerLink]="['/system-management/system-setup']" routerLinkActive="active">
+              <i class="fas fa-sliders-h"></i>
+              <span>جدول الاعدادات</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" [routerLink]="['/system-management/hijri-data']" routerLinkActive="active">
+              <i class="fas fa-calendar-alt"></i>
+              <span>بيانات التاريخ الهجري</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" [routerLink]="['/system-management/language-data']" routerLinkActive="active">
+              <i class="fas fa-language"></i>
+              <span>بيانات اللغه</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" [routerLink]="['/system-management/user-profile']" routerLinkActive="active">
+              <i class="fas fa-user-circle"></i>
+              <span>الملف الشخصي</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" [routerLink]="['/system-management/sessions-management']" routerLinkActive="active">
+              <i class="fas fa-clock"></i>
+              <span>ادارة جلسة الاتصال</span>
+            </a>
+          </li>
         </ul>
       </li>
 
       <!-- 17. الرقابه -->
       <li class="nav-item">
-        <a class="nav-link" (click)="toggleSubmenu('supervision')" [class.expanded]="isSubmenuOpen('supervision')">
-          <i class="fa-solid fa-list-check"></i>
-          <span>الرقابه</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
-        </a>
+        <div [routerLink]="['/consorship']">
+          <a class="nav-link" (click)="toggleSubmenu('supervision')" [class.expanded]="isSubmenuOpen('supervision')">
+            <i class="fas fa-shield-alt"></i>
+            <span>الرقابة</span>
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </a>
+        </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('supervision')">
-          <li><a class="nav-link" href="#">الجولات الرقابية</a></li>
-          <li><a class="nav-link" href="#">الجولات الرقابية</a></li>
-          <li><a class="nav-link" href="#">الانذارات</a></li>
+          <li>
+            <a class="nav-link" [routerLink]="['/consorship']" routerLinkActive="active">
+              <i class="fas fa-eye"></i>
+              <span>الرقابة</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" [routerLink]="['/consorship/tour-available']" routerLinkActive="active">
+              <i class="fas fa-check-circle"></i>
+              <span>الجولات الرقابية المتاحة</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" [routerLink]="['/consorship/tour-unavailable']" routerLinkActive="active">
+              <i class="fas fa-times-circle"></i>
+              <span>الجولات الرقابية غير المتاحة</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" [routerLink]="['/consorship/alarms']" routerLinkActive="active">
+              <i class="fas fa-bell"></i>
+              <span>الانذارات</span>
+            </a>
+          </li>
         </ul>
       </li>
     </ul>
