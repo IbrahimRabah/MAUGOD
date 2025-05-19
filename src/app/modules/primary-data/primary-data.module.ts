@@ -12,6 +12,7 @@ import { BanksComponent } from './components/banks/banks.component';
 import { EmplyeesStatusesComponent } from './components/emplyees-statuses/emplyees-statuses.component';
 import { JobsComponent } from './components/jobs/jobs.component';
 import { EmplyoeesDocumentsComponent } from './components/emplyoees-documents/emplyoees-documents.component';
+import { PrimaryDataComponent } from './components/primary-data/primary-data.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { EmplyoeesDocumentsComponent } from './components/emplyoees-documents/em
     BanksComponent,
     EmplyeesStatusesComponent,
     JobsComponent,
-    EmplyoeesDocumentsComponent
+    EmplyoeesDocumentsComponent,
+    PrimaryDataComponent
   ],
   imports: [
     CommonModule,
