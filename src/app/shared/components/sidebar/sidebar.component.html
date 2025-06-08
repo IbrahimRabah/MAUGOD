@@ -5,14 +5,14 @@
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active">
           <i class="fas fa-home"></i>
-          <span>الرئيسية</span>
+          <span>{{ 'HOME.TITLE' | translate }}</span>
         </a>
       </li>
 
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active">
           <i class="fa fa-dashboard"></i>
-          <span>الرسومات البيانية</span>
+          <span>{{ 'MENU.DASHBOARD' | translate }}</span>
         </a>
       </li>
 
@@ -20,7 +20,7 @@
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active">
           <i class="fas fa-table-list"></i>
-          <span>مشاهدة الحضور</span>
+          <span>{{ 'MENU.ATTENDANCE' | translate }}</span>
         </a>
       </li>
 
@@ -28,7 +28,7 @@
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">
           <i class="fa fa-mobile-alt"></i>
-          <span>تطبيق موجود</span>
+          <span>{{ 'MENU.MAWJOOD_APP' | translate }}</span>
         </a>
       </li>
 

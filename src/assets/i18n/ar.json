@@ -1,0 +1,31 @@
+{
+  "HOME": {
+    "TITLE": "الرئيسية"
+  },
+  "MENU": {
+    "DASHBOARD": "الرسومات البيانية",
+    "ATTENDANCE": "مشاهدة الحضور",
+    "MAWJOOD_APP": "تطبيق موجود",
+    "REPORTS": "التقارير",
+    "ATTENDANCE_DATA": "بيانات الحضور",
+    "SHIFTS": "فترات الدوام",
+    "VACATION_TASKS": "الاجازات والمهام",
+    "REQUESTS_APPROVALS": "الطلبات و الموافقات",
+    "TRACKING_LOCATIONS": "تتبع المواقع",
+    "MOBILE_APP": "الجوال و التطبيق",
+    "SALARIES": "الرواتب",
+    "PRIMARY_DATA": "البيانات الاساسية",
+    "MESSAGES_NOTIFICATIONS": "الرسائل والاشعارات",
+    "PERMISSION_MANAGEMENT": "ادارة الصلاحيات",
+    "AUDIT_TRACING": "التدقيق و المتابعة",
+    "SYSTEM_MANAGEMENT": "ادارة النظام"
+  },
+  "PROFILE": {
+    "PROFILE": "الملف الشخصي",
+    "LOGOUT": "تسجيل الخروج"
+  },
+  "HELP": {
+    "HELP_PAGE": "صفحة التعليمات",
+    "ABOUT_SYSTEM": "حول النظام"
+  }
+}
