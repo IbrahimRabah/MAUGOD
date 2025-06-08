@@ -1,15 +1,31 @@
 .sidebar {
   position: fixed;
   top: 45px;
-  right: 0;
+  bottom: 0;
   width: 60px; /* Initial mini width */
-  height: calc(100vh - 45px);
   background-color: #2e3439;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   z-index: 1000;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* RTL Styles */
+:host-context([dir="rtl"]) .sidebar {
+  right: 0;
+  left: auto;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   direction: rtl;
-  overflow: hidden;
+}
+
+/* LTR Styles */
+:host-context([dir="ltr"]) .sidebar {
+  left: 0;
+  right: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  direction: ltr;
 }
 
 /* For small screens, hide sidebar by default */

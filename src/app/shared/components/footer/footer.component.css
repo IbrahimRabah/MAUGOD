@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem;
+  z-index: 2;
+  flex-shrink: 0;
+  height: 50px;
+  transition: margin-right 0.3s ease;
+}
+
+@media (min-width: 769px) {
+  /* RTL */
+  :host-context([dir="rtl"]) {
+    margin-right: 60px;
+    margin-left: 0;
+  }
+
+  :host-context([dir="rtl"]) :host-context(.sidebar-expanded) {
+    margin-right: 280px;
+    margin-left: 0;
+  }
+
+  /* LTR */
+  :host-context([dir="ltr"]) {
+    margin-left: 60px;
+    margin-right: 0;
+  }
+
+  :host-context([dir="ltr"]) :host-context(.sidebar-expanded) {
+    margin-left: 280px;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  :host-context(.sidebar-expanded) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
