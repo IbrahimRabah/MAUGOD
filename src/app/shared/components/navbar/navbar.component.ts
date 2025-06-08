@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-navbar',
@@ -7,7 +8,10 @@ import { SidebarService } from '../../services/sidebar.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-  constructor(public sidebarService: SidebarService) { }
+  constructor(
+    public sidebarService: SidebarService,
+    private languageService: LanguageService
+  ) { }
 
   toggleSidebar() {
     console.log('NavbarComponent: Toggle button clicked');
@@ -19,8 +23,13 @@ export class NavbarComponent {
     console.log('Logout clicked');
   }
 
-  changeLanguage(lang: string) {
-    // Implement language change logic here
-    console.log('Language changed to:', lang);
+  switchLanguage() {
+    const currentLang = this.getCurrentLang();
+    const newLang = currentLang === 'ar' ? 'en' : 'ar';
+    this.languageService.setLanguage(newLang);
+  }
+
+  getCurrentLang() {
+    return this.languageService.getCurrentLang();
   }
 }
