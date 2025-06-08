@@ -1,0 +1,31 @@
+{
+  "HOME": {
+    "TITLE": "Home"
+  },
+  "MENU": {
+    "DASHBOARD": "Dashboard",
+    "ATTENDANCE": "View Attendance",
+    "MAWJOOD_APP": "Mawjood App",
+    "REPORTS": "Reports",
+    "ATTENDANCE_DATA": "Attendance Data",
+    "SHIFTS": "Shifts",
+    "VACATION_TASKS": "Vacations & Tasks",
+    "REQUESTS_APPROVALS": "Requests & Approvals",
+    "TRACKING_LOCATIONS": "Location Tracking",
+    "MOBILE_APP": "Mobile & App",
+    "SALARIES": "Salaries",
+    "PRIMARY_DATA": "Primary Data",
+    "MESSAGES_NOTIFICATIONS": "Messages & Notifications",
+    "PERMISSION_MANAGEMENT": "Permission Management",
+    "AUDIT_TRACING": "Audit & Tracing",
+    "SYSTEM_MANAGEMENT": "System Management"
+  },
+  "PROFILE": {
+    "PROFILE": "Profile",
+    "LOGOUT": "Logout"
+  },
+  "HELP": {
+    "HELP_PAGE": "Help Page",
+    "ABOUT_SYSTEM": "About System"
+  }
+}
