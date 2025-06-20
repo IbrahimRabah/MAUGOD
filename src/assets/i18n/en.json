@@ -18,7 +18,38 @@
     "MESSAGES_NOTIFICATIONS": "Messages & Notifications",
     "PERMISSION_MANAGEMENT": "Permission Management",
     "AUDIT_TRACING": "Audit & Tracing",
-    "SYSTEM_MANAGEMENT": "System Management"
+    "SYSTEM_MANAGEMENT": "System Management",
+    "CTS_DATA": {
+      "TITLE": "CTS Data",
+      "ACTION": "Action",
+      "POSITION": "Position",
+      "MY_LIST": "My List",
+      "DOCUMENT_TEMPLATE": "Document Template",
+      "DELIVERY_MODE": "Delivery Mode",
+      "DOCUMENT_TYPE": "Document Type",
+      "KEYWORDS": "Keywords",
+      "PRIORITY_LEVEL": "Priority Level",
+      "SECURITY_LEVEL": "Security Level",
+      "SUBJECT_CLASS": "Subject Classification",
+      "DOCUMENT_COLOR": "Document Colors & Alerts",
+      "TRANSACTION_STATUS": "Transaction Status",
+      "URGENCY_LEVEL": "Urgency Level",
+      "APPROVAL_ROUTES": "Approval Routes",
+      "ALL_DATA": "Search Transactions",
+      "PARALLEL_DOCUMENT": "Parallel Procedures",
+      "SECURITY_POLICY": "Security Policies",
+      "MASAR_APPLICATION": "Masar Application"
+    },
+    "COMMITTEES_DATA": {
+      "TITLE": "Committees & Councils Data",
+      "COMMITTEES": "Councils",
+      "COMMITTEE_MEMBERS": "Council & Committee Members",
+      "COMMITTEE_INVITATIONS": "Invitees",
+      "COMMITTEE_ROUTE": "Minutes Routing",
+      "COMMITTEE_SUBJECT_CLASSES": "Minutes Subject Classification",
+      "VOTING_TYPES": "Voting Types",
+      "MEETING_AND_SUBJECTS": "Minutes & Subjects"
+    }
   },
   "PROFILE": {
     "PROFILE": "Profile",
