@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { LoginResponse } from '../../../../core/models/account';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -57,11 +58,25 @@ export class LoginComponent {
     }
   }
   setInfoInStorage(response: LoginResponse): void {
-    localStorage.setItem('empId', response.empId.toString());
-    localStorage.setItem('lang', response.lang.toString());
-    localStorage.setItem('empName', response.empName || '');
-    localStorage.setItem('loginId', response.loginId || '');
     localStorage.setItem('token', response.token);
+    
+    try {
+      const decodedToken: any = jwtDecode(response.token);      
+      localStorage.setItem('lang', decodedToken.lang || response.lang.toString());
+      localStorage.setItem('exp', decodedToken.exp?.toString() || '');
+      localStorage.setItem('langUserName', decodedToken.langUserName || '');
+      localStorage.setItem('empId', decodedToken.empId?.toString() || response.empId.toString());
+      localStorage.setItem('empName', decodedToken.empName || response.empName || '');
+      localStorage.setItem('loginId', decodedToken.loginId || response.loginId || '');
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      // Fallback to response values if token decoding fails
+      localStorage.setItem('lang', response.lang.toString());
+      localStorage.setItem('empId', response.empId.toString());
+      localStorage.setItem('empName', response.empName || '');
+      localStorage.setItem('loginId', response.loginId || '');
+    }
+    
     localStorage.setItem('menuList', JSON.stringify(response.menuList));
   }
 }

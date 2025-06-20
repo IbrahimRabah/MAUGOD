@@ -18,7 +18,38 @@
     "MESSAGES_NOTIFICATIONS": "الرسائل والاشعارات",
     "PERMISSION_MANAGEMENT": "ادارة الصلاحيات",
     "AUDIT_TRACING": "التدقيق و المتابعة",
-    "SYSTEM_MANAGEMENT": "ادارة النظام"
+    "SYSTEM_MANAGEMENT": "ادارة النظام",
+    "CTS_DATA": {
+      "TITLE": "بيانات الاتصالات الادارية",
+      "ACTION": "الاجراء",
+      "POSITION": "المسمي الوظيفي",
+      "MY_LIST": "قائمتي",
+      "DOCUMENT_TEMPLATE": "نموذج المعاملة",
+      "DELIVERY_MODE": "طريقة التسليم",
+      "DOCUMENT_TYPE": "نوع المعاملة",
+      "KEYWORDS": "الكلمات المفتاحية",
+      "PRIORITY_LEVEL": "مستوي الاهمية",
+      "SECURITY_LEVEL": "درجة السرية",
+      "SUBJECT_CLASS": "تصنيف الموضوع",
+      "DOCUMENT_COLOR": "التنبيهات و الوان المعاملات",
+      "TRANSACTION_STATUS": "حالات المعاملات",
+      "URGENCY_LEVEL": "سرعة الانجاز",
+      "APPROVAL_ROUTES": "خارطة طريق المعاملة",
+      "ALL_DATA": "البحث عن المعاملات",
+      "PARALLEL_DOCUMENT": "الاجراءات الموازية",
+      "SECURITY_POLICY": "السياسات الامنية",
+      "MASAR_APPLICATION": "تطبيق مسار"
+    },
+    "COMMITTEES_DATA": {
+      "TITLE": "بيانات المجالس و اللجان",
+      "COMMITTEES": "المجالس",
+      "COMMITTEE_MEMBERS": "اعضاء المجالس و اللجان",
+      "COMMITTEE_INVITATIONS": "المدعوين",
+      "COMMITTEE_ROUTE": "خارطة طريق المحاضر",
+      "COMMITTEE_SUBJECT_CLASSES": "تصنيف مواضيع المحاضر",
+      "VOTING_TYPES": "انواع التصويت",
+      "MEETING_AND_SUBJECTS": "المحاضر و المواضيع"
+    }
   },
   "PROFILE": {
     "PROFILE": "الملف الشخصي",
