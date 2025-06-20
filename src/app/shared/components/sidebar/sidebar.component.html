@@ -183,16 +183,19 @@
             <div [routerLink]="['/primary-data/general-data']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('generalData')" [class.expanded]="isSubmenuOpen('generalData')">
               <i class="fas fa-database"></i>
-              <span>البيانات العامه</span>
+              <span>{{ 'MENU.PRIMARY_DATA_SECTIONS.GENERAL_DATA' | translate }}</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('generalData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/branches']" routerLinkActive="active"><i class="fas fa-building"></i><span>الفروع</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/departments']" routerLinkActive="active"><i class="fas fa-sitemap"></i><span>الاقسام</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/employees']" routerLinkActive="active"><i class="fas fa-users"></i><span>الموظفين</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/nationalities']" routerLinkActive="active"><i class="fas fa-flag"></i><span>الجنسيات</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/banks']" routerLinkActive="active"><i class="fas fa-university"></i><span>البنوك</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/branches']" routerLinkActive="active"><i class="fas fa-building"></i><span>{{ 'MENU.GENERAL_DATA.BRANCHES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/departments']" routerLinkActive="active"><i class="fas fa-sitemap"></i><span>{{ 'MENU.GENERAL_DATA.DEPARTMENTS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/employees']" routerLinkActive="active"><i class="fas fa-users"></i><span>{{ 'MENU.GENERAL_DATA.EMPLOYEES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/nationalities']" routerLinkActive="active"><i class="fas fa-flag"></i><span>{{ 'MENU.GENERAL_DATA.NATIONALITIES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/banks']" routerLinkActive="active"><i class="fas fa-university"></i><span>{{ 'MENU.GENERAL_DATA.BANKS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/cities']" routerLinkActive="active"><i class="fas fa-city"></i><span>{{ 'MENU.GENERAL_DATA.CITIES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/organization']" routerLinkActive="active"><i class="fas fa-user-graduate"></i><span>{{ 'MENU.GENERAL_DATA.ORGANIZATION' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/province']" routerLinkActive="active"><i class="fas fa-map-marker-alt"></i><span>{{ 'MENU.GENERAL_DATA.PROVINCE' | translate }}</span></a></li>
             </ul>
           </li>
           <!-- 12.2 بيانات موجود -->
@@ -200,14 +203,14 @@
           <div [routerLink]="['/primary-data/mawjood-data']">
             <a class="nav-link" (click)="toggleSubmenu('mawjoodData')" [class.expanded]="isSubmenuOpen('mawjoodData')">
               <i class="fas fa-file-alt"></i>
-              <span>بيانات موجود</span>
+              <span>{{ 'MENU.PRIMARY_DATA_SECTIONS.MAWJOOD_DATA' | translate }}</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('mawjoodData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/employees-statuses']"><i class="fas fa-user-check"></i><span>حالات الموظفين</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/jobs']"><i class="fas fa-briefcase"></i><span>الوظائف</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/employees-documents']"><i class="fas fa-file-signature"></i><span>مستند الموظفين</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/employees-statuses']"><i class="fas fa-user-check"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_STATUSES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/jobs']"><i class="fas fa-briefcase"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.JOBS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/employees-documents']"><i class="fas fa-file-signature"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_DOCUMENTS' | translate }}</span></a></li>
             </ul>
           </li>
           <!-- 12.3 بيانات الاتصالات الادارية -->
@@ -215,29 +218,29 @@
             <div [routerLink]="['/primary-data/cts-data']">
               <a class="nav-link" (click)="toggleSubmenu('ctsData')" [class.expanded]="isSubmenuOpen('ctsData')">
                 <i class="fas fa-exchange-alt"></i>
-                <span>بيانات الاتصالات الادارية</span>
+                <span>{{ 'MENU.CTS_DATA.TITLE' | translate }}</span>
                 <i class="fas fa-chevron-down submenu-arrow"></i>
               </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('ctsData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/action']"><i class="fas fa-tasks"></i><span>الاجراء</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/position']"><i class="fas fa-id-badge"></i><span>المسمي الوظيفي</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/my-list']"><i class="fas fa-list"></i><span>قائمتي</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/document-template']"><i class="fas fa-file-alt"></i><span>نموذج المعاملة</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/delivery-mode']"><i class="fas fa-truck"></i><span>طريقة التسليم</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/document-type']"><i class="fas fa-file-contract"></i><span>نوع المعاملة</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/keywords']"><i class="fas fa-key"></i><span>الكلمات المفتاحية</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/priority-level']"><i class="fas fa-exclamation"></i><span>مستوي الاهمية</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/security-level']"><i class="fas fa-shield-alt"></i><span>درجة السرية</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/subject-class']"><i class="fas fa-folder"></i><span>تصنيف الموضوع</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/document-color']"><i class="fas fa-palette"></i><span>التنبيهات و الوان المعاملات</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/transaction-status']"><i class="fas fa-info-circle"></i><span>حالات المعاملات</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/urgency-level']"><i class="fas fa-bolt"></i><span>سرعة الانجاز</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/approval-routes']"><i class="fas fa-route"></i><span>خارطة طريق المعاملة</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/all-data']"><i class="fas fa-search"></i><span>البحث عن المعاملات</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/parallel-document']"><i class="fas fa-random"></i><span>الاجراءات الموازية</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/security-policy']"><i class="fas fa-lock"></i><span>السياسات الامنية</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/masar-application']"><i class="fas fa-mobile-alt"></i><span>تطبيق مسار</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/action']"><i class="fas fa-tasks"></i><span>{{ 'MENU.CTS_DATA.ACTION' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/position']"><i class="fas fa-id-badge"></i><span>{{ 'MENU.CTS_DATA.POSITION' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/my-list']"><i class="fas fa-list"></i><span>{{ 'MENU.CTS_DATA.MY_LIST' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/document-template']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_TEMPLATE' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/delivery-mode']"><i class="fas fa-truck"></i><span>{{ 'MENU.CTS_DATA.DELIVERY_MODE' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/document-type']"><i class="fas fa-file-contract"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_TYPE' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/keywords']"><i class="fas fa-key"></i><span>{{ 'MENU.CTS_DATA.KEYWORDS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/priority-level']"><i class="fas fa-exclamation"></i><span>{{ 'MENU.CTS_DATA.PRIORITY_LEVEL' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/security-level']"><i class="fas fa-shield-alt"></i><span>{{ 'MENU.CTS_DATA.SECURITY_LEVEL' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/subject-class']"><i class="fas fa-folder"></i><span>{{ 'MENU.CTS_DATA.SUBJECT_CLASS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/document-color']"><i class="fas fa-palette"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_COLOR' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/transaction-status']"><i class="fas fa-info-circle"></i><span>{{ 'MENU.CTS_DATA.TRANSACTION_STATUS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/urgency-level']"><i class="fas fa-bolt"></i><span>{{ 'MENU.CTS_DATA.URGENCY_LEVEL' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/approval-routes']"><i class="fas fa-route"></i><span>{{ 'MENU.CTS_DATA.APPROVAL_ROUTES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/all-data']"><i class="fas fa-search"></i><span>{{ 'MENU.CTS_DATA.ALL_DATA' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/parallel-document']"><i class="fas fa-random"></i><span>{{ 'MENU.CTS_DATA.PARALLEL_DOCUMENT' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/security-policy']"><i class="fas fa-lock"></i><span>{{ 'MENU.CTS_DATA.SECURITY_POLICY' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/masar-application']"><i class="fas fa-mobile-alt"></i><span>{{ 'MENU.CTS_DATA.MASAR_APPLICATION' | translate }}</span></a></li>
             </ul>
           </li>
           <!-- 12.4 بيانات المجالس و اللجان -->
@@ -245,18 +248,18 @@
             <div [routerLink]="['/primary-data/committees-data']">
               <a class="nav-link" (click)="toggleSubmenu('committeesData')" [class.expanded]="isSubmenuOpen('committeesData')">
                 <i class="fas fa-users-cog"></i>
-                <span>بيانات المجالس و اللجان</span>
+                <span>{{ 'MENU.COMMITTEES_DATA.TITLE' | translate }}</span>
                 <i class="fas fa-chevron-down submenu-arrow"></i>
               </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('committeesData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/committees']"><i class="fas fa-chalkboard-teacher"></i><span>المجالس</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-members']"><i class="fas fa-user-friends"></i><span>اعضاء المجالس و اللجان</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-invitations']"><i class="fas fa-envelope-open-text"></i><span>المدعوين</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-route']"><i class="fas fa-route"></i><span>خارطة طريق المحاضر</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-subject-classes']"><i class="fas fa-clipboard-list"></i><span>تصنيف مواضيع المحاضر</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/voting-types']"><i class="fas fa-vote-yea"></i><span>انواع التصويت</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/meeting-and-subjects']"><i class="fas fa-file-alt"></i><span>المحاضر و المواضيع</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/committees']"><i class="fas fa-chalkboard-teacher"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/committee-members']"><i class="fas fa-user-friends"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_MEMBERS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/committee-invitations']"><i class="fas fa-envelope-open-text"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_INVITATIONS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/committee-route']"><i class="fas fa-route"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_ROUTE' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/committee-subject-classes']"><i class="fas fa-clipboard-list"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_SUBJECT_CLASSES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/voting-types']"><i class="fas fa-vote-yea"></i><span>{{ 'MENU.COMMITTEES_DATA.VOTING_TYPES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/primary-data/meeting-and-subjects']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.COMMITTEES_DATA.MEETING_AND_SUBJECTS' | translate }}</span></a></li>
             </ul>
           </li>
         </ul>

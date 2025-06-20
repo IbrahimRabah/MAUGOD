@@ -1,17 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PrimaryDataRoutingModule } from './primary-data-routing.module';
 import { GeneralDataComponent } from './components/general-data/general-data.component';
 import { MawjoodDataComponent } from './components/mawjood-data/mawjood-data.component';
-import { BranchesComponent } from './components/branches/branches.component';
-import { DepartmentsComponent } from './components/departments/departments.component';
-import { EmployeesComponent } from './components/employees/employees.component';
-import { NationalitiesComponent } from './components/nationalities/nationalities.component';
-import { BanksComponent } from './components/banks/banks.component';
-import { EmplyeesStatusesComponent } from './components/emplyees-statuses/emplyees-statuses.component';
+import { EmployeeStatusesComponent } from './components/employee-statuses/employee-statuses.component';
 import { JobsComponent } from './components/jobs/jobs.component';
-import { EmplyoeesDocumentsComponent } from './components/emplyoees-documents/emplyoees-documents.component';
+import { EmployeeDocumentsComponent } from './components/employee-documents/employee-documents.component';
 import { PrimaryDataComponent } from './components/primary-data/primary-data.component';
 import { CtsDataComponent } from './components/cts-data/cts-data.component';
 import { CommitteesDataComponent } from './components/committees-data/committees-data.component';
@@ -40,20 +36,18 @@ import { CommitteeRouteComponent } from './components/committee-route/committee-
 import { CommitteeSubjectClassesComponent } from './components/committee-subject-classes/committee-subject-classes.component';
 import { VotingTypesComponent } from './components/voting-types/voting-types.component';
 import { MeetingAndSubjectsComponent } from './components/meeting-and-subjects/meeting-and-subjects.component';
+import { CitiesComponent } from './components/cities/cities.component';
+import { OrganizationComponent } from './components/organization/organization.component';
+import { ProvinceComponent } from './components/province/province.component';
 
 
 @NgModule({
   declarations: [
     GeneralDataComponent,
     MawjoodDataComponent,
-    BranchesComponent,
-    DepartmentsComponent,
-    EmployeesComponent,
-    NationalitiesComponent,
-    BanksComponent,
-    EmplyeesStatusesComponent,
+    EmployeeStatusesComponent,
     JobsComponent,
-    EmplyoeesDocumentsComponent,
+    EmployeeDocumentsComponent,
     PrimaryDataComponent,
     CtsDataComponent,
     CommitteesDataComponent,
@@ -81,11 +75,15 @@ import { MeetingAndSubjectsComponent } from './components/meeting-and-subjects/m
     CommitteeRouteComponent,
     CommitteeSubjectClassesComponent,
     VotingTypesComponent,
-    MeetingAndSubjectsComponent
+    MeetingAndSubjectsComponent,
+    CitiesComponent,
+    OrganizationComponent,
+    ProvinceComponent
   ],
   imports: [
     CommonModule,
-    PrimaryDataRoutingModule
+    PrimaryDataRoutingModule,
+    TranslateModule
   ]
 })
 export class PrimaryDataModule { }

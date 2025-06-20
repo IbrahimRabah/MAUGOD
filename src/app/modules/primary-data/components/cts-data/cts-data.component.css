@@ -1,0 +1,139 @@
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container i {
+  font-size: 2rem;
+  color: white;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  color: #333;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.visit-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.visit-indicator i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.visit-indicator span {
+  font-size: 0.9rem;
+  color: inherit;
+}
+
+.card:hover .visit-indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover .visit-indicator i {
+  transform: translateX(5px);
+}
+
+/* Card specific colors */
+.action .icon-container { background-color: #FF5722; }
+.position .icon-container { background-color: #3F51B5; }
+.my-list .icon-container { background-color: #009688; }
+.document-template .icon-container { background-color: #795548; }
+.delivery-mode .icon-container { background-color: #607D8B; }
+.document-type .icon-container { background-color: #E91E63; }
+.keywords .icon-container { background-color: #9C27B0; }
+.priority-level .icon-container { background-color: #673AB7; }
+.security-level .icon-container { background-color: #2196F3; }
+.subject-class .icon-container { background-color: #00BCD4; }
+.document-color .icon-container { background-color: #4CAF50; }
+.transaction-status .icon-container { background-color: #8BC34A; }
+.urgency-level .icon-container { background-color: #FFC107; }
+.approval-routes .icon-container { background-color: #FF9800; }
+.all-data .icon-container { background-color: #FF5252; }
+.parallel-document .icon-container { background-color: #7C4DFF; }
+.security-policy .icon-container { background-color: #536DFE; }
+.masar-application .icon-container { background-color: #69F0AE; }
+
+/* Hover effects with opacity */
+.action:hover { background-color: rgba(255, 87, 34, 0.1); }
+.position:hover { background-color: rgba(63, 81, 181, 0.1); }
+.my-list:hover { background-color: rgba(0, 150, 136, 0.1); }
+.document-template:hover { background-color: rgba(121, 85, 72, 0.1); }
+.delivery-mode:hover { background-color: rgba(96, 125, 139, 0.1); }
+.document-type:hover { background-color: rgba(233, 30, 99, 0.1); }
+.keywords:hover { background-color: rgba(156, 39, 176, 0.1); }
+.priority-level:hover { background-color: rgba(103, 58, 183, 0.1); }
+.security-level:hover { background-color: rgba(33, 150, 243, 0.1); }
+.subject-class:hover { background-color: rgba(0, 188, 212, 0.1); }
+.document-color:hover { background-color: rgba(76, 175, 80, 0.1); }
+.transaction-status:hover { background-color: rgba(139, 195, 74, 0.1); }
+.urgency-level:hover { background-color: rgba(255, 193, 7, 0.1); }
+.approval-routes:hover { background-color: rgba(255, 152, 0, 0.1); }
+.all-data:hover { background-color: rgba(255, 82, 82, 0.1); }
+.parallel-document:hover { background-color: rgba(124, 77, 255, 0.1); }
+.security-policy:hover { background-color: rgba(83, 109, 254, 0.1); }
+.masar-application:hover { background-color: rgba(105, 240, 174, 0.1); }
+
+/* Title color on hover */
+.action:hover .card-title, .action:hover .visit-indicator { color: #FF5722; }
+.position:hover .card-title, .position:hover .visit-indicator { color: #3F51B5; }
+.my-list:hover .card-title, .my-list:hover .visit-indicator { color: #009688; }
+.document-template:hover .card-title, .document-template:hover .visit-indicator { color: #795548; }
+.delivery-mode:hover .card-title, .delivery-mode:hover .visit-indicator { color: #607D8B; }
+.document-type:hover .card-title, .document-type:hover .visit-indicator { color: #E91E63; }
+.keywords:hover .card-title, .keywords:hover .visit-indicator { color: #9C27B0; }
+.priority-level:hover .card-title, .priority-level:hover .visit-indicator { color: #673AB7; }
+.security-level:hover .card-title, .security-level:hover .visit-indicator { color: #2196F3; }
+.subject-class:hover .card-title, .subject-class:hover .visit-indicator { color: #00BCD4; }
+.document-color:hover .card-title, .document-color:hover .visit-indicator { color: #4CAF50; }
+.transaction-status:hover .card-title, .transaction-status:hover .visit-indicator { color: #8BC34A; }
+.urgency-level:hover .card-title, .urgency-level:hover .visit-indicator { color: #FFC107; }
+.approval-routes:hover .card-title, .approval-routes:hover .visit-indicator { color: #FF9800; }
+.all-data:hover .card-title, .all-data:hover .visit-indicator { color: #FF5252; }
+.parallel-document:hover .card-title, .parallel-document:hover .visit-indicator { color: #7C4DFF; }
+.security-policy:hover .card-title, .security-policy:hover .visit-indicator { color: #536DFE; }
+.masar-application:hover .card-title, .masar-application:hover .visit-indicator { color: #69F0AE; }

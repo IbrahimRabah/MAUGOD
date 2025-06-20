@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-primary-data',
-  templateUrl: './primary-data.component.html',
-  styleUrls: ['./primary-data.component.css']
+  selector: 'app-cities',
+  templateUrl: './cities.component.html',
+  styleUrls: ['./cities.component.css']
 })
-export class PrimaryDataComponent {
+export class CitiesComponent {
   constructor(public translate: TranslateService) {}
 }

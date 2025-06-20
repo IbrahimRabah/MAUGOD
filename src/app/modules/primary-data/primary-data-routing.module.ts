@@ -38,11 +38,24 @@ import { CommitteeRouteComponent } from './components/committee-route/committee-
 import { CommitteeSubjectClassesComponent } from './components/committee-subject-classes/committee-subject-classes.component';
 import { VotingTypesComponent } from './components/voting-types/voting-types.component';
 import { MeetingAndSubjectsComponent } from './components/meeting-and-subjects/meeting-and-subjects.component';
+import { CitiesComponent } from './components/cities/cities.component';
+import { OrganizationComponent } from './components/organization/organization.component';
+import { ProvinceComponent } from './components/province/province.component';
+import { EmployeeStatusesComponent } from './components/employee-statuses/employee-statuses.component';
+import { EmployeeDocumentsComponent } from './components/employee-documents/employee-documents.component';
 
 const routes: Routes = [
   { path: '', component: PrimaryDataComponent },
   { path: 'general-data', component: GeneralDataComponent },
-  { path: 'mawjood-data', component: MawjoodDataComponent },
+  { 
+    path: 'mawjood-data', 
+    component: MawjoodDataComponent,
+    children: [
+      { path: 'employee-statuses', component: EmployeeStatusesComponent },
+      { path: 'jobs', component: JobsComponent },
+      { path: 'employee-documents', component: EmployeeDocumentsComponent }
+    ]
+  },
   { path: 'branches', component: BranchesComponent },
   { path: 'departments', component: DepartmentsComponent },
   { path: 'banks', component: BanksComponent },
@@ -77,7 +90,10 @@ const routes: Routes = [
   { path: 'committee-route', component: CommitteeRouteComponent },
   { path: 'committee-subject-classes', component: CommitteeSubjectClassesComponent },
   { path: 'voting-types', component: VotingTypesComponent },
-  { path: 'meeting-and-subjects', component: MeetingAndSubjectsComponent }
+  { path: 'meeting-and-subjects', component: MeetingAndSubjectsComponent },
+  { path: 'cities',component: CitiesComponent},
+  { path: 'organization',component: OrganizationComponent},
+  { path: 'province',component: ProvinceComponent}
 ];
 
 @NgModule({

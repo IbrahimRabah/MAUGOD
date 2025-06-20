@@ -15,6 +15,15 @@
     "MOBILE_APP": "Mobile & App",
     "SALARIES": "Salaries",
     "PRIMARY_DATA": "Primary Data",
+    "PRIMARY_DATA_SECTIONS": {
+      "GENERAL_DATA": "General Data",
+      "MAWJOOD_DATA": "Mawjood Data"
+    },
+    "MAWJOOD_DATA_SECTIONS": {
+      "EMPLOYEE_STATUSES": "Employee Statuses",
+      "JOBS": "Jobs",
+      "EMPLOYEE_DOCUMENTS": "Employee Documents"
+    },
     "MESSAGES_NOTIFICATIONS": "Messages & Notifications",
     "PERMISSION_MANAGEMENT": "Permission Management",
     "AUDIT_TRACING": "Audit & Tracing",
@@ -49,7 +58,18 @@
       "COMMITTEE_SUBJECT_CLASSES": "Minutes Subject Classification",
       "VOTING_TYPES": "Voting Types",
       "MEETING_AND_SUBJECTS": "Minutes & Subjects"
-    }
+    },
+    "GENERAL_DATA": {
+      "BRANCHES": "Branches",
+      "DEPARTMENTS": "Departments",
+      "EMPLOYEES": "Employees",
+      "NATIONALITIES": "Nationalities",
+      "BANKS": "Banks",
+      "CITIES": "Cities",
+      "ORGANIZATION": "Organization",
+      "PROVINCE": "Province"
+    },
+    "VISIT": "Visit"
   },
   "PROFILE": {
     "PROFILE": "Profile",

@@ -1,0 +1,202 @@
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 200px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .icon-container {
+  transform: scale(1.1);
+}
+
+.icon-container i {
+  font-size: 2rem;
+  color: white;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  color: #333;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+/* Card specific colors */
+.committees .icon-container {
+  background-color: #E91E63; /* Pink */
+}
+
+.committee-members .icon-container {
+  background-color: #673AB7; /* Deep Purple */
+}
+
+.committee-invitations .icon-container {
+  background-color: #2196F3; /* Blue */
+}
+
+.committee-route .icon-container {
+  background-color: #009688; /* Teal */
+}
+
+.subject-classes .icon-container {
+  background-color: #FF5722; /* Deep Orange */
+}
+
+.voting-types .icon-container {
+  background-color: #795548; /* Brown */
+}
+
+.meeting-subjects .icon-container {
+  background-color: #607D8B; /* Blue Grey */
+}
+
+/* Hover effects */
+.committees:hover {
+  background-color: rgba(233, 30, 99, 0.1);
+}
+
+.committee-members:hover {
+  background-color: rgba(103, 58, 183, 0.1);
+}
+
+.committee-invitations:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.committee-route:hover {
+  background-color: rgba(0, 150, 136, 0.1);
+}
+
+.subject-classes:hover {
+  background-color: rgba(255, 87, 34, 0.1);
+}
+
+.voting-types:hover {
+  background-color: rgba(121, 85, 72, 0.1);
+}
+
+.meeting-subjects:hover {
+  background-color: rgba(96, 125, 139, 0.1);
+}
+
+/* Title color changes on hover */
+.committees:hover .card-title {
+  color: #E91E63;
+}
+
+.committee-members:hover .card-title {
+  color: #673AB7;
+}
+
+.committee-invitations:hover .card-title {
+  color: #2196F3;
+}
+
+.committee-route:hover .card-title {
+  color: #009688;
+}
+
+.subject-classes:hover .card-title {
+  color: #FF5722;
+}
+
+.voting-types:hover .card-title {
+  color: #795548;
+}
+
+.meeting-subjects:hover .card-title {
+  color: #607D8B;
+}
+
+/* Visit indicator styles */
+.visit-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.visit-indicator i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.visit-indicator span {
+  font-size: 0.9rem;
+  color: inherit;
+}
+
+.card:hover .visit-indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover .visit-indicator i {
+  transform: translateX(5px);
+}
+
+/* Card specific colors for visit indicator */
+.committees:hover .visit-indicator {
+  color: #E91E63;
+}
+
+.committee-members:hover .visit-indicator {
+  color: #673AB7;
+}
+
+.committee-invitations:hover .visit-indicator {
+  color: #2196F3;
+}
+
+.committee-route:hover .visit-indicator {
+  color: #009688;
+}
+
+.subject-classes:hover .visit-indicator {
+  color: #FF5722;
+}
+
+.voting-types:hover .visit-indicator {
+  color: #795548;
+}
+
+.meeting-subjects:hover .visit-indicator {
+  color: #607D8B;
+}
