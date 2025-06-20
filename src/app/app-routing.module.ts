@@ -4,8 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home',
+    redirectTo: 'auth',
     pathMatch: 'full'
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./modules/authentication/authentication.module').then(m => m.AuthenticationModule)
   },
   {
     path: 'home',
@@ -70,10 +74,6 @@ const routes: Routes = [
   {
     path: 'consorship',
     loadChildren: () => import('./modules/consorship/consorship.module').then(m => m.ConsorshipModule)
-  },
-  {
-    path: 'auth',
-    loadChildren: () => import('./modules/authentication/authentication.module').then(m => m.AuthenticationModule)
   }
 ];
 
