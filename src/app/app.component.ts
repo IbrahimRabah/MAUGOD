@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { SidebarService } from './shared/services/sidebar.service';
+import { AuthenticationService } from './modules/authentication/services/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +10,8 @@ import { SidebarService } from './shared/services/sidebar.service';
 export class AppComponent {
   title = 'mawgoud';
 
-  constructor(public sidebarService: SidebarService) {}
+  constructor(
+    public sidebarService: SidebarService,
+    public authService: AuthenticationService
+  ) {}
 }

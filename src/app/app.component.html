@@ -1,10 +1,12 @@
 <div class="app-container" [class.sidebar-expanded]="sidebarService.isExpanded$ | async">
-  <app-navbar></app-navbar>
-  <app-sidebar></app-sidebar>
-  <main class="main-content">
+  <ng-container *ngIf="authService.isAuthenticated()">
+    <app-navbar></app-navbar>
+    <app-sidebar></app-sidebar>
+  </ng-container>
+  <main class="main-content" [ngClass]="{'authenticated': authService.isAuthenticated()}">
     <div class="container">
       <router-outlet></router-outlet>
     </div>
   </main>
-  <app-footer></app-footer>
+  <app-footer *ngIf="authService.isAuthenticated()"></app-footer>
 </div>

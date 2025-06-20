@@ -1,29 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { Account, LoginResponse } from '../../../core/models/account';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private apiUrl = 'your-api-url'; // Replace with your actual API URL
+  private apiUrl = `${environment.apiUrl}/Account`  ;
 
   constructor(private http: HttpClient) { }
 
-  login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, { username, password });
+  login(account: Account): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Login`, account);
   }
 
-  register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+  register(account: Account): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/Register`, account);
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {});
+    return this.http.post(`${this.apiUrl}/Logout`, {});
   }
 
   isAuthenticated(): boolean {
-    // Implement your authentication check logic here
     return !!localStorage.getItem('token');
   }
 }
