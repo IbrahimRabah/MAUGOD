@@ -1,1 +1,37 @@
-<p>mawjood-data works!</p>
+<div class="cards-container">
+    <!-- Employee Statuses Card -->
+    <a [routerLink]="['/primary-data/employees-statuses']" class="card employee-statuses">
+        <div class="icon-container">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_STATUSES' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Jobs Card -->
+    <a [routerLink]="['/primary-data/jobs']" class="card jobs">
+        <div class="icon-container">
+            <i class="fas fa-briefcase"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.MAWJOOD_DATA_SECTIONS.JOBS' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Employee Documents Card -->
+    <a [routerLink]="['/primary-data/employees-documents']" class="card employee-documents">
+        <div class="icon-container">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_DOCUMENTS' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+</div>

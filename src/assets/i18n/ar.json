@@ -3,19 +3,28 @@
     "TITLE": "الرئيسية"
   },
   "MENU": {
-    "DASHBOARD": "الرسومات البيانية",
+    "DASHBOARD": "لوحة المعلومات",
     "ATTENDANCE": "مشاهدة الحضور",
     "MAWJOOD_APP": "تطبيق موجود",
     "REPORTS": "التقارير",
     "ATTENDANCE_DATA": "بيانات الحضور",
     "SHIFTS": "فترات الدوام",
-    "VACATION_TASKS": "الاجازات والمهام",
-    "REQUESTS_APPROVALS": "الطلبات و الموافقات",
+    "VACATION_TASKS": "الإجازات والمهام",
+    "REQUESTS_APPROVALS": "الطلبات والموافقات",
     "TRACKING_LOCATIONS": "تتبع المواقع",
-    "MOBILE_APP": "الجوال و التطبيق",
+    "MOBILE_APP": "الجوال والتطبيق",
     "SALARIES": "الرواتب",
-    "PRIMARY_DATA": "البيانات الاساسية",
-    "MESSAGES_NOTIFICATIONS": "الرسائل والاشعارات",
+    "PRIMARY_DATA": "البيانات الأساسية",
+    "PRIMARY_DATA_SECTIONS": {
+      "GENERAL_DATA": "البيانات العامة",
+      "MAWJOOD_DATA": "بيانات موجود"
+    },
+    "MAWJOOD_DATA_SECTIONS": {
+      "EMPLOYEE_STATUSES": "حالات الموظفين",
+      "JOBS": "الوظائف",
+      "EMPLOYEE_DOCUMENTS": "مستندات الموظفين"
+    },
+    "MESSAGES_NOTIFICATIONS": "الرسائل والإشعارات",
     "PERMISSION_MANAGEMENT": "ادارة الصلاحيات",
     "AUDIT_TRACING": "التدقيق و المتابعة",
     "SYSTEM_MANAGEMENT": "ادارة النظام",
@@ -49,6 +58,17 @@
       "COMMITTEE_SUBJECT_CLASSES": "تصنيف مواضيع المحاضر",
       "VOTING_TYPES": "انواع التصويت",
       "MEETING_AND_SUBJECTS": "المحاضر و المواضيع"
+    },
+    "VISIT": "زيارة",
+    "GENERAL_DATA": {
+      "BRANCHES": "الفروع",
+      "DEPARTMENTS": "الاقسام",
+      "EMPLOYEES": "الموظفيين",
+      "NATIONALITIES": "الجنسيات",
+      "BANKS": "البنوك",
+      "CITIES": "المدن",
+      "ORGANIZATION": "المنشأة",
+      "PROVINCE": "المنطقة"
     }
   },
   "PROFILE": {

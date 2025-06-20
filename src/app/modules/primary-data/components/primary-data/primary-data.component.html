@@ -1,1 +1,48 @@
-<p>primary-data works!</p>
+<div class="cards-container"> <!-- General Data Card -->
+    <a [routerLink]="['general-data']" class="card general-data">
+        <div class="icon-container">
+            <i class="fas fa-database"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.PRIMARY_DATA_SECTIONS.GENERAL_DATA' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Mawjood Data Card -->
+    <a [routerLink]="['mawjood-data']" class="card mawjood-data">
+        <div class="icon-container">
+            <i class="fas fa-fingerprint"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.PRIMARY_DATA_SECTIONS.MAWJOOD_DATA' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- CTS Data Card -->
+    <a [routerLink]="['cts-data']" class="card cts-data">
+        <div class="icon-container">
+            <i class="fas fa-envelope"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.CTS_DATA.TITLE' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Committees Data Card -->
+    <a [routerLink]="['committees-data']" class="card committees-data">
+        <div class="icon-container">
+            <i class="fas fa-users"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.COMMITTEES_DATA.TITLE' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+</div>
