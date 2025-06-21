@@ -2,7 +2,11 @@
   background-color: #056AC8;
   padding: 0.25rem 1rem;
   min-height: 45px;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
 }
 
 .container-fluid {
