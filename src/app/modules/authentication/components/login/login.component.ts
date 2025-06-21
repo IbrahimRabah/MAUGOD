@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { LoginResponse } from '../../../../core/models/account';
 import { jwtDecode } from 'jwt-decode';
+import { LanguageService } from '../../../../core/services/language.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   isLoading: boolean = false;
   apiError!: string;
   @ViewChild('container') containerDiv!: ElementRef;
-  constructor(private authenticationService: AuthenticationService, private router: Router) { }
+  constructor(private authenticationService: AuthenticationService, private router: Router,private LanguageService:LanguageService) { }
   ngOnInit(): void {
     this.initialization();
   }
@@ -76,7 +77,16 @@ export class LoginComponent {
       localStorage.setItem('empName', response.empName || '');
       localStorage.setItem('loginId', response.loginId || '');
     }
-    
-    localStorage.setItem('menuList', JSON.stringify(response.menuList));
+     localStorage.setItem('menuList', JSON.stringify(response.menuList));
+     switch (response.lang) {
+      case 2:
+        this.LanguageService.setLanguage('ar');
+        break;
+      case 1:
+        this.LanguageService.setLanguage('en');
+        break;
+      default:
+        this.LanguageService.setLanguage('ar');
   }
+}
 }
