@@ -19,6 +19,16 @@ export class LanguageService {
     this.translate.use(lang);
     this.currentLang.next(lang);
     localStorage.setItem('language', lang);
+    switch (lang) {
+      case 'ar':
+        localStorage.setItem('lang', '2');
+        break;
+      case 'en':
+        localStorage.setItem('lang', '1');
+        break;
+      default:
+        localStorage.setItem('lang', '2'); // Default to Arabic if not recognized
+    }
     
     // Update document direction
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
