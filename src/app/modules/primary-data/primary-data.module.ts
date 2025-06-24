@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PrimaryDataRoutingModule } from './primary-data-routing.module';
@@ -39,7 +40,21 @@ import { MeetingAndSubjectsComponent } from './components/meeting-and-subjects/m
 import { CitiesComponent } from './components/cities/cities.component';
 import { OrganizationComponent } from './components/organization/organization.component';
 import { ProvinceComponent } from './components/province/province.component';
+import { BranchesComponent } from './components/branches/branches.component';
 
+// PrimeNG Modules
+import { TableModule } from 'primeng/table';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
   declarations: [
@@ -78,12 +93,26 @@ import { ProvinceComponent } from './components/province/province.component';
     MeetingAndSubjectsComponent,
     CitiesComponent,
     OrganizationComponent,
-    ProvinceComponent
-  ],
-  imports: [
+    ProvinceComponent,
+    BranchesComponent
+  ],  imports: [
     CommonModule,
     PrimaryDataRoutingModule,
-    TranslateModule
+    FormsModule,
+    TranslateModule,
+    // PrimeNG Modules
+    TableModule,
+    InputTextModule,
+    ButtonModule,
+    TooltipModule,
+    DialogModule,
+    ConfirmDialogModule,
+    DropdownModule,
+    CalendarModule,
+    ToastModule,
+    ToolbarModule,
+    MessagesModule,
+    MessageModule
   ]
 })
 export class PrimaryDataModule { }

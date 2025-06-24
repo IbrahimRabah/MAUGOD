@@ -6,11 +6,12 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class LanguageService {
-  private currentLang = new BehaviorSubject<string>('ar');
+  private currentLang = new BehaviorSubject<string>(localStorage.getItem('language') || 'ar');
+
   currentLang$ = this.currentLang.asObservable();
   
   constructor(private translate: TranslateService) {
-    // Set default language
+    // Set default language from localStorage or fallback
     const savedLang = localStorage.getItem('language') || 'ar';
     this.setLanguage(savedLang);
   }
@@ -43,6 +44,19 @@ export class LanguageService {
   }
 
   getCurrentLang() {
-    return this.currentLang.value;
+    // Always return the value from localStorage for consistency
+    return localStorage.getItem('language') || this.currentLang.value;
+  }
+
+  getLangValue(): number {
+    const language = this.getCurrentLang();
+    switch (language) {
+      case 'ar':
+        return 2; // Arabic
+      case 'en':
+        return 1; // English
+      default:
+        return 2; // Default to Arabic if not recognized
+    }
   }
 }

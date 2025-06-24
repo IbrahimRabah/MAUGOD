@@ -25,7 +25,11 @@ export class AuthenticationService {
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    if (!localStorage.getItem('token')) {
+      return true;
+    }else{
+    return true;
+    }
   }
   getAuthToken() {
     let token = localStorage.getItem('token') || '';

@@ -58,8 +58,7 @@
       "COMMITTEE_SUBJECT_CLASSES": "Minutes Subject Classification",
       "VOTING_TYPES": "Voting Types",
       "MEETING_AND_SUBJECTS": "Minutes & Subjects"
-    },
-    "GENERAL_DATA": {
+    },    "GENERAL_DATA": {
       "BRANCHES": "Branches",
       "DEPARTMENTS": "Departments",
       "EMPLOYEES": "Employees",
@@ -67,7 +66,78 @@
       "BANKS": "Banks",
       "CITIES": "Cities",
       "ORGANIZATION": "Organization",
-      "PROVINCE": "Province"
+      "PROVINCE": "Province",      "BRANCHES_TABLE": {
+        "EDIT": "Edit",
+        "BRANCH_NAME": "Branch Name",
+        "MANAGER": "Manager",
+        "PARENT_BRANCH": "Parent Branch",
+        "LOCATION": "Location",
+        "LOCATION_DESC": "Location Description",
+        "NOTES": "Notes",
+        "DELETE": "Delete",
+        "CHANGE_NUMBER": "Change Number"
+      },      "BRANCHES_ACTIONS": {
+        "ADD_BRANCH": "Add Branch",
+        "SEARCH_PLACEHOLDER": "Search in branches...",
+        "SEARCH_TITLE": "Search",
+        "ADD_BRANCH_TITLE": "Add New Branch"
+      },      "BRANCHES_MODALS": {
+        "ADD_BRANCH_MODAL": {
+          "TITLE": "Add New Branch",
+          "ARABIC_NAME": "Arabic Name",
+          "ENGLISH_NAME": "English Name",
+          "MANAGER": "Manager",
+          "PARENT_DEPARTMENT": "Parent Department",
+          "BRANCH": "Branch",
+          "DEFAULT_LEVEL": "Default Level",
+          "LOCATION": "Location",
+          "LOCATION_DESC": "Location Description",
+          "NOTES": "Notes",
+          "CANCEL": "Cancel",
+          "SAVE": "Save",
+          "PLACEHOLDERS": {
+            "ARABIC_NAME": "Enter Arabic Name",
+            "ENGLISH_NAME": "Enter English Name",
+            "LOCATION_DESC": "Enter Location Description",
+            "NOTES": "Enter Notes"
+          },
+          "SELECT_OPTIONS": {
+            "CHOOSE_MANAGER": "Choose Manager",
+            "CHOOSE_PARENT_DEPT": "Choose Parent Department",
+            "CHOOSE_BRANCH": "Choose Branch",
+            "CHOOSE_DEFAULT_LEVEL": "Choose Default Level",
+            "CHOOSE_LOCATION": "Choose Location"
+          }
+        },
+        "CHANGE_NUMBER_MODAL": {
+          "TITLE": "Change Branch Number",
+          "BRANCH_NAME": "Branch Name",
+          "OLD_NUMBER": "Current Number",
+          "NEW_NUMBER": "New Number",
+          "CANCEL": "Cancel",
+          "SAVE": "Save Change",
+          "SELECT_NEW_NUMBER": "Select New Number"
+        }
+      },      "BRANCHES_PAGINATION": {
+        "SHOWING": "Showing",
+        "TO": "-",
+        "OF": "of",
+        "ITEMS": "items",
+        "PAGE": "Page",
+        "PAGE_OF": "of",
+        "ITEMS_PER_PAGE": "Items per page:",
+        "NO_DATA": "No data available",
+        "FIRST_PAGE": "First Page",
+        "PREVIOUS_PAGE": "Previous Page",
+        "NEXT_PAGE": "Next Page",
+        "LAST_PAGE": "Last Page"
+      },
+      "BRANCHES_GENERAL": {
+        "LOADING": "Loading...",
+        "EDIT_TOOLTIP": "Edit",
+        "DELETE_TOOLTIP": "Delete",
+        "CHANGE_NUMBER_TOOLTIP": "Change Number"
+      }
     },
     "VISIT": "Visit"
   },
