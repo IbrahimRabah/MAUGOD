@@ -59,8 +59,7 @@
       "VOTING_TYPES": "انواع التصويت",
       "MEETING_AND_SUBJECTS": "المحاضر و المواضيع"
     },
-    "VISIT": "زيارة",
-    "GENERAL_DATA": {
+    "VISIT": "زيارة",    "GENERAL_DATA": {
       "BRANCHES": "الفروع",
       "DEPARTMENTS": "الاقسام",
       "EMPLOYEES": "الموظفيين",
@@ -68,7 +67,78 @@
       "BANKS": "البنوك",
       "CITIES": "المدن",
       "ORGANIZATION": "المنشأة",
-      "PROVINCE": "المنطقة"
+      "PROVINCE": "المنطقة",      "BRANCHES_TABLE": {
+        "EDIT": "تعديل",
+        "BRANCH_NAME": "اسم الفرع",
+        "MANAGER": "المدير",
+        "PARENT_BRANCH": "الفرع الأب",
+        "LOCATION": "الموقع",
+        "LOCATION_DESC": "وصف الموقع",
+        "NOTES": "ملاحظات",
+        "DELETE": "حذف",
+        "CHANGE_NUMBER": "تغيير الرقم"
+      },      "BRANCHES_ACTIONS": {
+        "ADD_BRANCH": "إضافة فرع",
+        "SEARCH_PLACEHOLDER": "البحث في الفروع...",
+        "SEARCH_TITLE": "البحث",
+        "ADD_BRANCH_TITLE": "إضافة فرع جديد"
+      },      "BRANCHES_MODALS": {
+        "ADD_BRANCH_MODAL": {
+          "TITLE": "إضافة فرع جديد",
+          "ARABIC_NAME": "الاسم بالعربي",
+          "ENGLISH_NAME": "الاسم بالانجليزي",
+          "MANAGER": "المدير",
+          "PARENT_DEPARTMENT": "القسم الأب",
+          "BRANCH": "الفرع",
+          "DEFAULT_LEVEL": "المستوى الافتراضي",
+          "LOCATION": "الموقع",
+          "LOCATION_DESC": "وصف الموقع",
+          "NOTES": "ملاحظات",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ",
+          "PLACEHOLDERS": {
+            "ARABIC_NAME": "أدخل الاسم بالعربي",
+            "ENGLISH_NAME": "Enter English Name",
+            "LOCATION_DESC": "أدخل وصف الموقع",
+            "NOTES": "أدخل الملاحظات"
+          },
+          "SELECT_OPTIONS": {
+            "CHOOSE_MANAGER": "اختر المدير",
+            "CHOOSE_PARENT_DEPT": "اختر القسم الأب",
+            "CHOOSE_BRANCH": "اختر الفرع",
+            "CHOOSE_DEFAULT_LEVEL": "اختر المستوى الافتراضي",
+            "CHOOSE_LOCATION": "اختر الموقع"
+          }
+        },
+        "CHANGE_NUMBER_MODAL": {
+          "TITLE": "تغيير رقم الفرع",
+          "BRANCH_NAME": "اسم الفرع",
+          "OLD_NUMBER": "الرقم الحالي",
+          "NEW_NUMBER": "الرقم الجديد",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ التغيير",
+          "SELECT_NEW_NUMBER": "اختر الرقم الجديد"
+        }
+      },      "BRANCHES_PAGINATION": {
+        "SHOWING": "عرض",
+        "TO": "-",
+        "OF": "من",
+        "ITEMS": "عنصر",
+        "PAGE": "صفحة",
+        "PAGE_OF": "من",
+        "ITEMS_PER_PAGE": "عدد العناصر في الصفحة:",
+        "NO_DATA": "لا توجد بيانات",
+        "FIRST_PAGE": "الصفحة الأولى",
+        "PREVIOUS_PAGE": "الصفحة السابقة",
+        "NEXT_PAGE": "الصفحة التالية",
+        "LAST_PAGE": "الصفحة الأخيرة"
+      },
+      "BRANCHES_GENERAL": {
+        "LOADING": "جاري التحميل...",
+        "EDIT_TOOLTIP": "تعديل",
+        "DELETE_TOOLTIP": "حذف",
+        "CHANGE_NUMBER_TOOLTIP": "تغيير الرقم"
+      }
     }
   },
   "PROFILE": {

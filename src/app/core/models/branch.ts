@@ -1,3 +1,5 @@
+import { ApiResponse } from "./apiResponse";
+
 export interface Branch {
   branchId: number;
   branchName: string;
@@ -11,5 +13,14 @@ export interface Branch {
   note: string;
   updatePk: string;
   del: string;
-  totalCount: number;
+}
+
+export interface BranchResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: {
+    branches: Branch[];
+    totalCount: number;
+  };
 }
