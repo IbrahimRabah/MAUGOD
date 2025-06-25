@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Branch, BranchResponse } from '../../../core/models/branch';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginationRequest } from '../../../core/models/pagination';
 
 @Injectable({
@@ -13,14 +13,14 @@ export class BranchService {
    
   constructor(private http:HttpClient) { }
   getBranches(pagination:PaginationRequest): Observable<BranchResponse> {
-    const params = {
-      'lang': pagination.lang,
-      'pageNumber': pagination.pageNumber,
-      'pageSize': pagination.pageSize
-    };
+    const headers = new HttpHeaders({
+    'lang': pagination.lang,
+    'pageNumber': pagination.pageNumber,
+    'pageSize': pagination.pageSize
+  });
 
-    return this.http.get<BranchResponse>(`${this.apiUrl}/GetBranches`, { params });
-  }
+  return this.http.get<BranchResponse>(`${this.apiUrl}/GetBranches`, { headers });
+}
   getBranchById(id: number, lang: number): Observable<Branch> {
     const params = { lang: lang.toString() };
     return this.http.get<Branch>(`${this.apiUrl}/GetBranchById/${id}`, { params });

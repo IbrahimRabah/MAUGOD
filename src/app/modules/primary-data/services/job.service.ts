@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginationRequest } from '../../../core/models/pagination';
 import { Observable } from 'rxjs';
 import { Job, JobResponse } from '../../../core/models/jobs';
@@ -14,13 +14,13 @@ private apiUrl = `${environment.apiUrl}/Jobs`  ;
    
   constructor(private http:HttpClient) { }
   getJobs(pagination:PaginationRequest): Observable<JobResponse> {
-    const params = {
+     const headers  =  new HttpHeaders({
       'lang': pagination.lang,
       'pageNumber': pagination.pageNumber,
       'pageSize': pagination.pageSize
-    };
+    });
 
-    return this.http.get<JobResponse>(`${this.apiUrl}/GetJobs`, { params });
+    return this.http.get<JobResponse>(`${this.apiUrl}/GetJobs`, { headers });
   }
   getJobById(id: number, lang: number): Observable<Job> {
     const params = { lang: lang.toString() };

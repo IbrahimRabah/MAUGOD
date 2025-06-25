@@ -2,9 +2,9 @@
   <ng-container *ngIf="authService.isAuthenticated()">
     <app-navbar></app-navbar>
   </ng-container>
-  <main class="main-content" [ngClass]="{'authenticated': authService.isAuthenticated()}">
+  <main class="main-content main-background" [ngClass]="{'authenticated': authService.isAuthenticated()}">
     <div class="container">
-                <app-sidebar></app-sidebar>
+        <app-sidebar></app-sidebar>
 
       <router-outlet></router-outlet>
 
