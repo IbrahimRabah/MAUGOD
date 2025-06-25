@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Department, DepartmentResponse } from '../../../../core/models/department';
 import { DepartmentService } from '../../services/department.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -22,24 +23,9 @@ export class DepartmentsComponent implements OnInit {
   selectedDepartment: Department | null = null;
   isEditMode: boolean = false;
   
-  // Form data
-  newDepartment = {
-    arabicName: '',
-    englishName: '',
-    managerId: '',
-    parentDepartmentId: '',
-    branchId: '',
-    deptLevel: '',
-    locationId: '',
-    locationDescription: '',
-    notes: ''
-  };
-
-  // Change number form data
-  changeNumberData = {
-    newNumber: '',
-    notes: ''
-  };
+  // Reactive Forms
+  departmentForm!: FormGroup;
+  changeNumberForm!: FormGroup;
 
   // Available numbers for dropdown (dummy data)
   availableNumbers = [
@@ -122,19 +108,39 @@ export class DepartmentsComponent implements OnInit {
     private departmentService: DepartmentService,
     public langService: LanguageService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private fb: FormBuilder
   ) {
+    this.initializeForms();
+    
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
       this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
       this.loadDepartments(); // Reload departments when language changes
     });
-
-    
   }
 
   ngOnInit() {
     this.loadDepartments();
+  }
+
+  initializeForms() {
+    this.departmentForm = this.fb.group({
+      arabicName: ['', [Validators.required]],
+      englishName: ['', [Validators.required]],
+      managerId: ['', [Validators.required]],
+      parentDepartmentId: ['', [Validators.required]],
+      branchId: ['', [Validators.required]],
+      deptLevel: ['', [Validators.required]],
+      locationId: ['', [Validators.required]],
+      locationDescription: ['', [Validators.required]],
+      notes: ['', [Validators.required]]
+    });
+
+    this.changeNumberForm = this.fb.group({
+      newNumber: ['', [Validators.required]],
+      notes: ['', [Validators.required]]
+    });
   }
 
   // Custom pagination methods
@@ -198,30 +204,25 @@ export class DepartmentsComponent implements OnInit {
   }
 
   resetForm() {
-    this.newDepartment = {
-      arabicName: '',
-      englishName: '',
-      managerId: '',
-      parentDepartmentId: '',
-      branchId: '',
-      deptLevel: '',
-      locationId: '',
-      locationDescription: '',
-      notes: ''
-    };
+    this.departmentForm.reset();
   }
 
   submitDepartment() {
-    console.log('New Department Data:', this.newDepartment);
-    // TODO: Call API to save the department
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'نجح', 
-      detail: this.isEditMode ? 'تم تحديث القسم بنجاح' : 'تم إضافة القسم بنجاح' 
-    });
-    this.closeModal();
-    // Reload the departments list
-    this.loadDepartments();
+    if (this.departmentForm.valid) {
+      console.log('Department Form Data:', this.departmentForm.value);
+      // TODO: Call API to save the department
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'نجح', 
+        detail: this.isEditMode ? 'تم تحديث القسم بنجاح' : 'تم إضافة القسم بنجاح' 
+      });
+      this.closeModal();
+      // Reload the departments list
+      this.loadDepartments();
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.departmentForm.markAllAsTouched();
+    }
   }
 
   loadDepartments() {
@@ -254,7 +255,7 @@ export class DepartmentsComponent implements OnInit {
   editDepartment(department: Department) {
     this.isEditMode = true;
     this.selectedDepartment = department;
-    this.newDepartment = {
+    this.departmentForm.patchValue({
       arabicName: department.deptName,
       englishName: department.deptName,
       managerId: department.mgrId?.toString() || '',
@@ -262,9 +263,9 @@ export class DepartmentsComponent implements OnInit {
       branchId: department.branchId.toString(),
       deptLevel: department.deptLevel.toString(),
       locationId: department.locId?.toString() || '',
-      locationDescription: department.locDesc,
-      notes: department.note
-    };
+      locationDescription: department.locDesc || '',
+      notes: department.note || ''
+    });
     this.showAddModal = true;
   }
 
@@ -300,10 +301,7 @@ export class DepartmentsComponent implements OnInit {
   }
 
   resetChangeNumberForm() {
-    this.changeNumberData = {
-      newNumber: '',
-      notes: ''
-    };
+    this.changeNumberForm.reset();
   }
 
   getOldDepartmentNumber(department: Department | null): string {
@@ -311,14 +309,44 @@ export class DepartmentsComponent implements OnInit {
   }
 
   submitChangeNumber() {
-    console.log('Change Number Data:', this.changeNumberData);
-    // TODO: Call API to change the department number
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'نجح', 
-      detail: 'تم تغيير رقم القسم بنجاح' 
-    });
-    this.closeChangeNumberModal();
-    this.loadDepartments();
+    if (this.changeNumberForm.valid) {
+      console.log('Change Number Form Data:', this.changeNumberForm.value);
+      // TODO: Call API to change the department number
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'نجح', 
+        detail: 'تم تغيير رقم القسم بنجاح' 
+      });
+      this.closeChangeNumberModal();
+      this.loadDepartments();
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.changeNumberForm.markAllAsTouched();
+    }
+  }
+
+  // Helper methods for form validation
+  isFieldInvalid(fieldName: string, formGroup: FormGroup = this.departmentForm): boolean {
+    const field = formGroup.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getFieldError(fieldName: string, formGroup: FormGroup = this.departmentForm): string {
+    const field = formGroup.get(fieldName);
+    if (field && field.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) {
+        return 'هذا الحقل مطلوب';
+      }
+    }
+    return '';
+  }
+
+  // Getter methods for form validation
+  get isDepartmentFormValid(): boolean {
+    return this.departmentForm.valid;
+  }
+
+  get isChangeNumberFormValid(): boolean {
+    return this.changeNumberForm.valid;
   }
 }
