@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LanguageService } from '../../../../core/services/language.service';
 import { NationalityService } from '../../services/nationality.service';
@@ -21,14 +22,8 @@ export class NationalitiesComponent implements OnInit {
   showEditModal: boolean = false;
   selectedNationality: Nationality | null = null;
   
-  // Form data
-  nationalityForm = {
-    natId: '',
-    ar_Name: '',
-    en_Name: '',
-    note: '',
-    del: ''
-  };
+  // Reactive Forms
+  nationalityForm!: FormGroup;
   
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
@@ -40,12 +35,25 @@ export class NationalitiesComponent implements OnInit {
     private nationalityService: NationalityService,
     public langService: LanguageService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private fb: FormBuilder
   ) {
+    this.initializeForm();
+    
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
       this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
       this.loadNationalities(); // Reload nationalities when language changes
+    });
+  }
+
+  initializeForm() {
+    this.nationalityForm = this.fb.group({
+      natId: [''],
+      ar_Name: ['', [Validators.required]],
+      en_Name: ['', [Validators.required]],
+      note: [''],
+      del: ['']
     });
   }
 
@@ -110,13 +118,13 @@ export class NationalitiesComponent implements OnInit {
 
   editNationality(nationality: Nationality) {
     this.selectedNationality = nationality;
-    this.nationalityForm = {
+    this.nationalityForm.patchValue({
       natId: nationality.natId,
       ar_Name: nationality.ar_Name,
       en_Name: nationality.en_Name,
       note: nationality.note,
       del: nationality.del
-    };
+    });
     this.showEditModal = true;
   }
 
@@ -128,56 +136,63 @@ export class NationalitiesComponent implements OnInit {
   }
 
   resetForm() {
-    this.nationalityForm = {
+    this.nationalityForm.reset({
       natId: '',
       ar_Name: '',
       en_Name: '',
       note: '',
       del: ''
-    };
+    });
   }
 
   submitNationality() {
-    if (this.showEditModal && this.selectedNationality) {
-      // Update nationality
-      this.nationalityService.updateNationality(this.nationalityForm).subscribe({
-        next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'تم تحديث الجنسية بنجاح' : 'Nationality updated successfully'
-          });
-          this.closeModal();
-          this.loadNationalities();
-        },
-        error: (error) => {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في تحديث الجنسية' : 'Failed to update nationality'
-          });
-        }
-      });
+    if (this.nationalityForm.valid) {
+      const formValue = this.nationalityForm.value;
+      
+      if (this.showEditModal && this.selectedNationality) {
+        // Update nationality
+        this.nationalityService.updateNationality(formValue).subscribe({
+          next: () => {
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'تم تحديث الجنسية بنجاح' : 'Nationality updated successfully'
+            });
+            this.closeModal();
+            this.loadNationalities();
+          },
+          error: (error) => {
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في تحديث الجنسية' : 'Failed to update nationality'
+            });
+          }
+        });
+      } else {
+        // Add new nationality
+        this.nationalityService.addNationality(formValue).subscribe({
+          next: () => {
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة الجنسية بنجاح' : 'Nationality added successfully'
+            });
+            this.closeModal();
+            this.loadNationalities();
+          },
+          error: (error) => {
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في إضافة الجنسية' : 'Failed to add nationality'
+            });
+          }
+        });
+      }
     } else {
-      // Add new nationality
-      this.nationalityService.addNationality(this.nationalityForm).subscribe({
-        next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة الجنسية بنجاح' : 'Nationality added successfully'
-          });
-          this.closeModal();
-          this.loadNationalities();
-        },
-        error: (error) => {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في إضافة الجنسية' : 'Failed to add nationality'
-          });
-        }
-      });
+      // Mark all fields as touched to show validation errors
+      this.nationalityForm.markAllAsTouched();
     }
   }
 
@@ -236,5 +251,26 @@ export class NationalitiesComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Helper methods for form validation
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.nationalityForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getFieldError(fieldName: string): string {
+    const field = this.nationalityForm.get(fieldName);
+    if (field && field.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) {
+        return this.langService.getCurrentLang() === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
+      }
+    }
+    return '';
+  }
+
+  // Getter method for form validation
+  get isFormValid(): boolean {
+    return this.nationalityForm.valid;
   }
 }
