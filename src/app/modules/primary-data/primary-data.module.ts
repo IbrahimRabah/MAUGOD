@@ -41,6 +41,7 @@ import { CitiesComponent } from './components/cities/cities.component';
 import { OrganizationComponent } from './components/organization/organization.component';
 import { ProvinceComponent } from './components/province/province.component';
 import { BranchesComponent } from './components/branches/branches.component';
+import { EmployeesComponent } from './components/employees/employees.component';
 
 // PrimeNG Modules
 import { TableModule } from 'primeng/table';
@@ -91,10 +92,10 @@ import { CalendarModule } from 'primeng/calendar';
     CommitteeSubjectClassesComponent,
     VotingTypesComponent,
     MeetingAndSubjectsComponent,
-    CitiesComponent,
-    OrganizationComponent,
+    CitiesComponent,    OrganizationComponent,
     ProvinceComponent,
-    BranchesComponent
+    BranchesComponent,
+    EmployeesComponent
   ],  imports: [
     CommonModule,
     PrimaryDataRoutingModule,
