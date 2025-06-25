@@ -165,32 +165,36 @@
     </div>
     
     <div class="modal-body">
-      <form #addNationalityForm="ngForm" (ngSubmit)="submitNationality()">
+      <form [formGroup]="nationalityForm" (ngSubmit)="submitNationality()">
         <div class="form-grid">
           <!-- Arabic Name -->
           <div class="form-group">
-            <label for="arabicName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+            <label for="arabicName" class="required">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ARABIC_NAME' | translate }}</label>
             <input 
               type="text" 
               id="arabicName"
               class="form-input" 
-              [(ngModel)]="nationalityForm.ar_Name" 
-              name="arabicName"
-              required
+              formControlName="ar_Name"
+              [class.error]="isFieldInvalid('ar_Name')"
               [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ARABIC_NAME_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('ar_Name')" class="error-message">
+              {{ getFieldError('ar_Name') }}
+            </div>
           </div>
 
           <!-- English Name -->
           <div class="form-group">
-            <label for="englishName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+            <label for="englishName" class="required">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ENGLISH_NAME' | translate }}</label>
             <input 
               type="text" 
               id="englishName"
               class="form-input" 
-              [(ngModel)]="nationalityForm.en_Name" 
-              name="englishName"
-              required
+              formControlName="en_Name"
+              [class.error]="isFieldInvalid('en_Name')"
               [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ENGLISH_NAME_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('en_Name')" class="error-message">
+              {{ getFieldError('en_Name') }}
+            </div>
           </div>
 
           <!-- Notes -->
@@ -199,8 +203,7 @@
             <textarea 
               id="notes"
               class="form-textarea" 
-              [(ngModel)]="nationalityForm.note" 
-              name="notes"
+              formControlName="note"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.NOTES_PLACEHOLDER' | translate">
             </textarea>
@@ -211,7 +214,7 @@
           <button type="button" class="cancel-btn" (click)="closeModal()">
             {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!addNationalityForm.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
             {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.SAVE' | translate }}
           </button>
         </div>
@@ -231,32 +234,36 @@
     </div>
     
     <div class="modal-body">
-      <form #editNationalityForm="ngForm" (ngSubmit)="submitNationality()">
+      <form [formGroup]="nationalityForm" (ngSubmit)="submitNationality()">
         <div class="form-grid">
           <!-- Arabic Name -->
           <div class="form-group">
-            <label for="editArabicName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+            <label for="editArabicName" class="required">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ARABIC_NAME' | translate }}</label>
             <input 
               type="text" 
               id="editArabicName"
               class="form-input" 
-              [(ngModel)]="nationalityForm.ar_Name" 
-              name="editArabicName"
-              required
+              formControlName="ar_Name"
+              [class.error]="isFieldInvalid('ar_Name')"
               [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ARABIC_NAME_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('ar_Name')" class="error-message">
+              {{ getFieldError('ar_Name') }}
+            </div>
           </div>
 
           <!-- English Name -->
           <div class="form-group">
-            <label for="editEnglishName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+            <label for="editEnglishName" class="required">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ENGLISH_NAME' | translate }}</label>
             <input 
               type="text" 
               id="editEnglishName"
               class="form-input" 
-              [(ngModel)]="nationalityForm.en_Name" 
-              name="editEnglishName"
-              required
+              formControlName="en_Name"
+              [class.error]="isFieldInvalid('en_Name')"
               [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ENGLISH_NAME_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('en_Name')" class="error-message">
+              {{ getFieldError('en_Name') }}
+            </div>
           </div>
 
           <!-- Notes -->
@@ -265,8 +272,7 @@
             <textarea 
               id="editNotes"
               class="form-textarea" 
-              [(ngModel)]="nationalityForm.note" 
-              name="editNotes"
+              formControlName="note"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.NOTES_PLACEHOLDER' | translate">
             </textarea>
@@ -277,7 +283,7 @@
           <button type="button" class="cancel-btn" (click)="closeModal()">
             {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!editNationalityForm.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
             {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.UPDATE' | translate }}
           </button>
         </div>
