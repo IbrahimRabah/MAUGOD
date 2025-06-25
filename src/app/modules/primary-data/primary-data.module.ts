@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { SharedModule } from '../../shared/shared.module';
 
 import { PrimaryDataRoutingModule } from './primary-data-routing.module';
 import { GeneralDataComponent } from './components/general-data/general-data.component';
@@ -44,6 +44,7 @@ import { BranchesComponent } from './components/branches/branches.component';
 import { DepartmentsComponent } from './components/departments/departments.component';
 import { EmployeesComponent } from './components/employees/employees.component';
 import { NationalitiesComponent } from './components/nationalities/nationalities.component';
+import { BanksComponent } from './components/banks/banks.component';
 
 // PrimeNG Modules
 import { TableModule } from 'primeng/table';
@@ -99,12 +100,13 @@ import { CalendarModule } from 'primeng/calendar';
     BranchesComponent,
     DepartmentsComponent,
     EmployeesComponent,
-    NationalitiesComponent
+    NationalitiesComponent,
+    BanksComponent
   ],  imports: [
     CommonModule,
     PrimaryDataRoutingModule,
     FormsModule,
-    TranslateModule,
+    SharedModule,
     // PrimeNG Modules
     TableModule,
     InputTextModule,
