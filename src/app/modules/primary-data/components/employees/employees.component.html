@@ -1,1 +1,493 @@
-<p>employees works!</p>
+<div class="employees-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.GENERAL_DATA.EMPLOYEES_GENERAL.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addEmployee()" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.ADD_EMPLOYEE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.ADD_EMPLOYEE' | translate }}
+      </button>
+    </div>
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text" 
+          class="search-input" 
+          [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_PLACEHOLDER' | translate"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.EDIT' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.EMPLOYEE_NAME' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.DEPARTMENT_NAME' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.DIRECT_MANAGER' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.ACTIVE_FLAG' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.STATUS' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.EMAIL' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.SMS_PHONE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.LANGUAGE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.NOTE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.CHANGE_PASSWORD' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.DELETE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.CHANGE_NUMBER' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of employees" class="table-row">
+          <td>
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editEmployee(employee)"
+              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.EDIT_EMPLOYEE' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ employee.empName }}</td>
+          <td>{{ employee.deptName }}</td>
+          <td>{{ employee.directMgrName }}</td>
+          <td>{{ getActiveFlagDisplay(employee.activeFlag) }}</td>
+          <td>{{ employee.statusStr }}</td>
+          <td>{{ employee.email }}</td>
+          <td>{{ employee.smsPhone }}</td>
+          <td>{{ getLanguageDisplay(employee.lang) }}</td>
+          <td>{{ employee.note }}</td>
+          <td>
+            <button 
+              class="action-btn password-btn" 
+              (click)="changePassword(employee)"
+              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.CHANGE_PASSWORD' | translate">
+              <i class="fas fa-key"></i>
+            </button>
+          </td>
+          <td>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteEmployee(employee)"
+              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.DELETE_EMPLOYEE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+          <td>
+            <button 
+              class="action-btn number-btn" 
+              (click)="changeEmployeeNumber(employee)"
+              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.CHANGE_NUMBER' | translate">
+              <i class="fas fa-hashtag"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="employees.length === 0" class="empty-row">
+          <td colspan="13" class="empty-message">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NO_DATA' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+    <div class="pagination-info">
+      <span>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Add Employee Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditMode ? 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EDIT_TITLE' : 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form #employeeForm="ngForm" (ngSubmit)="submitEmployee()">
+        <div class="form-grid">
+          <!-- Employee Name -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMPLOYEE_NAME' | translate }}</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="newEmployee.empName" 
+              name="empName"
+              required
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMPLOYEE_NAME_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- Direct Manager -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.DIRECT_MANAGER' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="newEmployee.directMgrId" 
+              name="directMgrId"
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_MANAGER' | translate }}</option>
+              <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+            </select>
+          </div>
+
+          <!-- Department -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.DEPARTMENT' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="newEmployee.deptId" 
+              name="deptId"
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_DEPARTMENT' | translate }}</option>
+              <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
+            </select>
+          </div>
+
+          <!-- Status -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.STATUS' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="newEmployee.statusId" 
+              name="statusId"
+              required>
+              <option *ngFor="let status of statuses" [value]="status.id">{{ status.name }}</option>
+            </select>
+          </div>          <!-- Active Flag -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.ACTIVE_FLAG' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="newEmployee.activeFlag" 
+              name="activeFlag"
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_ACTIVE_STATUS' | translate }}</option>
+              <option value="1">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.ACTIVE_OPTION' | translate }}</option>
+              <option value="0">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.INACTIVE_OPTION' | translate }}</option>
+            </select>
+          </div>          <!-- Gender -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.GENDER' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="newEmployee.gender" 
+              name="gender"
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_GENDER' | translate }}</option>
+              <option *ngFor="let gender of genders" [value]="gender.id">{{ gender.name }}</option>
+            </select>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMAIL' | translate }}</label>
+            <input 
+              type="email" 
+              class="form-input" 
+              [(ngModel)]="newEmployee.email" 
+              name="email"
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMAIL_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- SMS Phone -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SMS_PHONE' | translate }}</label>
+            <input 
+              type="tel" 
+              class="form-input" 
+              [(ngModel)]="newEmployee.smsPhone" 
+              name="smsPhone"
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SMS_PHONE_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- National ID -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NATIONAL_ID' | translate }}</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="newEmployee.natId" 
+              name="natId"
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NATIONAL_ID_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- Government ID -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.GOVERNMENT_ID' | translate }}</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              [(ngModel)]="newEmployee.govId" 
+              name="govId"
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.GOVERNMENT_ID_PLACEHOLDER' | translate">
+          </div>          <!-- Marital Status -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.MARITAL_STATUS' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="newEmployee.maritalStatus" 
+              name="maritalStatus">
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_MARITAL_STATUS' | translate }}</option>
+              <option *ngFor="let status of maritalStatuses" [value]="status.id">{{ status.name }}</option>
+            </select>
+          </div>
+
+          <!-- Language -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.LANGUAGE' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="newEmployee.lang" 
+              name="lang"
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_LANGUAGE' | translate }}</option>
+              <option *ngFor="let language of languages" [value]="language.id">{{ language.name }}</option>
+            </select>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              class="form-textarea" 
+              [(ngModel)]="newEmployee.note" 
+              name="note"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
+          </div>
+        </div>        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+            {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!employeeForm.valid" *ngIf="!isEditMode">
+            <i class="fas fa-save"></i>
+            {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SAVE' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!employeeForm.valid" *ngIf="isEditMode">
+            <i class="fas fa-save"></i>
+            {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.UPDATE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Change Employee Number Modal -->
+<div *ngIf="showChangeNumberModal" class="modal-overlay" (click)="closeChangeNumberModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeChangeNumberModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form #changeNumberForm="ngForm" (ngSubmit)="submitChangeNumber()">
+        <div class="form-grid-simple">
+          <!-- Employee Name (Read Only) -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.EMPLOYEE_NAME' | translate }}</label>
+            <input 
+              type="text" 
+              class="form-input readonly-input" 
+              [value]="selectedEmployee?.empName" 
+              readonly>
+          </div>
+
+          <!-- Old Number (Read Only) -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.OLD_NUMBER' | translate }}</label>
+            <input 
+              type="text" 
+              class="form-input readonly-input" 
+              [value]="getOldEmployeeNumber(selectedEmployee)" 
+              readonly>
+          </div>
+
+          <!-- New Number (Dropdown) -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.NEW_NUMBER' | translate }}</label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="changeNumberData.newNumber" 
+              name="newNumber"
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.SELECT_NEW_NUMBER' | translate }}</option>
+              <option *ngFor="let number of availableNumbers" [value]="number.value">{{ number.label }}</option>
+            </select>
+          </div>
+        </div>        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeChangeNumberModal()">
+            <i class="fas fa-times"></i>
+            {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!changeNumberForm.valid">
+            <i class="fas fa-save"></i>
+            {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div *ngIf="showChangePasswordModal" class="modal-overlay" (click)="closeChangePasswordModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeChangePasswordModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form #changePasswordForm="ngForm" (ngSubmit)="submitChangePassword()">
+        <div class="form-grid-simple">
+          <!-- Employee Name (Read Only) -->
+          <div class="form-group">
+            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.EMPLOYEE_NAME' | translate }}</label>
+            <input 
+              type="text" 
+              class="form-input readonly-input" 
+              [value]="selectedEmployee?.empName" 
+              readonly>
+          </div>
+
+          <!-- New Password -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.NEW_PASSWORD' | translate }}</label>
+            <input 
+              type="password" 
+              class="form-input" 
+              [(ngModel)]="changePasswordData.newPassword" 
+              name="newPassword"
+              required
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.PASSWORD_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.CONFIRM_PASSWORD' | translate }}</label>
+            <input 
+              type="password" 
+              class="form-input" 
+              [(ngModel)]="changePasswordData.confirmPassword" 
+              name="confirmPassword"
+              required
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.CONFIRM_PLACEHOLDER' | translate">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeChangePasswordModal()">
+            <i class="fas fa-times"></i>
+            {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!changePasswordForm.valid || changePasswordData.newPassword !== changePasswordData.confirmPassword">
+            <i class="fas fa-save"></i>
+            {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
