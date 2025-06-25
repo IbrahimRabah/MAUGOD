@@ -379,6 +379,60 @@
         "LOADING": "جاري التحميل...",
         "EDIT_TOOLTIP": "تعديل",
         "DELETE_TOOLTIP": "حذف"
+      },
+      "BANKS_TABLE": {
+        "EDIT": "تعديل",
+        "ARABIC_NAME": "الاسم بالعربي",
+        "ENGLISH_NAME": "الاسم بالإنجليزي",
+        "BANK_DATA": "بيانات البنك",
+        "NOTES": "ملاحظات",
+        "DELETE": "حذف"
+      },
+      "BANKS_ACTIONS": {
+        "ADD_BANK": "إضافة بنك",
+        "SEARCH_PLACEHOLDER": "البحث في البنوك...",
+        "SEARCH_TITLE": "البحث",
+        "ADD_BANK_TITLE": "إضافة بنك جديد"
+      },
+      "BANKS_MODALS": {
+        "ADD_BANK_MODAL": {
+          "TITLE": "إضافة بنك جديد",
+          "ARABIC_NAME": "الاسم بالعربي",
+          "ENGLISH_NAME": "الاسم بالإنجليزي",
+          "BANK_DATA": "بيانات البنك",
+          "NOTES": "ملاحظات",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ"
+        },
+        "EDIT_BANK_MODAL": {
+          "TITLE": "تعديل البنك",
+          "ARABIC_NAME": "الاسم بالعربي",
+          "ENGLISH_NAME": "الاسم بالإنجليزي",
+          "BANK_DATA": "بيانات البنك",
+          "NOTES": "ملاحظات",
+          "CANCEL": "إلغاء",
+          "UPDATE": "تحديث"
+        }
+      },
+      "BANKS_PAGINATION": {
+        "SHOWING": "عرض",
+        "TO": "-",
+        "OF": "من",
+        "ITEMS": "عنصر",
+        "PAGE": "صفحة",
+        "PAGE_OF": "من",
+        "ITEMS_PER_PAGE": "عدد العناصر في الصفحة:",
+        "NO_DATA": "لا توجد بيانات",
+        "FIRST_PAGE": "الصفحة الأولى",
+        "PREVIOUS_PAGE": "الصفحة السابقة",
+        "NEXT_PAGE": "الصفحة التالية",
+        "LAST_PAGE": "الصفحة الأخيرة"
+      },
+      "BANKS_GENERAL": {
+        "LOADING": "جاري التحميل...",
+        "EDIT_TOOLTIP": "تعديل",
+        "DELETE_TOOLTIP": "حذف",
+        "NO_BANKS_FOUND": "لم يتم العثور على بنوك."
       }
     }
   },
