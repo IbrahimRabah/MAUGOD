@@ -1,1 +1,337 @@
-<p>jobs works!</p>
+<div class="jobs-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.GENERAL_DATA.JOBS_GENERAL.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addJob()" [title]="'MENU.GENERAL_DATA.JOBS_ACTIONS.ADD_JOB_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MENU.GENERAL_DATA.JOBS_ACTIONS.ADD_JOB' | translate }}
+      </button>
+    </div>
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          [placeholder]="'MENU.GENERAL_DATA.JOBS_ACTIONS.SEARCH_PLACEHOLDER' | translate"
+          [title]="'MENU.GENERAL_DATA.JOBS_ACTIONS.SEARCH_TITLE' | translate">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MENU.GENERAL_DATA.JOBS_TABLE.EDIT' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.JOBS_TABLE.ARABIC_TITLE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.JOBS_TABLE.ENGLISH_TITLE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.JOBS_TABLE.ARABIC_DESCRIPTION' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.JOBS_TABLE.ENGLISH_DESCRIPTION' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.JOBS_TABLE.NOTES' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.JOBS_TABLE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let job of jobs" class="table-row">
+          <td>
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editJob(job)"
+              [title]="'MENU.GENERAL_DATA.JOBS_GENERAL.EDIT_TOOLTIP' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ job.arTitle }}</td>
+          <td>{{ job.enTitle }}</td>
+          <td>{{ job.arJobDesc }}</td>
+          <td>{{ job.enJobDesc }}</td>
+          <td>{{ job.note }}</td>
+          <td>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteJob(job)"
+              [title]="'MENU.GENERAL_DATA.JOBS_GENERAL.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="jobs.length === 0" class="empty-row">
+          <td colspan="7" class="empty-message">
+            {{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.NO_DATA' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+    <div class="pagination-info">
+      <span>{{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.JOBS_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'MENU.GENERAL_DATA.JOBS_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Add Job Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form #addJobForm="ngForm" (ngSubmit)="submitJob()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="add-ar-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_TITLE' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="add-ar-title"
+              name="arTitle"
+              class="form-input"
+              [(ngModel)]="jobForm.arTitle"
+              required
+              #arTitle="ngModel"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_TITLE_PLACEHOLDER' | translate">
+          </div>
+          
+          <div class="form-group">
+            <label for="add-en-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_TITLE' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="add-en-title"
+              name="enTitle"
+              class="form-input"
+              [(ngModel)]="jobForm.enTitle"
+              required
+              #enTitle="ngModel"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_TITLE_PLACEHOLDER' | translate">
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="add-ar-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_DESCRIPTION' | translate }}</label>
+            <textarea 
+              id="add-ar-desc"
+              name="arJobDesc"
+              class="form-textarea"
+              [(ngModel)]="jobForm.arJobDesc"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="add-en-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_DESCRIPTION' | translate }}</label>
+            <textarea 
+              id="add-en-desc"
+              name="enJobDesc"
+              class="form-textarea"
+              [(ngModel)]="jobForm.enJobDesc"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="add-note">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              id="add-note"
+              name="note"
+              class="form-textarea"
+              [(ngModel)]="jobForm.note"
+              rows="2"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!addJobForm.valid">
+            {{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Job Modal -->
+<div *ngIf="showEditModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form #editJobForm="ngForm" (ngSubmit)="submitJob()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="edit-ar-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_TITLE' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="edit-ar-title"
+              name="arTitle"
+              class="form-input"
+              [(ngModel)]="jobForm.arTitle"
+              required
+              #arTitleEdit="ngModel"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_TITLE_PLACEHOLDER' | translate">
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-en-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_TITLE' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="edit-en-title"
+              name="enTitle"
+              class="form-input"
+              [(ngModel)]="jobForm.enTitle"
+              required
+              #enTitleEdit="ngModel"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_TITLE_PLACEHOLDER' | translate">
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="edit-ar-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_DESCRIPTION' | translate }}</label>
+            <textarea 
+              id="edit-ar-desc"
+              name="arJobDesc"
+              class="form-textarea"
+              [(ngModel)]="jobForm.arJobDesc"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="edit-en-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_DESCRIPTION' | translate }}</label>
+            <textarea 
+              id="edit-en-desc"
+              name="enJobDesc"
+              class="form-textarea"
+              [(ngModel)]="jobForm.enJobDesc"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+          </div>
+          
+          <div class="form-group full-width">
+            <label for="edit-note">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              id="edit-note"
+              name="note"
+              class="form-textarea"
+              [(ngModel)]="jobForm.note"
+              rows="2"
+              [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!editJobForm.valid">
+            {{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.UPDATE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
