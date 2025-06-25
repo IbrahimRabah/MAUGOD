@@ -323,6 +323,62 @@
         "SUCCESS_CHANGE_PASSWORD": "تم تغيير كلمة المرور بنجاح!",
         "ERROR_OCCURRED": "حدث خطأ. يرجى المحاولة مرة أخرى.",
         "NO_EMPLOYEES_FOUND": "لم يتم العثور على موظفين."
+      },
+      "NATIONALITIES_TABLE": {
+        "EDIT": "تعديل",
+        "ARABIC_NAME": "الاسم بالعربي",
+        "ENGLISH_NAME": "الاسم بالانجليزي",
+        "NOTES": "ملاحظات",
+        "DELETE": "حذف"
+      },
+      "NATIONALITIES_ACTIONS": {
+        "ADD_NATIONALITY": "إضافة جنسية",
+        "SEARCH_PLACEHOLDER": "البحث في الجنسيات...",
+        "SEARCH_TITLE": "البحث",
+        "ADD_NATIONALITY_TITLE": "إضافة جنسية جديدة"
+      },
+      "NATIONALITIES_MODALS": {
+        "ADD_NATIONALITY_MODAL": {
+          "TITLE": "إضافة جنسية جديدة",
+          "ARABIC_NAME": "الاسم بالعربي",
+          "ENGLISH_NAME": "الاسم بالانجليزي",
+          "NOTES": "ملاحظات",
+          "ARABIC_NAME_PLACEHOLDER": "أدخل الاسم بالعربي",
+          "ENGLISH_NAME_PLACEHOLDER": "أدخل الاسم بالانجليزي",
+          "NOTES_PLACEHOLDER": "أدخل الملاحظات",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ"
+        },
+        "EDIT_NATIONALITY_MODAL": {
+          "TITLE": "تعديل الجنسية",
+          "ARABIC_NAME": "الاسم بالعربي",
+          "ENGLISH_NAME": "الاسم بالانجليزي",
+          "NOTES": "ملاحظات",
+          "ARABIC_NAME_PLACEHOLDER": "أدخل الاسم بالعربي",
+          "ENGLISH_NAME_PLACEHOLDER": "أدخل الاسم بالانجليزي",
+          "NOTES_PLACEHOLDER": "أدخل الملاحظات",
+          "CANCEL": "إلغاء",
+          "UPDATE": "تحديث"
+        }
+      },
+      "NATIONALITIES_PAGINATION": {
+        "SHOWING": "عرض",
+        "TO": "-",
+        "OF": "من",
+        "ITEMS": "عنصر",
+        "PAGE": "صفحة",
+        "PAGE_OF": "من",
+        "ITEMS_PER_PAGE": "عدد العناصر في الصفحة:",
+        "NO_DATA": "لا توجد بيانات",
+        "FIRST_PAGE": "الصفحة الأولى",
+        "PREVIOUS_PAGE": "الصفحة السابقة",
+        "NEXT_PAGE": "الصفحة التالية",
+        "LAST_PAGE": "الصفحة الأخيرة"
+      },
+      "NATIONALITIES_GENERAL": {
+        "LOADING": "جاري التحميل...",
+        "EDIT_TOOLTIP": "تعديل",
+        "DELETE_TOOLTIP": "حذف"
       }
     }
   },

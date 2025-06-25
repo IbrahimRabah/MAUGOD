@@ -43,6 +43,7 @@ import { ProvinceComponent } from './components/province/province.component';
 import { BranchesComponent } from './components/branches/branches.component';
 import { DepartmentsComponent } from './components/departments/departments.component';
 import { EmployeesComponent } from './components/employees/employees.component';
+import { NationalitiesComponent } from './components/nationalities/nationalities.component';
 
 // PrimeNG Modules
 import { TableModule } from 'primeng/table';
@@ -97,7 +98,8 @@ import { CalendarModule } from 'primeng/calendar';
     ProvinceComponent,
     BranchesComponent,
     DepartmentsComponent,
-    EmployeesComponent
+    EmployeesComponent,
+    NationalitiesComponent
   ],  imports: [
     CommonModule,
     PrimaryDataRoutingModule,

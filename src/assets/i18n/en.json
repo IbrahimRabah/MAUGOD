@@ -324,6 +324,62 @@
         "ERROR_OCCURRED": "An error occurred. Please try again.",
         "NO_EMPLOYEES_FOUND": "No employees found."
       },
+      "NATIONALITIES_TABLE": {
+        "EDIT": "Edit",
+        "ARABIC_NAME": "Arabic Name",
+        "ENGLISH_NAME": "English Name",
+        "NOTES": "Notes",
+        "DELETE": "Delete"
+      },
+      "NATIONALITIES_ACTIONS": {
+        "ADD_NATIONALITY": "Add Nationality",
+        "SEARCH_PLACEHOLDER": "Search in nationalities...",
+        "SEARCH_TITLE": "Search",
+        "ADD_NATIONALITY_TITLE": "Add New Nationality"
+      },
+      "NATIONALITIES_MODALS": {
+        "ADD_NATIONALITY_MODAL": {
+          "TITLE": "Add New Nationality",
+          "ARABIC_NAME": "Arabic Name",
+          "ENGLISH_NAME": "English Name",
+          "NOTES": "Notes",
+          "ARABIC_NAME_PLACEHOLDER": "Enter arabic name",
+          "ENGLISH_NAME_PLACEHOLDER": "Enter english name",
+          "NOTES_PLACEHOLDER": "Enter notes",
+          "CANCEL": "Cancel",
+          "SAVE": "Save"
+        },
+        "EDIT_NATIONALITY_MODAL": {
+          "TITLE": "Edit Nationality",
+          "ARABIC_NAME": "Arabic Name",
+          "ENGLISH_NAME": "English Name",
+          "NOTES": "Notes",
+          "ARABIC_NAME_PLACEHOLDER": "Enter arabic name",
+          "ENGLISH_NAME_PLACEHOLDER": "Enter english name",
+          "NOTES_PLACEHOLDER": "Enter notes",
+          "CANCEL": "Cancel",
+          "UPDATE": "Update"
+        }
+      },
+      "NATIONALITIES_PAGINATION": {
+        "SHOWING": "Showing",
+        "TO": "-",
+        "OF": "of",
+        "ITEMS": "items",
+        "PAGE": "Page",
+        "PAGE_OF": "of",
+        "ITEMS_PER_PAGE": "Items per page:",
+        "NO_DATA": "No data available",
+        "FIRST_PAGE": "First Page",
+        "PREVIOUS_PAGE": "Previous Page",
+        "NEXT_PAGE": "Next Page",
+        "LAST_PAGE": "Last Page"
+      },
+      "NATIONALITIES_GENERAL": {
+        "LOADING": "Loading...",
+        "EDIT_TOOLTIP": "Edit",
+        "DELETE_TOOLTIP": "Delete"
+      },
       "DEPARTMENTS_TABLE": {
         "EDIT": "Edit",
         "DEPARTMENT_NAME": "Department Name",

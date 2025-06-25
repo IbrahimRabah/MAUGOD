@@ -127,7 +127,10 @@ export class DepartmentsComponent implements OnInit {
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
       this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+      this.loadDepartments(); // Reload departments when language changes
     });
+
+    
   }
 
   ngOnInit() {
