@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Bank, BankResponse } from '../../../../core/models/bank';
 import { BankService } from '../../services/bank.service';
 import { PaginationRequest } from '../../../../core/models/pagination';
@@ -22,15 +23,8 @@ export class BanksComponent implements OnInit {
   showEditModal: boolean = false;
   selectedBank: Bank | null = null;
   
-  // Form data
-  bankForm = {
-    bankId: 0,
-    ar_Name: '',
-    en_Name: '',
-    bankData: '',
-    note: '',
-    del: ''
-  };
+  // Reactive Forms
+  bankForm!: FormGroup;
   
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
@@ -42,12 +36,26 @@ export class BanksComponent implements OnInit {
     private bankService: BankService,
     public langService: LanguageService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private fb: FormBuilder
   ) {
+    this.initializeForm();
+    
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
       this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
       this.loadBanks(); // Reload banks when language changes
+    });
+  }
+
+  initializeForm() {
+    this.bankForm = this.fb.group({
+      bankId: [0],
+      ar_Name: ['', [Validators.required]],
+      en_Name: ['', [Validators.required]],
+      bankData: [''],
+      note: [''],
+      del: ['']
     });
   }
 
@@ -112,14 +120,14 @@ export class BanksComponent implements OnInit {
 
   editBank(bank: Bank) {
     this.selectedBank = bank;
-    this.bankForm = {
+    this.bankForm.patchValue({
       bankId: bank.bankId,
       ar_Name: bank.ar_Name,
       en_Name: bank.en_Name,
       bankData: bank.bankData,
       note: bank.note,
       del: bank.del
-    };
+    });
     this.showEditModal = true;
   }
 
@@ -131,57 +139,64 @@ export class BanksComponent implements OnInit {
   }
 
   resetForm() {
-    this.bankForm = {
+    this.bankForm.reset({
       bankId: 0,
       ar_Name: '',
       en_Name: '',
       bankData: '',
       note: '',
       del: ''
-    };
+    });
   }
 
   submitBank() {
-    if (this.showEditModal && this.selectedBank) {
-      // Update bank
-      this.bankService.updateBank(this.bankForm).subscribe({
-        next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'تم تحديث البنك بنجاح' : 'Bank updated successfully'
-          });
-          this.closeModal();
-          this.loadBanks();
-        },
-        error: (error) => {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في تحديث البنك' : 'Failed to update bank'
-          });
-        }
-      });
+    if (this.bankForm.valid) {
+      const formValue = this.bankForm.value;
+      
+      if (this.showEditModal && this.selectedBank) {
+        // Update bank
+        this.bankService.updateBank(formValue).subscribe({
+          next: () => {
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'تم تحديث البنك بنجاح' : 'Bank updated successfully'
+            });
+            this.closeModal();
+            this.loadBanks();
+          },
+          error: (error) => {
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في تحديث البنك' : 'Failed to update bank'
+            });
+          }
+        });
+      } else {
+        // Add new bank
+        this.bankService.addBank(formValue).subscribe({
+          next: () => {
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة البنك بنجاح' : 'Bank added successfully'
+            });
+            this.closeModal();
+            this.loadBanks();
+          },
+          error: (error) => {
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في إضافة البنك' : 'Failed to add bank'
+            });
+          }
+        });
+      }
     } else {
-      // Add new bank
-      this.bankService.addBank(this.bankForm).subscribe({
-        next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة البنك بنجاح' : 'Bank added successfully'
-          });
-          this.closeModal();
-          this.loadBanks();
-        },
-        error: (error) => {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في إضافة البنك' : 'Failed to add bank'
-          });
-        }
-      });
+      // Mark all fields as touched to show validation errors
+      this.bankForm.markAllAsTouched();
     }
   }
 
@@ -240,5 +255,26 @@ export class BanksComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Helper methods for form validation
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.bankForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getFieldError(fieldName: string): string {
+    const field = this.bankForm.get(fieldName);
+    if (field && field.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) {
+        return this.langService.getCurrentLang() === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
+      }
+    }
+    return '';
+  }
+
+  // Getter method for form validation
+  get isFormValid(): boolean {
+    return this.bankForm.valid;
   }
 }

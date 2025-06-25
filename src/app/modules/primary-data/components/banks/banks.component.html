@@ -173,30 +173,32 @@
     </div>
     
     <div class="modal-body">
-      <form #addBankForm="ngForm" (ngSubmit)="submitBank()">
+      <form [formGroup]="bankForm" (ngSubmit)="submitBank()">
         <div class="form-grid">
           <div class="form-group">
-            <label for="ar_Name">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+            <label for="ar_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ARABIC_NAME' | translate }}</label>
             <input 
               type="text" 
               id="ar_Name" 
-              name="ar_Name"
               class="form-input"
-              [(ngModel)]="bankForm.ar_Name" 
-              required
-              #ar_Name="ngModel">
+              formControlName="ar_Name"
+              [class.error]="isFieldInvalid('ar_Name')">
+            <div *ngIf="isFieldInvalid('ar_Name')" class="error-message">
+              {{ getFieldError('ar_Name') }}
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="en_Name">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+            <label for="en_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ENGLISH_NAME' | translate }}</label>
             <input 
               type="text" 
               id="en_Name" 
-              name="en_Name"
               class="form-input"
-              [(ngModel)]="bankForm.en_Name" 
-              required
-              #en_Name="ngModel">
+              formControlName="en_Name"
+              [class.error]="isFieldInvalid('en_Name')">
+            <div *ngIf="isFieldInvalid('en_Name')" class="error-message">
+              {{ getFieldError('en_Name') }}
+            </div>
           </div>
 
           <div class="form-group">
@@ -204,20 +206,16 @@
             <input 
               type="text" 
               id="bankData" 
-              name="bankData"
               class="form-input"
-              [(ngModel)]="bankForm.bankData"
-              #bankData="ngModel">
+              formControlName="bankData">
           </div>
 
           <div class="form-group full-width">
             <label for="note">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.NOTES' | translate }}</label>
             <textarea 
               id="note" 
-              name="note"
               class="form-textarea"
-              [(ngModel)]="bankForm.note"
-              #note="ngModel"
+              formControlName="note"
               rows="3"></textarea>
           </div>
         </div>
@@ -226,7 +224,7 @@
           <button type="button" class="cancel-btn" (click)="closeModal()">
             {{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!addBankForm.form.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
             {{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.SAVE' | translate }}
           </button>
         </div>
@@ -246,30 +244,32 @@
     </div>
     
     <div class="modal-body">
-      <form #editBankForm="ngForm" (ngSubmit)="submitBank()">
+      <form [formGroup]="bankForm" (ngSubmit)="submitBank()">
         <div class="form-grid">
           <div class="form-group">
-            <label for="edit_ar_Name">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+            <label for="edit_ar_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ARABIC_NAME' | translate }}</label>
             <input 
               type="text" 
               id="edit_ar_Name" 
-              name="edit_ar_Name"
               class="form-input"
-              [(ngModel)]="bankForm.ar_Name" 
-              required
-              #edit_ar_Name="ngModel">
+              formControlName="ar_Name"
+              [class.error]="isFieldInvalid('ar_Name')">
+            <div *ngIf="isFieldInvalid('ar_Name')" class="error-message">
+              {{ getFieldError('ar_Name') }}
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="edit_en_Name">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+            <label for="edit_en_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ENGLISH_NAME' | translate }}</label>
             <input 
               type="text" 
               id="edit_en_Name" 
-              name="edit_en_Name"
               class="form-input"
-              [(ngModel)]="bankForm.en_Name" 
-              required
-              #edit_en_Name="ngModel">
+              formControlName="en_Name"
+              [class.error]="isFieldInvalid('en_Name')">
+            <div *ngIf="isFieldInvalid('en_Name')" class="error-message">
+              {{ getFieldError('en_Name') }}
+            </div>
           </div>
 
           <div class="form-group">
@@ -277,20 +277,16 @@
             <input 
               type="text" 
               id="edit_bankData" 
-              name="edit_bankData"
               class="form-input"
-              [(ngModel)]="bankForm.bankData"
-              #edit_bankData="ngModel">
+              formControlName="bankData">
           </div>
 
           <div class="form-group full-width">
             <label for="edit_note">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.NOTES' | translate }}</label>
             <textarea 
               id="edit_note" 
-              name="edit_note"
               class="form-textarea"
-              [(ngModel)]="bankForm.note"
-              #edit_note="ngModel"
+              formControlName="note"
               rows="3"></textarea>
           </div>
         </div>
@@ -299,7 +295,7 @@
           <button type="button" class="cancel-btn" (click)="closeModal()">
             {{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!editBankForm.form.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
             {{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.UPDATE' | translate }}
           </button>
         </div>

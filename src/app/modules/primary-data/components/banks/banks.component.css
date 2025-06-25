@@ -530,6 +530,31 @@
   transform: none;
 }
 
+/* Form Validation Error Styles */
+.form-input.error,
+.form-select.error,
+.form-textarea.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.form-group .error-message {
+  margin-top: 5px;
+}
+
+/* Required field indicator */
+.required::after {
+  content: " *";
+  color: #dc3545;
+}
+
 /* Modal Responsive */
 @media (max-width: 1024px) {
   .form-grid {
