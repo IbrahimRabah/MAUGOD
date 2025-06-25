@@ -80,7 +80,7 @@
     </table>
   </div>
   <!-- Custom Pagination -->
-  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
     <div class="pagination-info">
       <span>{{ 'MENU.GENERAL_DATA.BRANCHES_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.BRANCHES_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.BRANCHES_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.BRANCHES_PAGINATION.ITEMS' | translate }}</span>
     </div>    <div class="pagination-controls">
@@ -164,13 +164,14 @@
 <!-- Add Branch Modal -->
 <div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">  <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.TITLE' | translate }}</h3>
+      <h3 *ngIf="!isEditMode">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.EDIT_TITLE' | translate }}</h3>
       <button class="close-btn" (click)="closeModal()">
         <i class="fas fa-times"></i>
       </button>
     </div>
     
-    <div class="modal-body">
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
       <form #branchForm="ngForm" (ngSubmit)="submitBranch()">
         <div class="form-grid">          <!-- Arabic Name -->
           <div class="form-group">
@@ -291,10 +292,15 @@
             <i class="fas fa-times"></i>
             {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!branchForm.valid">
+          <button type="submit" class="submit-btn" [disabled]="!branchForm.valid" *ngIf="!isEditMode">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.SAVE' | translate }}
-          </button>        </div>
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!branchForm.valid" *ngIf="isEditMode">
+            <i class="fas fa-save"></i>
+            {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.UPDATE' | translate }}
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -309,7 +315,7 @@
       </button>
     </div>
     
-    <div class="modal-body">
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
       <form #changeNumberForm="ngForm" (ngSubmit)="submitChangeNumber()">
         <div class="form-grid-simple">          <!-- Branch Name (Read Only) -->
           <div class="form-group">
@@ -348,6 +354,9 @@
               <option *ngFor="let number of availableNumbers" [value]="number.value">{{ number.label }}</option>
             </select>
           </div>
+
+          <!-- Notes -->
+
         </div>        <div class="modal-footer">
           <button type="button" class="cancel-btn" (click)="closeChangeNumberModal()">
             <i class="fas fa-times"></i>

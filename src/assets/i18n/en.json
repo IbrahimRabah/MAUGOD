@@ -162,6 +162,7 @@
       },      "BRANCHES_MODALS": {
         "ADD_BRANCH_MODAL": {
           "TITLE": "Add New Branch",
+          "EDIT_TITLE": "Edit Branch",
           "ARABIC_NAME": "Arabic Name",
           "ENGLISH_NAME": "English Name",
           "MANAGER": "Manager",
@@ -173,6 +174,7 @@
           "NOTES": "Notes",
           "CANCEL": "Cancel",
           "SAVE": "Save",
+          "UPDATE": "Update",
           "PLACEHOLDERS": {
             "ARABIC_NAME": "Enter Arabic Name",
             "ENGLISH_NAME": "Enter English Name",
@@ -192,9 +194,11 @@
           "BRANCH_NAME": "Branch Name",
           "OLD_NUMBER": "Current Number",
           "NEW_NUMBER": "New Number",
+          "NOTES": "Notes",
           "CANCEL": "Cancel",
           "SAVE": "Save Change",
-          "SELECT_NEW_NUMBER": "Select New Number"
+          "SELECT_NEW_NUMBER": "Select New Number",
+          "NOTES_PLACEHOLDER": "Enter notes for this change"
         }
       },      "BRANCHES_PAGINATION": {
         "SHOWING": "Showing",

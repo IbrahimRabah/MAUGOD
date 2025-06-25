@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginationRequest } from '../../../core/models/pagination';
 import { Observable } from 'rxjs';
 import { Nationality, NationalityResponse } from '../../../core/models/nationality ';
@@ -14,13 +14,13 @@ private apiUrl = `${environment.apiUrl}/Nationalities`  ;
    
   constructor(private http:HttpClient) { }
   getNationalities(pagination:PaginationRequest): Observable<NationalityResponse> {
-    const params = {
+     const headers  =  new HttpHeaders({
       'lang': pagination.lang,
       'pageNumber': pagination.pageNumber,
       'pageSize': pagination.pageSize
-    };
+    });
 
-    return this.http.get<NationalityResponse>(`${this.apiUrl}/GetNationalities`, { params });
+    return this.http.get<NationalityResponse>(`${this.apiUrl}/GetNationalities`, { headers });
   }
   getNationalityById(id: number, lang: number): Observable<Nationality> {
     const params = { lang: lang.toString() };

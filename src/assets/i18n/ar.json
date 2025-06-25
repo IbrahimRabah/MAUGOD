@@ -163,6 +163,7 @@
       },      "BRANCHES_MODALS": {
         "ADD_BRANCH_MODAL": {
           "TITLE": "إضافة فرع جديد",
+          "EDIT_TITLE": "تعديل الفرع",
           "ARABIC_NAME": "الاسم بالعربي",
           "ENGLISH_NAME": "الاسم بالانجليزي",
           "MANAGER": "المدير",
@@ -174,6 +175,7 @@
           "NOTES": "ملاحظات",
           "CANCEL": "إلغاء",
           "SAVE": "حفظ",
+          "UPDATE": "تحديث",
           "PLACEHOLDERS": {
             "ARABIC_NAME": "أدخل الاسم بالعربي",
             "ENGLISH_NAME": "Enter English Name",
@@ -193,9 +195,11 @@
           "BRANCH_NAME": "اسم الفرع",
           "OLD_NUMBER": "الرقم الحالي",
           "NEW_NUMBER": "الرقم الجديد",
+          "NOTES": "ملاحظات",
           "CANCEL": "إلغاء",
           "SAVE": "حفظ التغيير",
-          "SELECT_NEW_NUMBER": "اختر الرقم الجديد"
+          "SELECT_NEW_NUMBER": "اختر الرقم الجديد",
+          "NOTES_PLACEHOLDER": "أدخل ملاحظات حول هذا التغيير"
         }
       },      "BRANCHES_PAGINATION": {
         "SHOWING": "عرض",

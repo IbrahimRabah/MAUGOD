@@ -19,6 +19,7 @@ export class BranchesComponent implements OnInit {
   showAddModal: boolean = false;
   showChangeNumberModal: boolean = false;
   selectedBranch: Branch | null = null;
+  isEditMode: boolean = false;
   
   // Form data
   newBranch = {
@@ -35,7 +36,6 @@ export class BranchesComponent implements OnInit {
   // Change number form data
   changeNumberData = {
     newNumber: '',
-    notes: ''
   };
 
   // Available numbers for dropdown (dummy data)
@@ -174,6 +174,7 @@ export class BranchesComponent implements OnInit {
     this.loadBranches();
   }
   addBranch() {
+    this.isEditMode = false;
     this.showAddModal = true;
   }
 
@@ -202,7 +203,7 @@ export class BranchesComponent implements OnInit {
     this.messageService.add({ 
       severity: 'success', 
       summary: 'نجح', 
-      detail: 'تم إضافة الفرع بنجاح' 
+      detail: this.isEditMode ? 'تم تحديث الفرع بنجاح' : 'تم إضافة الفرع بنجاح' 
     });
     this.closeModal();
     // Reload the branches list
@@ -229,8 +230,20 @@ export class BranchesComponent implements OnInit {
   }
 
   editBranch(branch: Branch) {
-    // TODO: Implement edit functionality
-    console.log('Edit branch:', branch);
+    this.isEditMode = true;
+    this.selectedBranch = branch;
+    this.newBranch = {
+      arabicName: branch.branchName,
+      englishName: branch.branchName,
+      managerId: branch.mgrId?.toString() || '',
+      parentDepartmentId: branch.parentBranchId?.toString() || '',
+      branchId: branch.branchId.toString(),
+      defaultLevelId: '',
+      locationId: branch.locId?.toString() || '',
+      locationDescription: branch.locDesc || '',
+      notes: branch.note || ''
+    };
+    this.showAddModal = true;
   }  deleteBranch(branch: Branch) {
     this.confirmationService.confirm({
       message: `هل أنت متأكد من حذف الفرع "${branch.branchName}"؟\nلا يمكن التراجع عن هذا الإجراء.`,
@@ -268,7 +281,6 @@ export class BranchesComponent implements OnInit {
   resetChangeNumberForm() {
     this.changeNumberData = {
       newNumber: '',
-      notes: ''
     };
   }
 
@@ -285,7 +297,6 @@ export class BranchesComponent implements OnInit {
       branchName: this.selectedBranch?.branchName,
       oldNumber: this.getOldBranchNumber(this.selectedBranch),
       newNumber: this.changeNumberData.newNumber,
-      notes: this.changeNumberData.notes
     });
     
     // TODO: Call API to change the branch number

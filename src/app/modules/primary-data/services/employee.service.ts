@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { PaginationRequest } from '../../../core/models/pagination';
@@ -13,15 +13,15 @@ private apiUrl = `${environment.apiUrl}/Employees`;  ;
    
   constructor(private http:HttpClient) { }
   getEmployees(pagination:PaginationRequest): Observable<EmployeeResponse> {
-    const params = {
+    const headers  =  new HttpHeaders({
       'lang': pagination.lang,
       'pageNumber': pagination.pageNumber,
       'pageSize': pagination.pageSize,
       'empId': pagination.empId ?? ''
       
-    };
+    });
 
-    return this.http.get<EmployeeResponse>(`${this.apiUrl}/GetEmployees`, { params });
+    return this.http.get<EmployeeResponse>(`${this.apiUrl}/GetEmployees`, { headers });
   }
   getEmployeeById(id: number, lang: number): Observable<Employee> {
     const params = { lang: lang.toString() };

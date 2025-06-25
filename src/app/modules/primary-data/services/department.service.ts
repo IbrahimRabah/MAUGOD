@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Department, DepartmentResponse } from '../../../core/models/department';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginationRequest } from '../../../core/models/pagination';
 import { Observable } from 'rxjs';
 
@@ -13,13 +13,13 @@ private apiUrl = `${environment.apiUrl}/Departments`  ;
    
   constructor(private http:HttpClient) { }
   getDepartments(pagination:PaginationRequest): Observable<DepartmentResponse> {
-    const params = {
+     const headers  =  new HttpHeaders({
       'lang': pagination.lang,
       'pageNumber': pagination.pageNumber,
       'pageSize': pagination.pageSize
-    };
+    });
 
-    return this.http.get<DepartmentResponse>(`${this.apiUrl}/GetDepartments`, { params });
+    return this.http.get<DepartmentResponse>(`${this.apiUrl}/GetDepartments`, { headers });
   }
   getDepartmentById(id: number, lang: number): Observable<Department> {
     const params = { lang: lang.toString() };
