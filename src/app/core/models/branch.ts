@@ -1,4 +1,3 @@
-import { ApiResponse } from "./apiResponse";
 
 export interface Branch {
   branchId: number;

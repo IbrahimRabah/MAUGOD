@@ -1,1 +1,399 @@
-<p>departments works!</p>
+<div class="departments-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_GENERAL.LOADING' | translate }}</p>
+  </div>
+  
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addDepartment()" [title]="'MENU.GENERAL_DATA.DEPARTMENTS_ACTIONS.ADD_DEPARTMENT_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MENU.GENERAL_DATA.DEPARTMENTS_ACTIONS.ADD_DEPARTMENT' | translate }}
+      </button>
+    </div>
+    
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text" 
+          class="search-input" 
+          [(ngModel)]="searchTerm" 
+          (keyup.enter)="onSearch()" 
+          [placeholder]="'MENU.GENERAL_DATA.DEPARTMENTS_ACTIONS.SEARCH_PLACEHOLDER' | translate"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_ACTIONS.SEARCH_TITLE' | translate">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.EDIT' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.DEPARTMENT_NAME' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.MANAGER' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.PARENT_DEPARTMENT' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.BRANCH' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.LEVEL' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.LOCATION' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.LOCATION_DESC' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.NOTES' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.DELETE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.CHANGE_NUMBER' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let department of departments" class="table-row">
+          <td>
+            <button class="action-btn edit-btn" (click)="editDepartment(department)" [title]="'MENU.GENERAL_DATA.DEPARTMENTS_GENERAL.EDIT_TOOLTIP' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ department.deptName }}</td>
+          <td>{{ department.mgrName || '-' }}</td>
+          <td>{{ department.parentDeptName || '-' }}</td>
+          <td>{{ department.branchName }}</td>
+          <td>{{ department.deptLevel }}</td>
+          <td>{{ department.locName || '-' }}</td>
+          <td>{{ department.locDesc || '-' }}</td>
+          <td>{{ department.note || '-' }}</td>
+          <td>
+            <button class="action-btn delete-btn" (click)="deleteDepartment(department)" [title]="'MENU.GENERAL_DATA.DEPARTMENTS_GENERAL.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+          <td>
+            <button class="action-btn number-btn" (click)="changeDepartmentNumber(department)" [title]="'MENU.GENERAL_DATA.DEPARTMENTS_GENERAL.CHANGE_NUMBER_TOOLTIP' | translate">
+              <i class="fas fa-hashtag"></i>
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="departments.length === 0" class="empty-row">
+          <td colspan="11" class="empty-message">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.NO_DATA' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    
+    <div class="page-size-selector">
+      <label>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Department Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 *ngIf="!isEditMode">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.EDIT_TITLE' | translate }}</h3>
+
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form #departmentForm="ngForm" (ngSubmit)="submitDepartment()">
+        <div class="form-grid">
+          <!-- Arabic Name -->
+          <div class="form-group">
+            <label for="arabicName">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="arabicName" 
+              name="arabicName" 
+              class="form-input" 
+              [(ngModel)]="newDepartment.arabicName" 
+              required
+              [placeholder]="'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.ARABIC_NAME_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- English Name -->
+          <div class="form-group">
+            <label for="englishName">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="englishName" 
+              name="englishName" 
+              class="form-input" 
+              [(ngModel)]="newDepartment.englishName" 
+              required
+              [placeholder]="'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.ENGLISH_NAME_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- Manager -->
+          <div class="form-group">
+            <label for="managerId">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.MANAGER' | translate }}</label>
+            <select 
+              id="managerId" 
+              name="managerId" 
+              class="form-select" 
+              [(ngModel)]="newDepartment.managerId">
+              <option value="">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.SELECT_MANAGER' | translate }}</option>
+              <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+            </select>
+          </div>
+
+          <!-- Parent Department -->
+          <div class="form-group">
+            <label for="parentDepartmentId">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.PARENT_DEPARTMENT' | translate }}</label>
+            <select 
+              id="parentDepartmentId" 
+              name="parentDepartmentId" 
+              class="form-select" 
+              [(ngModel)]="newDepartment.parentDepartmentId">
+              <option value="">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.SELECT_PARENT_DEPARTMENT' | translate }}</option>
+              <option *ngFor="let department of parentDepartments" [value]="department.id">{{ department.name }}</option>
+            </select>
+          </div>
+
+          <!-- Branch -->
+          <div class="form-group">
+            <label for="branchId">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.BRANCH' | translate }} <span class="required">*</span></label>
+            <select 
+              id="branchId" 
+              name="branchId" 
+              class="form-select" 
+              [(ngModel)]="newDepartment.branchId" 
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.SELECT_BRANCH' | translate }}</option>
+              <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
+            </select>
+          </div>
+
+          <!-- Department Level -->
+          <div class="form-group">
+            <label for="deptLevel">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.LEVEL' | translate }} <span class="required">*</span></label>
+            <select 
+              id="deptLevel" 
+              name="deptLevel" 
+              class="form-select" 
+              [(ngModel)]="newDepartment.deptLevel" 
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.SELECT_LEVEL' | translate }}</option>
+              <option *ngFor="let level of deptLevels" [value]="level.id">{{ level.name }}</option>
+            </select>
+          </div>
+
+          <!-- Location -->
+          <div class="form-group">
+            <label for="locationId">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.LOCATION' | translate }}</label>
+            <select 
+              id="locationId" 
+              name="locationId" 
+              class="form-select" 
+              [(ngModel)]="newDepartment.locationId">
+              <option value="">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.SELECT_LOCATION' | translate }}</option>
+              <option *ngFor="let location of locations" [value]="location.id">{{ location.name }}</option>
+            </select>
+          </div>
+
+          <!-- Location Description -->
+          <div class="form-group">
+            <label for="locationDescription">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.LOCATION_DESC' | translate }}</label>
+            <input 
+              type="text" 
+              id="locationDescription" 
+              name="locationDescription" 
+              class="form-input" 
+              [(ngModel)]="newDepartment.locationDescription"
+              [placeholder]="'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.LOCATION_DESC_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width">
+            <label for="notes">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              id="notes" 
+              name="notes" 
+              class="form-textarea" 
+              [(ngModel)]="newDepartment.notes" 
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!departmentForm.valid" *ngIf="!isEditMode">
+            {{  'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.SAVE' | translate }}
+          </button >
+         <button type="submit" class="submit-btn" [disabled]="!departmentForm.valid" *ngIf="isEditMode">
+            {{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.UPDATE'  | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Change Department Number Modal -->
+<div *ngIf="showChangeNumberModal" class="modal-overlay" (click)="closeChangeNumberModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeChangeNumberModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form #changeNumberForm="ngForm" (ngSubmit)="submitChangeNumber()">
+        <div class="form-grid-simple">
+          <!-- Department Name (Read Only) -->
+          <div class="form-group">
+            <label for="departmentName">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.DEPARTMENT_NAME' | translate }}</label>
+            <input 
+              type="text" 
+              id="departmentName" 
+              name="departmentName" 
+              class="form-input readonly-input" 
+              [value]="selectedDepartment?.deptName" 
+              readonly>
+          </div>
+
+          <!-- Old Number (Read Only) -->
+          <div class="form-group">
+            <label for="oldNumber">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.OLD_NUMBER' | translate }}</label>
+            <input 
+              type="text" 
+              id="oldNumber" 
+              name="oldNumber" 
+              class="form-input readonly-input" 
+              [value]="getOldDepartmentNumber(selectedDepartment)" 
+              readonly>
+          </div>
+
+          <!-- New Number -->
+          <div class="form-group">
+            <label for="newNumber">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.NEW_NUMBER' | translate }} <span class="required">*</span></label>
+            <select 
+              id="newNumber" 
+              name="newNumber" 
+              class="form-select" 
+              [(ngModel)]="changeNumberData.newNumber" 
+              required>
+              <option value="">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.SELECT_NUMBER' | translate }}</option>
+              <option *ngFor="let number of availableNumbers" [value]="number.value">{{ number.label }}</option>
+            </select>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width">
+            <label for="changeNotes">{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              id="changeNotes" 
+              name="changeNotes" 
+              class="form-textarea" 
+              [(ngModel)]="changeNumberData.notes" 
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeChangeNumberModal()">
+            {{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!changeNumberForm.valid">
+            {{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.CHANGE_NUMBER_MODAL.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
