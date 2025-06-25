@@ -433,6 +433,72 @@
         "EDIT_TOOLTIP": "تعديل",
         "DELETE_TOOLTIP": "حذف",
         "NO_BANKS_FOUND": "لم يتم العثور على بنوك."
+      },
+      "JOBS_TABLE": {
+        "EDIT": "تعديل",
+        "ARABIC_TITLE": "العنوان العربي",
+        "ENGLISH_TITLE": "العنوان الإنجليزي",
+        "ARABIC_DESCRIPTION": "الوصف بالعربي",
+        "ENGLISH_DESCRIPTION": "الوصف بالإنجليزي",
+        "NOTES": "الملاحظات",
+        "DELETE": "حذف"
+      },
+      "JOBS_ACTIONS": {
+        "ADD_JOB": "إضافة وظيفة",
+        "SEARCH_PLACEHOLDER": "البحث في الوظائف...",
+        "SEARCH_TITLE": "البحث",
+        "ADD_JOB_TITLE": "إضافة وظيفة جديدة"
+      },
+      "JOBS_MODALS": {
+        "ADD_JOB_MODAL": {
+          "TITLE": "إضافة وظيفة جديدة",
+          "ARABIC_TITLE": "العنوان العربي",
+          "ENGLISH_TITLE": "العنوان الإنجليزي",
+          "ARABIC_DESCRIPTION": "الوصف بالعربي",
+          "ENGLISH_DESCRIPTION": "الوصف بالإنجليزي",
+          "NOTES": "الملاحظات",
+          "ARABIC_TITLE_PLACEHOLDER": "أدخل عنوان الوظيفة بالعربي",
+          "ENGLISH_TITLE_PLACEHOLDER": "أدخل عنوان الوظيفة بالإنجليزي",
+          "ARABIC_DESCRIPTION_PLACEHOLDER": "أدخل وصف الوظيفة بالعربي",
+          "ENGLISH_DESCRIPTION_PLACEHOLDER": "أدخل وصف الوظيفة بالإنجليزي",
+          "NOTES_PLACEHOLDER": "أدخل الملاحظات",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ"
+        },
+        "EDIT_JOB_MODAL": {
+          "TITLE": "تعديل الوظيفة",
+          "ARABIC_TITLE": "العنوان العربي",
+          "ENGLISH_TITLE": "العنوان الإنجليزي",
+          "ARABIC_DESCRIPTION": "الوصف بالعربي",
+          "ENGLISH_DESCRIPTION": "الوصف بالإنجليزي",
+          "NOTES": "الملاحظات",
+          "ARABIC_TITLE_PLACEHOLDER": "أدخل عنوان الوظيفة بالعربي",
+          "ENGLISH_TITLE_PLACEHOLDER": "أدخل عنوان الوظيفة بالإنجليزي",
+          "ARABIC_DESCRIPTION_PLACEHOLDER": "أدخل وصف الوظيفة بالعربي",
+          "ENGLISH_DESCRIPTION_PLACEHOLDER": "أدخل وصف الوظيفة بالإنجليزي",
+          "NOTES_PLACEHOLDER": "أدخل الملاحظات",
+          "CANCEL": "إلغاء",
+          "UPDATE": "تحديث"
+        }
+      },
+      "JOBS_PAGINATION": {
+        "SHOWING": "عرض",
+        "TO": "-",
+        "OF": "من",
+        "ITEMS": "عنصر",
+        "PAGE": "صفحة",
+        "PAGE_OF": "من",
+        "ITEMS_PER_PAGE": "عدد العناصر في الصفحة:",
+        "NO_DATA": "لا توجد بيانات",
+        "FIRST_PAGE": "الصفحة الأولى",
+        "PREVIOUS_PAGE": "الصفحة السابقة",
+        "NEXT_PAGE": "الصفحة التالية",
+        "LAST_PAGE": "الصفحة الأخيرة"
+      },
+      "JOBS_GENERAL": {
+        "LOADING": "جاري التحميل...",
+        "EDIT_TOOLTIP": "تعديل",
+        "DELETE_TOOLTIP": "حذف"
       }
     }
   },
