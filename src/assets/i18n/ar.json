@@ -67,7 +67,85 @@
       "BANKS": "البنوك",
       "CITIES": "المدن",
       "ORGANIZATION": "المنشأة",
-      "PROVINCE": "المنطقة",      "BRANCHES_TABLE": {
+      "PROVINCE": "المنطقة",
+      "DEPARTMENTS_TABLE": {
+        "EDIT": "تعديل",
+        "DEPARTMENT_NAME": "اسم القسم",
+        "MANAGER": "المدير",
+        "PARENT_DEPARTMENT": "القسم الأب",
+        "BRANCH": "الفرع",
+        "LEVEL": "المستوى",
+        "LOCATION": "الموقع",
+        "LOCATION_DESC": "وصف الموقع",
+        "NOTES": "ملاحظات",
+        "DELETE": "حذف",
+        "CHANGE_NUMBER": "تغيير الرقم"
+      },
+      "DEPARTMENTS_ACTIONS": {
+        "ADD_DEPARTMENT": "إضافة قسم",
+        "SEARCH_PLACEHOLDER": "البحث في الأقسام...",
+        "SEARCH_TITLE": "البحث",
+        "ADD_DEPARTMENT_TITLE": "إضافة قسم جديد"
+      },
+      "DEPARTMENTS_MODALS": {
+        "ADD_DEPARTMENT_MODAL": {
+          "TITLE": "إضافة قسم جديد",
+          "EDIT_TITLE": "تعديل القسم",
+          "ARABIC_NAME": "الاسم بالعربي",
+          "ENGLISH_NAME": "الاسم بالإنجليزي",
+          "MANAGER": "المدير",
+          "PARENT_DEPARTMENT": "القسم الأب",
+          "BRANCH": "الفرع",
+          "LEVEL": "المستوى",
+          "LOCATION": "الموقع",
+          "LOCATION_DESC": "وصف الموقع",
+          "NOTES": "ملاحظات",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ",
+          "UPDATE": "تحديث",
+          "ARABIC_NAME_PLACEHOLDER": "أدخل الاسم بالعربي",
+          "ENGLISH_NAME_PLACEHOLDER": "أدخل الاسم بالإنجليزي",
+          "LOCATION_DESC_PLACEHOLDER": "أدخل وصف الموقع",
+          "NOTES_PLACEHOLDER": "أدخل الملاحظات",
+          "SELECT_MANAGER": "اختر المدير",
+          "SELECT_PARENT_DEPARTMENT": "اختر القسم الأب",
+          "SELECT_BRANCH": "اختر الفرع",
+          "SELECT_LEVEL": "اختر المستوى",
+          "SELECT_LOCATION": "اختر الموقع"
+        },
+        "CHANGE_NUMBER_MODAL": {
+          "TITLE": "تغيير رقم القسم",
+          "DEPARTMENT_NAME": "اسم القسم",
+          "OLD_NUMBER": "الرقم القديم",
+          "NEW_NUMBER": "الرقم الجديد",
+          "NOTES": "ملاحظات",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ",
+          "SELECT_NUMBER": "اختر الرقم الجديد",
+          "NOTES_PLACEHOLDER": "أدخل الملاحظات"
+        }
+      },
+      "DEPARTMENTS_PAGINATION": {
+        "SHOWING": "عرض",
+        "TO": "-",
+        "OF": "من",
+        "ITEMS": "عنصر",
+        "PAGE": "صفحة",
+        "PAGE_OF": "من",
+        "ITEMS_PER_PAGE": "عدد العناصر في الصفحة:",
+        "NO_DATA": "لا توجد بيانات",
+        "FIRST_PAGE": "الصفحة الأولى",
+        "PREVIOUS_PAGE": "الصفحة السابقة",
+        "NEXT_PAGE": "الصفحة التالية",
+        "LAST_PAGE": "الصفحة الأخيرة"
+      },
+      "DEPARTMENTS_GENERAL": {
+        "LOADING": "جاري التحميل...",
+        "EDIT_TOOLTIP": "تعديل",
+        "DELETE_TOOLTIP": "حذف",
+        "CHANGE_NUMBER_TOOLTIP": "تغيير الرقم"
+      },
+      "BRANCHES_TABLE": {
         "EDIT": "تعديل",
         "BRANCH_NAME": "اسم الفرع",
         "MANAGER": "المدير",

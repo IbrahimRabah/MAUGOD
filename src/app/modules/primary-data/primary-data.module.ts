@@ -41,6 +41,7 @@ import { CitiesComponent } from './components/cities/cities.component';
 import { OrganizationComponent } from './components/organization/organization.component';
 import { ProvinceComponent } from './components/province/province.component';
 import { BranchesComponent } from './components/branches/branches.component';
+import { DepartmentsComponent } from './components/departments/departments.component';
 import { EmployeesComponent } from './components/employees/employees.component';
 
 // PrimeNG Modules
@@ -95,6 +96,7 @@ import { CalendarModule } from 'primeng/calendar';
     CitiesComponent,    OrganizationComponent,
     ProvinceComponent,
     BranchesComponent,
+    DepartmentsComponent,
     EmployeesComponent
   ],  imports: [
     CommonModule,
