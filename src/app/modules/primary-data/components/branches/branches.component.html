@@ -172,18 +172,21 @@
     </div>
     
     <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-      <form #branchForm="ngForm" (ngSubmit)="submitBranch()">
-        <div class="form-grid">          <!-- Arabic Name -->
+      <form [formGroup]="branchForm" (ngSubmit)="submitBranch()">
+        <div class="form-grid">
+          <!-- Arabic Name -->
           <div class="form-group">
             <label for="arabicName">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
             <input 
               type="text" 
               id="arabicName" 
-              name="arabicName"
+              formControlName="arabicName"
               class="form-input" 
-              [(ngModel)]="newBranch.arabicName"
-              required
+              [class.error]="isFieldInvalid('arabicName')"
               [placeholder]="'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.PLACEHOLDERS.ARABIC_NAME' | translate">
+            <div *ngIf="isFieldInvalid('arabicName')" class="error-message">
+              {{ getFieldError('arabicName') }}
+            </div>
           </div>
 
           <!-- English Name -->
@@ -192,111 +195,136 @@
             <input 
               type="text" 
               id="englishName" 
-              name="englishName"
+              formControlName="englishName"
               class="form-input" 
-              [(ngModel)]="newBranch.englishName"
-              required
+              [class.error]="isFieldInvalid('englishName')"
               [placeholder]="'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.PLACEHOLDERS.ENGLISH_NAME' | translate">
+            <div *ngIf="isFieldInvalid('englishName')" class="error-message">
+              {{ getFieldError('englishName') }}
+            </div>
           </div>
 
           <!-- Manager -->
           <div class="form-group">
-            <label for="manager">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.MANAGER' | translate }}</label>
+            <label for="manager">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.MANAGER' | translate }} <span class="required">*</span></label>
             <select 
               id="manager" 
-              name="manager"
+              formControlName="managerId"
               class="form-select" 
-              [(ngModel)]="newBranch.managerId">
+              [class.error]="isFieldInvalid('managerId')">
               <option value="">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.SELECT_OPTIONS.CHOOSE_MANAGER' | translate }}</option>
               <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('managerId')" class="error-message">
+              {{ getFieldError('managerId') }}
+            </div>
           </div>
 
           <!-- Parent Department -->
           <div class="form-group">
-            <label for="parentDepartment">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.PARENT_DEPARTMENT' | translate }}</label>
+            <label for="parentDepartment">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.PARENT_DEPARTMENT' | translate }} <span class="required">*</span></label>
             <select 
               id="parentDepartment" 
-              name="parentDepartment"
+              formControlName="parentDepartmentId"
               class="form-select" 
-              [(ngModel)]="newBranch.parentDepartmentId">
+              [class.error]="isFieldInvalid('parentDepartmentId')">
               <option value="">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.SELECT_OPTIONS.CHOOSE_PARENT_DEPT' | translate }}</option>
               <option *ngFor="let dept of parentDepartments" [value]="dept.id">{{ dept.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('parentDepartmentId')" class="error-message">
+              {{ getFieldError('parentDepartmentId') }}
+            </div>
           </div>
 
           <!-- Branch -->
           <div class="form-group">
-            <label for="branch">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.BRANCH' | translate }}</label>
+            <label for="branch">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.BRANCH' | translate }} <span class="required">*</span></label>
             <select 
               id="branch" 
-              name="branch"
+              formControlName="branchId"
               class="form-select" 
-              [(ngModel)]="newBranch.branchId">
+              [class.error]="isFieldInvalid('branchId')">
               <option value="">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.SELECT_OPTIONS.CHOOSE_BRANCH' | translate }}</option>
               <option *ngFor="let branch of branchOptions" [value]="branch.id">{{ branch.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('branchId')" class="error-message">
+              {{ getFieldError('branchId') }}
+            </div>
           </div>
 
           <!-- Default Level -->
           <div class="form-group">
-            <label for="defaultLevel">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.DEFAULT_LEVEL' | translate }}</label>
+            <label for="defaultLevel">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.DEFAULT_LEVEL' | translate }} <span class="required">*</span></label>
             <select 
               id="defaultLevel" 
-              name="defaultLevel"
+              formControlName="defaultLevelId"
               class="form-select" 
-              [(ngModel)]="newBranch.defaultLevelId">
+              [class.error]="isFieldInvalid('defaultLevelId')">
               <option value="">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.SELECT_OPTIONS.CHOOSE_DEFAULT_LEVEL' | translate }}</option>
               <option *ngFor="let level of defaultLevels" [value]="level.id">{{ level.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('defaultLevelId')" class="error-message">
+              {{ getFieldError('defaultLevelId') }}
+            </div>
           </div>
 
           <!-- Location -->
           <div class="form-group">
-            <label for="location">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.LOCATION' | translate }}</label>
+            <label for="location">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.LOCATION' | translate }} <span class="required">*</span></label>
             <select 
               id="location" 
-              name="location"
+              formControlName="locationId"
               class="form-select" 
-              [(ngModel)]="newBranch.locationId">
+              [class.error]="isFieldInvalid('locationId')">
               <option value="">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.SELECT_OPTIONS.CHOOSE_LOCATION' | translate }}</option>
               <option *ngFor="let location of locations" [value]="location.id">{{ location.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('locationId')" class="error-message">
+              {{ getFieldError('locationId') }}
+            </div>
           </div>
 
           <!-- Location Description -->
           <div class="form-group full-width">
-            <label for="locationDesc">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.LOCATION_DESC' | translate }}</label>
+            <label for="locationDesc">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.LOCATION_DESC' | translate }} <span class="required">*</span></label>
             <textarea 
               id="locationDesc" 
-              name="locationDesc"
+              formControlName="locationDescription"
               class="form-textarea" 
-              [(ngModel)]="newBranch.locationDescription"
+              [class.error]="isFieldInvalid('locationDescription')"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.PLACEHOLDERS.LOCATION_DESC' | translate"></textarea>
+            <div *ngIf="isFieldInvalid('locationDescription')" class="error-message">
+              {{ getFieldError('locationDescription') }}
+            </div>
           </div>
 
           <!-- Notes -->
           <div class="form-group full-width">
-            <label for="notes">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.NOTES' | translate }}</label>
+            <label for="notes">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.NOTES' | translate }} <span class="required">*</span></label>
             <textarea 
               id="notes" 
-              name="notes"
+              formControlName="notes"
               class="form-textarea" 
-              [(ngModel)]="newBranch.notes"
+              [class.error]="isFieldInvalid('notes')"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.PLACEHOLDERS.NOTES' | translate"></textarea>
+            <div *ngIf="isFieldInvalid('notes')" class="error-message">
+              {{ getFieldError('notes') }}
+            </div>
           </div>
-        </div>        <div class="modal-footer">
+        </div>
+        
+        <div class="modal-footer">
           <button type="button" class="cancel-btn" (click)="closeModal()">
             <i class="fas fa-times"></i>
             {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!branchForm.valid" *ngIf="!isEditMode">
+          <button type="submit" class="submit-btn" [disabled]="!isBranchFormValid" *ngIf="!isEditMode">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.SAVE' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!branchForm.valid" *ngIf="isEditMode">
+          <button type="submit" class="submit-btn" [disabled]="!isBranchFormValid" *ngIf="isEditMode">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.UPDATE' | translate }}
           </button>
@@ -316,8 +344,9 @@
     </div>
     
     <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-      <form #changeNumberForm="ngForm" (ngSubmit)="submitChangeNumber()">
-        <div class="form-grid-simple">          <!-- Branch Name (Read Only) -->
+      <form [formGroup]="changeNumberForm" (ngSubmit)="submitChangeNumber()">
+        <div class="form-grid-simple">
+          <!-- Branch Name (Read Only) -->
           <div class="form-group">
             <label for="branchNameReadOnly">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.CHANGE_NUMBER_MODAL.BRANCH_NAME' | translate }}</label>
             <input 
@@ -346,23 +375,27 @@
             <label for="newNumber">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.CHANGE_NUMBER_MODAL.NEW_NUMBER' | translate }} <span class="required">*</span></label>
             <select 
               id="newNumber" 
-              name="newNumber"
+              formControlName="newNumber"
               class="form-select" 
-              [(ngModel)]="changeNumberData.newNumber"
-              required>
+              [class.error]="isFieldInvalid('newNumber', changeNumberForm)">
               <option value="">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.CHANGE_NUMBER_MODAL.SELECT_NEW_NUMBER' | translate }}</option>
               <option *ngFor="let number of availableNumbers" [value]="number.value">{{ number.label }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('newNumber', changeNumberForm)" class="error-message">
+              {{ getFieldError('newNumber', changeNumberForm) }}
+            </div>
           </div>
 
           <!-- Notes -->
 
-        </div>        <div class="modal-footer">
+        </div>
+        
+        <div class="modal-footer">
           <button type="button" class="cancel-btn" (click)="closeChangeNumberModal()">
             <i class="fas fa-times"></i>
             {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.CHANGE_NUMBER_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!changeNumberForm.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isChangeNumberFormValid">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.CHANGE_NUMBER_MODAL.SAVE' | translate }}
           </button>
