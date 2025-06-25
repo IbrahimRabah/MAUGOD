@@ -199,7 +199,7 @@
     </div>
     
     <div class="modal-body">
-      <form #employeeForm="ngForm" (ngSubmit)="submitEmployee()">
+      <form [formGroup]="employeeForm" (ngSubmit)="submitEmployee()">
         <div class="form-grid">
           <!-- Employee Name -->
           <div class="form-group">
@@ -207,10 +207,12 @@
             <input 
               type="text" 
               class="form-input" 
-              [(ngModel)]="newEmployee.empName" 
-              name="empName"
-              required
+              formControlName="empName"
+              [class.error]="isFieldInvalid('empName')"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMPLOYEE_NAME_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('empName')" class="error-message">
+              {{ getFieldError('empName') }}
+            </div>
           </div>
 
           <!-- Direct Manager -->
@@ -218,12 +220,14 @@
             <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.DIRECT_MANAGER' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="newEmployee.directMgrId" 
-              name="directMgrId"
-              required>
+              formControlName="directMgrId"
+              [class.error]="isFieldInvalid('directMgrId')">
               <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_MANAGER' | translate }}</option>
               <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('directMgrId')" class="error-message">
+              {{ getFieldError('directMgrId') }}
+            </div>
           </div>
 
           <!-- Department -->
@@ -231,12 +235,14 @@
             <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.DEPARTMENT' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="newEmployee.deptId" 
-              name="deptId"
-              required>
+              formControlName="deptId"
+              [class.error]="isFieldInvalid('deptId')">
               <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_DEPARTMENT' | translate }}</option>
               <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('deptId')" class="error-message">
+              {{ getFieldError('deptId') }}
+            </div>
           </div>
 
           <!-- Status -->
@@ -244,88 +250,116 @@
             <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.STATUS' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="newEmployee.statusId" 
-              name="statusId"
-              required>
+              formControlName="statusId"
+              [class.error]="isFieldInvalid('statusId')">
+              <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_STATUS' | translate }}</option>
               <option *ngFor="let status of statuses" [value]="status.id">{{ status.name }}</option>
             </select>
-          </div>          <!-- Active Flag -->
+            <div *ngIf="isFieldInvalid('statusId')" class="error-message">
+              {{ getFieldError('statusId') }}
+            </div>
+          </div>
+
+          <!-- Active Flag -->
           <div class="form-group">
             <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.ACTIVE_FLAG' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="newEmployee.activeFlag" 
-              name="activeFlag"
-              required>
+              formControlName="activeFlag"
+              [class.error]="isFieldInvalid('activeFlag')">
               <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_ACTIVE_STATUS' | translate }}</option>
               <option value="1">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.ACTIVE_OPTION' | translate }}</option>
               <option value="0">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.INACTIVE_OPTION' | translate }}</option>
             </select>
-          </div>          <!-- Gender -->
+            <div *ngIf="isFieldInvalid('activeFlag')" class="error-message">
+              {{ getFieldError('activeFlag') }}
+            </div>
+          </div>
+
+          <!-- Gender -->
           <div class="form-group">
             <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.GENDER' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="newEmployee.gender" 
-              name="gender"
-              required>
+              formControlName="gender"
+              [class.error]="isFieldInvalid('gender')">
               <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_GENDER' | translate }}</option>
               <option *ngFor="let gender of genders" [value]="gender.id">{{ gender.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('gender')" class="error-message">
+              {{ getFieldError('gender') }}
+            </div>
           </div>
 
           <!-- Email -->
           <div class="form-group">
-            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMAIL' | translate }}</label>
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMAIL' | translate }}</label>
             <input 
               type="email" 
               class="form-input" 
-              [(ngModel)]="newEmployee.email" 
-              name="email"
+              formControlName="email"
+              [class.error]="isFieldInvalid('email')"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EMAIL_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('email')" class="error-message">
+              {{ getFieldError('email') }}
+            </div>
           </div>
 
           <!-- SMS Phone -->
           <div class="form-group">
-            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SMS_PHONE' | translate }}</label>
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SMS_PHONE' | translate }}</label>
             <input 
               type="tel" 
               class="form-input" 
-              [(ngModel)]="newEmployee.smsPhone" 
-              name="smsPhone"
+              formControlName="smsPhone"
+              [class.error]="isFieldInvalid('smsPhone')"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SMS_PHONE_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('smsPhone')" class="error-message">
+              {{ getFieldError('smsPhone') }}
+            </div>
           </div>
 
           <!-- National ID -->
           <div class="form-group">
-            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NATIONAL_ID' | translate }}</label>
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NATIONAL_ID' | translate }}</label>
             <input 
               type="text" 
               class="form-input" 
-              [(ngModel)]="newEmployee.natId" 
-              name="natId"
+              formControlName="natId"
+              [class.error]="isFieldInvalid('natId')"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NATIONAL_ID_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('natId')" class="error-message">
+              {{ getFieldError('natId') }}
+            </div>
           </div>
 
           <!-- Government ID -->
           <div class="form-group">
-            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.GOVERNMENT_ID' | translate }}</label>
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.GOVERNMENT_ID' | translate }}</label>
             <input 
               type="text" 
               class="form-input" 
-              [(ngModel)]="newEmployee.govId" 
-              name="govId"
+              formControlName="govId"
+              [class.error]="isFieldInvalid('govId')"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.GOVERNMENT_ID_PLACEHOLDER' | translate">
-          </div>          <!-- Marital Status -->
+            <div *ngIf="isFieldInvalid('govId')" class="error-message">
+              {{ getFieldError('govId') }}
+            </div>
+          </div>
+
+          <!-- Marital Status -->
           <div class="form-group">
-            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.MARITAL_STATUS' | translate }}</label>
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.MARITAL_STATUS' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="newEmployee.maritalStatus" 
-              name="maritalStatus">
+              formControlName="maritalStatus"
+              [class.error]="isFieldInvalid('maritalStatus')">
               <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_MARITAL_STATUS' | translate }}</option>
               <option *ngFor="let status of maritalStatuses" [value]="status.id">{{ status.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('maritalStatus')" class="error-message">
+              {{ getFieldError('maritalStatus') }}
+            </div>
           </div>
 
           <!-- Language -->
@@ -333,34 +367,41 @@
             <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.LANGUAGE' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="newEmployee.lang" 
-              name="lang"
-              required>
+              formControlName="lang"
+              [class.error]="isFieldInvalid('lang')">
               <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SELECT_LANGUAGE' | translate }}</option>
               <option *ngFor="let language of languages" [value]="language.id">{{ language.name }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('lang')" class="error-message">
+              {{ getFieldError('lang') }}
+            </div>
           </div>
 
           <!-- Notes -->
           <div class="form-group full-width">
-            <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NOTES' | translate }}</label>
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NOTES' | translate }}</label>
             <textarea 
               class="form-textarea" 
-              [(ngModel)]="newEmployee.note" 
-              name="note"
+              formControlName="note"
+              [class.error]="isFieldInvalid('note')"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
+            <div *ngIf="isFieldInvalid('note')" class="error-message">
+              {{ getFieldError('note') }}
+            </div>
           </div>
-        </div>        <div class="modal-footer">
+        </div>
+        
+        <div class="modal-footer">
           <button type="button" class="cancel-btn" (click)="closeModal()">
             <i class="fas fa-times"></i>
             {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!employeeForm.valid" *ngIf="!isEditMode">
+          <button type="submit" class="submit-btn" [disabled]="!isEmployeeFormValid" *ngIf="!isEditMode">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.SAVE' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!employeeForm.valid" *ngIf="isEditMode">
+          <button type="submit" class="submit-btn" [disabled]="!isEmployeeFormValid" *ngIf="isEditMode">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.UPDATE' | translate }}
           </button>
@@ -381,7 +422,7 @@
     </div>
     
     <div class="modal-body">
-      <form #changeNumberForm="ngForm" (ngSubmit)="submitChangeNumber()">
+      <form [formGroup]="changeNumberForm" (ngSubmit)="submitChangeNumber()">
         <div class="form-grid-simple">
           <!-- Employee Name (Read Only) -->
           <div class="form-group">
@@ -408,19 +449,37 @@
             <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.NEW_NUMBER' | translate }}</label>
             <select 
               class="form-select" 
-              [(ngModel)]="changeNumberData.newNumber" 
-              name="newNumber"
-              required>
+              formControlName="newNumber"
+              [class.error]="isFieldInvalid('newNumber', changeNumberForm)">
               <option value="">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.SELECT_NEW_NUMBER' | translate }}</option>
               <option *ngFor="let number of availableNumbers" [value]="number.value">{{ number.label }}</option>
             </select>
+            <div *ngIf="isFieldInvalid('newNumber', changeNumberForm)" class="error-message">
+              {{ getFieldError('newNumber', changeNumberForm) }}
+            </div>
           </div>
-        </div>        <div class="modal-footer">
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label class="required">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              class="form-textarea" 
+              formControlName="notes"
+              [class.error]="isFieldInvalid('notes', changeNumberForm)"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
+            <div *ngIf="isFieldInvalid('notes', changeNumberForm)" class="error-message">
+              {{ getFieldError('notes', changeNumberForm) }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
           <button type="button" class="cancel-btn" (click)="closeChangeNumberModal()">
             <i class="fas fa-times"></i>
             {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!changeNumberForm.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isChangeNumberFormValid">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_NUMBER_MODAL.SAVE' | translate }}
           </button>
@@ -441,7 +500,7 @@
     </div>
     
     <div class="modal-body">
-      <form #changePasswordForm="ngForm" (ngSubmit)="submitChangePassword()">
+      <form [formGroup]="changePasswordForm" (ngSubmit)="submitChangePassword()">
         <div class="form-grid-simple">
           <!-- Employee Name (Read Only) -->
           <div class="form-group">
@@ -459,10 +518,12 @@
             <input 
               type="password" 
               class="form-input" 
-              [(ngModel)]="changePasswordData.newPassword" 
-              name="newPassword"
-              required
+              formControlName="newPassword"
+              [class.error]="isFieldInvalid('newPassword', changePasswordForm)"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.PASSWORD_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('newPassword', changePasswordForm)" class="error-message">
+              {{ getFieldError('newPassword', changePasswordForm) }}
+            </div>
           </div>
 
           <!-- Confirm Password -->
@@ -471,18 +532,24 @@
             <input 
               type="password" 
               class="form-input" 
-              [(ngModel)]="changePasswordData.confirmPassword" 
-              name="confirmPassword"
-              required
+              formControlName="confirmPassword"
+              [class.error]="isFieldInvalid('confirmPassword', changePasswordForm) || (!passwordsMatch && changePasswordForm.get('confirmPassword')?.touched)"
               [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.CONFIRM_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('confirmPassword', changePasswordForm)" class="error-message">
+              {{ getFieldError('confirmPassword', changePasswordForm) }}
+            </div>
+            <div *ngIf="!passwordsMatch && changePasswordForm.get('confirmPassword')?.touched && !isFieldInvalid('confirmPassword', changePasswordForm)" class="error-message">
+              كلمة المرور وتأكيد كلمة المرور غير متطابقين
+            </div>
           </div>
         </div>
+        
         <div class="modal-footer">
           <button type="button" class="cancel-btn" (click)="closeChangePasswordModal()">
             <i class="fas fa-times"></i>
             {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!changePasswordForm.valid || changePasswordData.newPassword !== changePasswordData.confirmPassword">
+          <button type="submit" class="submit-btn" [disabled]="!isChangePasswordFormValid">
             <i class="fas fa-save"></i>
             {{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.CHANGE_PASSWORD_MODAL.SAVE' | translate }}
           </button>

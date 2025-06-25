@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmployeeService } from '../../services/employee.service';
 import { Employee, EmployeeResponse } from '../../../../core/models/employee';
 import { PaginationRequest } from '../../../../core/models/pagination';
@@ -17,40 +18,17 @@ export class EmployeesComponent implements OnInit {
   loading: boolean = false;
   totalRecords: number = 0;
   currentPage: number = 1;
-  searchTerm: string = '';  showAddModal: boolean = false;
+  searchTerm: string = '';
+  showAddModal: boolean = false;
   showChangeNumberModal: boolean = false;
   showChangePasswordModal: boolean = false;
   selectedEmployee: Employee | null = null;
   isEditMode: boolean = false;
   
-  // Form data
-  newEmployee = {
-    empName: '',
-    directMgrId: '',
-    deptId: '',
-    activeFlag: '1',
-    statusId: 1,
-    email: '',
-    smsPhone: '',
-    gender: '1',
-    maritalStatus: '0',
-    natId: '',
-    govId: '',
-    jobTypId: 0,
-    lang: '2',
-    note: ''
-  };
-  // Change number form data
-  changeNumberData = {
-    newNumber: '',
-    notes: ''
-  };
-
-  // Change password form data
-  changePasswordData = {
-    newPassword: '',
-    confirmPassword: ''
-  };
+  // Reactive Forms
+  employeeForm!: FormGroup;
+  changeNumberForm!: FormGroup;
+  changePasswordForm!: FormGroup;
 
   // Available numbers for dropdown (dummy data)
   availableNumbers = [
@@ -132,8 +110,11 @@ export class EmployeesComponent implements OnInit {
     private employeeService: EmployeeService,
     public langService: LanguageService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private fb: FormBuilder
   ) {
+    this.initializeForms();
+    
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
       this.paginationRequest.lang = lang === 'ar' ? 2 : 1; 
@@ -143,6 +124,35 @@ export class EmployeesComponent implements OnInit {
 
   ngOnInit() {
     this.loadEmployees();
+  }
+
+  initializeForms() {
+    this.employeeForm = this.fb.group({
+      empName: ['', [Validators.required]],
+      directMgrId: ['', [Validators.required]],
+      deptId: ['', [Validators.required]],
+      activeFlag: ['', [Validators.required]],
+      statusId: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      smsPhone: ['', [Validators.required]],
+      gender: ['', [Validators.required]],
+      maritalStatus: ['', [Validators.required]],
+      natId: ['', [Validators.required]],
+      govId: ['', [Validators.required]],
+      jobTypId: ['', [Validators.required]],
+      lang: ['', [Validators.required]],
+      note: ['', [Validators.required]]
+    });
+
+    this.changeNumberForm = this.fb.group({
+      newNumber: ['', [Validators.required]],
+      notes: ['', [Validators.required]]
+    });
+
+    this.changePasswordForm = this.fb.group({
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    });
   }
   getStoredEmpId(): number | undefined {
     const empId = localStorage.getItem('empId');
@@ -199,10 +209,11 @@ export class EmployeesComponent implements OnInit {
     this.resetForm();
     this.showAddModal = true;
   }
+
   editEmployee(employee: Employee) {
     this.isEditMode = true;
     this.selectedEmployee = employee;
-    this.newEmployee = {
+    this.employeeForm.patchValue({
       empName: employee.empName,
       directMgrId: employee.directMgr?.toString() || '',
       deptId: employee.deptId?.toString() || '',
@@ -217,7 +228,7 @@ export class EmployeesComponent implements OnInit {
       jobTypId: employee.jobTypId,
       lang: employee.lang || '2',
       note: employee.note || ''
-    };
+    });
     this.showAddModal = true;
   }
 
@@ -229,7 +240,7 @@ export class EmployeesComponent implements OnInit {
   }
 
   resetForm() {
-    this.newEmployee = {
+    this.employeeForm.reset({
       empName: '',
       directMgrId: '',
       deptId: '',
@@ -244,30 +255,35 @@ export class EmployeesComponent implements OnInit {
       jobTypId: 0,
       lang: '2',
       note: ''
-    };
+    });
   }
 
   submitEmployee() {
-    if (this.isEditMode) {
-      console.log('Edit Employee Data:', this.newEmployee, 'Employee ID:', this.selectedEmployee?.empId);
-      // TODO: Call API to update the employee
-      this.messageService.add({ 
-        severity: 'success', 
-        summary: 'نجح', 
-        detail: 'تم تحديث الموظف بنجاح' 
-      });
+    if (this.employeeForm.valid) {
+      if (this.isEditMode) {
+        console.log('Edit Employee Data:', this.employeeForm.value, 'Employee ID:', this.selectedEmployee?.empId);
+        // TODO: Call API to update the employee
+        this.messageService.add({ 
+          severity: 'success', 
+          summary: 'نجح', 
+          detail: 'تم تحديث الموظف بنجاح' 
+        });
+      } else {
+        console.log('New Employee Data:', this.employeeForm.value);
+        // TODO: Call API to save the employee
+        this.messageService.add({ 
+          severity: 'success', 
+          summary: 'نجح', 
+          detail: 'تم إضافة الموظف بنجاح' 
+        });
+      }
+      this.closeModal();
+      // Reload the employees list
+      this.loadEmployees();
     } else {
-      console.log('New Employee Data:', this.newEmployee);
-      // TODO: Call API to save the employee
-      this.messageService.add({ 
-        severity: 'success', 
-        summary: 'نجح', 
-        detail: 'تم إضافة الموظف بنجاح' 
-      });
+      // Mark all fields as touched to show validation errors
+      this.employeeForm.markAllAsTouched();
     }
-    this.closeModal();
-    // Reload the employees list
-    this.loadEmployees();
   }
 
   loadEmployees() {
@@ -325,10 +341,7 @@ export class EmployeesComponent implements OnInit {
   }
 
   resetChangeNumberForm() {
-    this.changeNumberData = {
-      newNumber: '',
-      notes: ''
-    };
+    this.changeNumberForm.reset();
   }
 
   getOldEmployeeNumber(employee: Employee | null): string {
@@ -337,23 +350,28 @@ export class EmployeesComponent implements OnInit {
   }
 
   submitChangeNumber() {
-    console.log('Change Number Data:', {
-      empId: this.selectedEmployee?.empId,
-      empName: this.selectedEmployee?.empName,
-      oldNumber: this.getOldEmployeeNumber(this.selectedEmployee),
-      newNumber: this.changeNumberData.newNumber,
-      notes: this.changeNumberData.notes
-    });
-    
-    // TODO: Call API to change the employee number
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'نجح', 
-      detail: 'تم تغيير رقم الموظف بنجاح' 
-    });
-    this.closeChangeNumberModal();
-    // Reload the employees list
-    this.loadEmployees();
+    if (this.changeNumberForm.valid) {
+      console.log('Change Number Form Data:', {
+        empId: this.selectedEmployee?.empId,
+        empName: this.selectedEmployee?.empName,
+        oldNumber: this.getOldEmployeeNumber(this.selectedEmployee),
+        newNumber: this.changeNumberForm.value.newNumber,
+        notes: this.changeNumberForm.value.notes
+      });
+      
+      // TODO: Call API to change the employee number
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'نجح', 
+        detail: 'تم تغيير رقم الموظف بنجاح' 
+      });
+      this.closeChangeNumberModal();
+      // Reload the employees list
+      this.loadEmployees();
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.changeNumberForm.markAllAsTouched();
+    }
   }
 
   changePassword(employee: Employee) {
@@ -369,35 +387,39 @@ export class EmployeesComponent implements OnInit {
   }
 
   resetChangePasswordForm() {
-    this.changePasswordData = {
-      newPassword: '',
-      confirmPassword: ''
-    };
+    this.changePasswordForm.reset();
   }
 
   submitChangePassword() {
-    if (this.changePasswordData.newPassword !== this.changePasswordData.confirmPassword) {
-      this.messageService.add({ 
-        severity: 'error', 
-        summary: 'خطأ', 
-        detail: 'كلمة المرور وتأكيد كلمة المرور غير متطابقين' 
-      });
-      return;
-    }
+    if (this.changePasswordForm.valid) {
+      const formValue = this.changePasswordForm.value;
+      
+      if (formValue.newPassword !== formValue.confirmPassword) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'خطأ', 
+          detail: 'كلمة المرور وتأكيد كلمة المرور غير متطابقين' 
+        });
+        return;
+      }
 
-    console.log('Change Password Data:', {
-      empId: this.selectedEmployee?.empId,
-      empName: this.selectedEmployee?.empName,
-      newPassword: this.changePasswordData.newPassword
-    });
-    
-    // TODO: Call API to change the employee password
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'نجح', 
-      detail: 'تم تغيير كلمة مرور الموظف بنجاح' 
-    });
-    this.closeChangePasswordModal();
+      console.log('Change Password Form Data:', {
+        empId: this.selectedEmployee?.empId,
+        empName: this.selectedEmployee?.empName,
+        newPassword: formValue.newPassword
+      });
+      
+      // TODO: Call API to change the employee password
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'نجح', 
+        detail: 'تم تغيير كلمة مرور الموظف بنجاح' 
+      });
+      this.closeChangePasswordModal();
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.changePasswordForm.markAllAsTouched();
+    }
   }
 
   getActiveFlagDisplay(activeFlag: string): string {
@@ -406,5 +428,47 @@ export class EmployeesComponent implements OnInit {
 
   getLanguageDisplay(lang: string): string {
     return lang === '1' ? 'English' : 'العربية';
+  }
+
+  // Helper methods for form validation
+  isFieldInvalid(fieldName: string, formGroup: FormGroup = this.employeeForm): boolean {
+    const field = formGroup.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getFieldError(fieldName: string, formGroup: FormGroup = this.employeeForm): string {
+    const field = formGroup.get(fieldName);
+    if (field && field.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) {
+        return 'هذا الحقل مطلوب';
+      }
+      if (field.errors['email']) {
+        return 'يرجى إدخال بريد إلكتروني صحيح';
+      }
+      if (field.errors['minlength']) {
+        return `يجب أن تحتوي كلمة المرور على ${field.errors['minlength'].requiredLength} أحرف على الأقل`;
+      }
+    }
+    return '';
+  }
+
+  // Getter methods for form validation
+  get isEmployeeFormValid(): boolean {
+    return this.employeeForm.valid;
+  }
+
+  get isChangeNumberFormValid(): boolean {
+    return this.changeNumberForm.valid;
+  }
+
+  get isChangePasswordFormValid(): boolean {
+    if (!this.changePasswordForm.valid) return false;
+    const formValue = this.changePasswordForm.value;
+    return formValue.newPassword === formValue.confirmPassword;
+  }
+
+  get passwordsMatch(): boolean {
+    const formValue = this.changePasswordForm.value;
+    return formValue.newPassword === formValue.confirmPassword;
   }
 }
