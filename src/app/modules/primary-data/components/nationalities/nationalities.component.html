@@ -1,1 +1,287 @@
-<p>nationalities works!</p>
+<div class="nationalities-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.GENERAL_DATA.NATIONALITIES_GENERAL.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addNationality()" [title]="'MENU.GENERAL_DATA.NATIONALITIES_ACTIONS.ADD_NATIONALITY_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MENU.GENERAL_DATA.NATIONALITIES_ACTIONS.ADD_NATIONALITY' | translate }}
+      </button>
+    </div>
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_ACTIONS.SEARCH_PLACEHOLDER' | translate"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_ACTIONS.SEARCH_TITLE' | translate">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.EDIT' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.ARABIC_NAME' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.ENGLISH_NAME' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.NOTES' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let nationality of nationalities" class="table-row">
+          <td>
+            <button class="action-btn edit-btn" (click)="editNationality(nationality)" [title]="'MENU.GENERAL_DATA.NATIONALITIES_GENERAL.EDIT_TOOLTIP' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ nationality.ar_Name }}</td>
+          <td>{{ nationality.en_Name }}</td>
+          <td>{{ nationality.note }}</td>
+          <td>
+            <button class="action-btn delete-btn" (click)="deleteNationality(nationality)" [title]="'MENU.GENERAL_DATA.NATIONALITIES_GENERAL.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="nationalities.length === 0" class="empty-row">
+          <td colspan="5" class="empty-message">
+            {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.NO_DATA' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+    <div class="pagination-info">
+      <span>{{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Add Nationality Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form #addNationalityForm="ngForm" (ngSubmit)="submitNationality()">
+        <div class="form-grid">
+          <!-- Arabic Name -->
+          <div class="form-group">
+            <label for="arabicName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="arabicName"
+              class="form-input" 
+              [(ngModel)]="nationalityForm.ar_Name" 
+              name="arabicName"
+              required
+              [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ARABIC_NAME_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- English Name -->
+          <div class="form-group">
+            <label for="englishName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="englishName"
+              class="form-input" 
+              [(ngModel)]="nationalityForm.en_Name" 
+              name="englishName"
+              required
+              [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.ENGLISH_NAME_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width">
+            <label for="notes">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              id="notes"
+              class="form-textarea" 
+              [(ngModel)]="nationalityForm.note" 
+              name="notes"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.NOTES_PLACEHOLDER' | translate">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!addNationalityForm.valid">
+            {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.ADD_NATIONALITY_MODAL.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Nationality Modal -->
+<div *ngIf="showEditModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form #editNationalityForm="ngForm" (ngSubmit)="submitNationality()">
+        <div class="form-grid">
+          <!-- Arabic Name -->
+          <div class="form-group">
+            <label for="editArabicName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="editArabicName"
+              class="form-input" 
+              [(ngModel)]="nationalityForm.ar_Name" 
+              name="editArabicName"
+              required
+              [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ARABIC_NAME_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- English Name -->
+          <div class="form-group">
+            <label for="editEnglishName">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="editEnglishName"
+              class="form-input" 
+              [(ngModel)]="nationalityForm.en_Name" 
+              name="editEnglishName"
+              required
+              [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.ENGLISH_NAME_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width">
+            <label for="editNotes">{{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.NOTES' | translate }}</label>
+            <textarea 
+              id="editNotes"
+              class="form-textarea" 
+              [(ngModel)]="nationalityForm.note" 
+              name="editNotes"
+              rows="3"
+              [placeholder]="'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.NOTES_PLACEHOLDER' | translate">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!editNationalityForm.valid">
+            {{ 'MENU.GENERAL_DATA.NATIONALITIES_MODALS.EDIT_NATIONALITY_MODAL.UPDATE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
