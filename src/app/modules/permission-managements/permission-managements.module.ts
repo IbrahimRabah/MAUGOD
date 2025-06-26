@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PermissionManagementsRoutingModule } from './permission-managements-routing.module';
 import { PremissionsManaagementComponent } from './components/premissions-manaagement/premissions-manaagement.component';
@@ -43,7 +44,8 @@ import { PermissionsDelegationsComponent } from './components/permissions-delega
   ],
   imports: [
     CommonModule,
-    PermissionManagementsRoutingModule
+    PermissionManagementsRoutingModule,
+    TranslateModule
   ]
 })
 export class PermissionManagementsModule { }

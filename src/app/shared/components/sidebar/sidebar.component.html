@@ -301,7 +301,7 @@
         <div [routerLink]="['/permission-managements']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('permissions')" [class.expanded]="isSubmenuOpen('permissions')">
           <i class="fa-solid fa-users"></i>
-          <span>ادارة الصلاحيات</span>
+          <span>{{ 'MENU.PERMISSION_MANAGEMENT.TITLE' | translate }}</span>
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
         </div>
@@ -312,18 +312,16 @@
             <a class="nav-link" (click)="toggleSubmenu('systemPermissions')"
               [class.expanded]="isSubmenuOpen('systemPermissions')">
               <i class="fas fa-shield-alt"></i>
-              <span>الصلاحيات علي النظام</span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_SYSTEM' | translate }}</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemPermissions')">
-              <li><a class="nav-link" [routerLink]="['/permission-managements/user-roles']"><i class="fas fa-user-tag"></i><span>ادوار المستخدمين</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/user-role-assignment']"><i class="fas fa-user-shield"></i><span>اسناد الادوار
-                    للمستخدمين</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/role-chart-rights']"><i class="fas fa-chart-line"></i><span>صلاحيات الرسومات
-                    البيانية</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/role-module-rights']"><i class="fas fa-key"></i><span>منح صلاحيات للادوار</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/role-report-rights']"><i class="fas fa-file-alt"></i><span>الصلاحيات علي التقارير</span></a>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/user-roles']"><i class="fas fa-user-tag"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLES' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/user-role-assignment']"><i class="fas fa-user-shield"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLE_ASSIGNMENTS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/role-chart-rights']"><i class="fas fa-chart-line"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_CHART_RIGHTS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/role-module-rights']"><i class="fas fa-key"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_MODULE_RIGHTS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/role-report-rights']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_REPORT_RIGHTS' | translate }}</span></a>
               </li>
             </ul>
           </li>
@@ -332,7 +330,7 @@
             <div [routerLink]="['/permission-managements/basic-system-items']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('systemElements')"
               [class.expanded]="isSubmenuOpen('systemElements')">
-              <span>عناصر النظام الاساسي</span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM_ITEMS' | translate }}</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
@@ -348,7 +346,7 @@
             <div [routerLink]="['/permission-managements/permission-on-data']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('dataPermissions')"
               [class.expanded]="isSubmenuOpen('dataPermissions')">
-              <span>الصلاحيات علي البيانات</span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_DATA' | translate }}</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>

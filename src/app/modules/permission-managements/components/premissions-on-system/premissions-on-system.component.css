@@ -1,0 +1,320 @@
+/* Container for all cards */
+.permissions-system-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Page header */
+.page-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* Cards grid layout */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  justify-items: center;
+}
+
+/* Base permission card styles */
+.permission-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 320px;
+  padding: 32px 24px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  border: 2px solid transparent;
+}
+
+.permission-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+}
+
+/* Card icon containers with different colors */
+.card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin-bottom: 24px;
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.card-icon i {
+  font-size: 36px;
+  color: white;
+  z-index: 2;
+  position: relative;
+}
+
+/* Individual card icon colors */
+.user-roles {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.user-assignments {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 8px 20px rgba(240, 147, 251, 0.4);
+}
+
+.chart-rights {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+}
+
+.module-rights {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+}
+
+.report-rights {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  box-shadow: 0 8px 20px rgba(250, 112, 154, 0.4);
+}
+
+/* Card content */
+.card-content {
+  text-align: center;
+  width: 100%;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  line-height: 1.4;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+/* Hover effects for each card type */
+.permission-card:hover .user-roles {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.permission-card:hover .user-assignments {
+  background: linear-gradient(135deg, #ed64a6 0%, #e53e3e 100%);
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.permission-card:hover .chart-rights {
+  background: linear-gradient(135deg, #3182ce 0%, #00b4d8 100%);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.permission-card:hover .module-rights {
+  background: linear-gradient(135deg, #38a169 0%, #2dd4bf 100%);
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.permission-card:hover .report-rights {
+  background: linear-gradient(135deg, #e53e3e 0%, #ecc94b 100%);
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Card background color change on hover */
+.permission-card:hover {
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+}
+
+.permission-card:hover .card-title {
+  color: #1a202c;
+  font-weight: 700;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .permissions-system-container {
+    padding: 16px;
+  }
+  
+  .cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  
+  .permission-card {
+    padding: 24px 20px;
+  }
+  
+  .card-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 20px;
+  }
+  
+  .card-icon i {
+    font-size: 28px;
+  }
+  
+  .card-title {
+    font-size: 16px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .permission-card {
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+  
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 16px;
+  }
+  
+  .card-icon i {
+    font-size: 24px;
+  }
+  
+  .card-title {
+    font-size: 15px;
+  }
+  
+  .page-title {
+    font-size: 22px;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .permissions-system-container {
+  direction: rtl;
+}
+
+[dir="rtl"] .card-title {
+  text-align: center;
+}
+
+/* Animation for page load */
+.permission-card {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.permission-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.permission-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.permission-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.permission-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.permission-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus accessibility */
+.permission-card:focus {
+  outline: 3px solid #4299e1;
+  outline-offset: 2px;
+}
+
+/* Additional hover effects */
+.permission-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.3) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 20px;
+}
+
+.permission-card:hover::before {
+  opacity: 1;
+}
+
+/* Loading animation for icons */
+.card-icon::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.permission-card:hover .card-icon::after {
+  opacity: 1;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

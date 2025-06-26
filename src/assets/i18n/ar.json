@@ -25,7 +25,19 @@
       "EMPLOYEE_DOCUMENTS": "مستندات الموظفين"
     },
     "MESSAGES_NOTIFICATIONS": "الرسائل والإشعارات",
-    "PERMISSION_MANAGEMENT": "ادارة الصلاحيات",
+    "PERMISSION_MANAGEMENT": {
+      "TITLE": "ادارة الصلاحيات",
+      "PERMISSIONS_ON_SYSTEM": "الصلاحيات علي النظام",
+      "BASIC_SYSTEM_ITEMS": "عناصر النظام الاساسية",
+      "PERMISSIONS_ON_DATA": "الصلاحيات علي البيانات",
+      "SYSTEM_PERMISSIONS": {
+        "USER_ROLES": "ادوار المستخدمين",
+        "USER_ROLE_ASSIGNMENTS": "اسناد الادوار للمستخدمين",
+        "ROLE_CHART_RIGHTS": "صلاحيات الرسومات البيانية",
+        "ROLE_MODULE_RIGHTS": "منح صلاحيات للادوار",
+        "ROLE_REPORT_RIGHTS": "الصلاحيات علي التقارير"
+      }
+    },
     "AUDIT_TRACING": "التدقيق و المتابعة",
     "SYSTEM_MANAGEMENT": "ادارة النظام",
     "CTS_DATA": {
