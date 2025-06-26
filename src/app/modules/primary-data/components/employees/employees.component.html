@@ -192,7 +192,9 @@
 <div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>{{ isEditMode ? 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EDIT_TITLE' : 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.TITLE' | translate }}</h3>
+      <h3 *ngIf="!isEditMode">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'MENU.GENERAL_DATA.EMPLOYEES_MODALS.ADD_EMPLOYEE_MODAL.EDIT_TITLE'  | translate }}</h3>
+
       <button class="close-btn" (click)="closeModal()">
         <i class="fas fa-times"></i>
       </button>
