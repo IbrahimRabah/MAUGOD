@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Job, JobResponse } from '../../../../core/models/jobs';
 import { PaginationRequest } from '../../../../core/models/pagination';
 import { JobService } from '../../services/job.service';
@@ -21,16 +22,8 @@ export class JobsComponent implements OnInit {
   showEditModal: boolean = false;
   selectedJob: Job | null = null;
   
-  // Form data
-  jobForm = {
-    jobTypId: 0,
-    arTitle: '',
-    enTitle: '',
-    arJobDesc: '',
-    enJobDesc: '',
-    note: '',
-    del: ''
-  };
+  // Reactive Forms
+  jobForm!: FormGroup;
   
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
@@ -42,12 +35,27 @@ export class JobsComponent implements OnInit {
     private jobService: JobService,
     public langService: LanguageService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private fb: FormBuilder
   ) {
+    this.initializeForm();
+    
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
       this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
       this.loadJobs(); // Reload jobs when language changes
+    });
+  }
+
+  initializeForm() {
+    this.jobForm = this.fb.group({
+      jobTypId: [0],
+      arTitle: ['', [Validators.required]],
+      enTitle: ['', [Validators.required]],
+      arJobDesc: [''],
+      enJobDesc: [''],
+      note: [''],
+      del: ['']
     });
   }
 
@@ -112,7 +120,7 @@ export class JobsComponent implements OnInit {
 
   editJob(job: Job) {
     this.selectedJob = job;
-    this.jobForm = {
+    this.jobForm.patchValue({
       jobTypId: job.jobTypId,
       arTitle: job.arTitle,
       enTitle: job.enTitle,
@@ -120,7 +128,7 @@ export class JobsComponent implements OnInit {
       enJobDesc: job.enJobDesc,
       note: job.note,
       del: job.del
-    };
+    });
     this.showEditModal = true;
   }
 
@@ -132,7 +140,7 @@ export class JobsComponent implements OnInit {
   }
 
   resetForm() {
-    this.jobForm = {
+    this.jobForm.reset({
       jobTypId: 0,
       arTitle: '',
       enTitle: '',
@@ -140,50 +148,57 @@ export class JobsComponent implements OnInit {
       enJobDesc: '',
       note: '',
       del: ''
-    };
+    });
   }
 
   submitJob() {
-    if (this.showEditModal && this.selectedJob) {
-      // Update job
-      this.jobService.updateJob(this.jobForm).subscribe({
-        next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'تم تحديث الوظيفة بنجاح' : 'Job updated successfully'
-          });
-          this.closeModal();
-          this.loadJobs();
-        },
-        error: (error) => {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في تحديث الوظيفة' : 'Failed to update job'
-          });
-        }
-      });
+    if (this.jobForm.valid) {
+      const formValue = this.jobForm.value;
+      
+      if (this.showEditModal && this.selectedJob) {
+        // Update job
+        this.jobService.updateJob(formValue).subscribe({
+          next: () => {
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'تم تحديث الوظيفة بنجاح' : 'Job updated successfully'
+            });
+            this.closeModal();
+            this.loadJobs();
+          },
+          error: (error) => {
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في تحديث الوظيفة' : 'Failed to update job'
+            });
+          }
+        });
+      } else {
+        // Add new job
+        this.jobService.addJob(formValue).subscribe({
+          next: () => {
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة الوظيفة بنجاح' : 'Job added successfully'
+            });
+            this.closeModal();
+            this.loadJobs();
+          },
+          error: (error) => {
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
+              detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في إضافة الوظيفة' : 'Failed to add job'
+            });
+          }
+        });
+      }
     } else {
-      // Add new job
-      this.jobService.addJob(this.jobForm).subscribe({
-        next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة الوظيفة بنجاح' : 'Job added successfully'
-          });
-          this.closeModal();
-          this.loadJobs();
-        },
-        error: (error) => {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-            detail: this.langService.getCurrentLang() === 'ar' ? 'فشل في إضافة الوظيفة' : 'Failed to add job'
-          });
-        }
-      });
+      // Mark all fields as touched to show validation errors
+      this.jobForm.markAllAsTouched();
     }
   }
 
@@ -242,5 +257,26 @@ export class JobsComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Helper methods for form validation
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.jobForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getFieldError(fieldName: string): string {
+    const field = this.jobForm.get(fieldName);
+    if (field && field.errors && (field.dirty || field.touched)) {
+      if (field.errors['required']) {
+        return this.langService.getCurrentLang() === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
+      }
+    }
+    return '';
+  }
+
+  // Getter method for form validation
+  get isFormValid(): boolean {
+    return this.jobForm.valid;
   }
 }

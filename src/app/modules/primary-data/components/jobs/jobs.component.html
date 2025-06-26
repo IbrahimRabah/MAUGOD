@@ -175,41 +175,42 @@
     </div>
     
     <div class="modal-body">
-      <form #addJobForm="ngForm" (ngSubmit)="submitJob()">
+      <form [formGroup]="jobForm" (ngSubmit)="submitJob()">
         <div class="form-grid">
           <div class="form-group">
-            <label for="add-ar-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_TITLE' | translate }} <span class="required">*</span></label>
+            <label for="add-ar-title" class="required">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_TITLE' | translate }}</label>
             <input 
               type="text" 
               id="add-ar-title"
-              name="arTitle"
               class="form-input"
-              [(ngModel)]="jobForm.arTitle"
-              required
-              #arTitle="ngModel"
+              formControlName="arTitle"
+              [class.error]="isFieldInvalid('arTitle')"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_TITLE_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('arTitle')" class="error-message">
+              {{ getFieldError('arTitle') }}
+            </div>
           </div>
           
           <div class="form-group">
-            <label for="add-en-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_TITLE' | translate }} <span class="required">*</span></label>
+            <label for="add-en-title" class="required">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_TITLE' | translate }}</label>
             <input 
               type="text" 
               id="add-en-title"
-              name="enTitle"
               class="form-input"
-              [(ngModel)]="jobForm.enTitle"
-              required
-              #enTitle="ngModel"
+              formControlName="enTitle"
+              [class.error]="isFieldInvalid('enTitle')"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_TITLE_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('enTitle')" class="error-message">
+              {{ getFieldError('enTitle') }}
+            </div>
           </div>
           
           <div class="form-group full-width">
             <label for="add-ar-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_DESCRIPTION' | translate }}</label>
             <textarea 
               id="add-ar-desc"
-              name="arJobDesc"
               class="form-textarea"
-              [(ngModel)]="jobForm.arJobDesc"
+              formControlName="arJobDesc"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ARABIC_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
           </div>
@@ -218,9 +219,8 @@
             <label for="add-en-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_DESCRIPTION' | translate }}</label>
             <textarea 
               id="add-en-desc"
-              name="enJobDesc"
               class="form-textarea"
-              [(ngModel)]="jobForm.enJobDesc"
+              formControlName="enJobDesc"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.ENGLISH_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
           </div>
@@ -229,9 +229,8 @@
             <label for="add-note">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.NOTES' | translate }}</label>
             <textarea 
               id="add-note"
-              name="note"
               class="form-textarea"
-              [(ngModel)]="jobForm.note"
+              formControlName="note"
               rows="2"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
           </div>
@@ -241,7 +240,7 @@
           <button type="button" class="cancel-btn" (click)="closeModal()">
             {{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!addJobForm.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
             {{ 'MENU.GENERAL_DATA.JOBS_MODALS.ADD_JOB_MODAL.SAVE' | translate }}
           </button>
         </div>
@@ -261,41 +260,42 @@
     </div>
     
     <div class="modal-body">
-      <form #editJobForm="ngForm" (ngSubmit)="submitJob()">
+      <form [formGroup]="jobForm" (ngSubmit)="submitJob()">
         <div class="form-grid">
           <div class="form-group">
-            <label for="edit-ar-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_TITLE' | translate }} <span class="required">*</span></label>
+            <label for="edit-ar-title" class="required">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_TITLE' | translate }}</label>
             <input 
               type="text" 
               id="edit-ar-title"
-              name="arTitle"
               class="form-input"
-              [(ngModel)]="jobForm.arTitle"
-              required
-              #arTitleEdit="ngModel"
+              formControlName="arTitle"
+              [class.error]="isFieldInvalid('arTitle')"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_TITLE_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('arTitle')" class="error-message">
+              {{ getFieldError('arTitle') }}
+            </div>
           </div>
           
           <div class="form-group">
-            <label for="edit-en-title">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_TITLE' | translate }} <span class="required">*</span></label>
+            <label for="edit-en-title" class="required">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_TITLE' | translate }}</label>
             <input 
               type="text" 
               id="edit-en-title"
-              name="enTitle"
               class="form-input"
-              [(ngModel)]="jobForm.enTitle"
-              required
-              #enTitleEdit="ngModel"
+              formControlName="enTitle"
+              [class.error]="isFieldInvalid('enTitle')"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_TITLE_PLACEHOLDER' | translate">
+            <div *ngIf="isFieldInvalid('enTitle')" class="error-message">
+              {{ getFieldError('enTitle') }}
+            </div>
           </div>
           
           <div class="form-group full-width">
             <label for="edit-ar-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_DESCRIPTION' | translate }}</label>
             <textarea 
               id="edit-ar-desc"
-              name="arJobDesc"
               class="form-textarea"
-              [(ngModel)]="jobForm.arJobDesc"
+              formControlName="arJobDesc"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ARABIC_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
           </div>
@@ -304,9 +304,8 @@
             <label for="edit-en-desc">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_DESCRIPTION' | translate }}</label>
             <textarea 
               id="edit-en-desc"
-              name="enJobDesc"
               class="form-textarea"
-              [(ngModel)]="jobForm.enJobDesc"
+              formControlName="enJobDesc"
               rows="3"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.ENGLISH_DESCRIPTION_PLACEHOLDER' | translate"></textarea>
           </div>
@@ -315,9 +314,8 @@
             <label for="edit-note">{{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.NOTES' | translate }}</label>
             <textarea 
               id="edit-note"
-              name="note"
               class="form-textarea"
-              [(ngModel)]="jobForm.note"
+              formControlName="note"
               rows="2"
               [placeholder]="'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.NOTES_PLACEHOLDER' | translate"></textarea>
           </div>
@@ -327,7 +325,7 @@
           <button type="button" class="cancel-btn" (click)="closeModal()">
             {{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!editJobForm.valid">
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
             {{ 'MENU.GENERAL_DATA.JOBS_MODALS.EDIT_JOB_MODAL.UPDATE' | translate }}
           </button>
         </div>
