@@ -25,7 +25,19 @@
       "EMPLOYEE_DOCUMENTS": "Employee Documents"
     },
     "MESSAGES_NOTIFICATIONS": "Messages & Notifications",
-    "PERMISSION_MANAGEMENT": "Permission Management",
+    "PERMISSION_MANAGEMENT": {
+      "TITLE": "Permission Management",
+      "PERMISSIONS_ON_SYSTEM": "Permissions on System",
+      "BASIC_SYSTEM_ITEMS": "Basic System Items",
+      "PERMISSIONS_ON_DATA": "Permissions on Data",
+      "SYSTEM_PERMISSIONS": {
+        "USER_ROLES": "User Roles",
+        "USER_ROLE_ASSIGNMENTS": "User Role Assignments",
+        "ROLE_CHART_RIGHTS": "Role Chart Rights",
+        "ROLE_MODULE_RIGHTS": "Role Module Rights",
+        "ROLE_REPORT_RIGHTS": "Role Report Rights"
+      }
+    },
     "AUDIT_TRACING": "Audit & Tracing",
     "SYSTEM_MANAGEMENT": "System Management",
     "CTS_DATA": {

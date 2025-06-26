@@ -1,1 +1,31 @@
-<p>premissions-manaagement works!</p>
+<div class="cards-container">
+  <!-- Permissions on System Card -->
+  <a [routerLink]="['/permission-managements/premissions-on-system']" class="card permissions-system">
+    <div class="icon-container">
+      <i class="fas fa-user-shield"></i>
+    </div>
+    <div class="card-title">
+      {{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_SYSTEM' | translate }}
+    </div>
+  </a>
+
+  <!-- Basic System Items Card -->
+  <a [routerLink]="['/permission-managements/basic-system-items']" class="card basic-system">
+    <div class="icon-container">
+      <i class="fas fa-cogs"></i>
+    </div>
+    <div class="card-title">
+      {{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM_ITEMS' | translate }}
+    </div>
+  </a>
+
+  <!-- Permissions on Data Card -->
+  <a [routerLink]="['/permission-managements/permission-on-data']" class="card permissions-data">
+    <div class="icon-container">
+      <i class="fas fa-database"></i>
+    </div>
+    <div class="card-title">
+      {{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_DATA' | translate }}
+    </div>
+  </a>
+</div>

@@ -1,0 +1,202 @@
+/* Container for all cards */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Base card styles */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  cursor: pointer;
+}
+
+/* Card hover effects */
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  color: white;
+}
+
+/* Card background gradients */
+.permissions-system {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.permissions-system:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.basic-system {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.basic-system:hover {
+  background: linear-gradient(135deg, #ed64a6 0%, #e53e3e 100%);
+}
+
+.permissions-data {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.permissions-data:hover {
+  background: linear-gradient(135deg, #3182ce 0%, #00b4d8 100%);
+}
+
+/* Icon container */
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.icon-container i {
+  font-size: 32px;
+  color: white;
+}
+
+/* Card title */
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.4;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .card {
+    padding: 24px 20px;
+    min-height: 160px;
+  }
+  
+  .icon-container {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 16px;
+  }
+  
+  .icon-container i {
+    font-size: 24px;
+  }
+  
+  .card-title {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cards-container {
+    padding: 12px;
+  }
+  
+  .card {
+    padding: 20px 16px;
+    min-height: 140px;
+  }
+  
+  .icon-container {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 12px;
+  }
+  
+  .icon-container i {
+    font-size: 20px;
+  }
+  
+  .card-title {
+    font-size: 16px;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .cards-container {
+  direction: rtl;
+}
+
+[dir="rtl"] .card-title {
+  text-align: center;
+}
+
+/* Animation for page load */
+.card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus accessibility */
+.card:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* Additional hover effects for better interactivity */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
+}

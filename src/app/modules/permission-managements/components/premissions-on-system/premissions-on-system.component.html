@@ -1,1 +1,62 @@
-<p>premissions-on-system works!</p>
+<div class="permissions-system-container">
+  <div class="page-header">
+    <h2 class="page-title">{{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_SYSTEM' | translate }}</h2>
+  </div>
+  
+  <div class="cards-grid">
+    <!-- User Roles Card -->
+    <div class="permission-card" 
+         [routerLink]="['../user-roles']">
+      <div class="card-icon user-roles">
+        <i class="fas fa-users-cog"></i>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLES' | translate }}</h3>
+      </div>
+    </div>
+
+    <!-- User Role Assignments Card -->
+    <div class="permission-card" 
+         [routerLink]="['../user-role-assignment']">
+      <div class="card-icon user-assignments">
+        <i class="fas fa-user-tag"></i>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLE_ASSIGNMENTS' | translate }}</h3>
+      </div>
+    </div>
+
+    <!-- Role Chart Rights Card -->
+    <div class="permission-card" 
+         [routerLink]="['../role-chart-rights']">
+      <div class="card-icon chart-rights">
+        <i class="fas fa-chart-bar"></i>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_CHART_RIGHTS' | translate }}</h3>
+      </div>
+    </div>
+
+    <!-- Role Module Rights Card -->
+    <div class="permission-card" 
+         [routerLink]="['../role-module-rights']">
+      <div class="card-icon module-rights">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_MODULE_RIGHTS' | translate }}</h3>
+      </div>
+    </div>
+
+    <!-- Role Report Rights Card -->
+    <div class="permission-card" 
+         [routerLink]="['../role-report-rights']">
+      <div class="card-icon report-rights">
+        <i class="fas fa-file-contract"></i>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_REPORT_RIGHTS' | translate }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
