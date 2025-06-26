@@ -36,6 +36,18 @@
         "ROLE_CHART_RIGHTS": "Role Chart Rights",
         "ROLE_MODULE_RIGHTS": "Role Module Rights",
         "ROLE_REPORT_RIGHTS": "Role Report Rights"
+      },
+      "BASIC_SYSTEM": {
+        "CHARTS_LIST": "Charts List",
+        "REPORTS_LIST": "Reports List",
+        "SYSTEM_MENUS": "System Menus",
+        "SYSTEM_MODULES": "System Modules"
+      },
+      "DATA_PERMISSIONS": {
+        "ACCESS_PERMISSIONS": "Access Permissions",
+        "ACCESS_PERMISSIONS_SUMMARY": "Access Permissions Summary",
+        "REQUEST_POST_PERMISSIONS": "Request Post Permissions",
+        "PERMISSIONS_DELEGATIONS": "Permissions Delegations"
       }
     },
     "AUDIT_TRACING": "Audit & Tracing",

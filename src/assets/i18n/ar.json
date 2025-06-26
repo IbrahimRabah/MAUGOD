@@ -36,6 +36,18 @@
         "ROLE_CHART_RIGHTS": "صلاحيات الرسومات البيانية",
         "ROLE_MODULE_RIGHTS": "منح صلاحيات للادوار",
         "ROLE_REPORT_RIGHTS": "الصلاحيات علي التقارير"
+      },
+      "BASIC_SYSTEM": {
+        "CHARTS_LIST": "قائمة الرسومات البيانية",
+        "REPORTS_LIST": "قائمة التقارير",
+        "SYSTEM_MENUS": "قوائم النظام",
+        "SYSTEM_MODULES": "شاشات النظام"
+      },
+      "DATA_PERMISSIONS": {
+        "ACCESS_PERMISSIONS": "الصلاحيات علي البيانات",
+        "ACCESS_PERMISSIONS_SUMMARY": "ملخص الصلاحيات علي البيانات",
+        "REQUEST_POST_PERMISSIONS": "صلاحيات رفع الطلبات",
+        "PERMISSIONS_DELEGATIONS": "التفويض علي الصلاحيات"
       }
     },
     "AUDIT_TRACING": "التدقيق و المتابعة",

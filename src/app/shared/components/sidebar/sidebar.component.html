@@ -330,15 +330,16 @@
             <div [routerLink]="['/permission-managements/basic-system-items']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('systemElements')"
               [class.expanded]="isSubmenuOpen('systemElements')">
+              <i class="fas fa-cogs"></i>
               <span>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM_ITEMS' | translate }}</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemElements')">
-              <li><a class="nav-link" [routerLink]="['/permission-managements/charts-list']">قائمة الرسومات البيانية</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/report-list']">قائمة التقارير</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/system-menus']">قوائم النظام</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/system-modules']">شاشات النظام</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/charts-list']"><i class="fas fa-chart-line"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.CHARTS_LIST' | translate }}</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/report-list']"><i class="fas fa-file-alt"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.REPORTS_LIST' | translate }}</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/system-menus']"><i class="fas fa-list"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.SYSTEM_MENUS' | translate }}</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/system-modules']"><i class="fas fa-th"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.SYSTEM_MODULES' | translate }}</a></li>
             </ul>
           </li>
           <!-- 14.3 الصلاحيات علي البيانات -->
@@ -346,15 +347,16 @@
             <div [routerLink]="['/permission-managements/permission-on-data']" routerLinkActive="active">
             <a class="nav-link" (click)="toggleSubmenu('dataPermissions')"
               [class.expanded]="isSubmenuOpen('dataPermissions')">
+              <i class="fas fa-key"></i>
               <span>{{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_DATA' | translate }}</span>
               <i class="fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('dataPermissions')">
-              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions']">الصلاحيات علي البيانات</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions-summary']">ملخص الصلاحيات علي البيانات</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/request-post-premisions']">صلاحيات رفع الطلبات</a></li>
-              <li><a class="nav-link"  [routerLink]="['/permission-managements/permissions-delegations']">التفويض علي الصلاحيات</a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions']"><i class="fas fa-key"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions-summary']"><i class="fas fa-clipboard-list"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_SUMMARY' | translate }}</span></a></li>
+              <li><a class="nav-link" [routerLink]="['/permission-managements/request-post-premisions']"><i class="fas fa-paper-plane"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.REQUEST_POST_PERMISSIONS' | translate }}</span></a></li>
+              <li><a class="nav-link"  [routerLink]="['/permission-managements/permissions-delegations']"><i class="fas fa-user-friends"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.PERMISSIONS_DELEGATIONS' | translate }}</span></a></li>
             </ul>
           </li>
         </ul>
