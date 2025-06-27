@@ -5,9 +5,7 @@
   <main class="main-content main-background" [ngClass]="{'authenticated': authService.isAuthenticated()}">
     <div class="container">
         <app-sidebar></app-sidebar>
-
       <router-outlet></router-outlet>
-
     </div>
   </main>
   <app-footer *ngIf="authService.isAuthenticated()"></app-footer>

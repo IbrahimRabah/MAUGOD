@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
 import { LanguageService } from '../../../core/services/language.service';
+import { AuthenticationService } from '../../../modules/authentication/services/authentication.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +11,8 @@ import { LanguageService } from '../../../core/services/language.service';
 export class NavbarComponent {
   constructor(
     public sidebarService: SidebarService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+     private authenticationService: AuthenticationService
   ) { }
 
   toggleSidebar() {
@@ -19,8 +21,7 @@ export class NavbarComponent {
   }
 
   logout() {
-    // Implement logout logic here
-    console.log('Logout clicked');
+    this.authenticationService.logout();
   }
 
   switchLanguage() {

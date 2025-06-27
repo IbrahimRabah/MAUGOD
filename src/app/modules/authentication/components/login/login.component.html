@@ -1,93 +1,68 @@
-<div class="main">
-  <div class="container" id="container" #container>
-    <div class="form-container sign-up">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <h1>Sign In</h1>
-        <input type="text" placeholder="User Name" formControlName="userName" />
-        <div
-          *ngIf="
-            loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched
-          "
-          class="error-message text-danger"
-        >
-          Please enter a valid userName.
-        </div>
-        <input
-          type="password"
-          placeholder="Password"
-          formControlName="password"
-        />
-        <div
-          *ngIf="
-            loginForm.get('password')?.invalid &&
-            loginForm.get('password')?.touched
-          "
-          class="error-message text-danger"
-        >
-          Please enter a valid password.
-        </div>
-        <div class="text-danger error-message" *ngIf="apiError">
-          {{ apiError }}
-        </div>
-        <button type="submit">
-          <i class="fas fa-spinner" *ngIf="isLoading"></i>
-          <span *ngIf="!isLoading">Sign In</span>
-        </button>
-      </form>
+<div class="login-background">
+  <div class="overlay"></div>
+  <div class="login-card">
+    <div class="company-title">شركة البوراق العربية</div>
+    
+    <div class="logo-container">
+      <img src="assets/images/logo.jpeg" alt="Company Logo" class="company-logo">
     </div>
-    <div class="form-container sign-in">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <h1>Sign In</h1>
-        <input type="text" placeholder="User Name" formControlName="userName" />
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="input-group">
+        <div class="input-container">
+          <i class="fas fa-user input-icon"></i>
+          <input 
+            type="text" 
+            placeholder="ادخل أسم المستخدم" 
+            formControlName="userName"
+            class="form-input"
+          />
+        </div>
         <div
-          *ngIf="
-            loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched
-          "
-          class="error-message text-danger"
+          *ngIf="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched"
+          class="error-message"
         >
-          Please enter a valid userName.
-        </div>
-        <input
-          type="password"
-          placeholder="Password"
-          formControlName="password"
-        />
-        <div
-          *ngIf="
-            loginForm.get('password')?.invalid &&
-            loginForm.get('password')?.touched
-          "
-          class="error-message text-danger"
-        >
-          Please enter a valid password.
-        </div>
-        <div class="error-message text-danger" *ngIf="apiError">
-          {{ apiError }}
-        </div>
-        <button type="submit">
-          <i class="fas fa-spinner" *ngIf="isLoading"></i>
-          <span *ngIf="!isLoading">Sign In</span>
-        </button>
-      </form>
-    </div>
-    <div class="toggle-container">
-      <div class="toggle">
-        <div class="toggle-panel toggle-left">
-          <h1>Welcome Back!</h1>
-          <p style="color: black;">Enter your personal details to use all of site features</p>
-          <button class="hidden" id="login" (click)="toggle('remove')">
-            Sign In
-          </button>
-        </div>
-        <div class="toggle-panel toggle-right">
-          <h1>Hello, Friend!</h1>
-          <p style="color: black;">Sign In with your personal details to use all of site features</p>
-          <button class="hidden" id="register" (click)="toggle('add')">
-            Sign In
-          </button>
+          يرجى إدخال اسم مستخدم صحيح
         </div>
       </div>
-    </div>
+
+      <div class="input-group">
+        <div class="input-container">
+          <i class="fas fa-key input-icon"></i>
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            placeholder="ادخل كلمة السر" 
+            formControlName="password"
+            class="form-input"
+          />
+          <i 
+            [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" 
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+          ></i>
+        </div>
+        <div
+          *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          class="error-message"
+        >
+          يرجى إدخال كلمة سر صحيحة
+        </div>
+      </div>
+
+      <div class="checkbox-container">
+        <input type="checkbox" id="rememberMe" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}">
+        <label for="rememberMe" class="checkbox-label">تذكر اسم المستخدم</label>
+      </div>
+
+      <div class="error-message" *ngIf="apiError">
+        {{ apiError }}
+      </div>
+
+      <button type="submit" class="login-button" [disabled]="isLoading">
+        <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+        <span *ngIf="!isLoading">تسجيل الدخول</span>
+      </button>
+    </form>
   </div>
 </div>
 

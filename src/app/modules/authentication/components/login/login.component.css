@@ -1,245 +1,228 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
-    direction: rtl;
-}
-.main{
-    background-color: #c9d6ff;
-    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    width: 100%;
-    padding: 20px;
-    margin: 0;
+    font-family: 'Cairo', sans-serif;
 }
 
-.container{
-    background-color: #fff;
-    border-radius: 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+.login-background {
     position: relative;
-    overflow: hidden;
-    width: 100%;
-    max-width: 768px;
-    height: 600px;
-    margin: 0 auto;
-}
-
-.container p{
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: 0.3px;
-    margin: 20px 0;
-}
-
-.container span{
-    font-size: 12px;
-}
-
-.container a{
-    color: #333;
-    font-size: 13px;
-    text-decoration: none;
-    margin: 15px 0 10px;
-}
-
-.container button{
-    background-color: #512da8;
-    color: #fff;
-    font-size: 12px;
-    padding: 10px 45px;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.container button.hidden{
-    background-color: transparent;
-    border-color: #fff;
-}
-
-.container form{
-    background-color: #fff;
+    width: 100vw;
+    height: 100vh;
+    background: url('../../../../../assets/images/login-background.jpeg') no-repeat center center;
+    background-size: cover;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    padding: 0 40px;
-    height: 100%;
 }
 
-.container input{
-    background-color: #eee;
-    border: none;
-    margin: 8px 0;
-    padding: 10px 15px;
-    font-size: 13px;
-    border-radius: 8px;
-    width: 100%;
-    outline: none;
-}
-
-.form-container{
+.overlay {
     position: absolute;
     top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    transition: all 0.6s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sign-in{
-    right: 0;  /* Changed from left: 0 */
-    width: 50%;
-    z-index: 2;
-}
-
-.container.active .sign-in{
-    transform: translateX(-100%);  /* Changed from 100% to -100% */
-}
-
-.sign-up{
-    right: 0;  /* Changed from left: 0 */
-    width: 50%;
-    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.3);
     z-index: 1;
 }
 
-.container.active .sign-up{
-    transform: translateX(-100%);  /* Changed from 100% to -100% */
-    opacity: 1;
-    z-index: 5;
-    animation: move 0.6s;
-}
-
-@keyframes move{
-    0%, 49.99%{
-        opacity: 0;
-        z-index: 1;
-    }
-    50%, 100%{
-        opacity: 1;
-        z-index: 5;
-    }
-}
-
-.social-icons{
-    margin: 20px 0;
-}
-
-.social-icons a{
-    border: 1px solid #ccc;
-    border-radius: 20%;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 3px;
-    width: 40px;
-    height: 40px;
-}
-
-.toggle-container{
-    position: absolute;
-    top: 0;
-    right: 50%;  /* Changed from left: 50% */
-    width: 50%;
-    height: 100%;
-    overflow: hidden;
-    transition: all 0.6s ease-in-out;
-    border-radius: 0 150px 100px 0;  /* Swapped border radius */
-    z-index: 1000;
-}
-
-.container.active .toggle-container{
-    transform: translateX(100%);  /* Changed from -100% to 100% */
-    border-radius: 150px 0 0 100px;  /* Swapped border radius */
-}
-
-.toggle{
-    background-color: #512da8;
-    height: 100%;
-    background: linear-gradient(to left, #5c6bc0, #512da8);  /* Changed gradient direction */
-    color: #fff;
+.login-card {
     position: relative;
-    right: -100%;  /* Changed from left: -100% */
-    height: 100%;
-    width: 200%;
-    transform: translateX(0);
-    transition: all 0.6s ease-in-out;
+    z-index: 2;
+    background-color: #e6e6e6;
+    border-radius: 20px;
+    padding: 40px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    direction: rtl;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.container.active .toggle{
-    transform: translateX(-50%);  /* Changed from 50% to -50% */
+.login-card form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.toggle-panel{
+.company-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.logo-container {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.company-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #056ac8;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.input-icon {
     position: absolute;
-    width: 50%;
-    height: 100%;
+    right: 12px;
+    color: #666;
+    z-index: 3;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 40px 12px 40px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+    direction: rtl;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #056ac8;
+}
+
+.password-toggle {
+    position: absolute;
+    left: 12px;
+    color: #666;
+    cursor: pointer;
+    z-index: 3;
+    transition: color 0.3s ease;
+    font-size: 16px;
+}
+
+.password-toggle:hover {
+    color: #056ac8;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+    direction: rtl;
+    width: 100%;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-left: 8px;
+    width: 18px;
+    height: 18px;
+    accent-color: #056ac8;
+}
+
+.checkbox-label {
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.login-button {
+    width: 100%;
+    background-color: #056ac8;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    padding: 0 30px;
-    text-align: center;
-    top: 0;
-    transform: translateX(0);
-    transition: all 0.6s ease-in-out;
+    gap: 8px;
+    margin-top: 10px;
 }
 
-.toggle-left{
-    transform: translateX(200%);  /* Changed from -200% to 200% */
+.login-button:hover:not(:disabled) {
+    background-color: #044a94;
 }
 
-.container.active .toggle-left{
-    transform: translateX(0);
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
-.toggle-right{
-    left: 0;  /* Changed from right: 0 */
-    transform: translateX(0);
+.fa-spin {
+    animation: spin 1s linear infinite;
 }
 
-.container.active .toggle-right{
-    transform: translateX(-200%);  /* Changed from 200% to -200% */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Additional form centering styles */
+.login-card .company-title,
+.login-card .logo-container,
+.login-card form {
+    width: 100%;
+}
+
+.login-card .input-group,
+.login-card .checkbox-container {
+    max-width: 100%;
 }
 
 @media (max-width: 768px) {
-    .container {
-        height: 500px;
-        margin: 0 10px;
+    .login-card {
+        width: 95%;
+        padding: 30px 20px;
     }
     
-    .container form {
-        padding: 0 20px;
+    .company-title {
+        font-size: 20px;
     }
     
-    .toggle-container {
-        display: none;
-    }
-    
-    .form-container {
-        width: 100% !important;
-    }
-    
-    .sign-in {
-        right: 0;
-        width: 100%;
-    }
-    
-    .sign-up {
-        right: 0;
-        width: 100%;
+    .company-logo {
+        width: 80px;
+        height: 80px;
     }
 }

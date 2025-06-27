@@ -9,9 +9,11 @@ import { AuthenticationService } from './modules/authentication/services/authent
 })
 export class AppComponent {
   title = 'mawgoud';
-
+  authenticated: boolean = false;
   constructor(
     public sidebarService: SidebarService,
     public authService: AuthenticationService
-  ) {}
+  ) {
+    this.authenticated = this.authService.isAuthenticated();
+  }
 }

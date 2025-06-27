@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Account, LoginResponse } from '../../../core/models/account';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { Account, LoginResponse } from '../../../core/models/account';
 export class AuthenticationService {
   private apiUrl = `${environment.apiUrl}/Account`  ;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private router: Router) { }
 
   login(account: Account): Observable<any> {
     return this.http.post(`${this.apiUrl}/Login`, account);
@@ -20,15 +21,18 @@ export class AuthenticationService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/Register`, account);
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Logout`, {});
+  logout(): void {
+    localStorage.clear();
+    this.router.navigate(['/auth/login']);
   }
 
   isAuthenticated(): boolean {
-    if (!localStorage.getItem('token')) {
-      return true;
+    if (localStorage.getItem('token') == null) {
+      console.log('User is not authenticated');
+      return false;
     }else{
-    return true;
+      console.log('User is authenticated');
+      return true;
     }
   }
   getAuthToken() {

@@ -15,6 +15,8 @@ export class LoginComponent {
  loginForm!: FormGroup;
   isLoading: boolean = false;
   apiError!: string;
+  showPassword: boolean = false;
+  rememberMe: boolean = false;
   @ViewChild('container') containerDiv!: ElementRef;
   constructor(private authenticationService: AuthenticationService, private router: Router,private LanguageService:LanguageService) { }
   ngOnInit(): void {
@@ -49,15 +51,7 @@ export class LoginComponent {
       }
     }
   }
-  toggle(action: string): void {
-    switch (action) {
-      case 'add':
-        this.containerDiv.nativeElement.classList.add('active');
-        break;
-      default:
-        this.containerDiv.nativeElement.classList.remove('active');
-    }
-  }
+
   setInfoInStorage(response: LoginResponse): void {
     localStorage.setItem('token', response.token);
     
@@ -89,4 +83,7 @@ export class LoginComponent {
         this.LanguageService.setLanguage('ar');
   }
 }
+togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 }
