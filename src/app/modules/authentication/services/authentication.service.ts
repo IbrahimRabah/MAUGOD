@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Account, LoginResponse } from '../../../core/models/account';
 import { Router } from '@angular/router';
@@ -9,9 +9,11 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private apiUrl = `${environment.apiUrl}/Account`  ;
+  private apiUrl = `${environment.apiUrl}/Account`;
+  private authStatusSubject = new BehaviorSubject<boolean>(this.hasValidToken());
+  public authStatus$ = this.authStatusSubject.asObservable();
 
-  constructor(private http: HttpClient,private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(account: Account): Observable<any> {
     return this.http.post(`${this.apiUrl}/Login`, account);
@@ -23,20 +25,36 @@ export class AuthenticationService {
 
   logout(): void {
     localStorage.clear();
+    this.authStatusSubject.next(false);
     this.router.navigate(['/auth/login']);
   }
 
   isAuthenticated(): boolean {
-    if (localStorage.getItem('token') == null) {
+    const isAuth = this.hasValidToken();
+    this.authStatusSubject.next(isAuth);
+    return isAuth;
+  }
+
+  private hasValidToken(): boolean {
+    const token = localStorage.getItem('token');
+    if (token == null) {
       console.log('User is not authenticated');
       return false;
-    }else{
+    } else {
       console.log('User is authenticated');
       return true;
     }
   }
+
   getAuthToken() {
     let token = localStorage.getItem('token') || '';
     return token;
+  }
+
+  // Call this method when login is successful
+  setAuthenticated(token: string): void {
+    localStorage.setItem('token', token);
+    this.authStatusSubject.next(true);
+    this.router.navigate(['/home']);
   }
 }
