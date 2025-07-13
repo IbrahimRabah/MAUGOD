@@ -51,6 +51,15 @@ export class AuthenticationService {
     return token;
   }
 
+  getEmpId(): string {
+    return localStorage.getItem('empId') || '';
+  }
+
+  getEmpIdAsNumber(): number | null {
+    const empId = localStorage.getItem('empId');
+    return empId ? parseInt(empId, 10) : null;
+  }
+
   // Call this method when login is successful
   setAuthenticated(token: string): void {
     localStorage.setItem('token', token);

@@ -5,6 +5,7 @@ import { PaginationRequest } from '../../../../core/models/pagination';
 import { JobService } from '../../services/job.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { CustomValidators } from '../../../../shared/validators/custom-validators';
 
 @Component({
   selector: 'app-jobs',
@@ -49,9 +50,10 @@ export class JobsComponent implements OnInit {
 
   initializeForm() {
     this.jobForm = this.fb.group({
+      jobId: [0],
       jobTypId: [0],
-      arTitle: ['', [Validators.required]],
-      enTitle: ['', [Validators.required]],
+      arTitle: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
+      enTitle: ['', [Validators.required, CustomValidators.noArabicInEnglishValidator]],
       arJobDesc: [''],
       enJobDesc: [''],
       note: [''],
@@ -121,6 +123,7 @@ export class JobsComponent implements OnInit {
   editJob(job: Job) {
     this.selectedJob = job;
     this.jobForm.patchValue({
+      jobId: job.jobId,
       jobTypId: job.jobTypId,
       arTitle: job.arTitle,
       enTitle: job.enTitle,
@@ -141,6 +144,7 @@ export class JobsComponent implements OnInit {
 
   resetForm() {
     this.jobForm.reset({
+      jobId: 0,
       jobTypId: 0,
       arTitle: '',
       enTitle: '',
@@ -156,7 +160,9 @@ export class JobsComponent implements OnInit {
       const formValue = this.jobForm.value;
       
       if (this.showEditModal && this.selectedJob) {
-        // Update job
+        console.log('Updating job:', formValue);
+        formValue.jobId = this.jobForm.get('jobTypId')?.value; // Ensure jobId is set for
+        // Update job - form already contains jobId
         this.jobService.updateJob(formValue).subscribe({
           next: () => {
             this.messageService.add({ 
@@ -204,7 +210,7 @@ export class JobsComponent implements OnInit {
 
   loadJobs() {
     this.loading = true;
-    this.jobService.getJobs(this.paginationRequest).subscribe({
+    this.jobService.getJobs(this.paginationRequest, this.searchTerm).subscribe({
       next: (response: JobResponse) => {
         if (response.isSuccess) {
           this.jobs = response.data.jobs;
@@ -230,6 +236,7 @@ export class JobsComponent implements OnInit {
   }
 
   deleteJob(job: Job) {
+    console.log('Deleting job:', job);
     this.confirmationService.confirm({
       message: this.langService.getCurrentLang() === 'ar' ? 
         `هل أنت متأكد من حذف الوظيفة "${job.arTitle}"؟` : 
@@ -268,9 +275,8 @@ export class JobsComponent implements OnInit {
   getFieldError(fieldName: string): string {
     const field = this.jobForm.get(fieldName);
     if (field && field.errors && (field.dirty || field.touched)) {
-      if (field.errors['required']) {
-        return this.langService.getCurrentLang() === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
-      }
+      const isArabic = this.langService.getCurrentLang() === 'ar';
+      return CustomValidators.getErrorMessage(field.errors, fieldName, isArabic);
     }
     return '';
   }

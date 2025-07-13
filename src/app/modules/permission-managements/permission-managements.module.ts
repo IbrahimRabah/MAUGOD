@@ -1,6 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+
+// PrimeNG Modules
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { PermissionManagementsRoutingModule } from './permission-managements-routing.module';
 import { PremissionsManaagementComponent } from './components/premissions-manaagement/premissions-manaagement.component';
@@ -44,8 +49,12 @@ import { PermissionsDelegationsComponent } from './components/permissions-delega
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
     PermissionManagementsRoutingModule,
-    TranslateModule
+    TranslateModule,
+    ToastModule,
+    ConfirmDialogModule
   ]
 })
 export class PermissionManagementsModule { }

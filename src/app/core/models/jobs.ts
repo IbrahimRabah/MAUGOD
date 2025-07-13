@@ -1,5 +1,6 @@
 export interface Job {
   jobTypId: number;
+  jobId: number;
   arTitle: string;
   enTitle: string;
   arJobDesc: string;

@@ -13,27 +13,34 @@ export class JobService {
 private apiUrl = `${environment.apiUrl}/Jobs`  ;
    
   constructor(private http:HttpClient) { }
-  getJobs(pagination:PaginationRequest): Observable<JobResponse> {
-     const headers  =  new HttpHeaders({
-      'lang': pagination.lang,
-      'pageNumber': pagination.pageNumber,
-      'pageSize': pagination.pageSize
+  getJobs(pagination: PaginationRequest, searchTerm?: string): Observable<JobResponse> {
+    let headers = new HttpHeaders({
+      'lang': pagination.lang.toString(),
+      'pageNumber': pagination.pageNumber.toString(),
+      'pageSize': pagination.pageSize.toString()
     });
 
-    return this.http.get<JobResponse>(`${this.apiUrl}/GetJobs`, { headers });
+    let url = `${this.apiUrl}/GetJobs`;
+    
+    // Add search parameter if provided
+    if (searchTerm && searchTerm.trim()) {
+      url += `?search=${encodeURIComponent(searchTerm.trim())}`;
+    }
+
+    return this.http.get<JobResponse>(url, { headers });
   }
   getJobById(id: number, lang: number): Observable<Job> {
     const params = { lang: lang.toString() };
     return this.http.get<Job>(`${this.apiUrl}/GetJobById/${id}`, { params });
   }
   addJob(job: Job): Observable<Job> {
-    return this.http.post<Job>(`${this.apiUrl}/AddJob`, job);
+    return this.http.post<Job>(`${this.apiUrl}/AddEmpJob`, job);
   }
   updateJob(job: Job): Observable<Job> {
-    return this.http.put<Job>(`${this.apiUrl}/UpdateJob`, job);
+    return this.http.post<Job>(`${this.apiUrl}/UpdateEmpJob`, job);
   }
   deleteJob(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/DeleteJob/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/DeleteJobById/${id}`);
   }
 
 }

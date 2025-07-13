@@ -1,1 +1,324 @@
-<p>user-role-assignment works!</p>
+<div class="user-role-assignment-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'USER_ROLE_ASSIGNMENT.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addUserRoleAssignment()" [title]="'USER_ROLE_ASSIGNMENT.ADD_USER_ROLE_ASSIGNMENT' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'USER_ROLE_ASSIGNMENT.ADD_USER_ROLE_ASSIGNMENT' | translate }}
+      </button>
+      <button class="delete-selected-btn" (click)="deleteSelectedRoleAssignments()" [disabled]="selectedItems.size === 0" [title]="'USER_ROLE_ASSIGNMENT.DELETE_SELECTED' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'USER_ROLE_ASSIGNMENT.DELETE_SELECTED' | translate }}
+      </button>
+    </div>
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text" 
+          class="search-input" 
+          [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_PLACEHOLDER' | translate"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          [title]="'USER_ROLE_ASSIGNMENT.SEARCH_TITLE' | translate">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>
+            <input 
+              type="checkbox" 
+              class="select-all-checkbox"
+              [checked]="isAllSelected"
+              [indeterminate]="isIndeterminate"
+              (change)="toggleSelectAll($event)"
+              [title]="'USER_ROLE_ASSIGNMENT.SELECT_ALL' | translate">
+          </th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.START_DATE' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.END_DATE' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.NOTE' | translate }}</th>
+          <th>{{ 'USER_ROLE_ASSIGNMENT.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let roleAssignment of userRoleAssignments" class="table-row">
+          <td>
+            <input 
+              type="checkbox" 
+              [checked]="selectedItems.has(roleAssignment.recId)"
+              (change)="toggleSelectItem(roleAssignment.recId, $event)"
+              [title]="'USER_ROLE_ASSIGNMENT.SELECT_ITEM' | translate">
+          </td>
+          <td>{{ roleAssignment.fromEmployeeName }}</td>
+          <td>{{ roleAssignment.fromDepartmentName || '-' }}</td>
+          <td>{{ roleAssignment.fromManagerOfDepartmentName || '-' }}</td>
+          <td>{{ roleAssignment.fromBranchName || '-' }}</td>
+          <td>{{ roleAssignment.fromManagerOfBranchName || '-' }}</td>
+          <td>{{ roleAssignment.fromRoleName }}</td>
+          <td>{{ roleAssignment.startDate ? (roleAssignment.startDate | date:'short') : '-' }}</td>
+          <td>{{ roleAssignment.endDate ? (roleAssignment.endDate | date:'short') : '-' }}</td>
+          <td>{{ roleAssignment.note || '-' }}</td>
+          <td>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteUserRoleAssignment(roleAssignment)"
+              [title]="'USER_ROLE_ASSIGNMENT.DELETE_ROLE_ASSIGNMENT' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="userRoleAssignments.length === 0" class="empty-row">
+          <td colspan="11" class="empty-message">{{ 'USER_ROLE_ASSIGNMENT.NO_DATA_AVAILABLE' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'USER_ROLE_ASSIGNMENT.SHOWING' | translate }} {{ currentPageStart }} {{ 'USER_ROLE_ASSIGNMENT.TO' | translate }} {{ currentPageEnd }} {{ 'USER_ROLE_ASSIGNMENT.OF' | translate }} {{ totalRecords }} {{ 'USER_ROLE_ASSIGNMENT.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'USER_ROLE_ASSIGNMENT.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'USER_ROLE_ASSIGNMENT.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'USER_ROLE_ASSIGNMENT.PAGE' | translate }} {{ currentPage }} {{ 'USER_ROLE_ASSIGNMENT.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'USER_ROLE_ASSIGNMENT.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'USER_ROLE_ASSIGNMENT.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'USER_ROLE_ASSIGNMENT.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'USER_ROLE_ASSIGNMENT.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'USER_ROLE_ASSIGNMENT.PAGE' | translate }} {{ currentPage }} {{ 'USER_ROLE_ASSIGNMENT.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'USER_ROLE_ASSIGNMENT.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'USER_ROLE_ASSIGNMENT.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'USER_ROLE_ASSIGNMENT.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Role Assignment Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 *ngIf="!isEditMode">{{ 'USER_ROLE_ASSIGNMENT.ADD_USER_ROLE_ASSIGNMENT' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'USER_ROLE_ASSIGNMENT.EDIT_USER_ROLE_ASSIGNMENT' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="userRoleAssignmentForm" (ngSubmit)="submitUserRoleAssignment()">
+        <div class="form-grid">
+          <!-- Employee -->
+          <div class="form-group">
+            <label for="employeeId">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }} <span class="required">*</span></label>
+            <select 
+              id="employeeId"
+              class="form-select"
+              [class.error]="isFieldInvalid('employeeId')"
+              formControlName="employeeId">
+              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_EMPLOYEE' | translate }}</option>
+              <option *ngFor="let employee of employees" [value]="employee.id">{{ employee.name }}</option>
+            </select>
+            <div class="error-message" *ngIf="isFieldInvalid('employeeId')">
+              {{ getFieldError('employeeId') }}
+            </div>
+          </div>
+
+          <!-- Department -->
+          <div class="form-group">
+            <label for="departmentId">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
+            <select 
+              id="departmentId"
+              class="form-select"
+              formControlName="departmentId">
+              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_DEPARTMENT' | translate }}</option>
+              <option *ngFor="let department of departments" [value]="department.id">{{ department.name }}</option>
+            </select>
+          </div>
+
+          <!-- Manager of Department -->
+          <div class="form-group">
+            <label for="managerOfDepartmentId">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
+            <select 
+              id="managerOfDepartmentId"
+              class="form-select"
+              formControlName="managerOfDepartmentId">
+              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_MANAGER' | translate }}</option>
+              <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+            </select>
+          </div>
+
+          <!-- Branch -->
+          <div class="form-group">
+            <label for="branchId">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
+            <select 
+              id="branchId"
+              class="form-select"
+              formControlName="branchId">
+              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_BRANCH' | translate }}</option>
+              <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
+            </select>
+          </div>
+
+          <!-- Manager of Branch -->
+          <div class="form-group">
+            <label for="managerOfBranchId">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
+            <select 
+              id="managerOfBranchId"
+              class="form-select"
+              formControlName="managerOfBranchId">
+              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_MANAGER' | translate }}</option>
+              <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+            </select>
+          </div>
+
+          <!-- Role -->
+          <div class="form-group">
+            <label for="roleId">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }} <span class="required">*</span></label>
+            <select 
+              id="roleId"
+              class="form-select"
+              [class.error]="isFieldInvalid('roleId')"
+              formControlName="roleId">
+              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_ROLE' | translate }}</option>
+              <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+            </select>
+            <div class="error-message" *ngIf="isFieldInvalid('roleId')">
+              {{ getFieldError('roleId') }}
+            </div>
+          </div>
+
+          <!-- Start Date -->
+          <div class="form-group">
+            <label for="startDate">{{ 'USER_ROLE_ASSIGNMENT.START_DATE' | translate }}</label>
+            <input 
+              type="date" 
+              id="startDate"
+              class="form-input"
+              formControlName="startDate">
+          </div>
+
+          <!-- End Date -->
+          <div class="form-group">
+            <label for="endDate">{{ 'USER_ROLE_ASSIGNMENT.END_DATE' | translate }}</label>
+            <input 
+              type="date" 
+              id="endDate"
+              class="form-input"
+              formControlName="endDate">
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width">
+            <label for="notes">{{ 'USER_ROLE_ASSIGNMENT.NOTE' | translate }}</label>
+            <textarea 
+              id="notes"
+              class="form-textarea"
+              rows="3"
+              [placeholder]="'USER_ROLE_ASSIGNMENT.ENTER_NOTES' | translate"
+              formControlName="notes"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'USER_ROLE_ASSIGNMENT.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!isUserRoleAssignmentFormValid" *ngIf="!isEditMode">
+            {{ 'USER_ROLE_ASSIGNMENT.ADD' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!isUserRoleAssignmentFormValid" *ngIf="isEditMode">
+            {{ 'USER_ROLE_ASSIGNMENT.UPDATE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
