@@ -30,9 +30,9 @@ private apiUrl = `${environment.apiUrl}/Nationalities`  ;
     return this.http.post<Nationality>(`${this.apiUrl}/AddNationality`, nationality);
   }
   updateNationality(nationality: Nationality): Observable<Nationality> {
-    return this.http.put<Nationality>(`${this.apiUrl}/UpdateNationality`, nationality);
+    return this.http.post<Nationality>(`${this.apiUrl}/UpdateNationality`, nationality);
   }
   deleteNationality(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/DeleteNationality/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/DeleteNationalityById/${id}`);
   }
 }

@@ -5,6 +5,7 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { NationalityService } from '../../services/nationality.service';
 import { Nationality, NationalityResponse } from '../../../../core/models/nationality ';
 import { PaginationRequest } from '../../../../core/models/pagination';
+import { CustomValidators } from '../../../../shared/validators/custom-validators';
 
 @Component({
   selector: 'app-nationalities',
@@ -50,8 +51,8 @@ export class NationalitiesComponent implements OnInit {
   initializeForm() {
     this.nationalityForm = this.fb.group({
       natId: [''],
-      ar_Name: ['', [Validators.required]],
-      en_Name: ['', [Validators.required]],
+      ar: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
+      en: ['', [Validators.required, CustomValidators.noArabicInEnglishValidator]],
       note: [''],
       del: ['']
     });
@@ -120,8 +121,8 @@ export class NationalitiesComponent implements OnInit {
     this.selectedNationality = nationality;
     this.nationalityForm.patchValue({
       natId: nationality.natId,
-      ar_Name: nationality.ar_Name,
-      en_Name: nationality.en_Name,
+      ar: nationality.ar_Name,
+      en: nationality.en_Name,
       note: nationality.note,
       del: nationality.del
     });
@@ -138,8 +139,8 @@ export class NationalitiesComponent implements OnInit {
   resetForm() {
     this.nationalityForm.reset({
       natId: '',
-      ar_Name: '',
-      en_Name: '',
+      ar: '',
+      en: '',
       note: '',
       del: ''
     });
@@ -262,9 +263,8 @@ export class NationalitiesComponent implements OnInit {
   getFieldError(fieldName: string): string {
     const field = this.nationalityForm.get(fieldName);
     if (field && field.errors && (field.dirty || field.touched)) {
-      if (field.errors['required']) {
-        return this.langService.getCurrentLang() === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
-      }
+      const isArabic = this.langService.getCurrentLang() === 'ar';
+      return CustomValidators.getErrorMessage(field.errors, fieldName, isArabic);
     }
     return '';
   }

@@ -1,7 +1,9 @@
 export interface Nationality {
   natId: string;
-  ar_Name: string;
-  en_Name: string;
+  ar_Name?: string;
+  ar: string;
+  en: string;
+  en_Name?: string;
   note: string;
   del: string;
 }

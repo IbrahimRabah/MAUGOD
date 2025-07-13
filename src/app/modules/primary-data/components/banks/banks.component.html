@@ -176,28 +176,28 @@
       <form [formGroup]="bankForm" (ngSubmit)="submitBank()">
         <div class="form-grid">
           <div class="form-group">
-            <label for="ar_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ARABIC_NAME' | translate }}</label>
+            <label for="ar" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ARABIC_NAME' | translate }}</label>
             <input 
               type="text" 
-              id="ar_Name" 
+              id="ar" 
               class="form-input"
-              formControlName="ar_Name"
-              [class.error]="isFieldInvalid('ar_Name')">
-            <div *ngIf="isFieldInvalid('ar_Name')" class="error-message">
-              {{ getFieldError('ar_Name') }}
+              formControlName="ar"
+              [class.error]="isFieldInvalid('ar')">
+            <div *ngIf="isFieldInvalid('ar')" class="error-message">
+              {{ getFieldError('ar') }}
             </div>
           </div>
 
           <div class="form-group">
-            <label for="en_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ENGLISH_NAME' | translate }}</label>
+            <label for="en" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.ADD_BANK_MODAL.ENGLISH_NAME' | translate }}</label>
             <input 
               type="text" 
-              id="en_Name" 
+              id="en" 
               class="form-input"
-              formControlName="en_Name"
-              [class.error]="isFieldInvalid('en_Name')">
-            <div *ngIf="isFieldInvalid('en_Name')" class="error-message">
-              {{ getFieldError('en_Name') }}
+              formControlName="en"
+              [class.error]="isFieldInvalid('en')">
+            <div *ngIf="isFieldInvalid('en')" class="error-message">
+              {{ getFieldError('en') }}
             </div>
           </div>
 
@@ -247,28 +247,28 @@
       <form [formGroup]="bankForm" (ngSubmit)="submitBank()">
         <div class="form-grid">
           <div class="form-group">
-            <label for="edit_ar_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ARABIC_NAME' | translate }}</label>
+            <label for="edit_ar" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ARABIC_NAME' | translate }}</label>
             <input 
               type="text" 
-              id="edit_ar_Name" 
+              id="edit_ar" 
               class="form-input"
-              formControlName="ar_Name"
-              [class.error]="isFieldInvalid('ar_Name')">
-            <div *ngIf="isFieldInvalid('ar_Name')" class="error-message">
-              {{ getFieldError('ar_Name') }}
+              formControlName="ar"
+              [class.error]="isFieldInvalid('ar')">
+            <div *ngIf="isFieldInvalid('ar')" class="error-message">
+              {{ getFieldError('ar') }}
             </div>
           </div>
 
           <div class="form-group">
-            <label for="edit_en_Name" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ENGLISH_NAME' | translate }}</label>
+            <label for="edit_en" class="required">{{ 'MENU.GENERAL_DATA.BANKS_MODALS.EDIT_BANK_MODAL.ENGLISH_NAME' | translate }}</label>
             <input 
               type="text" 
-              id="edit_en_Name" 
+              id="edit_en" 
               class="form-input"
-              formControlName="en_Name"
-              [class.error]="isFieldInvalid('en_Name')">
-            <div *ngIf="isFieldInvalid('en_Name')" class="error-message">
-              {{ getFieldError('en_Name') }}
+              formControlName="en"
+              [class.error]="isFieldInvalid('en')">
+            <div *ngIf="isFieldInvalid('en')" class="error-message">
+              {{ getFieldError('en') }}
             </div>
           </div>
 

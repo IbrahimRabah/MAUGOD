@@ -1,7 +1,9 @@
 export interface Bank {
   bankId: number;
-  ar_Name: string;
-  en_Name: string;
+  ar_Name?: string;
+  en_Name?: string;
+  en: string;
+  ar: string;
   bankData: string;
   note: string;
   del: string;

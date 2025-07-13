@@ -6,6 +6,7 @@ import { PaginationRequest } from '../../../../core/models/pagination';
 import { LanguageService } from '../../../../core/services/language.service';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
+import { CustomValidators } from '../../../../shared/validators/custom-validators';
 
 @Component({
   selector: 'app-banks',
@@ -50,9 +51,9 @@ export class BanksComponent implements OnInit {
 
   initializeForm() {
     this.bankForm = this.fb.group({
-      bankId: [0],
-      ar_Name: ['', [Validators.required]],
-      en_Name: ['', [Validators.required]],
+      bankId: [],
+      ar: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
+      en: ['', [Validators.required, CustomValidators.noArabicInEnglishValidator]],
       bankData: [''],
       note: [''],
       del: ['']
@@ -122,8 +123,8 @@ export class BanksComponent implements OnInit {
     this.selectedBank = bank;
     this.bankForm.patchValue({
       bankId: bank.bankId,
-      ar_Name: bank.ar_Name,
-      en_Name: bank.en_Name,
+      ar: bank.ar_Name,
+      en: bank.en_Name,
       bankData: bank.bankData,
       note: bank.note,
       del: bank.del
@@ -141,8 +142,8 @@ export class BanksComponent implements OnInit {
   resetForm() {
     this.bankForm.reset({
       bankId: 0,
-      ar_Name: '',
-      en_Name: '',
+      ar: '',
+      en: '',
       bankData: '',
       note: '',
       del: ''
@@ -154,6 +155,7 @@ export class BanksComponent implements OnInit {
       const formValue = this.bankForm.value;
       
       if (this.showEditModal && this.selectedBank) {
+        formValue.bankId = this.selectedBank.bankId; // Ensure bankId is set for update
         // Update bank
         this.bankService.updateBank(formValue).subscribe({
           next: () => {
@@ -266,9 +268,8 @@ export class BanksComponent implements OnInit {
   getFieldError(fieldName: string): string {
     const field = this.bankForm.get(fieldName);
     if (field && field.errors && (field.dirty || field.touched)) {
-      if (field.errors['required']) {
-        return this.langService.getCurrentLang() === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
-      }
+      const isArabic = this.langService.getCurrentLang() === 'ar';
+      return CustomValidators.getErrorMessage(field.errors, fieldName, isArabic);
     }
     return '';
   }

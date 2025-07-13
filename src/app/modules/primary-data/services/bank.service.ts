@@ -24,15 +24,15 @@ private apiUrl = `${environment.apiUrl}/Banks`  ;
   }
   getBankById(id: number, lang: number): Observable<Bank> {
     const params = { lang: lang.toString() };
-    return this.http.get<Bank>(`${this.apiUrl}/GetBankById/${id}`, { params });
+    return this.http.get<Bank>(`${this.apiUrl}/GetBankInfoById/${id}`, { params });
   }
   addBank(bank: Bank): Observable<Bank> {
-    return this.http.post<Bank>(`${this.apiUrl}/AddBank`, bank);
+    return this.http.post<Bank>(`${this.apiUrl}/AddBankInfo`, bank);
   }
   updateBank(bank: Bank): Observable<Bank> {
-    return this.http.put<Bank>(`${this.apiUrl}/UpdateBank`, bank);
+    return this.http.post<Bank>(`${this.apiUrl}/UpdateBankInfo`, bank);
   }
   deleteBank(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/DeleteBank/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/DeleteBankById/${id}`);
   }
 }
