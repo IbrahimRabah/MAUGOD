@@ -1,5 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+
+// PrimeNG Modules
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { VacarionAndTasksRoutingModule } from './vacarion-and-tasks-routing.module';
 import { VacationsTasksComponent } from './components/vacations-tasks/vacations-tasks.component';
@@ -23,6 +29,11 @@ import { MyBalanceComponent } from './components/my-balance/my-balance.component
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    ToastModule,
+    ConfirmDialogModule,
     VacarionAndTasksRoutingModule
   ]
 })

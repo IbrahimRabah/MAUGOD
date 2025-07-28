@@ -1,1 +1,599 @@
-<p>handle-statuses-employee-balance works!</p>
+<div class="employee-balance-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'EMPLOYEE_BALANCE.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addBalance()" [title]="'EMPLOYEE_BALANCE.ADD_BALANCE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'EMPLOYEE_BALANCE.ADD_BALANCE' | translate }}
+      </button>
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'EMPLOYEE_BALANCE.DELETE_SELECTED_TITLE' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'EMPLOYEE_BALANCE.DELETE_SELECTED' | translate }} ({{ selectedItems.length }})
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            class="search-input" 
+            formControlName="searchTerm"
+            (keyup.enter)="onSearch()"
+            [placeholder]="'EMPLOYEE_BALANCE.SEARCH_PLACEHOLDER' | translate"
+            [title]="'EMPLOYEE_BALANCE.SEARCH_TITLE' | translate">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>
+            <input type="checkbox" 
+                   [checked]="isAllSelected" 
+                   [indeterminate]="isPartiallySelected"
+                   (change)="toggleSelectAll()"
+                   [title]="'EMPLOYEE_BALANCE.SELECT_ALL' | translate">
+          </th>
+          <th>{{ 'EMPLOYEE_BALANCE.EDIT' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.ALL_EMPLOYEES' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.EMPLOYEE' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.DEPARTMENT' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.BRANCH' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.ROLE' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.STATUS' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.ALL_STATUSES' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.MAX_PER_WEEK' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.MAX_PER_MONTH' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.MAX_PER_YEAR' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.FORWARD_BALANCE' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.COUNT_BASE_CONTRACT_START' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.IGNORE_FRACTION' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.INCLUDE_WEEKEND' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.NOTES' | translate }}</th>
+          <th>{{ 'EMPLOYEE_BALANCE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let balance of employeeBalances" class="table-row">
+          <td>
+            <input type="checkbox" 
+                   [checked]="isSelected(balance)" 
+                   (change)="toggleSelection(balance)"
+                   [title]="'EMPLOYEE_BALANCE.SELECT_ITEM' | translate">
+          </td>
+          <td>
+            <button class="action-btn edit-btn" 
+                    (click)="editBalance(balance)" 
+                    [title]="'EMPLOYEE_BALANCE.EDIT_TOOLTIP' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="balance.allEmployee" [class.no]="!balance.allEmployee">
+              {{ balance.allEmployee ? ('EMPLOYEE_BALANCE.YES' | translate) : ('EMPLOYEE_BALANCE.NO' | translate) }}
+            </span>
+          </td>
+          <td>{{ balance.employeeName || '-' }}</td>
+          <td>{{ balance.departmentName || '-' }}</td>
+          <td>{{ balance.branchName || '-' }}</td>
+          <td>{{ balance.roleName || '-' }}</td>
+          <td>{{ balance.statusName || '-' }}</td>
+          <td>
+            <span class="boolean-badge" [class.yes]="balance.allSts" [class.no]="!balance.allSts">
+              {{ balance.allSts ? ('EMPLOYEE_BALANCE.YES' | translate) : ('EMPLOYEE_BALANCE.NO' | translate) }}
+            </span>
+          </td>
+          <td>{{ balance.maxPerWeek || '-' }}</td>
+          <td>{{ balance.maxPerMonth || '-' }}</td>
+          <td>{{ balance.maxPerYear || '-' }}</td>
+          <td>
+            <span class="boolean-badge" [class.yes]="balance.forwardBalance" [class.no]="!balance.forwardBalance">
+              {{ balance.forwardBalance ? ('EMPLOYEE_BALANCE.YES' | translate) : ('EMPLOYEE_BALANCE.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="balance.countBaseContractStart" [class.no]="!balance.countBaseContractStart">
+              {{ balance.countBaseContractStart ? ('EMPLOYEE_BALANCE.YES' | translate) : ('EMPLOYEE_BALANCE.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="balance.fractionFloorCeil" [class.no]="!balance.fractionFloorCeil">
+              {{ balance.fractionFloorCeil ? ('EMPLOYEE_BALANCE.YES' | translate) : ('EMPLOYEE_BALANCE.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="balance.includeWeekendInBetween" [class.no]="!balance.includeWeekendInBetween">
+              {{ balance.includeWeekendInBetween ? ('EMPLOYEE_BALANCE.YES' | translate) : ('EMPLOYEE_BALANCE.NO' | translate) }}
+            </span>
+          </td>
+          <td>{{ balance.note || '-' }}</td>
+          <td>
+            <button class="action-btn delete-btn" 
+                    (click)="deleteBalance(balance)" 
+                    [title]="'EMPLOYEE_BALANCE.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="employeeBalances.length === 0" class="empty-row">
+          <td colspan="18" class="empty-message">
+            {{ 'EMPLOYEE_BALANCE.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'EMPLOYEE_BALANCE.SHOWING' | translate }} {{ currentPageStart }} {{ 'EMPLOYEE_BALANCE.TO' | translate }} {{ currentPageEnd }} {{ 'EMPLOYEE_BALANCE.OF' | translate }} {{ totalRecords }} {{ 'EMPLOYEE_BALANCE.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'EMPLOYEE_BALANCE.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'EMPLOYEE_BALANCE.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'EMPLOYEE_BALANCE.PAGE' | translate }} {{ currentPage }} {{ 'EMPLOYEE_BALANCE.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'EMPLOYEE_BALANCE.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'EMPLOYEE_BALANCE.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'EMPLOYEE_BALANCE.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'EMPLOYEE_BALANCE.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'EMPLOYEE_BALANCE.PAGE' | translate }} {{ currentPage }} {{ 'EMPLOYEE_BALANCE.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'EMPLOYEE_BALANCE.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'EMPLOYEE_BALANCE.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'EMPLOYEE_BALANCE.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Balance Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 *ngIf="!isEditMode">{{ 'EMPLOYEE_BALANCE.ADD_BALANCE_MODAL_TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'EMPLOYEE_BALANCE.EDIT_BALANCE_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="balanceForm" (ngSubmit)="submitBalance()">
+        
+        <!-- Step 1: Employee Selection Type -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'EMPLOYEE_BALANCE.EMPLOYEE_SELECTION' | translate }}</h4>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="allEmployee" [value]="true" (change)="onEmployeeTypeChange()">
+              <span class="radio-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.FOR_EVERYONE' | translate }}
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="allEmployee" [value]="false" (change)="onEmployeeTypeChange()">
+              <span class="radio-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.FOR_GROUP' | translate }}
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 2: Group Selection (Only shown when "For Group" is selected) -->
+        <div class="form-section" *ngIf="!balanceForm.get('allEmployee')?.value">
+          <h4 class="section-title">{{ 'EMPLOYEE_BALANCE.SELECT_GROUP_TYPE' | translate }}</h4>
+          
+          <!-- Group Type Checkboxes -->
+          <div class="checkbox-grid">
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="includeEmployees" (change)="onGroupTypeChange('employees')">
+              <span class="checkbox-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.EMPLOYEES' | translate }}
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="includeDepartments" (change)="onGroupTypeChange('departments')">
+              <span class="checkbox-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.DEPARTMENTS' | translate }}
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="includeBranches" (change)="onGroupTypeChange('branches')">
+              <span class="checkbox-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.BRANCHES' | translate }}
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="includeRoles" (change)="onGroupTypeChange('roles')">
+              <span class="checkbox-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.ROLES' | translate }}
+            </label>
+          </div>
+
+          <!-- Pick Lists for each selected group type -->
+          <div class="picklist-container">
+            <!-- Employees Pick List -->
+            <div class="picklist-section" *ngIf="balanceForm.get('includeEmployees')?.value">
+              <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_EMPLOYEES' | translate }}</label>
+              <div class="custom-multiselect-container">
+                <div class="multiselect-header">
+                  <i class="fas fa-users"></i>
+                  {{ 'EMPLOYEE_BALANCE.EMPLOYEES' | translate }}
+                </div>
+                <div class="multiselect-search">
+                  <input 
+                    type="text" 
+                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_EMPLOYEES' | translate }}"
+                    [value]="multiSelectStates['employees'].searchTerm || ''"
+                    (input)="updateSearchTerm('employees', $any($event.target).value)"
+                    class="search-input">
+                  <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="multiselect-items">
+                  <div *ngFor="let emp of getFilteredItems('employees')" 
+                       class="multiselect-item"
+                       [class.selected]="isItemSelected('employees', emp)"
+                       (click)="toggleItemSelection('employees', emp)">
+                    <div class="item-checkbox">
+                      <i class="fas" [class.fa-check-square]="isItemSelected('employees', emp)" [class.fa-square]="!isItemSelected('employees', emp)"></i>
+                    </div>
+                    <div class="item-content">
+                      <i class="fas fa-user item-icon"></i>
+                      <span>{{ emp.name }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="multiselect-footer" *ngIf="getSelectedCount('employees') > 0">
+                  <span class="selected-count">{{ getSelectedCount('employees') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
+                  <button type="button" class="clear-btn" (click)="clearSelection('employees')">
+                    {{ 'EMPLOYEE_BALANCE.CLEAR_ALL' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Departments Pick List -->
+            <div class="picklist-section" *ngIf="balanceForm.get('includeDepartments')?.value">
+              <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_DEPARTMENTS' | translate }}</label>
+              <div class="custom-multiselect-container">
+                <div class="multiselect-header">
+                  <i class="fas fa-building"></i>
+                  {{ 'EMPLOYEE_BALANCE.DEPARTMENTS' | translate }}
+                </div>
+                <div class="multiselect-search">
+                  <input 
+                    type="text" 
+                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_DEPARTMENTS' | translate }}"
+                    [value]="multiSelectStates['departments'].searchTerm || ''"
+                    (input)="updateSearchTerm('departments', $any($event.target).value)"
+                    class="search-input">
+                  <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="multiselect-items">
+                  <div *ngFor="let dept of getFilteredItems('departments')" 
+                       class="multiselect-item"
+                       [class.selected]="isItemSelected('departments', dept)"
+                       (click)="toggleItemSelection('departments', dept)">
+                    <div class="item-checkbox">
+                      <i class="fas" [class.fa-check-square]="isItemSelected('departments', dept)" [class.fa-square]="!isItemSelected('departments', dept)"></i>
+                    </div>
+                    <div class="item-content">
+                      <i class="fas fa-building item-icon"></i>
+                      <span>{{ dept.name }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="multiselect-footer" *ngIf="getSelectedCount('departments') > 0">
+                  <span class="selected-count">{{ getSelectedCount('departments') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
+                  <button type="button" class="clear-btn" (click)="clearSelection('departments')">
+                    {{ 'EMPLOYEE_BALANCE.CLEAR_ALL' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Branches Pick List -->
+            <div class="picklist-section" *ngIf="balanceForm.get('includeBranches')?.value">
+              <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_BRANCHES' | translate }}</label>
+              <div class="custom-multiselect-container">
+                <div class="multiselect-header">
+                  <i class="fas fa-map-marker-alt"></i>
+                  {{ 'EMPLOYEE_BALANCE.BRANCHES' | translate }}
+                </div>
+                <div class="multiselect-search">
+                  <input 
+                    type="text" 
+                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_BRANCHES' | translate }}"
+                    [value]="multiSelectStates['branches'].searchTerm || ''"
+                    (input)="updateSearchTerm('branches', $any($event.target).value)"
+                    class="search-input">
+                  <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="multiselect-items">
+                  <div *ngFor="let branch of getFilteredItems('branches')" 
+                       class="multiselect-item"
+                       [class.selected]="isItemSelected('branches', branch)"
+                       (click)="toggleItemSelection('branches', branch)">
+                    <div class="item-checkbox">
+                      <i class="fas" [class.fa-check-square]="isItemSelected('branches', branch)" [class.fa-square]="!isItemSelected('branches', branch)"></i>
+                    </div>
+                    <div class="item-content">
+                      <i class="fas fa-map-marker-alt item-icon"></i>
+                      <span>{{ branch.name }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="multiselect-footer" *ngIf="getSelectedCount('branches') > 0">
+                  <span class="selected-count">{{ getSelectedCount('branches') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
+                  <button type="button" class="clear-btn" (click)="clearSelection('branches')">
+                    {{ 'EMPLOYEE_BALANCE.CLEAR_ALL' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Roles Pick List -->
+            <div class="picklist-section" *ngIf="balanceForm.get('includeRoles')?.value">
+              <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_ROLES' | translate }}</label>
+              <div class="custom-multiselect-container">
+                <div class="multiselect-header">
+                  <i class="fas fa-user-tag"></i>
+                  {{ 'EMPLOYEE_BALANCE.ROLES' | translate }}
+                </div>
+                <div class="multiselect-search">
+                  <input 
+                    type="text" 
+                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_ROLES' | translate }}"
+                    [value]="multiSelectStates['roles'].searchTerm || ''"
+                    (input)="updateSearchTerm('roles', $any($event.target).value)"
+                    class="search-input">
+                  <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="multiselect-items">
+                  <div *ngFor="let role of getFilteredItems('roles')" 
+                       class="multiselect-item"
+                       [class.selected]="isItemSelected('roles', role)"
+                       (click)="toggleItemSelection('roles', role)">
+                    <div class="item-checkbox">
+                      <i class="fas" [class.fa-check-square]="isItemSelected('roles', role)" [class.fa-square]="!isItemSelected('roles', role)"></i>
+                    </div>
+                    <div class="item-content">
+                      <i class="fas fa-user-tag item-icon"></i>
+                      <span>{{ role.name }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="multiselect-footer" *ngIf="getSelectedCount('roles') > 0">
+                  <span class="selected-count">{{ getSelectedCount('roles') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
+                  <button type="button" class="clear-btn" (click)="clearSelection('roles')">
+                    {{ 'EMPLOYEE_BALANCE.CLEAR_ALL' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Status Selection -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'EMPLOYEE_BALANCE.STATUS_SELECTION' | translate }}</h4>
+          
+          <!-- Status Type Selection -->
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="allSts" [value]="true" (change)="onStatusTypeChange()">
+              <span class="radio-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.ALL_STATUSES' | translate }}
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="allSts" [value]="false" (change)="onStatusTypeChange()">
+              <span class="radio-custom"></span>
+              {{ 'EMPLOYEE_BALANCE.SPECIFIC_STATUS' | translate }}
+            </label>
+          </div>
+
+          <!-- Status Dropdown (Only shown when "Specific Status" is selected) -->
+          <div class="form-group" *ngIf="!balanceForm.get('allSts')?.value">
+            <label for="stsId" class="required">{{ 'EMPLOYEE_BALANCE.STATUS' | translate }}</label>
+            <select 
+              id="stsId" 
+              formControlName="stsId" 
+              class="form-select"
+              [class.error]="isFieldInvalid('stsId')">
+              <option value="">{{ 'EMPLOYEE_BALANCE.SELECT_STATUS' | translate }}</option>
+              <option *ngFor="let status of statuses" [value]="status.id">{{ status.name }}</option>
+            </select>
+            <div *ngIf="isFieldInvalid('stsId')" class="error-message">{{ getFieldError('stsId') }}</div>
+          </div>
+        </div>
+
+        <!-- Step 4: Limits Configuration -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'EMPLOYEE_BALANCE.LIMITS_CONFIG' | translate }}</h4>
+          <div class="form-grid-limits">
+            <!-- Max Per Week -->
+            <div class="form-group">
+              <label for="maxPerWeek">{{ 'EMPLOYEE_BALANCE.MAX_PER_WEEK' | translate }}</label>
+              <input 
+                type="number" 
+                id="maxPerWeek" 
+                formControlName="maxPerWeek" 
+                class="form-input"
+                min="0"
+                [placeholder]="'EMPLOYEE_BALANCE.ENTER_NUMBER' | translate">
+            </div>
+
+            <!-- Max Per Month -->
+            <div class="form-group">
+              <label for="maxPerMonth">{{ 'EMPLOYEE_BALANCE.MAX_PER_MONTH' | translate }}</label>
+              <input 
+                type="number" 
+                id="maxPerMonth" 
+                formControlName="maxPerMonth" 
+                class="form-input"
+                min="0"
+                [placeholder]="'EMPLOYEE_BALANCE.ENTER_NUMBER' | translate">
+            </div>
+
+            <!-- Max Per Year -->
+            <div class="form-group">
+              <label for="maxPerYear">{{ 'EMPLOYEE_BALANCE.MAX_PER_YEAR' | translate }}</label>
+              <input 
+                type="number" 
+                id="maxPerYear" 
+                formControlName="maxPerYear" 
+                class="form-input"
+                min="0"
+                [placeholder]="'EMPLOYEE_BALANCE.ENTER_NUMBER' | translate">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Additional Options -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'EMPLOYEE_BALANCE.ADDITIONAL_OPTIONS' | translate }}</h4>
+          <div class="toggle-grid">
+            <!-- Forward Balance -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="forwardBalance">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'EMPLOYEE_BALANCE.FORWARD_BALANCE' | translate }}</span>
+            </label>
+
+            <!-- Count Base Contract Start -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="countBaseContractStart">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'EMPLOYEE_BALANCE.COUNT_BASE_CONTRACT_START' | translate }}</span>
+            </label>
+
+            <!-- Ignore Fraction -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="fractionFloorCeil">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'EMPLOYEE_BALANCE.IGNORE_FRACTION' | translate }}</span>
+            </label>
+
+            <!-- Include Weekend -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="includeWeekendInBetween">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'EMPLOYEE_BALANCE.INCLUDE_WEEKEND' | translate }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 6: Notes -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'EMPLOYEE_BALANCE.NOTES_SECTION' | translate }}</h4>
+          <div class="form-group full-width">
+            <label for="note">{{ 'EMPLOYEE_BALANCE.NOTES' | translate }}</label>
+            <textarea 
+              id="note" 
+              formControlName="note" 
+              class="form-textarea"
+              rows="4"
+              [placeholder]="'EMPLOYEE_BALANCE.ENTER_NOTES' | translate">
+            </textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'EMPLOYEE_BALANCE.CANCEL' | translate }}
+          </button>
+          <button 
+            type="submit" 
+            class="submit-btn" 
+            [disabled]="!isBalanceFormValid">
+            <span *ngIf="!isEditMode">{{ 'EMPLOYEE_BALANCE.ADD' | translate }}</span>
+            <span *ngIf="isEditMode">{{ 'EMPLOYEE_BALANCE.UPDATE' | translate }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
