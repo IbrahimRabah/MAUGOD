@@ -14,6 +14,16 @@ export interface Branch {
   del: string;
 }
 
+export interface BranchCreateUpdateRequest {
+  ar: string;
+  en: string;
+  mgrId: number;
+  locDesc: string;
+  parentBranchId: number;
+  locId: number;
+  note: string;
+}
+
 export interface BranchResponse {
   statusCode: number;
   message: string;
@@ -21,5 +31,21 @@ export interface BranchResponse {
   data: {
     branches: Branch[];
     totalCount: number;
+  };
+}
+
+export interface BranchEditResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: {
+    branchId: number;
+    ar: string;
+    en: string;
+    mgrId: number;
+    locDesc: string;
+    parentBranchId: number;
+    locId: number;
+    note: string;
   };
 }
