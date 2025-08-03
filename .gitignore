@@ -40,3 +40,36 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Large files and executables that should not be tracked
+*.exe
+*.msi
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.bak
+*.backup
+*.dump
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Large media files
+*.mov
+*.mp4
+*.avi
+*.mkv
+*.flv
+*.wmv
+*.webm
+*.m4v
+
+# Large archive files
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tar.bz2
