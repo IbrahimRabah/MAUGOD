@@ -295,37 +295,62 @@
 
           <!-- Pick Lists for each selected group type -->
           <div class="picklist-container">
-            <!-- Employees Pick List -->
             <div class="picklist-section" *ngIf="balanceForm.get('includeEmployees')?.value">
               <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_EMPLOYEES' | translate }}</label>
               <div class="custom-multiselect-container">
                 <div class="multiselect-header">
                   <i class="fas fa-users"></i>
                   {{ 'EMPLOYEE_BALANCE.EMPLOYEES' | translate }}
+                  <div class="header-actions" *ngIf="hasSelectableItems('employees') && !loadingEmployees">
+                    <button type="button" 
+                            class="select-all-btn" 
+                            (click)="selectAllItems('employees')"
+                            [disabled]="areAllItemsSelected('employees')"
+                            [title]="'EMPLOYEE_BALANCE.SELECT_ALL' | translate">
+                      <i class="fas fa-check-square"></i>
+                      {{ 'EMPLOYEE_BALANCE.SELECT_ALL' | translate }}
+                    </button>
+                  </div>
                 </div>
-                <div class="multiselect-search">
-                  <input 
-                    type="text" 
-                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_EMPLOYEES' | translate }}"
-                    [value]="multiSelectStates['employees'].searchTerm || ''"
-                    (input)="updateSearchTerm('employees', $any($event.target).value)"
-                    class="search-input">
-                  <i class="fas fa-search search-icon"></i>
+                
+                <!-- Loading State -->
+                <div *ngIf="loadingEmployees" class="multiselect-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  {{ 'EMPLOYEE_BALANCE.LOADING_EMPLOYEES' | translate }}
                 </div>
-                <div class="multiselect-items">
-                  <div *ngFor="let emp of getFilteredItems('employees')" 
-                       class="multiselect-item"
-                       [class.selected]="isItemSelected('employees', emp)"
-                       (click)="toggleItemSelection('employees', emp)">
-                    <div class="item-checkbox">
-                      <i class="fas" [class.fa-check-square]="isItemSelected('employees', emp)" [class.fa-square]="!isItemSelected('employees', emp)"></i>
+                
+                <!-- Search and Items -->
+                <div *ngIf="!loadingEmployees">
+                  <div class="multiselect-search">
+                    <input 
+                      type="text" 
+                      placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_EMPLOYEES' | translate }}"
+                      [value]="multiSelectStates['employees'].searchTerm || ''"
+                      (input)="updateSearchTerm('employees', $any($event.target).value)"
+                      class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                  </div>
+                  <div class="multiselect-items">
+                    <div *ngFor="let emp of getFilteredItems('employees')" 
+                         class="multiselect-item"
+                         [class.selected]="isItemSelected('employees', emp)"
+                         (click)="toggleItemSelection('employees', emp)">
+                      <div class="item-checkbox">
+                        <i class="fas" [class.fa-check-square]="isItemSelected('employees', emp)" [class.fa-square]="!isItemSelected('employees', emp)"></i>
+                      </div>
+                      <div class="item-content">
+                        <i class="fas fa-user item-icon"></i>
+                        <span>{{ emp.name }}</span>
+                      </div>
                     </div>
-                    <div class="item-content">
-                      <i class="fas fa-user item-icon"></i>
-                      <span>{{ emp.name }}</span>
+                    
+                    <!-- No items message -->
+                    <div *ngIf="getFilteredItems('employees').length === 0 && !loadingEmployees" class="no-items">
+                      {{ 'EMPLOYEE_BALANCE.NO_EMPLOYEES_FOUND' | translate }}
                     </div>
                   </div>
                 </div>
+                
                 <div class="multiselect-footer" *ngIf="getSelectedCount('employees') > 0">
                   <span class="selected-count">{{ getSelectedCount('employees') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
                   <button type="button" class="clear-btn" (click)="clearSelection('employees')">
@@ -335,37 +360,62 @@
               </div>
             </div>
 
-            <!-- Departments Pick List -->
             <div class="picklist-section" *ngIf="balanceForm.get('includeDepartments')?.value">
               <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_DEPARTMENTS' | translate }}</label>
               <div class="custom-multiselect-container">
                 <div class="multiselect-header">
                   <i class="fas fa-building"></i>
                   {{ 'EMPLOYEE_BALANCE.DEPARTMENTS' | translate }}
+                  <div class="header-actions" *ngIf="hasSelectableItems('departments') && !loadingDepartments">
+                    <button type="button" 
+                            class="select-all-btn" 
+                            (click)="selectAllItems('departments')"
+                            [disabled]="areAllItemsSelected('departments')"
+                            [title]="'EMPLOYEE_BALANCE.SELECT_ALL' | translate">
+                      <i class="fas fa-check-square"></i>
+                      {{ 'EMPLOYEE_BALANCE.SELECT_ALL' | translate }}
+                    </button>
+                  </div>
                 </div>
-                <div class="multiselect-search">
-                  <input 
-                    type="text" 
-                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_DEPARTMENTS' | translate }}"
-                    [value]="multiSelectStates['departments'].searchTerm || ''"
-                    (input)="updateSearchTerm('departments', $any($event.target).value)"
-                    class="search-input">
-                  <i class="fas fa-search search-icon"></i>
+                
+                <!-- Loading State -->
+                <div *ngIf="loadingDepartments" class="multiselect-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  {{ 'EMPLOYEE_BALANCE.LOADING_DEPARTMENTS' | translate }}
                 </div>
-                <div class="multiselect-items">
-                  <div *ngFor="let dept of getFilteredItems('departments')" 
-                       class="multiselect-item"
-                       [class.selected]="isItemSelected('departments', dept)"
-                       (click)="toggleItemSelection('departments', dept)">
-                    <div class="item-checkbox">
-                      <i class="fas" [class.fa-check-square]="isItemSelected('departments', dept)" [class.fa-square]="!isItemSelected('departments', dept)"></i>
+                
+                <!-- Search and Items -->
+                <div *ngIf="!loadingDepartments">
+                  <div class="multiselect-search">
+                    <input 
+                      type="text" 
+                      placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_DEPARTMENTS' | translate }}"
+                      [value]="multiSelectStates['departments'].searchTerm || ''"
+                      (input)="updateSearchTerm('departments', $any($event.target).value)"
+                      class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                  </div>
+                  <div class="multiselect-items">
+                    <div *ngFor="let dept of getFilteredItems('departments')" 
+                         class="multiselect-item"
+                         [class.selected]="isItemSelected('departments', dept)"
+                         (click)="toggleItemSelection('departments', dept)">
+                      <div class="item-checkbox">
+                        <i class="fas" [class.fa-check-square]="isItemSelected('departments', dept)" [class.fa-square]="!isItemSelected('departments', dept)"></i>
+                      </div>
+                      <div class="item-content">
+                        <i class="fas fa-building item-icon"></i>
+                        <span>{{ dept.name }}</span>
+                      </div>
                     </div>
-                    <div class="item-content">
-                      <i class="fas fa-building item-icon"></i>
-                      <span>{{ dept.name }}</span>
+                    
+                    <!-- No items message -->
+                    <div *ngIf="getFilteredItems('departments').length === 0 && !loadingDepartments" class="no-items">
+                      {{ 'EMPLOYEE_BALANCE.NO_DEPARTMENTS_FOUND' | translate }}
                     </div>
                   </div>
                 </div>
+                
                 <div class="multiselect-footer" *ngIf="getSelectedCount('departments') > 0">
                   <span class="selected-count">{{ getSelectedCount('departments') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
                   <button type="button" class="clear-btn" (click)="clearSelection('departments')">
@@ -375,37 +425,62 @@
               </div>
             </div>
 
-            <!-- Branches Pick List -->
             <div class="picklist-section" *ngIf="balanceForm.get('includeBranches')?.value">
               <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_BRANCHES' | translate }}</label>
               <div class="custom-multiselect-container">
                 <div class="multiselect-header">
                   <i class="fas fa-map-marker-alt"></i>
                   {{ 'EMPLOYEE_BALANCE.BRANCHES' | translate }}
+                  <div class="header-actions" *ngIf="hasSelectableItems('branches') && !loadingBranches">
+                    <button type="button" 
+                            class="select-all-btn" 
+                            (click)="selectAllItems('branches')"
+                            [disabled]="areAllItemsSelected('branches')"
+                            [title]="'EMPLOYEE_BALANCE.SELECT_ALL' | translate">
+                      <i class="fas fa-check-square"></i>
+                      {{ 'EMPLOYEE_BALANCE.SELECT_ALL' | translate }}
+                    </button>
+                  </div>
                 </div>
-                <div class="multiselect-search">
-                  <input 
-                    type="text" 
-                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_BRANCHES' | translate }}"
-                    [value]="multiSelectStates['branches'].searchTerm || ''"
-                    (input)="updateSearchTerm('branches', $any($event.target).value)"
-                    class="search-input">
-                  <i class="fas fa-search search-icon"></i>
+                
+                <!-- Loading State -->
+                <div *ngIf="loadingBranches" class="multiselect-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  {{ 'EMPLOYEE_BALANCE.LOADING_BRANCHES' | translate }}
                 </div>
-                <div class="multiselect-items">
-                  <div *ngFor="let branch of getFilteredItems('branches')" 
-                       class="multiselect-item"
-                       [class.selected]="isItemSelected('branches', branch)"
-                       (click)="toggleItemSelection('branches', branch)">
-                    <div class="item-checkbox">
-                      <i class="fas" [class.fa-check-square]="isItemSelected('branches', branch)" [class.fa-square]="!isItemSelected('branches', branch)"></i>
+                
+                <!-- Search and Items -->
+                <div *ngIf="!loadingBranches">
+                  <div class="multiselect-search">
+                    <input 
+                      type="text" 
+                      placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_BRANCHES' | translate }}"
+                      [value]="multiSelectStates['branches'].searchTerm || ''"
+                      (input)="updateSearchTerm('branches', $any($event.target).value)"
+                      class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                  </div>
+                  <div class="multiselect-items">
+                    <div *ngFor="let branch of getFilteredItems('branches')" 
+                         class="multiselect-item"
+                         [class.selected]="isItemSelected('branches', branch)"
+                         (click)="toggleItemSelection('branches', branch)">
+                      <div class="item-checkbox">
+                        <i class="fas" [class.fa-check-square]="isItemSelected('branches', branch)" [class.fa-square]="!isItemSelected('branches', branch)"></i>
+                      </div>
+                      <div class="item-content">
+                        <i class="fas fa-map-marker-alt item-icon"></i>
+                        <span>{{ branch.name }}</span>
+                      </div>
                     </div>
-                    <div class="item-content">
-                      <i class="fas fa-map-marker-alt item-icon"></i>
-                      <span>{{ branch.name }}</span>
+                    
+                    <!-- No items message -->
+                    <div *ngIf="getFilteredItems('branches').length === 0 && !loadingBranches" class="no-items">
+                      {{ 'EMPLOYEE_BALANCE.NO_BRANCHES_FOUND' | translate }}
                     </div>
                   </div>
                 </div>
+                
                 <div class="multiselect-footer" *ngIf="getSelectedCount('branches') > 0">
                   <span class="selected-count">{{ getSelectedCount('branches') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
                   <button type="button" class="clear-btn" (click)="clearSelection('branches')">
@@ -415,37 +490,62 @@
               </div>
             </div>
 
-            <!-- Roles Pick List -->
             <div class="picklist-section" *ngIf="balanceForm.get('includeRoles')?.value">
               <label class="picklist-label">{{ 'EMPLOYEE_BALANCE.SELECT_ROLES' | translate }}</label>
               <div class="custom-multiselect-container">
                 <div class="multiselect-header">
                   <i class="fas fa-user-tag"></i>
                   {{ 'EMPLOYEE_BALANCE.ROLES' | translate }}
+                  <div class="header-actions" *ngIf="hasSelectableItems('roles') && !loadingRoles">
+                    <button type="button" 
+                            class="select-all-btn" 
+                            (click)="selectAllItems('roles')"
+                            [disabled]="areAllItemsSelected('roles')"
+                            [title]="'EMPLOYEE_BALANCE.SELECT_ALL' | translate">
+                      <i class="fas fa-check-square"></i>
+                      {{ 'EMPLOYEE_BALANCE.SELECT_ALL' | translate }}
+                    </button>
+                  </div>
                 </div>
-                <div class="multiselect-search">
-                  <input 
-                    type="text" 
-                    placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_ROLES' | translate }}"
-                    [value]="multiSelectStates['roles'].searchTerm || ''"
-                    (input)="updateSearchTerm('roles', $any($event.target).value)"
-                    class="search-input">
-                  <i class="fas fa-search search-icon"></i>
+                
+                <!-- Loading State -->
+                <div *ngIf="loadingRoles" class="multiselect-loading">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  {{ 'EMPLOYEE_BALANCE.LOADING_ROLES' | translate }}
                 </div>
-                <div class="multiselect-items">
-                  <div *ngFor="let role of getFilteredItems('roles')" 
-                       class="multiselect-item"
-                       [class.selected]="isItemSelected('roles', role)"
-                       (click)="toggleItemSelection('roles', role)">
-                    <div class="item-checkbox">
-                      <i class="fas" [class.fa-check-square]="isItemSelected('roles', role)" [class.fa-square]="!isItemSelected('roles', role)"></i>
+                
+                <!-- Search and Items -->
+                <div *ngIf="!loadingRoles">
+                  <div class="multiselect-search">
+                    <input 
+                      type="text" 
+                      placeholder="{{ 'EMPLOYEE_BALANCE.SEARCH_ROLES' | translate }}"
+                      [value]="multiSelectStates['roles'].searchTerm || ''"
+                      (input)="updateSearchTerm('roles', $any($event.target).value)"
+                      class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                  </div>
+                  <div class="multiselect-items">
+                    <div *ngFor="let role of getFilteredItems('roles')" 
+                         class="multiselect-item"
+                         [class.selected]="isItemSelected('roles', role)"
+                         (click)="toggleItemSelection('roles', role)">
+                      <div class="item-checkbox">
+                        <i class="fas" [class.fa-check-square]="isItemSelected('roles', role)" [class.fa-square]="!isItemSelected('roles', role)"></i>
+                      </div>
+                      <div class="item-content">
+                        <i class="fas fa-user-tag item-icon"></i>
+                        <span>{{ role.name }}</span>
+                      </div>
                     </div>
-                    <div class="item-content">
-                      <i class="fas fa-user-tag item-icon"></i>
-                      <span>{{ role.name }}</span>
+                    
+                    <!-- No items message -->
+                    <div *ngIf="getFilteredItems('roles').length === 0 && !loadingRoles" class="no-items">
+                      {{ 'EMPLOYEE_BALANCE.NO_ROLES_FOUND' | translate }}
                     </div>
                   </div>
                 </div>
+                
                 <div class="multiselect-footer" *ngIf="getSelectedCount('roles') > 0">
                   <span class="selected-count">{{ getSelectedCount('roles') }} {{ 'EMPLOYEE_BALANCE.SELECTED' | translate }}</span>
                   <button type="button" class="clear-btn" (click)="clearSelection('roles')">
@@ -482,9 +582,11 @@
               id="stsId" 
               formControlName="stsId" 
               class="form-select"
-              [class.error]="isFieldInvalid('stsId')">
-              <option value="">{{ 'EMPLOYEE_BALANCE.SELECT_STATUS' | translate }}</option>
-              <option *ngFor="let status of statuses" [value]="status.id">{{ status.name }}</option>
+              [class.error]="isFieldInvalid('stsId')"
+              [disabled]="loadingStatuses">
+              <option value="" *ngIf="!loadingStatuses">{{ 'EMPLOYEE_BALANCE.SELECT_STATUS' | translate }}</option>
+              <option value="" *ngIf="loadingStatuses">{{ 'EMPLOYEE_BALANCE.LOADING_STATUSES' | translate }}</option>
+              <option *ngFor="let status of statusOptions" [value]="status.id">{{ status.name }}</option>
             </select>
             <div *ngIf="isFieldInvalid('stsId')" class="error-message">{{ getFieldError('stsId') }}</div>
           </div>
@@ -588,7 +690,7 @@
           <button 
             type="submit" 
             class="submit-btn" 
-            [disabled]="!isBalanceFormValid">
+            >
             <span *ngIf="!isEditMode">{{ 'EMPLOYEE_BALANCE.ADD' | translate }}</span>
             <span *ngIf="isEditMode">{{ 'EMPLOYEE_BALANCE.UPDATE' | translate }}</span>
           </button>

@@ -82,4 +82,61 @@ export class DropdownlistsService {
       { headers }
     );
   }
+  getEmpsDropdownList(lang: number, empId: number ): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString(),
+      'empId': empId.toString()
+    });
+
+    console.log('Calling employees API:', `${this.apiUrl}/Employees/GetEmpsDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetEmpsDropdownList`,
+      { headers }
+    );
+  }
+  getDepartmentsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling departments API:', `${this.apiUrl}/Employees/GetDepartmentsDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetDepartmentsDropdownList`,
+      { headers }
+    );
+  }
+  getBranchesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling branches API:', `${this.apiUrl}/Branches/GetParentBranchesDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Branches/GetParentBranchesDropdownList`,
+      { headers }
+    );
+  }
+  getEmployeeStatusesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling employee statuses API:', `${this.apiUrl}/Employees/GetStatusesDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetStatusesDropdownList`,
+      { headers }
+    );
+  }
+  getEmployeeRolesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling employee roles API:', `${this.apiUrl}/SystemPermissions/GetSourceRolesDropdownListForRoleModuleRights`);
+    return this.http.get<any>(
+      `${this.apiUrl}/SystemPermissions/GetSourceRolesDropdownListForRoleModuleRights`,
+      { headers }
+    );
+  }
+
 }

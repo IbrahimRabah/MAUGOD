@@ -6,9 +6,9 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class EmployeeHandlesBalanceService {
-private apiUrl = `${environment.apiUrl}/api/EmployeeHandlesBalance`  ;
+  private apiUrl = `${environment.apiUrl}/api/EmployeeHandlesBalance`;
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
   getEmployeeHandlesBalance(lang: string, pageNumber: number, pageSize: number) {
     const headers = {
       'lang': lang, // Use the passed language parameter directly
@@ -34,4 +34,34 @@ private apiUrl = `${environment.apiUrl}/api/EmployeeHandlesBalance`  ;
     return this.http.delete(`${this.apiUrl}/DeleteEmployeeHandleBalanceById/${id}`);
   }
 
+  processEmployee(processData: any, lang: number) {
+    const headers = {
+      'lang': lang.toString()
+    };
+
+    return this.http.post(`${this.apiUrl}/process-employees`, processData, { headers });
+  }
+  processDepartments(processData: any, lang: number) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'lang': lang.toString()
+    };
+
+    return this.http.post(`${this.apiUrl}/process-depts`, processData, { headers });
+  }
+  processBranches(processData: any, lang: number) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'lang': lang.toString()
+    };
+
+    return this.http.post(`${this.apiUrl}/process-branches`, processData, { headers });
+  }
+  processRoles(processData: any, lang: number) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'lang': lang.toString()
+    };
+    return this.http.post(`${this.apiUrl}/process-roles`, processData, { headers });
+  }
 }
