@@ -1,1 +1,334 @@
-<p>salary-add-ons-deducts works!</p>
+<div class="employee-balance-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'SALARY_ADD_ONS_DEDUCTS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addAddon()" [title]="'SALARY_ADD_ONS_DEDUCTS.ADD_ADDON_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'SALARY_ADD_ONS_DEDUCTS.ADD_ADDON' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text"
+            class="search-input"
+            formControlName="searchTerm"
+            (keyup.enter)="onSearch()"
+            [placeholder]="'SALARY_ADD_ONS_DEDUCTS.SEARCH_PLACEHOLDER' | translate"
+            [title]="'SALARY_ADD_ONS_DEDUCTS.SEARCH_TITLE' | translate">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.EDIT' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.ARABIC_NAME' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.ENGLISH_NAME' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.ADD_OR_DEDUCT' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.PER_WORKING_DAY' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_DEDUCT_ABSENT' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_IN_VACATION' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_IN_PAID_VACATION' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_IN_END_OF_SERVICE' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.NOTE' | translate }}</th>
+          <th>{{ 'SALARY_ADD_ONS_DEDUCTS.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let addon of addons" class="table-row">
+          <td>
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editAddon(addon)"
+              [title]="'SALARY_ADD_ONS_DEDUCTS.EDIT_TOOLTIP' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ addon.ar }}</td>
+          <td>{{ addon.en }}</td>
+          <td>
+            <span class="add-deduct-badge" [class.add]="addon.addDed === 1" [class.deduct]="addon.addDed === -1">
+              {{ addon.addDed === 1 ? ('SALARY_ADD_ONS_DEDUCTS.ADD' | translate) : ('SALARY_ADD_ONS_DEDUCTS.DEDUCT' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="addon.perWorkingDay" [class.no]="!addon.perWorkingDay">
+              {{ addon.perWorkingDay ? ('SALARY_ADD_ONS_DEDUCTS.YES' | translate) : ('SALARY_ADD_ONS_DEDUCTS.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="addon.includeWhenDedAbsent" [class.no]="!addon.includeWhenDedAbsent">
+              {{ addon.includeWhenDedAbsent ? ('SALARY_ADD_ONS_DEDUCTS.YES' | translate) : ('SALARY_ADD_ONS_DEDUCTS.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="addon.includeWhenInVaction" [class.no]="!addon.includeWhenInVaction">
+              {{ addon.includeWhenInVaction ? ('SALARY_ADD_ONS_DEDUCTS.YES' | translate) : ('SALARY_ADD_ONS_DEDUCTS.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="addon.includeWhenInPaidVaction" [class.no]="!addon.includeWhenInPaidVaction">
+              {{ addon.includeWhenInPaidVaction ? ('SALARY_ADD_ONS_DEDUCTS.YES' | translate) : ('SALARY_ADD_ONS_DEDUCTS.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="addon.includeInEndOfService" [class.no]="!addon.includeInEndOfService">
+              {{ addon.includeInEndOfService ? ('SALARY_ADD_ONS_DEDUCTS.YES' | translate) : ('SALARY_ADD_ONS_DEDUCTS.NO' | translate) }}
+            </span>
+          </td>
+          <td>{{ addon.note || '-' }}</td>
+          <td>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteAddon(addon)"
+              [title]="'SALARY_ADD_ONS_DEDUCTS.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="addons.length === 0" class="empty-row">
+          <td colspan="11" class="empty-message">
+            {{ 'SALARY_ADD_ONS_DEDUCTS.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'SALARY_ADD_ONS_DEDUCTS.SHOWING' | translate }} {{ currentPageStart }} {{ 'SALARY_ADD_ONS_DEDUCTS.TO' | translate }} {{ currentPageEnd }} {{ 'SALARY_ADD_ONS_DEDUCTS.OF' | translate }} {{ totalRecords }} {{ 'SALARY_ADD_ONS_DEDUCTS.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'SALARY_ADD_ONS_DEDUCTS.PAGE' | translate }} {{ currentPage }} {{ 'SALARY_ADD_ONS_DEDUCTS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SALARY_ADD_ONS_DEDUCTS.PAGE' | translate }} {{ currentPage }} {{ 'SALARY_ADD_ONS_DEDUCTS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_ONS_DEDUCTS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'SALARY_ADD_ONS_DEDUCTS.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Addon Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 *ngIf="!isEditMode">{{ 'SALARY_ADD_ONS_DEDUCTS.ADD_ADDON_MODAL_TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'SALARY_ADD_ONS_DEDUCTS.EDIT_ADDON_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="addonForm" (ngSubmit)="submitAddon()">
+        
+        <div class="form-grid">
+          <!-- Arabic Name -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARY_ADD_ONS_DEDUCTS.ARABIC_NAME' | translate }}</label>
+            <input 
+              type="text"
+              class="form-input"
+              formControlName="ar"
+              [placeholder]="'SALARY_ADD_ONS_DEDUCTS.ENTER_ARABIC_NAME' | translate"
+              [class.error]="isFieldInvalid('ar')">
+            <div class="error-message" *ngIf="isFieldInvalid('ar')">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.ARABIC_NAME_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- English Name -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARY_ADD_ONS_DEDUCTS.ENGLISH_NAME' | translate }}</label>
+            <input 
+              type="text"
+              class="form-input"
+              formControlName="en"
+              [placeholder]="'SALARY_ADD_ONS_DEDUCTS.ENTER_ENGLISH_NAME' | translate"
+              [class.error]="isFieldInvalid('en')">
+            <div class="error-message" *ngIf="isFieldInvalid('en')">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.ENGLISH_NAME_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- Add or Deduct Radio Buttons -->
+          <div class="form-group radio-group">
+            <label>{{ 'SALARY_ADD_ONS_DEDUCTS.ADD_OR_DEDUCT' | translate }}</label>
+            <div class="radio-buttons">
+              <label class="radio-option">
+                <input type="radio" formControlName="addDed" [value]="1" name="addDed">
+                <span class="radio-custom"></span>
+                <span class="radio-label">{{ 'SALARY_ADD_ONS_DEDUCTS.ADD' | translate }}</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" formControlName="addDed" [value]="-1" name="addDed">
+                <span class="radio-custom"></span>
+                <span class="radio-label">{{ 'SALARY_ADD_ONS_DEDUCTS.DEDUCT' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boolean Options with Toggle Switches -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARY_ADD_ONS_DEDUCTS.ADDITIONAL_OPTIONS' | translate }}</h4>
+          <div class="toggle-grid">
+            <!-- Per Working Day -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="perWorkingDay">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARY_ADD_ONS_DEDUCTS.PER_WORKING_DAY' | translate }}</span>
+            </label>
+
+            <!-- Include When Deduct Absent -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="includeWhenDedAbsent">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_DEDUCT_ABSENT' | translate }}</span>
+            </label>
+
+            <!-- Include When In Vacation -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="includeWhenInVaction">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_IN_VACATION' | translate }}</span>
+            </label>
+
+            <!-- Include When In Paid Vacation -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="includeWhenInPaidVaction">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_IN_PAID_VACATION' | translate }}</span>
+            </label>
+
+            <!-- Include In End of Service -->
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="includeInEndOfService">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_IN_END_OF_SERVICE' | translate }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Notes - Single line at the end -->
+        <div class="form-group note-field">
+          <label>{{ 'SALARY_ADD_ONS_DEDUCTS.NOTES' | translate }}</label>
+          <input 
+            type="text"
+            class="form-input"
+            formControlName="note"
+            [placeholder]="'SALARY_ADD_ONS_DEDUCTS.ENTER_NOTES' | translate">
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'SALARY_ADD_ONS_DEDUCTS.CANCEL' | translate }}
+          </button>
+          <button 
+            type="submit" 
+            class="submit-btn" 
+            [disabled]="addonForm.invalid">
+            <span *ngIf="!isEditMode">{{ 'SALARY_ADD_ONS_DEDUCTS.ADD' | translate }}</span>
+            <span *ngIf="isEditMode">{{ 'SALARY_ADD_ONS_DEDUCTS.UPDATE' | translate }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

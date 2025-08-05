@@ -6,7 +6,6 @@ import { SalariesCalculationsService } from '../../services/salaries-calculation
 import { LanguageService } from '../../../../core/services/language.service';
 import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
 import { SalaryData, SalaryResponse } from '../../../../core/models/CalculateSalaryRequest';
-import { ApiResponse } from '../../../../core/models/apiResponse';
 
 interface SelectableItem {
   id: number | string;
