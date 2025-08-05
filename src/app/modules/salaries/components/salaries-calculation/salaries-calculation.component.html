@@ -1,1 +1,604 @@
-<p>salaries-calculation works!</p>
+<div class="salary-calculation-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'SALARY_CALCULATION.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="openCalculateModal()" [title]="'SALARY_CALCULATION.CALCULATE_TITLE' | translate">
+        <i class="fas fa-calculator"></i>
+        {{ 'SALARY_CALCULATION.CALCULATE' | translate }}
+      </button>
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'SALARY_CALCULATION.DELETE_SELECTED_TITLE' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'SALARY_CALCULATION.DELETE_SELECTED' | translate }} ({{ selectedItems.length }})
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            class="search-input" 
+            formControlName="searchTerm"
+            (keyup.enter)="onSearch()"
+            [placeholder]="'SALARY_CALCULATION.SEARCH_PLACEHOLDER' | translate"
+            [title]="'SALARY_CALCULATION.SEARCH_TITLE' | translate">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>
+            <input 
+              type="checkbox" 
+              [checked]="isAllSelected" 
+              [indeterminate]="isPartiallySelected"
+              (change)="toggleSelectAll()"
+              [title]="'SALARY_CALCULATION.SELECT_ALL' | translate">
+          </th>
+          <th>{{ 'SALARY_CALCULATION.EMPLOYEE' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.START_DATE' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.END_DATE' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.SALARY' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.ADDONS_TOTAL' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.OVERTIME_TOTAL' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.LATE_DEDUCT' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.ABSENT_DEDUCT' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.NO_SIGNOUT_DEDUCT' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.TOTAL_AMOUNT' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.PAID_AMOUNT' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.CALC_DATE' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.CALCULATED_BY' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.OUT_REFERENCE' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.NOTE' | translate }}</th>
+          <th>{{ 'SALARY_CALCULATION.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let calculation of salaryCalculations" class="table-row">
+          <td>
+            <input 
+              type="checkbox" 
+              [checked]="isSelected(calculation)" 
+              (change)="toggleSelection(calculation)"
+              [title]="'SALARY_CALCULATION.SELECT_ITEM' | translate">
+          </td>
+          <td>{{ calculation.empName }}</td>
+          <td>{{ formatDate(calculation.sDate) }}</td>
+          <td>{{ formatDate(calculation.eDate) }}</td>
+          <td>{{ formatCurrency(calculation.sal) }}</td>
+          <td>{{ formatCurrency(calculation.addonTot) }}</td>
+          <td>{{ formatCurrency(calculation.overtimeTot) }}</td>
+          <td>{{ formatCurrency(calculation.lateDed) }}</td>
+          <td>{{ formatCurrency(calculation.absentDed) }}</td>
+          <td>{{ formatCurrency(calculation.noSignoutDed) }}</td>
+          <td>{{ formatCurrency(calculation.totalAmount) }}</td>
+          <td>{{ formatCurrency(calculation.paidAmount) }}</td>
+          <td>{{ formatDate(calculation.calcTime) }}</td>
+          <td>{{ calculation.calcByEmpName }}</td>
+          <td>{{ calculation.outReference || '-' }}</td>
+          <td>{{ calculation.note || '-' }}</td>
+          <td>
+            <button class="action-btn delete-btn" 
+                    (click)="deleteSalaryCalculation(calculation)" 
+                    [title]="'SALARY_CALCULATION.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="salaryCalculations.length === 0" class="empty-row">
+          <td colspan="17" class="empty-message">
+            {{ 'SALARY_CALCULATION.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'SALARY_CALCULATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'SALARY_CALCULATION.TO' | translate }} {{ currentPageEnd }} {{ 'SALARY_CALCULATION.OF' | translate }} {{ totalRecords }} {{ 'SALARY_CALCULATION.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_CALCULATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_CALCULATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'SALARY_CALCULATION.PAGE' | translate }} {{ currentPage }} {{ 'SALARY_CALCULATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_CALCULATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_CALCULATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_CALCULATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_CALCULATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SALARY_CALCULATION.PAGE' | translate }} {{ currentPage }} {{ 'SALARY_CALCULATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_CALCULATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_CALCULATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'SALARY_CALCULATION.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Calculate Salary Modal -->
+<div *ngIf="showCalculateModal" class="modal-overlay" (click)="closeCalculateModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'SALARY_CALCULATION.CALCULATE_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeCalculateModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="calculateForm" (ngSubmit)="submitCalculation()">
+        
+        <!-- Step 1: Calculation Type Selection -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARY_CALCULATION.CALCULATION_TYPE' | translate }}</h4>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="calculationType" value="employees">
+              <span class="radio-custom"></span>
+              <span>{{ 'SALARY_CALCULATION.EMPLOYEES' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="calculationType" value="departments">
+              <span class="radio-custom"></span>
+              <span>{{ 'SALARY_CALCULATION.DEPARTMENTS' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="calculationType" value="branches">
+              <span class="radio-custom"></span>
+              <span>{{ 'SALARY_CALCULATION.BRANCHES' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="calculationType" value="roles">
+              <span class="radio-custom"></span>
+              <span>{{ 'SALARY_CALCULATION.ROLES' | translate }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 2: Item Selection with Custom Multi-Select -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARY_CALCULATION.SELECT_ITEMS' | translate }}</h4>
+          
+          <!-- Employees Multi-Select -->
+          <div *ngIf="calculateForm.get('calculationType')?.value === 'employees'" class="multi-select-container">
+            <div class="multiselect-header">
+              <i class="fas fa-users"></i>
+              {{ 'SALARY_CALCULATION.SELECT_EMPLOYEES' | translate }}
+              <div class="header-actions" *ngIf="hasSelectableItems('employees') && !loadingEmployees">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllItems('employees')"
+                        [disabled]="areAllItemsSelected('employees')"
+                        [title]="'SALARY_CALCULATION.SELECT_ALL' | translate">
+                  <i class="fas fa-check-square"></i>
+                  {{ 'SALARY_CALCULATION.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearSelection('employees')" 
+                        [disabled]="getSelectedCount('employees') === 0"
+                        [title]="'SALARY_CALCULATION.CLEAR_ALL' | translate">
+                  <i class="fas fa-times"></i>
+                  {{ 'SALARY_CALCULATION.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="multiSelectStates['employees'].searchTerm"
+                (input)="updateSearchTerm('employees', $any($event.target).value)"
+                [placeholder]="'SALARY_CALCULATION.SEARCH_EMPLOYEES' | translate">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingEmployees">
+              <div *ngIf="loadingEmployees" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'SALARY_CALCULATION.LOADING_EMPLOYEES' | translate }}
+              </div>
+              <div *ngIf="!loadingEmployees && getFilteredItems('employees').length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ 'SALARY_CALCULATION.NO_EMPLOYEES_FOUND' | translate }}
+              </div>
+              <div *ngIf="!loadingEmployees" class="items-list">
+                <label *ngFor="let emp of getFilteredItems('employees')" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isItemSelected('employees', emp)"
+                    (change)="toggleItemSelection('employees', emp)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ emp.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getSelectedCount('employees') > 0">
+              <i class="fas fa-check-circle"></i>
+              {{ 'SALARY_CALCULATION.SELECTED' | translate }}: {{ getSelectedCount('employees') }}
+            </div>
+          </div>
+
+          <!-- Departments Multi-Select -->
+          <div *ngIf="calculateForm.get('calculationType')?.value === 'departments'" class="multi-select-container">
+            <div class="multiselect-header">
+              <i class="fas fa-building"></i>
+              {{ 'SALARY_CALCULATION.SELECT_DEPARTMENTS' | translate }}
+              <div class="header-actions" *ngIf="hasSelectableItems('departments') && !loadingDepartments">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllItems('departments')"
+                        [disabled]="areAllItemsSelected('departments')"
+                        [title]="'SALARY_CALCULATION.SELECT_ALL' | translate">
+                  <i class="fas fa-check-square"></i>
+                  {{ 'SALARY_CALCULATION.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearSelection('departments')" 
+                        [disabled]="getSelectedCount('departments') === 0"
+                        [title]="'SALARY_CALCULATION.CLEAR_ALL' | translate">
+                  <i class="fas fa-times"></i>
+                  {{ 'SALARY_CALCULATION.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="multiSelectStates['departments'].searchTerm"
+                (input)="updateSearchTerm('departments', $any($event.target).value)"
+                [placeholder]="'SALARY_CALCULATION.SEARCH_DEPARTMENTS' | translate">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingDepartments">
+              <div *ngIf="loadingDepartments" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'SALARY_CALCULATION.LOADING_DEPARTMENTS' | translate }}
+              </div>
+              <div *ngIf="!loadingDepartments && getFilteredItems('departments').length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ 'SALARY_CALCULATION.NO_DEPARTMENTS_FOUND' | translate }}
+              </div>
+              <div *ngIf="!loadingDepartments" class="items-list">
+                <label *ngFor="let dept of getFilteredItems('departments')" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isItemSelected('departments', dept)"
+                    (change)="toggleItemSelection('departments', dept)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ dept.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getSelectedCount('departments') > 0">
+              <i class="fas fa-check-circle"></i>
+              {{ 'SALARY_CALCULATION.SELECTED' | translate }}: {{ getSelectedCount('departments') }}
+            </div>
+          </div>
+
+          <!-- Branches Multi-Select -->
+          <div *ngIf="calculateForm.get('calculationType')?.value === 'branches'" class="multi-select-container">
+            <div class="multiselect-header">
+              <i class="fas fa-code-branch"></i>
+              {{ 'SALARY_CALCULATION.SELECT_BRANCHES' | translate }}
+              <div class="header-actions" *ngIf="hasSelectableItems('branches') && !loadingBranches">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllItems('branches')"
+                        [disabled]="areAllItemsSelected('branches')"
+                        [title]="'SALARY_CALCULATION.SELECT_ALL' | translate">
+                  <i class="fas fa-check-square"></i>
+                  {{ 'SALARY_CALCULATION.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearSelection('branches')" 
+                        [disabled]="getSelectedCount('branches') === 0"
+                        [title]="'SALARY_CALCULATION.CLEAR_ALL' | translate">
+                  <i class="fas fa-times"></i>
+                  {{ 'SALARY_CALCULATION.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="multiSelectStates['branches'].searchTerm"
+                (input)="updateSearchTerm('branches', $any($event.target).value)"
+                [placeholder]="'SALARY_CALCULATION.SEARCH_BRANCHES' | translate">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingBranches">
+              <div *ngIf="loadingBranches" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'SALARY_CALCULATION.LOADING_BRANCHES' | translate }}
+              </div>
+              <div *ngIf="!loadingBranches && getFilteredItems('branches').length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ 'SALARY_CALCULATION.NO_BRANCHES_FOUND' | translate }}
+              </div>
+              <div *ngIf="!loadingBranches" class="items-list">
+                <label *ngFor="let branch of getFilteredItems('branches')" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isItemSelected('branches', branch)"
+                    (change)="toggleItemSelection('branches', branch)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ branch.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getSelectedCount('branches') > 0">
+              <i class="fas fa-check-circle"></i>
+              {{ 'SALARY_CALCULATION.SELECTED' | translate }}: {{ getSelectedCount('branches') }}
+            </div>
+          </div>
+
+          <!-- Roles Multi-Select -->
+          <div *ngIf="calculateForm.get('calculationType')?.value === 'roles'" class="multi-select-container">
+            <div class="multiselect-header">
+              <i class="fas fa-user-tag"></i>
+              {{ 'SALARY_CALCULATION.SELECT_ROLES' | translate }}
+              <div class="header-actions" *ngIf="hasSelectableItems('roles') && !loadingRoles">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllItems('roles')"
+                        [disabled]="areAllItemsSelected('roles')"
+                        [title]="'SALARY_CALCULATION.SELECT_ALL' | translate">
+                  <i class="fas fa-check-square"></i>
+                  {{ 'SALARY_CALCULATION.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearSelection('roles')" 
+                        [disabled]="getSelectedCount('roles') === 0"
+                        [title]="'SALARY_CALCULATION.CLEAR_ALL' | translate">
+                  <i class="fas fa-times"></i>
+                  {{ 'SALARY_CALCULATION.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="multiSelectStates['roles'].searchTerm"
+                (input)="updateSearchTerm('roles', $any($event.target).value)"
+                [placeholder]="'SALARY_CALCULATION.SEARCH_ROLES' | translate">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingRoles">
+              <div *ngIf="loadingRoles" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'SALARY_CALCULATION.LOADING_ROLES' | translate }}
+              </div>
+              <div *ngIf="!loadingRoles && getFilteredItems('roles').length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ 'SALARY_CALCULATION.NO_ROLES_FOUND' | translate }}
+              </div>
+              <div *ngIf="!loadingRoles" class="items-list">
+                <label *ngFor="let role of getFilteredItems('roles')" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isItemSelected('roles', role)"
+                    (change)="toggleItemSelection('roles', role)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ role.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getSelectedCount('roles') > 0">
+              <i class="fas fa-check-circle"></i>
+              {{ 'SALARY_CALCULATION.SELECTED' | translate }}: {{ getSelectedCount('roles') }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Date Range -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARY_CALCULATION.DATE_RANGE' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="sDate">{{ 'SALARY_CALCULATION.START_DATE' | translate }} <span class="required">*</span></label>
+              <input 
+                type="date"
+                id="sDate"
+                formControlName="sDate"
+                class="form-input"
+                [class.error]="isFieldInvalid('sDate')">
+              <div *ngIf="isFieldInvalid('sDate')" class="error-message">
+                {{ getFieldError('sDate') }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="eDate">{{ 'SALARY_CALCULATION.END_DATE' | translate }} <span class="required">*</span></label>
+              <input 
+                type="date"
+                id="eDate"
+                formControlName="eDate"
+                class="form-input"
+                [class.error]="isFieldInvalid('eDate')">
+              <div *ngIf="isFieldInvalid('eDate')" class="error-message">
+                {{ getFieldError('eDate') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Payment Type -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARY_CALCULATION.PAYMENT_TYPE' | translate }}</h4>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="paymentType" value="full">
+              <span class="radio-custom"></span>
+              <span>{{ 'SALARY_CALCULATION.FULL_PAYMENT' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="paymentType" value="partial">
+              <span class="radio-custom"></span>
+              <span>{{ 'SALARY_CALCULATION.PARTIAL_PAYMENT' | translate }}</span>
+            </label>
+          </div>
+
+          <div *ngIf="calculateForm.get('paymentType')?.value === 'partial'" class="form-group">
+            <label for="paidAmount">{{ 'SALARY_CALCULATION.PAID_AMOUNT' | translate }} <span class="required">*</span></label>
+            <input 
+              type="number" 
+              id="paidAmount"
+              formControlName="paidAmount" 
+              class="form-input"
+              [class.error]="isFieldInvalid('paidAmount')"
+              [placeholder]="'SALARY_CALCULATION.ENTER_AMOUNT' | translate"
+              min="0"
+              step="0.01">
+            <div *ngIf="isFieldInvalid('paidAmount')" class="error-message">
+              {{ getFieldError('paidAmount') }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Additional Information -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARY_CALCULATION.ADDITIONAL_INFO' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="outReference">{{ 'SALARY_CALCULATION.OUT_REFERENCE' | translate }}</label>
+              <input 
+                type="text" 
+                id="outReference"
+                formControlName="outReference" 
+                class="form-input"
+                [placeholder]="'SALARY_CALCULATION.ENTER_REFERENCE' | translate">
+            </div>
+
+            <div class="form-group full-width">
+              <label for="note">{{ 'SALARY_CALCULATION.NOTE' | translate }}</label>
+              <textarea 
+                id="note"
+                formControlName="note" 
+                class="form-textarea"
+                rows="3"
+                [placeholder]="'SALARY_CALCULATION.ENTER_NOTE' | translate">
+              </textarea>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeCalculateModal()">
+            {{ 'SALARY_CALCULATION.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="calculateForm.invalid">
+            {{ 'SALARY_CALCULATION.CALCULATE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

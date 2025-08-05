@@ -1,5 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+
+// PrimeNG Modules
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { SalariesRoutingModule } from './salaries-routing.module';
 import { SalariesComponent } from './components/salaries/salaries.component';
@@ -21,6 +27,11 @@ import { SalariesDetailsComponent } from './components/salaries-details/salaries
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslateModule,
+    ToastModule,
+    ConfirmDialogModule,
     SalariesRoutingModule
   ]
 })
