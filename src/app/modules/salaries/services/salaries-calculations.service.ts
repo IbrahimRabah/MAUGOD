@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CalculateSalaryRequest, SalaryResponse } from '../../../core/models/CalculateSalaryRequest';
+import { ApiResponse } from '../../../core/models/apiResponse';
 
 
 
@@ -60,5 +61,19 @@ export class SalariesCalculationsService {
       'lang': lang.toString()
     };
     return this.http.post(`${this.apiUrl}/calculate-by-role`, body, { headers });
+  }
+  deleteSalaryCalculation(id: number, lang: number): Observable<ApiResponse> {
+    const headers = {
+      'Content-Type': 'application/json',
+      'lang': lang.toString()
+    };
+    return this.http.delete<ApiResponse>(`${this.apiUrl}/${id}`, { headers });
+  }
+  deleteSelectedSalaryCalculations(ids: number[], lang: number): Observable<ApiResponse> {
+    const headers = {
+      'Content-Type': 'application/json',
+      'lang': lang.toString()
+    };
+    return this.http.post<ApiResponse>(`${this.apiUrl}/delete-selected`, ids, { headers });
   }
 }

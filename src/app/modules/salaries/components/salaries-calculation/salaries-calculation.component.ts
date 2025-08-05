@@ -6,6 +6,7 @@ import { SalariesCalculationsService } from '../../services/salaries-calculation
 import { LanguageService } from '../../../../core/services/language.service';
 import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
 import { SalaryData, SalaryResponse } from '../../../../core/models/CalculateSalaryRequest';
+import { ApiResponse } from '../../../../core/models/apiResponse';
 
 interface SelectableItem {
   id: number | string;
@@ -66,6 +67,14 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
   loadingDepartments = false;
   loadingBranches = false;
   loadingRoles = false;
+  
+  // Data loaded flags to avoid unnecessary reloads
+  private dataLoaded = {
+    employees: false,
+    departments: false,
+    branches: false,
+    roles: false
+  };
 
   constructor(
     private salariesService: SalariesCalculationsService,
@@ -84,11 +93,9 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
     this.langSubscription = this.langService.currentLang$.subscribe(lang => {
       this.currentLang = this.langService.getLangValue();
       this.loadSalaryCalculations();
-      this.loadAllData();
+      // Reset data loaded flags when language changes to reload data in new language
+      this.resetDataLoadedFlags();
     });
-
-    this.loadSalaryCalculations();
-    this.loadAllData();
   }
 
   ngOnDestroy() {
@@ -123,13 +130,64 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
       }
       paidAmountControl?.updateValueAndValidity();
     });
+
+    // Watch for calculation type changes to load appropriate dropdown data
+    this.calculateForm.get('calculationType')?.valueChanges.subscribe(value => {
+      if (value && this.showCalculateModal) {
+        this.loadDataByCalculationType(value);
+      }
+    });
   }
 
-  private loadAllData() {
-    this.loadEmployees();
-    this.loadDepartments();
-    this.loadBranches();
-    this.loadRoles();
+  private resetDataLoadedFlags() {
+    this.dataLoaded = {
+      employees: false,
+      departments: false,
+      branches: false,
+      roles: false
+    };
+  }
+
+  private loadDataIfNeeded() {
+    // Only load data that hasn't been loaded yet or when language changes
+    if (!this.dataLoaded.employees) {
+      this.loadEmployees();
+    }
+    if (!this.dataLoaded.departments) {
+      this.loadDepartments();
+    }
+    if (!this.dataLoaded.branches) {
+      this.loadBranches();
+    }
+    if (!this.dataLoaded.roles) {
+      this.loadRoles();
+    }
+  }
+
+  private loadDataByCalculationType(calculationType: string) {
+    // Load only the data needed for the selected calculation type
+    switch (calculationType) {
+      case CALCULATION_TYPES.EMPLOYEES:
+        if (!this.dataLoaded.employees) {
+          this.loadEmployees();
+        }
+        break;
+      case CALCULATION_TYPES.DEPARTMENTS:
+        if (!this.dataLoaded.departments) {
+          this.loadDepartments();
+        }
+        break;
+      case CALCULATION_TYPES.BRANCHES:
+        if (!this.dataLoaded.branches) {
+          this.loadBranches();
+        }
+        break;
+      case CALCULATION_TYPES.ROLES:
+        if (!this.dataLoaded.roles) {
+          this.loadRoles();
+        }
+        break;
+    }
   }
 
   private showErrorMessage(detail: string) {
@@ -157,6 +215,7 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
             name: emp.label
           }));
           this.updateMultiSelectState('employees', employees);
+          this.dataLoaded.employees = true;
         } else {
           this.showErrorMessage('فشل في تحميل بيانات الموظفين');
         }
@@ -180,6 +239,7 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
             name: dept.label
           }));
           this.updateMultiSelectState('departments', departments);
+          this.dataLoaded.departments = true;
         } else {
           this.showErrorMessage('فشل في تحميل بيانات الأقسام');
         }
@@ -203,6 +263,7 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
             name: branch.label
           }));
           this.updateMultiSelectState('branches', branches);
+          this.dataLoaded.branches = true;
         } else {
           this.showErrorMessage('فشل في تحميل بيانات الفروع');
         }
@@ -226,6 +287,7 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
             name: role.label
           }));
           this.updateMultiSelectState('roles', roles);
+          this.dataLoaded.roles = true;
         } else {
           this.showErrorMessage('فشل في تحميل بيانات الوظائف');
         }
@@ -298,7 +360,8 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
     this.showCalculateModal = true;
     this.resetCalculateForm();
     this.clearAllSelections();
-    this.loadAllData();
+    // Only load dropdown data for the default calculation type (employees)
+    this.loadDataByCalculationType(CALCULATION_TYPES.EMPLOYEES);
   }
 
   closeCalculateModal() {
@@ -529,13 +592,36 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        // TODO: Implement delete logic here
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Salary calculation deleted successfully'
+        this.loading = true;
+        this.salariesService.deleteSalaryCalculation(calculation.recId, this.currentLang).subscribe({
+          next: (response) => {
+            this.loading = false;
+            if (response.isSuccess) {
+              this.messageService.add({
+                severity: 'success',
+                summary: this.currentLang === 1 ? 'Success' : 'نجح',
+                detail: response.message || (this.currentLang === 1 ? 'Salary calculation deleted successfully' : 'تم حذف حساب الراتب بنجاح')
+              });
+              this.loadSalaryCalculations();
+              // Remove from selected items if it was selected
+              this.selectedItems = this.selectedItems.filter(item => item.recId !== calculation.recId);
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.currentLang === 1 ? 'Error' : 'خطأ',
+                detail: response.message || (this.currentLang === 1 ? 'Failed to delete salary calculation' : 'فشل في حذف حساب الراتب')
+              });
+            }
+          },
+          error: (error) => {
+            this.loading = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: this.currentLang === 1 ? 'Error' : 'خطأ',
+              detail: this.currentLang === 1 ? 'An error occurred while deleting the salary calculation' : 'حدث خطأ أثناء حذف حساب الراتب'
+            });
+          }
         });
-        this.loadSalaryCalculations();
       }
     });
   }
@@ -570,14 +656,43 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        // TODO: Implement bulk delete logic here
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `${this.selectedItems.length} items deleted successfully`
+        this.loading = true;
+        const selectedIds = this.selectedItems.map(item => item.recId);
+        
+        this.salariesService.deleteSelectedSalaryCalculations(selectedIds, this.currentLang).subscribe({
+          next: (response) => {
+            this.loading = false;
+            if (response.isSuccess) {
+              this.messageService.add({
+                severity: 'success',
+                summary: this.currentLang === 1 ? 'Success' : 'نجح',
+                detail: response.message || (this.currentLang === 1 ? 
+                  `${this.selectedItems.length} items deleted successfully` : 
+                  `تم حذف ${this.selectedItems.length} عنصر بنجاح`)
+              });
+              this.selectedItems = [];
+              this.loadSalaryCalculations();
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.currentLang === 1 ? 'Error' : 'خطأ',
+                detail: response.message || (this.currentLang === 1 ? 
+                  'Failed to delete selected items' : 
+                  'فشل في حذف العناصر المحددة')
+              });
+            }
+          },
+          error: (error) => {
+            this.loading = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: this.currentLang === 1 ? 'Error' : 'خطأ',
+              detail: this.currentLang === 1 ? 
+                'An error occurred while deleting the selected items' : 
+                'حدث خطأ أثناء حذف العناصر المحددة'
+            });
+          }
         });
-        this.selectedItems = [];
-        this.loadSalaryCalculations();
       }
     });
   }
