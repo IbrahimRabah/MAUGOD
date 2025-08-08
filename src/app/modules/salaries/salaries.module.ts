@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 // PrimeNG Modules
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 import { SalariesRoutingModule } from './salaries-routing.module';
 import { SalariesComponent } from './components/salaries/salaries.component';
@@ -32,6 +33,7 @@ import { SalariesDetailsComponent } from './components/salaries-details/salaries
     TranslateModule,
     ToastModule,
     ConfirmDialogModule,
+    AutoCompleteModule,
     SalariesRoutingModule
   ]
 })

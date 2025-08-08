@@ -1,1 +1,766 @@
-<p>salaries-details works!</p>
+<div class="employee-balance-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'SALARIES_DETAILS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addSalaryDetail()" [title]="'SALARIES_DETAILS.ADD_SALARY_DETAIL_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'SALARIES_DETAILS.ADD_SALARY_DETAIL' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text"
+            class="search-input"
+            formControlName="searchTerm"
+            [placeholder]="'SALARIES_DETAILS.SEARCH_PLACEHOLDER' | translate"
+            [title]="'SALARIES_DETAILS.SEARCH_TITLE' | translate"
+            >
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'SALARIES_DETAILS.ACTIONS' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.EMPLOYEE_NAME' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.CONTRACT_DATE' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.SALARY_TYPE' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.SALARY' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.FREE_LATE' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.INCLUDE_FREE_LATE_AFTER_EXCEED' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.MINUTES_TO_DEDUCT_1_DAY' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.COUNT_PARTIAL_LATE' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.SEPARATE_OVERTIME' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.OVERTIME_HR_COST' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.MAX_OVERTIME' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.ABSENT_PER_MONTH_YEAR' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.NO_SIGNOUT_PER_MONTH_YEAR' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.CONTRACT_FILE' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.NOTE' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.BANK' | translate }}</th>
+          <th>{{ 'SALARIES_DETAILS.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detail of salariesDetails" class="table-row">
+          <!-- Edit Action -->
+          <td>
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editSalaryDetail(detail)"
+              [title]="'SALARIES_DETAILS.EDIT_TOOLTIP' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+
+          <!-- Employee Name -->
+          <td [title]="detail.empName">{{ detail.empName }}</td>
+
+          <!-- Contract Date -->
+          <td>{{ formatDate(detail.contractStart) }}</td>
+
+          <!-- Salary Type -->
+          <td>
+            <span class="salary-type-badge" 
+                  [ngClass]="{
+                    'monthly': detail.salType === 1,
+                    'hourly': detail.salType === 2,
+                    'yearly': detail.salType === 3
+                  }">
+              {{ getSalaryTypeText(detail.salType) | translate }}
+            </span>
+          </td>
+
+          <!-- Salary -->
+          <td>{{ detail.salary | number:'1.2-2' }}</td>
+
+          <!-- Free Late -->
+          <td>{{ detail.freeLate }}</td>
+
+          <!-- Include Free Late After Exceed -->
+          <td>
+            <span class="boolean-badge" [ngClass]="detail.includeFreeLateAfterExceedLimit ? 'yes' : 'no'">
+              {{ (detail.includeFreeLateAfterExceedLimit ? 'SALARIES_DETAILS.YES' : 'SALARIES_DETAILS.NO') | translate }}
+            </span>
+          </td>
+
+          <!-- Minutes to Deduct 1 Day -->
+          <td>{{ detail.minutes2Days }}</td>
+
+          <!-- Count Partial Late -->
+          <td>
+            <span class="boolean-badge" [ngClass]="detail.countParialLate ? 'yes' : 'no'">
+              {{ (detail.countParialLate ? 'SALARIES_DETAILS.YES' : 'SALARIES_DETAILS.NO') | translate }}
+            </span>
+          </td>
+
+          <!-- Separate Overtime -->
+          <td>
+            <span class="boolean-badge" [ngClass]="detail.separateOvertime ? 'yes' : 'no'">
+              {{ (detail.separateOvertime ? 'SALARIES_DETAILS.YES' : 'SALARIES_DETAILS.NO') | translate }}
+            </span>
+          </td>
+
+          <!-- Overtime Hr Cost -->
+          <td>{{ detail.overtimeHrCost | number:'1.2-2' }}</td>
+
+          <!-- Max Overtime -->
+          <td>{{ detail.maxOvertime }}</td>
+
+          <!-- Absent Per Month/Year -->
+          <td>
+            <span class="period-badge" 
+                  [ngClass]="{
+                    'monthly': detail.absentPerMY === 1,
+                    'yearly': detail.absentPerMY === 2
+                  }">
+              {{ getAbsentPerText(detail.absentPerMY) | translate }}
+            </span>
+          </td>
+
+          <!-- No Signout Per Month/Year -->
+          <td>
+            <span class="period-badge" 
+                  [ngClass]="{
+                    'monthly': detail.noSignoutPerMY === 1,
+                    'yearly': detail.noSignoutPerMY === 2
+                  }">
+              {{ getNoSignoutPerText(detail.noSignoutPerMY) | translate }}
+            </span>
+          </td>
+
+          <!-- Contract File -->
+          <td>
+            <span class="file-badge" [ngClass]="hasContractFile(detail.contractFileSize) ? 'available' : 'not-available'">
+              {{ (hasContractFile(detail.contractFileSize) ? 'SALARIES_DETAILS.FILE_AVAILABLE' : 'SALARIES_DETAILS.NO_FILE') | translate }}
+            </span>
+          </td>
+
+          <!-- Note -->
+          <td [title]="detail.note">{{ detail.note || '-' }}</td>
+
+          <!-- Bank -->
+          <td [title]="detail.bankName">{{ detail.bankName }}</td>
+
+          <!-- Delete Action -->
+          <td>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteSalaryDetail(detail)"
+              [title]="'SALARIES_DETAILS.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="salariesDetails.length === 0" class="empty-row">
+          <td colspan="18" class="empty-message">
+            {{ 'SALARIES_DETAILS.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'SALARIES_DETAILS.SHOWING' | translate }} {{ currentPageStart }} {{ 'SALARIES_DETAILS.TO' | translate }} {{ currentPageEnd }} {{ 'SALARIES_DETAILS.OF' | translate }} {{ totalRecords }} {{ 'SALARIES_DETAILS.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARIES_DETAILS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARIES_DETAILS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SALARIES_DETAILS.PAGE' | translate }} {{ currentPage }} {{ 'SALARIES_DETAILS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARIES_DETAILS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARIES_DETAILS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARIES_DETAILS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'SALARIES_DETAILS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SALARIES_DETAILS.PAGE' | translate }} {{ currentPage }} {{ 'SALARIES_DETAILS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARIES_DETAILS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARIES_DETAILS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'SALARIES_DETAILS.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Salary Detail Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 *ngIf="!isEditMode">{{ 'SALARIES_DETAILS.ADD_SALARY_DETAIL_MODAL_TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'SALARIES_DETAILS.EDIT_SALARY_DETAIL_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="salaryDetailForm" (ngSubmit)="submitSalaryDetail()">
+        
+        <!-- Employee Information Section -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.EMPLOYEE_INFORMATION' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">{{ 'SALARIES_DETAILS.SELECT_EMPLOYEE' | translate }}</label>
+              <p-autoComplete
+                formControlName="employeeAutoComplete"
+                [suggestions]="filteredEmployees"
+                (completeMethod)="searchEmployee($event)"
+                optionLabel="label"
+                dataKey="value"
+                [dropdown]="true"
+                [showClear]="true"
+                [forceSelection]="false"
+                [placeholder]="'SALARIES_DETAILS.SEARCH_EMPLOYEE_PLACEHOLDER' | translate"
+                styleClass="w-full"
+                [class]="isFieldInvalid('empId') ? 'ng-invalid ng-dirty' : ''"
+                [inputStyle]="{'width': '100%'}"
+                [panelStyle]="{'max-height': '200px'}"
+                [minLength]="0"
+                appendTo="body">
+                
+                <ng-template pTemplate="item" let-employee>
+                  <div class="employee-option">
+                    <span class="employee-name">{{ employee.label }}</span>
+                  </div>
+                </ng-template>
+                
+                <ng-template pTemplate="empty">
+                  <div class="empty-option">
+                    <i class="fas fa-user-times"></i>
+                    <span>{{ 'SALARIES_DETAILS.NO_EMPLOYEES_FOUND' | translate }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+              
+              <span *ngIf="isFieldInvalid('empId')" class="error-message">
+                {{ 'SALARIES_DETAILS.EMPLOYEE_REQUIRED' | translate }}
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label class="required">{{ 'SALARIES_DETAILS.CONTRACT_START_DATE' | translate }}</label>
+              <input 
+                type="date"
+                formControlName="contractStart"
+                class="form-input"
+                [class.error]="isFieldInvalid('contractStart')">
+              <span *ngIf="isFieldInvalid('contractStart')" class="error-message">
+                {{ 'SALARIES_DETAILS.CONTRACT_START_REQUIRED' | translate }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Salary Information Section -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.SALARY_INFORMATION' | translate }}</h4>
+          
+          <!-- Salary Type Radio Buttons -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARIES_DETAILS.SALARY_TYPE' | translate }}</label>
+            <div class="radio-group">
+              <div class="radio-buttons">
+                <label class="radio-option">
+                  <input type="radio" formControlName="salType" value="0">
+                  <span class="radio-custom"></span>
+                  <span class="radio-label">{{ 'SALARIES_DETAILS.MONTHLY_SALARY' | translate }}</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" formControlName="salType" value="1">
+                  <span class="radio-custom"></span>
+                  <span class="radio-label">{{ 'SALARIES_DETAILS.HOURLY_SALARY' | translate }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group" *ngIf="salaryDetailForm.get('salType')?.value == 0">
+              <label>{{ 'SALARIES_DETAILS.MONTHLY_SALARY_AMOUNT' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="monthSal"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_MONTHLY_SALARY' | translate"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group" *ngIf="salaryDetailForm.get('salType')?.value == 1">
+              <label>{{ 'SALARIES_DETAILS.HOURLY_SALARY_AMOUNT' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="hourSal"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_HOURLY_SALARY' | translate"
+                min="0"
+                step="0.01">
+            </div>
+          </div>
+        </div>
+
+        <!-- Late & Attendance Settings -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.LATE_ATTENDANCE_SETTINGS' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.FREE_LATE_MINUTES' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="freeLate"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_FREE_LATE_MINUTES' | translate"
+                min="0">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.MINUTES_TO_DEDUCT_1_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="minutes2Days"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_MINUTES_TO_DEDUCT' | translate"
+                min="0">
+            </div>
+          </div>
+
+          <div class="toggle-grid">
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="includeFreeLateAfterExceedLimit">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARIES_DETAILS.INCLUDE_FREE_LATE_AFTER_EXCEED_LIMIT' | translate }}</span>
+            </label>
+
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="countParialLate">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARIES_DETAILS.COUNT_PARTIAL_LATE' | translate }}</span>
+            </label>
+
+            <label class="toggle-switch">
+              <input type="checkbox" formControlName="separateOvertime">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">{{ 'SALARIES_DETAILS.SEPARATE_OVERTIME' | translate }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Overtime Settings -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.OVERTIME_SETTINGS' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.OVERTIME_HOUR_COST' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="overtimeHrCost"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_OVERTIME_COST' | translate"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.MAX_OVERTIME_HOURS' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="maxOvertime"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_MAX_OVERTIME' | translate"
+                min="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Absence Settings -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.ABSENT_SETTINGS' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_PER' | translate }}</label>
+              <div class="radio-group">
+                <div class="radio-buttons">
+                  <label class="radio-option">
+                    <input type="radio" formControlName="absentPerMY" value="0">
+                    <span class="radio-custom"></span>
+                    <span class="radio-label">{{ 'SALARIES_DETAILS.MONTHLY' | translate }}</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" formControlName="absentPerMY" value="1">
+                    <span class="radio-custom"></span>
+                    <span class="radio-label">{{ 'SALARIES_DETAILS.YEARLY' | translate }}</span>
+                  </label>
+                </div>
+              </div>
+              <span *ngIf="isFieldInvalid('absentPerMY')" class="error-message">
+                {{ getFieldError('absentPerMY') }}
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_1_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absent1Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_2_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absent2Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_3_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absent3Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_4_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absent4Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_5_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absent5Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_6_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absent6Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_7_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absent7Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ABSENT_MORE_DAYS' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="absentMoreDay"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+          </div>
+        </div>
+
+        <!-- No Signout Settings -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.NO_SIGNOUT_SETTINGS' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_PER' | translate }}</label>
+              <div class="radio-group">
+                <div class="radio-buttons">
+                  <label class="radio-option">
+                    <input type="radio" formControlName="noSignoutPerMY" value="0">
+                    <span class="radio-custom"></span>
+                    <span class="radio-label">{{ 'SALARIES_DETAILS.MONTHLY' | translate }}</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" formControlName="noSignoutPerMY" value="1">
+                    <span class="radio-custom"></span>
+                    <span class="radio-label">{{ 'SALARIES_DETAILS.YEARLY' | translate }}</span>
+                  </label>
+                </div>
+              </div>
+              <span *ngIf="isFieldInvalid('noSignoutPerMY')" class="error-message">
+                {{ getFieldError('noSignoutPerMY') }}
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_1_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignout1Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_2_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignout2Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_3_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignout3Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_4_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignout4Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_5_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignout5Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_6_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignout6Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_7_DAY' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignout7Day"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.NO_SIGNOUT_MORE_DAYS' | translate }}</label>
+              <input 
+                type="number"
+                formControlName="noSignoutMoreDay"
+                class="form-input"
+                min="0"
+                step="0.01">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bank Information -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.BANK_INFORMATION' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">{{ 'SALARIES_DETAILS.SELECT_BANK' | translate }}</label>
+              <select 
+                formControlName="bankId"
+                class="form-select"
+                [class.error]="isFieldInvalid('bankId')">
+                <option value="0">{{ 'SALARIES_DETAILS.SELECT_BANK_PLACEHOLDER' | translate }}</option>
+                <option *ngFor="let bank of banks" [value]="bank.value">{{ bank.label }}</option>
+              </select>
+              <span *ngIf="isFieldInvalid('bankId')" class="error-message">
+                {{ 'SALARIES_DETAILS.BANK_REQUIRED' | translate }}
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ACCOUNT_NUMBER' | translate }}</label>
+              <input 
+                type="text"
+                formControlName="accountNumber"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_ACCOUNT_NUMBER' | translate">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.ACCOUNT_IBAN' | translate }}</label>
+              <input 
+                type="text"
+                formControlName="accountIban"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_ACCOUNT_IBAN' | translate">
+            </div>
+          </div>
+        </div>
+
+        <!-- Contract Information -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.CONTRACT_INFORMATION' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.CONTRACT_TYPE' | translate }}</label>
+              <input 
+                type="text"
+                formControlName="contractType"
+                class="form-input"
+                [placeholder]="'SALARIES_DETAILS.ENTER_CONTRACT_TYPE' | translate">
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'SALARIES_DETAILS.CONTRACT_FILE' | translate }}</label>
+              <input 
+                type="text"
+                formControlName="contractUrl"
+                class="form-input"
+                placeholder="Contract URL...">
+              <small class="form-help">{{ 'SALARIES_DETAILS.FILE_HELP' | translate }}</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'SALARIES_DETAILS.NOTES_SECTION' | translate }}</h4>
+          <div class="form-group">
+            <label>{{ 'SALARIES_DETAILS.NOTES' | translate }}</label>
+            <textarea 
+              formControlName="note"
+              class="form-textarea"
+              rows="4"
+              [placeholder]="'SALARIES_DETAILS.ENTER_NOTE' | translate">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'SALARIES_DETAILS.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!isSalaryDetailFormValid || loading">
+            {{ isEditMode ? ('SALARIES_DETAILS.UPDATE' | translate) : ('SALARIES_DETAILS.ADD' | translate) }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

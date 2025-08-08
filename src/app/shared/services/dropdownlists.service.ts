@@ -6,6 +6,7 @@ import { ManagerResponse } from '../../core/models/managers';
 import { DirectManagerResponse } from '../../core/models/directManagers';
 import { LocationResponse } from '../../core/models/location';
 import { ParentBranchResponse } from '../../core/models/parentBranches';
+import { BankResponse } from '../../core/models/bank';
 
 @Injectable({
   providedIn: 'root'
@@ -135,6 +136,17 @@ export class DropdownlistsService {
     console.log('Calling employee roles API:', `${this.apiUrl}/SystemPermissions/GetSourceRolesDropdownListForRoleModuleRights`);
     return this.http.get<any>(
       `${this.apiUrl}/SystemPermissions/GetSourceRolesDropdownListForRoleModuleRights`,
+      { headers }
+    );
+  }
+  getBanksDropdownList(lang: number): Observable<BankResponse> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling banks API:', `${this.apiUrl}/Banks/GetBanksDropdownList`);
+    return this.http.get<BankResponse>(
+      `${this.apiUrl}/api/Salary/GetBanksDropdownList`,
       { headers }
     );
   }
