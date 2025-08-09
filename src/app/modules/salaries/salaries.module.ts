@@ -15,6 +15,7 @@ import { SalaryAddOnsDeductsComponent } from './components/salary-add-ons-deduct
 import { SalariesCalculationComponent } from './components/salaries-calculation/salaries-calculation.component';
 import { MySalaryComponent } from './components/my-salary/my-salary.component';
 import { SalariesDetailsComponent } from './components/salaries-details/salaries-details.component';
+import { DataTransferFormComponent } from './components/data-transfer-form/data-transfer-form.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { SalariesDetailsComponent } from './components/salaries-details/salaries
     SalaryAddOnsDeductsComponent,
     SalariesCalculationComponent,
     MySalaryComponent,
-    SalariesDetailsComponent
+    SalariesDetailsComponent,
+    DataTransferFormComponent
   ],
   imports: [
     CommonModule,

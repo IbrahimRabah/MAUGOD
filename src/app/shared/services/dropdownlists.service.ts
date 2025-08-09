@@ -150,5 +150,32 @@ export class DropdownlistsService {
       { headers }
     );
   }
+  getSalariesAddOnsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    return this.http.get<any>(
+      `${this.apiUrl}/SalaryAddon/GetAddonsDropdownList`,
+      { headers }
+    );
+  }
+
+  /**
+   * Get Branch Managers Dropdown List
+   * @param lang - Language number for header
+   * @returns Observable<any>
+   */
+  getBranchManagersDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling branch managers API:', `${this.apiUrl}/Branches/GetBranchManagersDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Branches/GetBranchManagersDropdownList`,
+      { headers }
+    );
+  }
 
 }

@@ -1,1 +1,284 @@
-<p>salary-add-deducts-assign works!</p>
+<div class="employee-balance-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addAssignment()" [title]="'SALARY_ADD_DEDUCTS_ASSIGN.ADD_ASSIGNMENT_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'SALARY_ADD_DEDUCTS_ASSIGN.ADD_ASSIGNMENT' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text"
+            class="search-input"
+            formControlName="searchTerm"
+            (input)="onSearch()"
+            [placeholder]="'SALARY_ADD_DEDUCTS_ASSIGN.SEARCH_PLACEHOLDER' | translate"
+            [title]="'SALARY_ADD_DEDUCTS_ASSIGN.SEARCH_TITLE' | translate">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.EMPLOYEE_NAME' | translate }}</th>
+          <th>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.ADD_OR_DEDUCT' | translate }}</th>
+          <th>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.AMOUNT' | translate }}</th>
+          <th>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.START_DATE' | translate }}</th>
+          <th>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.END_DATE' | translate }}</th>
+          <th>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.NOTE' | translate }}</th>
+          <th>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assignment of assignments" class="table-row">
+          <td>{{ assignment.employeeName }}</td>
+          <td>
+            <span class="add-deduct-badge" [ngClass]="getAddDeductClass(assignment.addonName)">
+              {{ getAddDeductText(assignment.addonName) }}
+            </span>
+          </td>
+          <td>{{ assignment.amnt | number:'1.2-2' }}</td>
+          <td>{{ formatDate(assignment.sdate) }}</td>
+          <td>{{ formatDate(assignment.edate) }}</td>
+          <td>{{ assignment.note || '-' }}</td>
+          <td>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteAssignment(assignment)"
+              [title]="'SALARY_ADD_DEDUCTS_ASSIGN.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="assignments.length === 0" class="empty-row">
+          <td colspan="7" class="empty-message">
+            {{ 'SALARY_ADD_DEDUCTS_ASSIGN.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.SHOWING' | translate }} {{ currentPageStart }} {{ 'SALARY_ADD_DEDUCTS_ASSIGN.TO' | translate }} {{ currentPageEnd }} {{ 'SALARY_ADD_DEDUCTS_ASSIGN.OF' | translate }} {{ totalRecords }} {{ 'SALARY_ADD_DEDUCTS_ASSIGN.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'SALARY_ADD_DEDUCTS_ASSIGN.PAGE' | translate }} {{ currentPage }} {{ 'SALARY_ADD_DEDUCTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SALARY_ADD_DEDUCTS_ASSIGN.PAGE' | translate }} {{ currentPage }} {{ 'SALARY_ADD_DEDUCTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'SALARY_ADD_DEDUCTS_ASSIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Assignment Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.ADD_ASSIGNMENT_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="assignmentForm" (ngSubmit)="submitAssignment()">
+        
+        <div class="form-grid">
+          <!-- Employee Selection -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARY_ADD_DEDUCTS_ASSIGN.EMPLOYEE' | translate }}</label>
+            <select 
+              class="form-select"
+              formControlName="empIds"
+              [class.error]="isFieldInvalid('empIds')"
+              multiple>
+              <option value="" disabled>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.SELECT_EMPLOYEE' | translate }}</option>
+              <!-- Add employee options here -->
+            </select>
+            <div class="error-message" *ngIf="isFieldInvalid('empIds')">
+              {{ 'SALARY_ADD_DEDUCTS_ASSIGN.EMPLOYEE_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- Add-on/Deduction Selection -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARY_ADD_DEDUCTS_ASSIGN.ADD_OR_DEDUCT' | translate }}</label>
+            <select 
+              class="form-select"
+              formControlName="addonId"
+              [class.error]="isFieldInvalid('addonId')">
+              <option value="" disabled>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.SELECT_ADDON' | translate }}</option>
+              <!-- Add addon options here -->
+            </select>
+            <div class="error-message" *ngIf="isFieldInvalid('addonId')">
+              {{ 'SALARY_ADD_DEDUCTS_ASSIGN.ADDON_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- Amount -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARY_ADD_DEDUCTS_ASSIGN.AMOUNT' | translate }}</label>
+            <input 
+              type="number"
+              class="form-input"
+              formControlName="amnt"
+              [placeholder]="'SALARY_ADD_DEDUCTS_ASSIGN.ENTER_AMOUNT' | translate"
+              [class.error]="isFieldInvalid('amnt')"
+              step="0.01"
+              min="0">
+            <div class="error-message" *ngIf="isFieldInvalid('amnt')">
+              {{ 'SALARY_ADD_DEDUCTS_ASSIGN.AMOUNT_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- Start Date -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARY_ADD_DEDUCTS_ASSIGN.START_DATE' | translate }}</label>
+            <input 
+              type="date"
+              class="form-input"
+              formControlName="sdate"
+              [class.error]="isFieldInvalid('sdate')">
+            <div class="error-message" *ngIf="isFieldInvalid('sdate')">
+              {{ 'SALARY_ADD_DEDUCTS_ASSIGN.START_DATE_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- End Date -->
+          <div class="form-group">
+            <label class="required">{{ 'SALARY_ADD_DEDUCTS_ASSIGN.END_DATE' | translate }}</label>
+            <input 
+              type="date"
+              class="form-input"
+              formControlName="edate"
+              [class.error]="isFieldInvalid('edate')">
+            <div class="error-message" *ngIf="isFieldInvalid('edate')">
+              {{ 'SALARY_ADD_DEDUCTS_ASSIGN.END_DATE_REQUIRED' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group note-field">
+          <label>{{ 'SALARY_ADD_DEDUCTS_ASSIGN.NOTE' | translate }}</label>
+          <input 
+            type="text"
+            class="form-input"
+            formControlName="note"
+            [placeholder]="'SALARY_ADD_DEDUCTS_ASSIGN.ENTER_NOTES' | translate">
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'SALARY_ADD_DEDUCTS_ASSIGN.CANCEL' | translate }}
+          </button>
+          <button 
+            type="submit" 
+            class="submit-btn" 
+            [disabled]="assignmentForm.invalid">
+            {{ 'SALARY_ADD_DEDUCTS_ASSIGN.ADD' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

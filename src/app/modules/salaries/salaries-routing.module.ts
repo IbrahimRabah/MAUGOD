@@ -6,6 +6,7 @@ import { SalaryAddOnsDeductsComponent } from './components/salary-add-ons-deduct
 import { SalariesCalculationComponent } from './components/salaries-calculation/salaries-calculation.component';
 import { MySalaryComponent } from './components/my-salary/my-salary.component';
 import { SalariesDetailsComponent } from './components/salaries-details/salaries-details.component';
+import { DataTransferFormComponent } from './components/data-transfer-form/data-transfer-form.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
   {
     path: 'salaries-details',
     component: SalariesDetailsComponent
+  },
+  {
+    path: 'data-transfer',
+    component: DataTransferFormComponent
   }
 ];
 

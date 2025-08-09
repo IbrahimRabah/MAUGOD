@@ -1,1 +1,993 @@
-<p>access-permissions works!</p>
+<div class="access-permissions-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Radio Button Selection -->
+  <div class="table-selector">
+    <h2>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.TITLE' | translate }}</h2>
+    <div class="radio-group">
+      <div class="radio-option" (click)="onTableChange('access')">
+        <input type="radio" id="access" name="tableSelector" value="access" 
+               [(ngModel)]="selectedTable" >
+        <label for="access">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.TABLES.ACCESS_PERMISSIONS' | translate }}</label>
+      </div>
+      <div class="radio-option" (click)="onTableChange('directManagers')">
+        <input type="radio" id="directManagers" name="tableSelector" value="directManagers" 
+               [(ngModel)]="selectedTable">
+        <label for="directManagers">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.TABLES.DIRECT_MANAGERS' | translate }}</label>
+      </div>
+      <div class="radio-option" (click)="onTableChange('departments')">
+        <input type="radio" id="departments" name="tableSelector" value="departments" 
+               [(ngModel)]="selectedTable" >
+        <label for="departments">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.TABLES.DEPARTMENTS' | translate }}</label>
+      </div>
+      <div class="radio-option" (click)="onTableChange('branches')">
+        <input type="radio" id="branches" name="tableSelector" value="branches" 
+               [(ngModel)]="selectedTable" >
+        <label for="branches">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.TABLES.BRANCHES' | translate }}</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <!-- Actions for Access Permissions Table -->
+      <ng-container *ngIf="selectedTable === 'access'">
+        <button class="add-btn" (click)="createNew()" 
+                [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.CREATE_NEW' | translate">
+          <i class="fas fa-plus"></i>
+          {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.CREATE_NEW' | translate }}
+        </button>
+        <button class="delete-btn" (click)="deleteSelected()" 
+                [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DELETE_SELECTED' | translate">
+          <i class="fas fa-trash"></i>
+          {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DELETE_SELECTED' | translate }}
+        </button>
+      </ng-container>
+      
+      <!-- Actions for Permission Tables -->
+      <ng-container *ngIf="selectedTable !== 'access'">
+        <button class="save-btn" (click)="savePermissions()" 
+                [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.SAVE_PERMISSIONS' | translate">
+          <i class="fas fa-save"></i>
+          {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.SAVE_PERMISSIONS' | translate }}
+        </button>
+      </ng-container>
+    </div>
+    
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.SEARCH_PLACEHOLDER' | translate"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.SEARCH_TITLE' | translate">
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Table 1: Access Permissions -->
+  <div *ngIf="!loading && selectedTable === 'access'" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="checkbox-column">
+            <input type="checkbox" [checked]="selectAll" (change)="onSelectAll($event)" 
+                   [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.SELECT_ALL' | translate">
+          </th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_EMPLOYEE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_DEPT' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_BRANCH' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_BRANCH' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_ROLE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_EMPLOYEE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_MANAGER_DEPT' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_DEPARTMENT' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_MANAGER_BRANCH' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_BRANCH' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_ROLE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CHANGE_DATA' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.START_DATE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.END_DATE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.SOURCE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.NOTE' | translate }}</th>
+          <th class="actions-column">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permission of accessPermissions" class="table-row">
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="isItemSelected(permission)" 
+                   (change)="onItemSelect(permission, $event)"
+                   [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.SELECT_ITEM' | translate">
+          </td>
+          <td>{{ permission.fromEmployeeName || '-' }}</td>
+          <td>{{ permission.fromManagerOfDepartmentName || '-' }}</td>
+          <td>{{ permission.fromManagerOfBranchName || '-' }}</td>
+          <td>{{ permission.fromBranchName || '-' }}</td>
+          <td>{{ permission.fromRoleName || '-' }}</td>
+          <td>{{ permission.toEmployeeName || '-' }}</td>
+          <td>{{ permission.toManagerOfDepartmentName || '-' }}</td>
+          <td>{{ permission.toDepartmentName || '-' }}</td>
+          <td>{{ permission.toManagerOfBranchName || '-' }}</td>
+          <td>{{ permission.toBranchName || '-' }}</td>
+          <td>{{ permission.toRoleName || '-' }}</td>
+          <td>{{ permission.changeData || '-' }}</td>
+          <td>{{ permission.startDate ? (permission.startDate | date:'short') : '-' }}</td>
+          <td>{{ permission.endDate ? (permission.endDate | date:'short') : '-' }}</td>
+          <td>{{ permission.sourceId || '-' }}</td>
+          <td>{{ permission.note || '-' }}</td>
+          <td class="actions-column">
+            <button class="action-btn delete-btn" (click)="deleteItem(permission)" 
+                    [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DELETE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="accessPermissions.length === 0" class="empty-row">
+          <td [attr.colspan]="18" class="empty-message">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table 2: Direct Managers Permissions -->
+  <div *ngIf="!loading && selectedTable === 'directManagers'" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.EDIT' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.EMPLOYEE_NAME' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.DIRECT_MANAGER' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.DIRECT_MANAGER_PERMISSION' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.ACCESS_EMPLOYEE_CHILDREN' | translate }}</th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CANNOT_VIEW' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('cannotView', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CAN_VIEW' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('canView', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CAN_MODIFY' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('canModify', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.ACCESS_CHILDREN' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('accessChild', $event)" 
+                   class="select-all-checkbox">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permission of directManagersPermissions" class="table-row">
+          <td>
+            <button class="action-btn edit-btn" (click)="editItem(permission)" 
+                    [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ permission.empName }}</td>
+          <td>{{ permission.directMgrLabel }}</td>
+          <td>{{ permission.directMgrPermissionLabel }}</td>
+          <td>{{ permission.accessEmpChildrenLabel }}</td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.cannotView" 
+                   (change)="onPermissionChange(permission, 'cannotView', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.canView" 
+                   (change)="onPermissionChange(permission, 'canView', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.canModify" 
+                   (change)="onPermissionChange(permission, 'canModify', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.accessChild" 
+                   (change)="onPermissionChange(permission, 'accessChild', $event)">
+          </td>
+        </tr>
+        <tr *ngIf="directManagersPermissions.length === 0" class="empty-row">
+          <td [attr.colspan]="9" class="empty-message">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table 3: Departments Permissions -->
+  <div *ngIf="!loading && selectedTable === 'departments'" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.EDIT' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.DEPARTMENT_NAME' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.MANAGER' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.MANAGER_ACCESS_PERMISSION' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.ACCESS_DEPARTMENT_CHILDREN' | translate }}</th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CANNOT_VIEW' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('cannotView', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CAN_VIEW' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('canView', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CAN_MODIFY' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('canModify', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.ACCESS_CHILDREN' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('accessChild', $event)" 
+                   class="select-all-checkbox">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permission of departmentsPermissions" class="table-row">
+          <td>
+            <button class="action-btn edit-btn" (click)="editItem(permission)" 
+                    [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ permission.deptName }}</td>
+          <td>{{ permission.mgrLabel }}</td>
+          <td>{{ permission.mgrAccessPermissionLabel }}</td>
+          <td>{{ permission.accessDeptChildrenLabel }}</td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.cannotView" 
+                   (change)="onPermissionChange(permission, 'cannotView', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.canView" 
+                   (change)="onPermissionChange(permission, 'canView', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.canModify" 
+                   (change)="onPermissionChange(permission, 'canModify', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.accessChild" 
+                   (change)="onPermissionChange(permission, 'accessChild', $event)">
+          </td>
+        </tr>
+        <tr *ngIf="departmentsPermissions.length === 0" class="empty-row">
+          <td [attr.colspan]="9" class="empty-message">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table 4: Branches Permissions -->
+  <div *ngIf="!loading && selectedTable === 'branches'" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.EDIT' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.BRANCH_NAME' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.MANAGER' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.MANAGER_ACCESS_PERMISSION' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.ACCESS_BRANCH_CHILDREN' | translate }}</th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CANNOT_VIEW' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('cannotView', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CAN_VIEW' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('canView', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.CAN_MODIFY' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('canModify', $event)" 
+                   class="select-all-checkbox">
+          </th>
+          <th class="permission-header">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.ACCESS_CHILDREN' | translate }}
+            <input type="checkbox" (change)="selectAllPermissions('accessChild', $event)" 
+                   class="select-all-checkbox">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permission of branchesPermissions" class="table-row">
+          <td>
+            <button class="action-btn edit-btn" (click)="editItem(permission)" 
+                    [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ permission.branchName }}</td>
+          <td>{{ permission.mgrLabel }}</td>
+          <td>{{ permission.mgrAccessPermissionLabel }}</td>
+          <td>{{ permission.accessBranchChildrenLabel }}</td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.cannotView" 
+                   (change)="onPermissionChange(permission, 'cannotView', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.canView" 
+                   (change)="onPermissionChange(permission, 'canView', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.canModify" 
+                   (change)="onPermissionChange(permission, 'canModify', $event)">
+          </td>
+          <td class="checkbox-column">
+            <input type="checkbox" [checked]="permission.accessChild" 
+                   (change)="onPermissionChange(permission, 'accessChild', $event)">
+          </td>
+        </tr>
+        <tr *ngIf="branchesPermissions.length === 0" class="empty-row">
+          <td [attr.colspan]="9" class="empty-message">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+    <div class="pagination-info">
+      <span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Create Access Permission Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.CREATE_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeCreateModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
+        
+        <!-- Step 1: FROM Fields (All Available) -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.FROM_SECTION_TITLE' | translate }}</h4>
+          <div class="form-grid">
+            <!-- From Employee -->
+            <div class="form-group">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_EMPLOYEE' | translate }}</label>
+              <select 
+                formControlName="fromEmpId" 
+                class="form-select">
+                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_EMPLOYEE' | translate }}</option>
+                <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+              </select>
+            </div>
+
+            <!-- From Manager of Department -->
+            <div class="form-group">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_DEPT' | translate }}</label>
+              <select 
+                formControlName="fromMgrOfDeptId" 
+                class="form-select">
+                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate }}</option>
+                <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+              </select>
+            </div>
+
+            <!-- From Department -->
+            <div class="form-group">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_DEPARTMENT' | translate }}</label>
+              <select 
+                formControlName="fromDeptId" 
+                class="form-select">
+                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_DEPARTMENT' | translate }}</option>
+                <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
+              </select>
+            </div>
+
+            <!-- From Manager of Branch -->
+            <div class="form-group">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_BRANCH' | translate }}</label>
+              <select 
+                formControlName="fromMgrOfBranchId" 
+                class="form-select">
+                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate }}</option>
+                <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+              </select>
+            </div>
+
+            <!-- From Branch -->
+            <div class="form-group">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_BRANCH' | translate }}</label>
+              <select 
+                formControlName="fromBranchId" 
+                class="form-select">
+                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_BRANCH' | translate }}</option>
+                <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
+              </select>
+            </div>
+
+            <!-- From Role -->
+            <div class="form-group">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_ROLE' | translate }}</label>
+              <select 
+                formControlName="fromRoleId" 
+                class="form-select">
+                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_ROLE' | translate }}</option>
+                <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: TO Target Type Selection -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TO_TARGET_TYPE_TITLE' | translate }}</h4>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="toTargetType" value="employee">
+              <span class="radio-custom"></span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TARGET_TYPES.TO_EMPLOYEES' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="toTargetType" value="managerOfDepartment">
+              <span class="radio-custom"></span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TARGET_TYPES.TO_MANAGERS_OF_DEPARTMENT' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="toTargetType" value="department">
+              <span class="radio-custom"></span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TARGET_TYPES.TO_DEPARTMENTS' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="toTargetType" value="managerOfBranch">
+              <span class="radio-custom"></span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TARGET_TYPES.TO_MANAGERS_OF_BRANCH' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="toTargetType" value="branch">
+              <span class="radio-custom"></span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TARGET_TYPES.TO_BRANCHES' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="toTargetType" value="role">
+              <span class="radio-custom"></span>
+              <span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TARGET_TYPES.TO_ROLES' | translate }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: TO Target Multi-Select -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.TO_TARGETS_TITLE' | translate }}</h4>
+          
+          <!-- To Employees Multi-Select -->
+          <div class="multi-select-container" *ngIf="getCurrentToTargetType() === 'employee'">
+            <div class="multiselect-header">
+              <i class="fas fa-users"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECT_EMPLOYEES' | translate }}
+              <div class="header-actions" *ngIf="hasSelectableToEmployees() && !loadingToEmployees">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllToEmployees()"
+                        [disabled]="areAllToEmployeesSelected()"
+                        [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECT_ALL' | translate">
+                  <i class="fas fa-check-square"></i>
+                  {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearToEmployeesSelection()" 
+                        [disabled]="getToEmployeesSelectedCount() === 0"
+                        [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.CLEAR_ALL' | translate">
+                  <i class="fas fa-times"></i>
+                  {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="toEmployeesMultiSelectState.searchTerm"
+                (input)="updateToEmployeesSearchTerm($any($event.target).value)"
+                [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SEARCH_EMPLOYEES' | translate">
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingToEmployees">
+              <div *ngIf="loadingToEmployees" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.LOADING_EMPLOYEES' | translate }}
+              </div>
+              <div *ngIf="!loadingToEmployees && getFilteredToEmployees().length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.NO_EMPLOYEES_FOUND' | translate }}
+              </div>
+              <div *ngIf="!loadingToEmployees" class="items-list">
+                <label *ngFor="let emp of getFilteredToEmployees()" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isToEmployeeSelected(emp)"
+                    (change)="toggleToEmployeeSelection(emp)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ emp.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getToEmployeesSelectedCount() > 0">
+              <i class="fas fa-check-circle"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECTED' | translate }}: {{ getToEmployeesSelectedCount() }}
+            </div>
+          </div>
+
+          <!-- To Departments Multi-Select -->
+          <div class="multi-select-container" *ngIf="getCurrentToTargetType() === 'department'">
+            <div class="multiselect-header">
+              <i class="fas fa-building"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECT_DEPARTMENTS' | translate }}
+              <div class="header-actions" *ngIf="hasSelectableToDepartments() && !loadingToDepartments">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllToDepartments()"
+                        [disabled]="areAllToDepartmentsSelected()">
+                  <i class="fas fa-check-square"></i>
+                  {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearToDepartmentsSelection()" 
+                        [disabled]="getToDepartmentsSelectedCount() === 0">
+                  <i class="fas fa-times"></i>
+                  {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="toDepartmentsMultiSelectState.searchTerm"
+                (input)="updateToDepartmentsSearchTerm($any($event.target).value)"
+                [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SEARCH_DEPARTMENTS' | translate">
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingToDepartments">
+              <div *ngIf="loadingToDepartments" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.LOADING_DEPARTMENTS' | translate }}
+              </div>
+              <div *ngIf="!loadingToDepartments && getFilteredToDepartments().length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.NO_DEPARTMENTS_FOUND' | translate }}
+              </div>
+              <div *ngIf="!loadingToDepartments" class="items-list">
+                <label *ngFor="let dept of getFilteredToDepartments()" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isToDepartmentSelected(dept)"
+                    (change)="toggleToDepartmentSelection(dept)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ dept.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getToDepartmentsSelectedCount() > 0">
+              <i class="fas fa-check-circle"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECTED' | translate }}: {{ getToDepartmentsSelectedCount() }}
+            </div>
+          </div>
+
+          <!-- To Branches Multi-Select -->
+          <div class="multi-select-container" *ngIf="getCurrentToTargetType() === 'branch'">
+            <div class="multiselect-header">
+              <i class="fas fa-code-branch"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SELECT_BRANCHES' | translate }}
+              <div class="header-actions" *ngIf="hasSelectableToBranches() && !loadingToBranches">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllToBranches()"
+                        [disabled]="areAllToBranchesSelected()">
+                  <i class="fas fa-check-square"></i>
+                  اختر الكل
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearToBranchesSelection()" 
+                        [disabled]="getToBranchesSelectedCount() === 0">
+                  <i class="fas fa-times"></i>
+                  إلغاء الكل
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="toBranchesMultiSelectState.searchTerm"
+                (input)="updateToBranchesSearchTerm($any($event.target).value)"
+                [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.SEARCH_BRANCHES' | translate">
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingToBranches">
+              <div *ngIf="loadingToBranches" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.MULTISELECT.LOADING_BRANCHES' | translate }}
+              </div>
+              <div *ngIf="!loadingToBranches && getFilteredToBranches().length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                لم يتم العثور على فروع
+              </div>
+              <div *ngIf="!loadingToBranches" class="items-list">
+                <label *ngFor="let branch of getFilteredToBranches()" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isToBranchSelected(branch)"
+                    (change)="toggleToBranchSelection(branch)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ branch.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getToBranchesSelectedCount() > 0">
+              <i class="fas fa-check-circle"></i>
+              المحدد: {{ getToBranchesSelectedCount() }}
+            </div>
+          </div>
+
+          <!-- To Roles Multi-Select -->
+          <div class="multi-select-container" *ngIf="getCurrentToTargetType() === 'role'">
+            <div class="multiselect-header">
+              <i class="fas fa-user-tag"></i>
+              اختر الأدوار المستهدفة
+              <div class="header-actions" *ngIf="hasSelectableToRoles() && !loadingToRoles">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllToRoles()"
+                        [disabled]="areAllToRolesSelected()">
+                  <i class="fas fa-check-square"></i>
+                  اختر الكل
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearToRolesSelection()" 
+                        [disabled]="getToRolesSelectedCount() === 0">
+                  <i class="fas fa-times"></i>
+                  إلغاء الكل
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="toRolesMultiSelectState.searchTerm"
+                (input)="updateToRolesSearchTerm($any($event.target).value)"
+                placeholder="البحث في الأدوار">
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingToRoles">
+              <div *ngIf="loadingToRoles" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                جاري تحميل الأدوار...
+              </div>
+              <div *ngIf="!loadingToRoles && getFilteredToRoles().length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                لم يتم العثور على أدوار
+              </div>
+              <div *ngIf="!loadingToRoles" class="items-list">
+                <label *ngFor="let role of getFilteredToRoles()" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isToRoleSelected(role)"
+                    (change)="toggleToRoleSelection(role)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ role.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getToRolesSelectedCount() > 0">
+              <i class="fas fa-check-circle"></i>
+              المحدد: {{ getToRolesSelectedCount() }}
+            </div>
+          </div>
+
+          <!-- To Managers of Department Multi-Select -->
+          <div class="multi-select-container" *ngIf="getCurrentToTargetType() === 'managerOfDepartment'">
+            <div class="multiselect-header">
+              <i class="fas fa-user-tie"></i>
+              اختر مدراء الأقسام المستهدفين
+              <div class="header-actions" *ngIf="hasSelectableToManagersOfDepartment() && !loadingToManagersOfDepartment">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllToManagersOfDepartment()"
+                        [disabled]="areAllToManagersOfDepartmentSelected()">
+                  <i class="fas fa-check-square"></i>
+                  اختر الكل
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearToManagersOfDepartmentSelection()" 
+                        [disabled]="getToManagersOfDepartmentSelectedCount() === 0">
+                  <i class="fas fa-times"></i>
+                  إلغاء الكل
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="toManagersOfDepartmentMultiSelectState.searchTerm"
+                (input)="updateToManagersOfDepartmentSearchTerm($any($event.target).value)"
+                placeholder="البحث في مدراء الأقسام">
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingToManagersOfDepartment">
+              <div *ngIf="loadingToManagersOfDepartment" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                جاري تحميل مدراء الأقسام...
+              </div>
+              <div *ngIf="!loadingToManagersOfDepartment && getFilteredToManagersOfDepartment().length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                لم يتم العثور على مدراء أقسام
+              </div>
+              <div *ngIf="!loadingToManagersOfDepartment" class="items-list">
+                <label *ngFor="let manager of getFilteredToManagersOfDepartment()" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isToManagerOfDepartmentSelected(manager)"
+                    (change)="toggleToManagerOfDepartmentSelection(manager)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ manager.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getToManagersOfDepartmentSelectedCount() > 0">
+              <i class="fas fa-check-circle"></i>
+              المحدد: {{ getToManagersOfDepartmentSelectedCount() }}
+            </div>
+          </div>
+
+          <!-- To Managers of Branch Multi-Select -->
+          <div class="multi-select-container" *ngIf="getCurrentToTargetType() === 'managerOfBranch'">
+            <div class="multiselect-header">
+              <i class="fas fa-user-cog"></i>
+              اختر مدراء الفروع المستهدفين
+              <div class="header-actions" *ngIf="hasSelectableToManagersOfBranch() && !loadingToManagersOfBranch">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllToManagersOfBranch()"
+                        [disabled]="areAllToManagersOfBranchSelected()">
+                  <i class="fas fa-check-square"></i>
+                  اختر الكل
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearToManagersOfBranchSelection()" 
+                        [disabled]="getToManagersOfBranchSelectedCount() === 0">
+                  <i class="fas fa-times"></i>
+                  إلغاء الكل
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="toManagersOfBranchMultiSelectState.searchTerm"
+                (input)="updateToManagersOfBranchSearchTerm($any($event.target).value)"
+                placeholder="البحث في مدراء الفروع">
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingToManagersOfBranch">
+              <div *ngIf="loadingToManagersOfBranch" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                جاري تحميل مدراء الفروع...
+              </div>
+              <div *ngIf="!loadingToManagersOfBranch && getFilteredToManagersOfBranch().length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                لم يتم العثور على مدراء فروع
+              </div>
+              <div *ngIf="!loadingToManagersOfBranch" class="items-list">
+                <label *ngFor="let manager of getFilteredToManagersOfBranch()" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isToManagerOfBranchSelected(manager)"
+                    (change)="toggleToManagerOfBranchSelection(manager)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ manager.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getToManagersOfBranchSelectedCount() > 0">
+              <i class="fas fa-check-circle"></i>
+              المحدد: {{ getToManagersOfBranchSelectedCount() }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Date Range -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.VALIDITY_PERIOD_TITLE' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.START_DATE' | translate }}</label>
+              <input 
+                type="datetime-local" 
+                formControlName="sDate" 
+                class="form-input"
+                [class.error]="isFieldInvalid('sDate')">
+              <div *ngIf="isFieldInvalid('sDate')" class="error-message">
+                {{ getFieldError('sDate') }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="required">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.END_DATE' | translate }}</label>
+              <input 
+                type="datetime-local" 
+                formControlName="eDate" 
+                class="form-input"
+                [class.error]="isFieldInvalid('eDate')">
+              <div *ngIf="isFieldInvalid('eDate')" class="error-message">
+                {{ getFieldError('eDate') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Additional Information -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.ADDITIONAL_INFO_TITLE' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.CHANGE_DATA_EMP' | translate }}</label>
+              <input 
+                type="number" 
+                formControlName="changeDataEmp" 
+                class="form-input"
+                min="0"
+                placeholder="0">
+            </div>
+
+            <div class="form-group full-width">
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.NOTE' | translate }}</label>
+              <textarea 
+                formControlName="note" 
+                class="form-textarea"
+                rows="3"
+                [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.NOTE_PLACEHOLDER' | translate"></textarea>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeCreateModal()">
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="createForm.invalid || loading">
+            <i *ngIf="loading" class="fas fa-spinner fa-spin"></i>
+            {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.CREATE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

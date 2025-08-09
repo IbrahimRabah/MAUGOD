@@ -1,1 +1,262 @@
-<p>my-salary works!</p>
+<div class="my-salary-container">
+  <!-- Radio Button Selection -->
+  <div class="table-selector">
+    <h2>{{ 'MY_SALARY.TITLE' | translate }}</h2>
+    <div class="radio-group">
+      <div class="radio-option" (click)="onTableChange('salaryDetails')">
+        <input type="radio" id="salaryDetails" name="tableSelector" value="salaryDetails" 
+               [(ngModel)]="selectedTable">
+        <label for="salaryDetails">{{ 'MY_SALARY.TABLES.SALARY_DETAILS' | translate }}</label>
+      </div>
+      <div class="radio-option" (click)="onTableChange('salaryAddons')">
+        <input type="radio" id="salaryAddons" name="tableSelector" value="salaryAddons" 
+               [(ngModel)]="selectedTable">
+        <label for="salaryAddons">{{ 'MY_SALARY.TABLES.SALARY_ADDONS_DEDUCTS' | translate }}</label>
+      </div>
+      <div class="radio-option" (click)="onTableChange('salaryCalculations')">
+        <input type="radio" id="salaryCalculations" name="tableSelector" value="salaryCalculations" 
+               [(ngModel)]="selectedTable">
+        <label for="salaryCalculations">{{ 'MY_SALARY.TABLES.SALARY_CALCULATIONS' | translate }}</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MY_SALARY.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <!-- No actions for view-only tables -->
+    </div>
+    
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          [placeholder]="'MY_SALARY.SEARCH_PLACEHOLDER' | translate">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table 1: Salary Details -->
+  <div *ngIf="!loading && selectedTable === 'salaryDetails'" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.EMPLOYEE_NAME' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.CONTRACT_DATE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.SALARY_TYPE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.SALARY' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.FREE_LATE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.INCLUDE_FREE_LATE_AFTER_EXCEED' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.MINUTES_TO_DEDUCT_1_DAY' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.COUNT_PARTIAL_LATE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.SEPARATE_OVERTIME' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.OVERTIME_HR_COST' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.MAX_OVERTIME' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.ABSENT_PER_MONTH_YEAR' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.NO_SIGNOUT_PER_MONTH_YEAR' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.BANK' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_DETAILS.NOTE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detail of salaryDetails" class="table-row">
+          <td>{{ detail.empName }}</td>
+          <td>{{ formatDate(detail.contractStart) }}</td>
+          <td>{{ getSalaryTypeText(detail.salType) }}</td>
+          <td>{{ detail.salary | number:'1.2-2' }}</td>
+          <td>{{ detail.freeLate }}</td>
+          <td>{{ getBooleanText(detail.includeFreeLateAfterExceedLimit) }}</td>
+          <td>{{ detail.minutes2Days }}</td>
+          <td>{{ getBooleanText(detail.countParialLate) }}</td>
+          <td>{{ getBooleanText(detail.separateOvertime) }}</td>
+          <td>{{ detail.overtimeHrCost | number:'1.2-2' }}</td>
+          <td>{{ detail.maxOvertime }}</td>
+          <td>{{ detail.absentPerMY }}</td>
+          <td>{{ detail.noSignoutPerMY }}</td>
+          <td>{{ detail.bankName }}</td>
+          <td>{{ detail.note }}</td>
+        </tr>
+        <tr *ngIf="salaryDetails.length === 0" class="empty-row">
+          <td colspan="15" class="empty-message">{{ 'MY_SALARY.NO_DATA_AVAILABLE' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table 2: Salary Add-ons/Deductions -->
+  <div *ngIf="!loading && selectedTable === 'salaryAddons'" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.ARABIC_NAME' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.ENGLISH_NAME' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.ADD_OR_DEDUCT' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.PER_WORKING_DAY' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.INCLUDE_WHEN_DEDUCT_ABSENT' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.INCLUDE_WHEN_IN_VACATION' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.INCLUDE_WHEN_IN_PAID_VACATION' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.INCLUDE_IN_END_OF_SERVICE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_ADDONS.NOTE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let addon of salaryAddons" class="table-row">
+          <td>{{ addon.ar }}</td>
+          <td>{{ addon.en }}</td>
+          <td>{{ getAddDeductText(addon.addDed) }}</td>
+          <td>{{ getBooleanText(addon.perWorkingDay) }}</td>
+          <td>{{ getBooleanText(addon.includeWhenDedAbsent) }}</td>
+          <td>{{ getBooleanText(addon.includeWhenInVaction) }}</td>
+          <td>{{ getBooleanText(addon.includeWhenInPaidVaction) }}</td>
+          <td>{{ getBooleanText(addon.includeInEndOfService) }}</td>
+          <td>{{ addon.note }}</td>
+        </tr>
+        <tr *ngIf="salaryAddons.length === 0" class="empty-row">
+          <td colspan="9" class="empty-message">{{ 'MY_SALARY.NO_DATA_AVAILABLE' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table 3: Salary Calculations -->
+  <div *ngIf="!loading && selectedTable === 'salaryCalculations'" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.EMPLOYEE_NAME' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.START_DATE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.END_DATE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.SALARY' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.ADDON_TOTAL' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.MINUS_TOTAL' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.OVERTIME_TOTAL' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.LATE_DEDUCTION' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.ABSENT_DEDUCTION' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.NO_SIGNOUT_DEDUCTION' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.TOTAL_AMOUNT' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.PAID_AMOUNT' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.CALC_TIME' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.CALC_BY' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.OUT_REFERENCE' | translate }}</th>
+          <th>{{ 'MY_SALARY.SALARY_CALCULATIONS.NOTE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let calculation of salaryCalculations" class="table-row">
+          <td>{{ calculation.empName }}</td>
+          <td>{{ formatDate(calculation.sDate) }}</td>
+          <td>{{ formatDate(calculation.eDate) }}</td>
+          <td>{{ calculation.sal | number:'1.2-2' }}</td>
+          <td>{{ calculation.addonTot | number:'1.2-2' }}</td>
+          <td>{{ calculation.minusTot | number:'1.2-2' }}</td>
+          <td>{{ calculation.overtimeTot | number:'1.2-2' }}</td>
+          <td>{{ calculation.lateDed | number:'1.2-2' }}</td>
+          <td>{{ calculation.absentDed | number:'1.2-2' }}</td>
+          <td>{{ calculation.noSignoutDed | number:'1.2-2' }}</td>
+          <td>{{ calculation.totalAmount | number:'1.2-2' }}</td>
+          <td>{{ calculation.paidAmount | number:'1.2-2' }}</td>
+          <td>{{ formatDate(calculation.calcTime) }}</td>
+          <td>{{ calculation.calcByEmpName }}</td>
+          <td>{{ calculation.outReference }}</td>
+          <td>{{ calculation.note }}</td>
+        </tr>
+        <tr *ngIf="salaryCalculations.length === 0" class="empty-row">
+          <td colspan="16" class="empty-message">{{ 'MY_SALARY.NO_DATA_AVAILABLE' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+    <div class="pagination-info">
+      <span>{{ 'MY_SALARY.PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MY_SALARY.PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MY_SALARY.PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MY_SALARY.PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MY_SALARY.PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MY_SALARY.PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MY_SALARY.PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MY_SALARY.PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MY_SALARY.PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MY_SALARY.PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MY_SALARY.PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MY_SALARY.PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MY_SALARY.PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MY_SALARY.PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MY_SALARY.PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MY_SALARY.PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'MY_SALARY.PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>

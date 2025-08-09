@@ -1,0 +1,745 @@
+.my-salary-container {
+  padding: 25px;
+  background: #f8f9fa;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Table Selector */
+.table-selector {
+  margin-bottom: 25px;
+  padding: 25px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.table-selector h2 {
+  margin: 0 0 20px 0;
+  color: #2d3748;
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+}
+
+.table-selector h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #007bff;
+  border-radius: 2px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.radio-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 12px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.radio-option:hover {
+  background: #e3f2fd;
+  border-color: #007bff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+.radio-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radio-option label {
+  cursor: pointer;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.radio-option input[type="radio"]:checked + label {
+  color: #007bff;
+}
+
+.radio-option input[type="radio"]:checked {
+  background: #007bff;
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  background: white;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+}
+
+.spinner {
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+.loading-spinner p {
+  color: #007bff;
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Table Header Actions */
+.table-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.table-header-actions::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.left-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Search Container */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  min-width: 320px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.search-container:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+.search-container:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  background: white;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  padding: 14px 20px;
+  font-size: 14px;
+  width: 100%;
+  background: transparent;
+  color: #2d3748;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+/* RTL (Arabic) - Padding for icon on the right */
+.search-container.rtl .search-input {
+  padding-right: 50px;
+  padding-left: 20px;
+}
+
+/* LTR (English) - Padding for icon on the left */
+.search-container.ltr .search-input {
+  padding-left: 50px;
+  padding-right: 20px;
+}
+
+/* Default fallback - Padding for icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-input {
+  padding-left: 50px;
+  padding-right: 20px;
+}
+
+.search-input:focus {
+  background: transparent;
+}
+
+.search-input::placeholder {
+  color: #a0aec0;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.search-icon {
+  position: absolute;
+  color: #a0aec0;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-container:focus-within .search-icon {
+  color: #007bff;
+  transform: scale(1.1);
+}
+
+/* RTL (Arabic) - Icon on the right */
+.search-container.rtl .search-icon {
+  right: 18px;
+}
+
+/* LTR (English) - Icon on the left */
+.search-container.ltr .search-icon {
+  left: 18px;
+}
+
+/* Default fallback - Icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-icon {
+  left: 18px;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+  background: white;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  position: relative;
+  overflow-x: auto;
+}
+
+.table-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #007bff;
+  z-index: 1;
+}
+
+/* Custom Table */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: transparent;
+  min-width: 800px;
+  position: relative;
+}
+
+/* Table Header */
+.custom-table thead tr.table-header th {
+  background: #007bff;
+  color: white;
+  padding: 18px 15px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.custom-table thead tr.table-header th:first-child {
+  border-top-left-radius: 0;
+  position: relative;
+}
+
+.custom-table thead tr.table-header th:first-child::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.custom-table thead tr.table-header th:last-child {
+  border-top-right-radius: 0;
+}
+
+/* Table Body */
+.custom-table tbody tr.table-row {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  position: relative;
+}
+
+.custom-table tbody tr.table-row:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.custom-table tbody tr.table-row:hover {
+  background: #e3f2fd;
+  transform: translateX(3px);
+  box-shadow: 3px 0 10px rgba(0, 123, 255, 0.1);
+  border-left: 4px solid #007bff;
+}
+
+.custom-table tbody tr.table-row td {
+  padding: 16px 15px;
+  vertical-align: middle;
+  color: #2d3748;
+  border-bottom: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+}
+
+.custom-table tbody tr.table-row:hover td {
+  color: #1a202c;
+}
+
+.custom-table tbody tr.table-row td:first-child {
+  font-weight: 700;
+  color: #007bff;
+  border-left: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.custom-table tbody tr.table-row:hover td:first-child {
+  color: #0056b3;
+  border-left-color: #007bff;
+}
+
+/* Data Cell Animations */
+.custom-table tbody tr.table-row td {
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-table tbody tr.table-row td::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  transition: width 0.3s ease;
+}
+
+.custom-table tbody tr.table-row:hover td::after {
+  width: 100%;
+}
+
+/* Empty Row */
+.custom-table tbody tr.empty-row td.empty-message {
+  text-align: center;
+  padding: 50px 20px;
+  color: #6c757d;
+  font-style: italic;
+  font-size: 18px;
+  background: #f8f9fa;
+  position: relative;
+}
+
+.custom-table tbody tr.empty-row td.empty-message::before {
+  content: '📊';
+  display: block;
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+/* Pagination */
+.pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 0 0 10px 10px;
+  margin-top: 0;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.pagination-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.pagination-info {
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 14px;
+  background: #f8f9fa;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-btn {
+  background: white;
+  border: 2px solid #e0e0e0;
+  color: #4a5568;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #007bff;
+  border-color: #007bff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.pagination-btn:disabled {
+  background: #f7fafc;
+  color: #cbd5e0;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 123, 255, 0.2);
+}
+
+.page-info {
+  margin: 0 20px;
+  font-weight: 700;
+  color: #007bff;
+  font-size: 15px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 2px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f9fa;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.page-size-selector label {
+  color: #4a5568;
+  font-weight: 600;
+  margin: 0;
+  font-size: 14px;
+}
+
+.page-size-selector select {
+  padding: 8px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #4a5568;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 70px;
+}
+
+.page-size-selector select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  background: white;
+}
+
+.page-size-selector select:hover {
+  border-color: #007bff;
+  background: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .my-salary-container {
+    padding: 15px;
+  }
+  
+  .table-selector {
+    padding: 20px 15px;
+  }
+  
+  .table-selector h2 {
+    font-size: 1.5rem;
+  }
+  
+  .radio-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .radio-option {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .table-header-actions {
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+    padding: 20px;
+  }
+  
+  .search-container {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .pagination-wrapper {
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .pagination-controls {
+    justify-content: center;
+  }
+  
+  .page-size-selector {
+    justify-content: center;
+  }
+  
+  .custom-table {
+    font-size: 12px;
+    min-width: 600px;
+  }
+  
+  .custom-table thead tr.table-header th,
+  .custom-table tbody tr.table-row td {
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-salary-container {
+    padding: 10px;
+  }
+  
+  .table-selector {
+    padding: 15px 10px;
+  }
+  
+  .table-selector h2 {
+    font-size: 1.25rem;
+  }
+  
+  .pagination-btn {
+    padding: 8px 10px;
+    min-width: 40px;
+    height: 40px;
+  }
+  
+  .page-info {
+    margin: 0 10px;
+    font-size: 14px;
+  }
+  
+  .custom-table {
+    font-size: 11px;
+  }
+  
+  .custom-table thead tr.table-header th,
+  .custom-table tbody tr.table-row td {
+    padding: 10px 6px;
+  }
+}
+
+/* Enhanced hover effects for table rows */
+.custom-table tbody tr.table-row {
+  cursor: pointer;
+}
+
+.custom-table tbody tr.table-row:hover {
+  animation: rowHighlight 0.3s ease-in-out;
+}
+
+@keyframes rowHighlight {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+  100% { transform: translateX(5px); }
+}
+
+/* Table cell value highlighting */
+.custom-table tbody tr.table-row td:nth-child(4),
+.custom-table tbody tr.table-row td:nth-child(11),
+.custom-table tbody tr.table-row td:nth-child(12) {
+  font-weight: 700;
+  color: #007bff;
+}
+
+.custom-table tbody tr.table-row:hover td:nth-child(4),
+.custom-table tbody tr.table-row:hover td:nth-child(11),
+.custom-table tbody tr.table-row:hover td:nth-child(12) {
+  color: #0056b3;
+}
+
+/* Smooth scrollbar for table wrapper */
+.table-wrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #0056b3;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+/* Additional enhancements */
+.custom-table tbody tr.table-row td {
+  position: relative;
+}
+
+/* Number formatting for monetary values */
+.custom-table tbody tr.table-row td[title*="Amount"],
+.custom-table tbody tr.table-row td[title*="Salary"],
+.custom-table tbody tr.table-row td[title*="Cost"] {
+  font-family: 'Courier New', monospace;
+  text-align: right;
+  background: #f0fff4;
+  font-weight: 600;
+}
+
+/* Status indicators for boolean values */
+.custom-table tbody tr.table-row td:contains("Yes"),
+.custom-table tbody tr.table-row td:contains("نعم") {
+  color: #38a169;
+  font-weight: 600;
+}
+
+.custom-table tbody tr.table-row td:contains("No"),
+.custom-table tbody tr.table-row td:contains("لا") {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+/* Loading state for table */
+.table-wrapper.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.table-wrapper.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+}

@@ -1,0 +1,299 @@
+<div class="data-transfer-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <div class="header-actions">
+      <button class="create-btn" (click)="openModal()" title="إنشاء نقل بيانات جديد">
+        <i class="fas fa-plus"></i>
+        إنشاء نقل بيانات
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Data Transfer Modal -->
+<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>نقل البيانات</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="dataTransferForm" (ngSubmit)="submitForm()">
+        
+        <!-- Step 1: Transfer Type Selection -->
+        <div class="form-section">
+          <h4 class="section-title">نوع النقل</h4>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="transferType" value="employee">
+              <span class="radio-custom"></span>
+              <span>موظف</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="transferType" value="managerOfDepartment">
+              <span class="radio-custom"></span>
+              <span>مدير قسم</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="transferType" value="department">
+              <span class="radio-custom"></span>
+              <span>قسم</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="transferType" value="managerOfBranch">
+              <span class="radio-custom"></span>
+              <span>مدير فرع</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="transferType" value="branch">
+              <span class="radio-custom"></span>
+              <span>فرع</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="transferType" value="role">
+              <span class="radio-custom"></span>
+              <span>دور</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 2: From Fields (Dropdowns) -->
+        <div class="form-section">
+          <h4 class="section-title">من</h4>
+          <div class="form-grid">
+            <!-- From Employee -->
+            <div class="form-group" *ngIf="dataTransferForm.get('transferType')?.value === 'employee'">
+              <label class="required">الموظف</label>
+              <select 
+                formControlName="fromEmpId" 
+                class="form-select"
+                [class.error]="isFieldInvalid('fromEmpId')">
+                <option value="0">اختر موظف</option>
+                <option *ngFor="let emp of fromEmployees" [value]="emp.id">{{ emp.name }}</option>
+              </select>
+              <div *ngIf="isFieldInvalid('fromEmpId')" class="error-message">
+                {{ getFieldError('fromEmpId') }}
+              </div>
+            </div>
+
+            <!-- From Manager of Department -->
+            <div class="form-group" *ngIf="dataTransferForm.get('transferType')?.value === 'managerOfDepartment'">
+              <label class="required">مدير القسم</label>
+              <select 
+                formControlName="fromMgrOfDeptId" 
+                class="form-select"
+                [class.error]="isFieldInvalid('fromMgrOfDeptId')">
+                <option value="0">اختر مدير قسم</option>
+                <option *ngFor="let manager of fromManagers" [value]="manager.id">{{ manager.name }}</option>
+              </select>
+              <div *ngIf="isFieldInvalid('fromMgrOfDeptId')" class="error-message">
+                {{ getFieldError('fromMgrOfDeptId') }}
+              </div>
+            </div>
+
+            <!-- From Department -->
+            <div class="form-group" *ngIf="dataTransferForm.get('transferType')?.value === 'department'">
+              <label class="required">القسم</label>
+              <select 
+                formControlName="fromDeptId" 
+                class="form-select"
+                [class.error]="isFieldInvalid('fromDeptId')">
+                <option value="0">اختر قسم</option>
+                <option *ngFor="let dept of fromDepartments" [value]="dept.id">{{ dept.name }}</option>
+              </select>
+              <div *ngIf="isFieldInvalid('fromDeptId')" class="error-message">
+                {{ getFieldError('fromDeptId') }}
+              </div>
+            </div>
+
+            <!-- From Manager of Branch -->
+            <div class="form-group" *ngIf="dataTransferForm.get('transferType')?.value === 'managerOfBranch'">
+              <label class="required">مدير الفرع</label>
+              <select 
+                formControlName="fromMgrOfBranchId" 
+                class="form-select"
+                [class.error]="isFieldInvalid('fromMgrOfBranchId')">
+                <option value="0">اختر مدير فرع</option>
+                <option *ngFor="let manager of fromBranchManagers" [value]="manager.id">{{ manager.name }}</option>
+              </select>
+              <div *ngIf="isFieldInvalid('fromMgrOfBranchId')" class="error-message">
+                {{ getFieldError('fromMgrOfBranchId') }}
+              </div>
+            </div>
+
+            <!-- From Branch -->
+            <div class="form-group" *ngIf="dataTransferForm.get('transferType')?.value === 'branch'">
+              <label class="required">الفرع</label>
+              <select 
+                formControlName="fromBranchId" 
+                class="form-select"
+                [class.error]="isFieldInvalid('fromBranchId')">
+                <option value="0">اختر فرع</option>
+                <option *ngFor="let branch of fromBranches" [value]="branch.id">{{ branch.name }}</option>
+              </select>
+              <div *ngIf="isFieldInvalid('fromBranchId')" class="error-message">
+                {{ getFieldError('fromBranchId') }}
+              </div>
+            </div>
+
+            <!-- From Role -->
+            <div class="form-group" *ngIf="dataTransferForm.get('transferType')?.value === 'role'">
+              <label class="required">الدور</label>
+              <select 
+                formControlName="fromRoleId" 
+                class="form-select"
+                [class.error]="isFieldInvalid('fromRoleId')">
+                <option value="0">اختر دور</option>
+                <option *ngFor="let role of fromRoles" [value]="role.id">{{ role.name }}</option>
+              </select>
+              <div *ngIf="isFieldInvalid('fromRoleId')" class="error-message">
+                {{ getFieldError('fromRoleId') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: To Employees Multi-Select -->
+        <div class="form-section">
+          <h4 class="section-title">إلى الموظفين</h4>
+          
+          <div class="multi-select-container">
+            <div class="multiselect-header">
+              <i class="fas fa-users"></i>
+              اختر الموظفين المستهدفين
+              <div class="header-actions" *ngIf="hasSelectableToEmployees() && !loadingToEmployees">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllToEmployees()"
+                        [disabled]="areAllToEmployeesSelected()"
+                        title="اختر الكل">
+                  <i class="fas fa-check-square"></i>
+                  اختر الكل
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearToEmployeesSelectionMethod()" 
+                        [disabled]="getToEmployeesSelectedCount() === 0"
+                        title="إلغاء الكل">
+                  <i class="fas fa-times"></i>
+                  إلغاء الكل
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="toEmployeesMultiSelectState.searchTerm"
+                (input)="updateToEmployeesSearchTerm($any($event.target).value)"
+                placeholder="البحث في الموظفين">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingToEmployees">
+              <div *ngIf="loadingToEmployees" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                جاري تحميل الموظفين...
+              </div>
+              <div *ngIf="!loadingToEmployees && getFilteredToEmployees().length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                لم يتم العثور على موظفين
+              </div>
+              <div *ngIf="!loadingToEmployees" class="items-list">
+                <label *ngFor="let emp of getFilteredToEmployees()" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isToEmployeeSelected(emp)"
+                    (change)="toggleToEmployeeSelection(emp)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ emp.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getToEmployeesSelectedCount() > 0">
+              <i class="fas fa-check-circle"></i>
+              المحدد: {{ getToEmployeesSelectedCount() }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Date Range -->
+        <div class="form-section">
+          <h4 class="section-title">فترة النقل</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">تاريخ البداية</label>
+              <input 
+                type="datetime-local" 
+                formControlName="sDate" 
+                class="form-input"
+                [class.error]="isFieldInvalid('sDate')">
+              <div *ngIf="isFieldInvalid('sDate')" class="error-message">
+                {{ getFieldError('sDate') }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="required">تاريخ النهاية</label>
+              <input 
+                type="datetime-local" 
+                formControlName="eDate" 
+                class="form-input"
+                [class.error]="isFieldInvalid('eDate')">
+              <div *ngIf="isFieldInvalid('eDate')" class="error-message">
+                {{ getFieldError('eDate') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Additional Information -->
+        <div class="form-section">
+          <h4 class="section-title">معلومات إضافية</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>تغيير بيانات الموظف</label>
+              <input 
+                type="number" 
+                formControlName="changeDataEmp" 
+                class="form-input"
+                min="0"
+                placeholder="0">
+            </div>
+
+            <div class="form-group full-width">
+              <label>ملاحظات</label>
+              <textarea 
+                formControlName="note" 
+                class="form-textarea"
+                rows="3"
+                placeholder="أدخل أي ملاحظات إضافية"></textarea>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+            إلغاء
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="dataTransferForm.invalid || getToEmployeesSelectedCount() === 0">
+            <i class="fas fa-check"></i>
+            إرسال
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
