@@ -30,3 +30,44 @@ export interface EmployeeResponse {
     totalCount: number;
   };
 }
+
+export interface EmployeeCreateUpdateRequest {
+  rowId: number;
+  empId?: number;
+  ar?: string;
+  en?: string;
+  activeFlag: number;
+  statusId: number;
+  fpid?: string;
+  deptId: number;
+  natId: number;
+  gender: number;
+  email?: string;
+  smsPhone?: string;
+  phone?: string;
+  physicalAddress?: string;
+  maritalStatus: number;
+  birthDate?: string; // ISO string format for DateTime
+  hireSDate?: string;
+  hireEDate?: string;
+  jobId?: string;
+  jobTypId?: number;
+  jobdesc?:string
+  empVatInfo?: string;
+  govId?: string;
+  govIdExpiration?: string;
+  employeeCardNo?: string;
+  employeeCardExpiration?: string;
+  driverLicenceNo?: string;
+  driverLicenceExpiration?: string;
+  healthCardNo?: string;
+  healthCardExpiration?: string;
+  insuranceCardInfo?: string;
+  insuranceCardExpiration?: string;
+  passportNo?: string;
+  passportExpiration?: string;
+  userName?: string;
+  passwd?: string;
+  lang: number;
+  note?: string;
+}

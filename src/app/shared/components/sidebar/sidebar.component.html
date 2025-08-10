@@ -36,7 +36,7 @@
       <li class="nav-item">
         <a class="nav-link" [routerLink]="['/reports']" routerLinkActive="active">
           <i class="fa fa fa-print"></i>
-          <span>التقارير</span>
+          <span>{{ 'MENU.REPORTS' | translate }}</span>
         </a>
       </li>
 
@@ -45,38 +45,44 @@
         <div [routerLink]="['/attendance/data']">
           <a class="nav-link" (click)="toggleSubmenu('attendance')" [class.expanded]="isSubmenuOpen('attendance')">
             <i class="fa-regular fa-check-square"></i>
-            <span>بيانات الحضور</span>
+            <span>{{ 'MENU.ATTENDANCE_DATA' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
 
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('attendance')">
           <li><a class="nav-link" [routerLink]="['/attendance/punch-in-transactions']"
-              routerLinkActive="active"><span>سجل البصمات</span></a></li>
-          <li><a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active"><span>مشاهدة
-                الحضور</span></a></li>
+              routerLinkActive="active"><span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.PUNCH_TRANSACTION' | translate }}</span></a></li>
+          <li><a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active">
+            <span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.ATTENDANCE' | translate }}</span></a></li>
           <li><a class="nav-link" [routerLink]="['/attendance/change-attendance-time']"
-              routerLinkActive="active"><span>تعديل بيانات الحضور مباشرة</span></a></li>
+              routerLinkActive="active"><span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.CHANGE_ATTENDANCE_TIME' | translate }}</span></a></li>
         </ul>
-      </li> <!-- 6. فترات الدوام -->
+      </li> 
+
+      <!-- 6. فترات الدوام -->
       <li class="nav-item">
         <div [routerLink]="['/shifts-section']">
           <a class="nav-link" (click)="toggleSubmenu('shifts')" [class.expanded]="isSubmenuOpen('shifts')">
             <i class="fa-regular fa-calendar-days"></i>
-            <span>فترات الدوام</span>
+            <span>{{ 'MENU.SHIFTS' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('shifts')">
-          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts']" routerLinkActive="active">الورديات</a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/automatic-sign']" routerLinkActive="active">التوقيع
-              الالي</a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts-assign']" routerLinkActive="active">اسناد
-              الورديات</a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/missing-days']" routerLinkActive="active">الايام
-              المفقودة بدون اسناد فترة</a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/timtran-lock']" routerLinkActive="active">اغلاق
-              الفترات</a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts']" routerLinkActive="active">{{ 'MENU.SHIFTS_SECTIONS.SHIFTS' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/automatic-sign']" routerLinkActive="active">
+            {{ 'MENU.SHIFTS_SECTIONS.AUTOMATIC_SIGN' | translate }}
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts-assign']" routerLinkActive="active">
+            {{ 'MENU.SHIFTS_SECTIONS.SHIFTS_ASSIGN' | translate }}
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/missing-days']" routerLinkActive="active">
+            {{ 'MENU.SHIFTS_SECTIONS.MISSING_DAYS' | translate }}
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/shifts-section/timtran-lock']" routerLinkActive="active">
+            {{ 'MENU.SHIFTS_SECTIONS.TIMTRAN_LOCK' | translate }}
+          </a></li>
         </ul>
       </li>
 
@@ -86,22 +92,27 @@
 
           <a class="nav-link" (click)="toggleSubmenu('leaves')" [class.expanded]="isSubmenuOpen('leaves')">
             <i class="fa fa fa-tasks"></i>
-            <span>الاجازات والمهام</span>
+            <span>{{ 'MENU.VACATION_TASKS' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
           <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-status-classifications']"
-              routerLinkActive="active">تصنيف حالات الحضور</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-statuses']" routerLinkActive="active">حالات
-              الحضور</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-priority']" routerLinkActive="active">ترتيب
-              اولايات الحالات</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/days-handle']" routerLinkActive="active">الاجازات
-              والمهام</a></li>
+              routerLinkActive="active">{{ 'MENU.VACATION_TASKS_SECTIONS.ATTENDANCE_STATUS_CLASSIFICATION' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-statuses']" routerLinkActive="active">
+            {{ 'MENU.VACATION_TASKS_SECTIONS.ATTENDANCE_STATUSES' | translate }}
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-priority']" routerLinkActive="active">
+            {{ 'MENU.VACATION_TASKS_SECTIONS.STATUS_PRIORITY_ORDER' | translate }}
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/days-handle']" routerLinkActive="active">
+            {{ 'MENU.VACATION_TASKS_SECTIONS.DAYS_HANDLE' | translate }}
+          </a></li>
           <li><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-employee-balance']"
-              routerLinkActive="active">ارصدة الموظفين من الحالات</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/my-balance']" routerLinkActive="active">ارصدتي</a></li>
+              routerLinkActive="active">{{ 'MENU.VACATION_TASKS_SECTIONS.EMPLOYEE_BALANCES' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/vacation-tasks/my-balance']" routerLinkActive="active">
+            {{ 'MENU.VACATION_TASKS_SECTIONS.MY_BALANCE' | translate }}
+          </a></li>
         </ul>
       </li>
 
@@ -110,62 +121,88 @@
         <div [routerLink]="['/requests-and-approvals']">
           <a class="nav-link" (click)="toggleSubmenu('requests')" [class.expanded]="isSubmenuOpen('requests')">
             <i class="fas fa-check-square"></i>
-            <span>الطلبات و الموافقات</span>
+            <span>{{ 'MENU.REQUESTS_APPROVALS' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('requests')">
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" routerLinkActive="active">خطوات تعديل الوقت</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/attendance-time-change-request']" routerLinkActive="active">طلب تعديل اوقات الحضور</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/post-request']" routerLinkActive="active">رفع الطلب</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-route']" routerLinkActive="active">خطوات الموافقة علي الطلبات</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-vacations']" routerLinkActive="active">الموافقة علي الطلبات</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/delete-completed-request']" routerLinkActive="active">حذف الطلبات المكتمله</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" routerLinkActive="active">
+            {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.TIME_CHANGE_APPROVAL_STEPS' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/attendance-time-change-request']" routerLinkActive="active">
+            {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.ATTENDANCE_TIME_CHANGE_REQUEST' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/post-request']" routerLinkActive="active">
+            {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.POST_REQUEST' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-route']" routerLinkActive="active">
+            {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.REQUEST_APPROVAL_ROUTE' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-vacations']" routerLinkActive="active">
+            {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.REQUESTS_APPROVAL_VACATIONS' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/delete-completed-request']" routerLinkActive="active">
+            {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.DELETE_COMPLETED_REQUESTS' | translate }}</a></li>
         </ul>
-      </li>      <!-- 9. تتبع المواقع -->
+      </li>     
+      
+      <!-- 9. تتبع المواقع -->
       <li class="nav-item">
         <div [routerLink]="['/tracking-locations']">
           <a class="nav-link" (click)="toggleSubmenu('locations')" [class.expanded]="isSubmenuOpen('locations')">
             <i class="fa-solid fa-location-arrow"></i>
-            <span>تتبع المواقع</span>
+            <span>{{ 'MENU.TRACKING_LOCATIONS' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('locations')">
-          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-details']" routerLinkActive="active">تفاصيل تتبع المواقع</a></li>
-          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-transactions']" routerLinkActive="active">حركات تتبع المواقع</a></li>
+          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-details']" routerLinkActive="active">
+            {{ 'MENU.TRACKING_LOCATIONS_SECTIONS.LOCATION_TRACKING_DETAILS' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-transactions']" routerLinkActive="active">
+            {{ 'MENU.TRACKING_LOCATIONS_SECTIONS.LOCATION_TRACKING_TRANSACTIONS' | translate }}</a></li>
         </ul>
-      </li>      <!-- 10. الجوال و التطبيق -->
+      </li>      
+      
+      <!-- 10. الجوال و التطبيق -->
       <li class="nav-item">
         <div [routerLink]="['/mobile-and-app']">
           <a class="nav-link" (click)="toggleSubmenu('mobile')" [class.expanded]="isSubmenuOpen('mobile')">
             <i class="fas fa-mobile-alt"></i>
-            <span>الجوال و التطبيق</span>
+            <span>{{ 'MENU.MOBILE_APP' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('mobile')">
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">تطبيق موجود</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/send-app-qr-code']" routerLinkActive="active">ارسال رمز الدخول للطبيق</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-location-assign']" routerLinkActive="active">اسناد موقع بصمة الجوال</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-locations']" routerLinkActive="active">حركات التوقيع بأستخدام الجوال</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-transaction']" routerLinkActive="active">مواقع التبصيم بأستخدام الجوال</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">
+            {{ 'MENU.MOBILE_APP_SECTIONS.MAWJOOD_APP' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/send-app-qr-code']" routerLinkActive="active">
+            {{ 'MENU.MOBILE_APP_SECTIONS.SEND_APP_QR_CODE' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-location-assign']" routerLinkActive="active">
+            {{ 'MENU.MOBILE_APP_SECTIONS.APP_DEVICES' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-locations']" routerLinkActive="active">
+           {{ 'MENU.MOBILE_APP_SECTIONS.MOBILE_SIGN_LOCATION_ASSIGN' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-transaction']" routerLinkActive="active">
+            {{ 'MENU.MOBILE_APP_SECTIONS.MOBILE_SIGN_TRANSACTION' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-transaction']" routerLinkActive="active">
+            {{ 'MENU.MOBILE_APP_SECTIONS.MOBILE_SIGN_LOCATIONS' | translate }}</a></li>
         </ul>
-      </li>      <!-- 11. الرواتب -->
+      </li>     
+      
+      <!-- 11. الرواتب -->
       <li class="nav-item">
         <div [routerLink]="['/salaries']">
           <a class="nav-link" (click)="toggleSubmenu('salaries')" [class.expanded]="isSubmenuOpen('salaries')">
             <i class="fas fa-money-bill-alt"></i>
-            <span>الرواتب</span>
+            <span>{{ 'MENU.SALARIES' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('salaries')">
-          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-deducts']" routerLinkActive="active">أسناد أضافات / خصومات الرواتب</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-ons-deducts']" routerLinkActive="active">أضافات / خصومات الراتب</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/salaries-calculation']" routerLinkActive="active">أحتساب الرواتب</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/my-salary']" routerLinkActive="active">راتبي</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/salaries-details']" routerLinkActive="active">تفاصيل الرواتب</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-deducts']" routerLinkActive="active">
+            {{ 'MENU.SALARIES_SECTIONS.SALARY_ADDONS_DEDUCTS_ASSIGN' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-ons-deducts']" routerLinkActive="active">
+            {{ 'MENU.SALARIES_SECTIONS.SALARY_ADDONS_DEDUCTS' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salaries-calculation']" routerLinkActive="active">
+            {{ 'MENU.SALARIES_SECTIONS.SALARIES_CALCULATION' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/my-salary']" routerLinkActive="active">
+            {{ 'MENU.SALARIES_SECTIONS.MY_SALARY' | translate }}</a></li>
+          <li><a class="nav-link" [routerLink]="['/salaries/salaries-details']" routerLinkActive="active">
+            {{ 'MENU.SALARIES_SECTIONS.SALARIES_DETAILS' | translate }}</a></li>
         </ul>
       </li>
       <!-- 12. البيانات الاساسية -->
@@ -173,7 +210,7 @@
         <div [routerLink]="['/primary-data']">
         <a class="nav-link" (click)="toggleSubmenu('basicData')" [class.expanded]="isSubmenuOpen('basicData')">
           <i class="fas fa-info"></i>
-          <span>البيانات الاساسية</span>
+          <span>{{ 'MENU.PRIMARY_DATA' | translate }}</span>
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
         </div>
@@ -263,35 +300,37 @@
             </ul>
           </li>
         </ul>
-      </li>      <!-- 13. الرسائل والاشعارات -->
+      </li>      
+      
+      <!-- 13. الرسائل والاشعارات -->
       <li class="nav-item">
         <div [routerLink]="['/messages-and-notifications']">
           <a class="nav-link" (click)="toggleSubmenu('notifications')" [class.expanded]="isSubmenuOpen('notifications')">
             <i class="fas fa-envelope"></i>
-            <span>الرسائل والاشعارات</span>
+            <span>{{ 'MENU.MESSAGES_NOTIFICATIONS' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('notifications')">
           <li><a class="nav-link" [routerLink]="['/messages-and-notifications/system-messages']" routerLinkActive="active">
             <i class="fas fa-message"></i>
-            رسائل النظام
+            {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.SYSTEM_MESSAGES' | translate }}
           </a></li>
           <li><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-text']" routerLinkActive="active">
             <i class="fas fa-bell-concierge"></i>
-            نصوص الاشعار
+            {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NOTIFICATIONS_TEXTS' | translate }}
           </a></li>
           <li><a class="nav-link" [routerLink]="['/messages-and-notifications/news']" routerLinkActive="active">
             <i class="fas fa-newspaper"></i>
-            الاخبار
+            {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NEWS' | translate }}
           </a></li>
           <li><a class="nav-link" [routerLink]="['/messages-and-notifications/send-notifications']" routerLinkActive="active">
             <i class="fas fa-paper-plane"></i>
-            أرسال الاشعارات
+            {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.SEND_NOTIFICATIONS' | translate }}
           </a></li>
           <li><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-settings']" routerLinkActive="active">
             <i class="fas fa-gear"></i>
-            اعدادات الاشعارات
+            {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NOTIFICATIONS_SETTINGS' | translate }}
           </a></li>
         </ul>
       </li>
@@ -360,31 +399,49 @@
             </ul>
           </li>
         </ul>
-      </li>      <!-- 15. التدقيق و المتابعة -->
+      </li>     
+      
+      <!-- 15. التدقيق و المتابعة -->
       <li class="nav-item">
         <div [routerLink]="['/audit-and-tracing']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('audit')" [class.expanded]="isSubmenuOpen('audit')">
           <i class="fa-regular fa-rectangle-list"></i>
-          <span>التدقيق و المتابعة</span>
+          <span>{{ 'MENU.AUDIT_TRACING' | translate }}</span>
           <i class="fas fa-chevron-down submenu-arrow"></i>
         </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('audit')">
           <li><a class="nav-link" [routerLink]="['/audit-and-tracing/track-changes']" routerLinkActive="active">
             <i class="fas fa-history"></i>
-            <span>متابعة التغييرات</span>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_OPEN_DOCUMENT' | translate }}</span>
           </a></li>
           <li><a class="nav-link" [routerLink]="['/audit-and-tracing/login-trace']" routerLinkActive="active">
             <i class="fas fa-sign-in-alt"></i>
-            <span>بيانات الدخول علي النظام</span>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_OPEN_DOCUMENT_TRANSACTION' | translate }}</span>
           </a></li>
           <li><a class="nav-link" [routerLink]="['/audit-and-tracing/error-logs']" routerLinkActive="active">
             <i class="fas fa-exclamation-triangle"></i>
-            <span>سجلات الاخطاء</span>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_CHANGES' | translate }}</span>
           </a></li>
           <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
             <i class="fas fa-table"></i>
-            <span>اعدادات تتبع تغييرات الجدول</span>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.LOGIN_TRACE' | translate }}</span>
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
+            <i class="fas fa-table"></i>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.ERROR_LOGS' | translate }}</span>
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
+            <i class="fas fa-table"></i>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TABLES_TRACE_SETTINGS' | translate }}</span>
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
+            <i class="fas fa-table"></i>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.WATERMARK_TRACING' | translate }}</span>
+          </a></li>
+          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
+            <i class="fas fa-table"></i>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACE_PARALLEL_DOCUMENT' | translate }}</span>
           </a></li>
         </ul>
       </li>
@@ -394,7 +451,7 @@
         <div [routerLink]="['/system-management']">
           <a class="nav-link" (click)="toggleSubmenu('systemManagement')" [class.expanded]="isSubmenuOpen('systemManagement')">
             <i class="fas fa-cogs"></i>
-            <span>ادارة النظام</span>
+            <span>{{ 'MENU.SYSTEM_MANAGEMENT' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
@@ -402,31 +459,31 @@
           <li>
             <a class="nav-link" [routerLink]="['/system-management/system-setup']" routerLinkActive="active">
               <i class="fas fa-sliders-h"></i>
-              <span>جدول الاعدادات</span>
+              <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.SYSTEM_SETUP' | translate }}</span>
             </a>
           </li>
           <li>
             <a class="nav-link" [routerLink]="['/system-management/hijri-data']" routerLinkActive="active">
               <i class="fas fa-calendar-alt"></i>
-              <span>بيانات التاريخ الهجري</span>
+              <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.HIJRI_DATE_DATA' | translate }}</span>
             </a>
           </li>
           <li>
             <a class="nav-link" [routerLink]="['/system-management/language-data']" routerLinkActive="active">
               <i class="fas fa-language"></i>
-              <span>بيانات اللغه</span>
+              <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.LANGUAGE_DATA' | translate }}</span>
             </a>
           </li>
           <li>
             <a class="nav-link" [routerLink]="['/system-management/user-profile']" routerLinkActive="active">
               <i class="fas fa-user-circle"></i>
-              <span>الملف الشخصي</span>
+              <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.USER_PROFILE' | translate }}</span>
             </a>
           </li>
           <li>
             <a class="nav-link" [routerLink]="['/system-management/sessions-management']" routerLinkActive="active">
               <i class="fas fa-clock"></i>
-              <span>ادارة جلسة الاتصال</span>
+              <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.SESSIONS_MANAGEMENT' | translate }}</span>
             </a>
           </li>
         </ul>
@@ -437,33 +494,27 @@
         <div [routerLink]="['/consorship']">
           <a class="nav-link" (click)="toggleSubmenu('supervision')" [class.expanded]="isSubmenuOpen('supervision')">
             <i class="fas fa-shield-alt"></i>
-            <span>الرقابة</span>
+            <span>{{ 'MENU.CONSORSHIP' | translate }}</span>
             <i class="fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('supervision')">
           <li>
-            <a class="nav-link" [routerLink]="['/consorship']" routerLinkActive="active">
-              <i class="fas fa-eye"></i>
-              <span>الرقابة</span>
-            </a>
-          </li>
-          <li>
             <a class="nav-link" [routerLink]="['/consorship/tour-available']" routerLinkActive="active">
               <i class="fas fa-check-circle"></i>
-              <span>الجولات الرقابية المتاحة</span>
+              <span>{{ 'MENU.CONSORSHIP_SECTIONS.CENSORSHIP_TOUR' | translate }}</span>
             </a>
           </li>
           <li>
             <a class="nav-link" [routerLink]="['/consorship/tour-unavailable']" routerLinkActive="active">
               <i class="fas fa-times-circle"></i>
-              <span>الجولات الرقابية غير المتاحة</span>
+              <span>{{ 'MENU.CONSORSHIP_SECTIONS.CENSORSHIP_TOUR' | translate }}</span>
             </a>
           </li>
           <li>
             <a class="nav-link" [routerLink]="['/consorship/alarms']" routerLinkActive="active">
               <i class="fas fa-bell"></i>
-              <span>الانذارات</span>
+              <span>{{ 'MENU.CONSORSHIP_SECTIONS.ALARMS' | translate }}</span>
             </a>
           </li>
         </ul>

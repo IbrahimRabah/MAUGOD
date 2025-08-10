@@ -7,12 +7,12 @@
     "ATTENDANCE": "View Attendance",
     "MAWJOOD_APP": "Mawjood App",
     "REPORTS": "Reports",
-    "ATTENDANCE_DATA": "Attendance Data",
+    "ATTENDANCE_DATA": "Attendance",
     "SHIFTS": "Shifts",
-    "VACATION_TASKS": "Vacations & Tasks",
-    "REQUESTS_APPROVALS": "Requests & Approvals",
-    "TRACKING_LOCATIONS": "Location Tracking",
-    "MOBILE_APP": "Mobile & App",
+    "VACATION_TASKS": "Vacation and tasks",
+    "REQUESTS_APPROVALS": "Requests and Approvals",
+    "TRACKING_LOCATIONS": "Tracking locations",
+    "MOBILE_APP": "Mobile and App",
     "SALARIES": "Salaries",
     "PRIMARY_DATA": "Primary Data",
     "PRIMARY_DATA_SECTIONS": {
@@ -24,7 +24,7 @@
       "JOBS": "Jobs",
       "EMPLOYEE_DOCUMENTS": "Employee Documents"
     },
-    "MESSAGES_NOTIFICATIONS": "Messages & Notifications",
+    "MESSAGES_NOTIFICATIONS": "Messages and Notifications",
     "PERMISSION_MANAGEMENT": {
       "TITLE": "Permission Management",
       "PERMISSIONS_ON_SYSTEM": "Permissions on System",
@@ -171,7 +171,7 @@
         }
       }
     },
-    "AUDIT_TRACING": "Audit & Tracing",
+    "AUDIT_TRACING": "Audit and Tracing",
     "SYSTEM_MANAGEMENT": "System Management",
     "CTS_DATA": {
       "TITLE": "CTS Data",
@@ -203,7 +203,8 @@
       "COMMITTEE_SUBJECT_CLASSES": "Minutes Subject Classification",
       "VOTING_TYPES": "Voting Types",
       "MEETING_AND_SUBJECTS": "Minutes & Subjects"
-    },    "GENERAL_DATA": {
+    },   
+     "GENERAL_DATA": {
       "BRANCHES": "Branches",
       "DEPARTMENTS": "Departments",
       "EMPLOYEES": "Employees",
@@ -255,10 +256,11 @@
           "SELECT_PARENT_DEPARTMENT": "Select Parent Department",
           "SELECT_BRANCH": "Select Branch",
           "SELECT_LEVEL": "Select Level",
-          "SELECT_LOCATION": "Select Location"
+          "SELECT_LOCATION": "Select Location",
+          "New_Dept_Id":"New Department ID"
         },
         "CHANGE_NUMBER_MODAL": {
-          "TITLE": "Change Department Number",
+          "TITLE": "Change Department ID",
           "DEPARTMENT_NAME": "Department Name",
           "OLD_NUMBER": "Old Number",
           "NEW_NUMBER": "New Number",
@@ -342,7 +344,7 @@
           "NOTES": "Notes",
           "CANCEL": "Cancel",
           "SAVE": "Save Change",
-          "SELECT_NEW_NUMBER": "Select New Number",
+          "ENTER_NEW_NUMBER": "Enter New Number",
           "NOTES_PLACEHOLDER": "Enter notes for this change"
         }
       },      "BRANCHES_PAGINATION": {
@@ -385,9 +387,11 @@
         "ADD_EMPLOYEE_TITLE": "Add New Employee",
         "EDIT_EMPLOYEE": "Edit Employee",
         "DELETE_EMPLOYEE": "Delete Employee",
-        "CHANGE_PASSWORD": "Change Password"
+        "CHANGE_PASSWORD": "Change Password",
+        "RESET_PASSWORD":"Reset Password"
       },
-      "EMPLOYEES_MODALS": {        "ADD_EMPLOYEE_MODAL": {
+      "EMPLOYEES_MODALS": {        
+        "ADD_EMPLOYEE_MODAL": {
           "TITLE": "Add New Employee",
           "EDIT_TITLE": "Edit Employee",
           "EMPLOYEE_NAME": "Employee Name",
@@ -421,16 +425,44 @@
           "INACTIVE_OPTION": "Inactive",
           "SELECT_GENDER": "Select Gender",
           "SELECT_MARITAL_STATUS": "Select Marital Status",
-          "SELECT_LANGUAGE": "Select Language"
+          "SELECT_LANGUAGE": "Select Language",
+          "FINGER_PRINT": "Finger print",
+          "EMPLOYEE_NUMBER": "Employee Number",
+          "ARABIC_NAME": "Arabic Name",
+          "ENGLISH_NAME": "English Name",
+          "NATIONALITY": "Nationality",
+          "PHONE_NUMBER": "Phone Number",
+          "HOME_LAND_LINE": "Home/Land line",
+          "PHYSICAL_ADDRESS": "Physical Address",
+          "BIRTH_DATE": "Birth Date",
+          "HIRE_START_DATE": "Hire Start Date",
+          "HIRE_END_DATE": "Hire End Date",
+          "EMPLOYEE_VAT_INFORMATION": "Employee VAT Information",
+          "JOB": "Job",
+          "JOB_DESCRIPTION": "Job Description",
+          "NATIONAL_NUMBER": "National Number",
+          "NATIONAL_NUMBER_EXPIRATION": "National Number Expiration",
+          "DRIVER_LICENCE_NUMBER": "Driver License Number",
+          "DRIVER_LICENCE_EXPIRATION": "Driver License Expiration",
+          "INSURANCE_CARD_INFORMATION": "Insurance Card Information",
+          "INSURANCE_CARD_EXPIRATION": "Insurance Card Expiration",
+          "EMPLOYEE_CARD_NUMBER": "Employee Card Number",
+          "HEALTH_CARD_NUMBER": "Health Card Number",
+          "EMPLOYEE_CARD_EXPIRATION": "Employee Card Expiration",
+          "HEALTH_CARD_EXPIRATION": "Health Card Expiration",
+          "PASSPORT_NUMBER": "Passport Number",
+          "PASSPORT_EXPIRATION": "Passport Expiration",
+          "USER_NAME": "Username",
+          "PASSWORD": "Password"
         },
         "CHANGE_NUMBER_MODAL": {
           "TITLE": "Change Employee Number",
           "EMPLOYEE_NAME": "Employee Name",
-          "OLD_NUMBER": "Current Number",
+          "OLD_NUMBER": "Current ID",
           "NEW_NUMBER": "New Number",
           "CANCEL": "Cancel",
           "SAVE": "Save Change",
-          "SELECT_NEW_NUMBER": "Select New Number"
+          "ENTER_NEW_NUMBER": "Enter New Number"
         },
         "CHANGE_PASSWORD_MODAL": {
           "TITLE": "Change Employee Password",
@@ -650,7 +682,83 @@
         "DELETE_TOOLTIP": "Delete"
       }
     },
-    "VISIT": "Visit"
+    "VISIT": "Visit",
+    "ATTENDANCE_DATA_SECTIONS": {
+      "PUNCH_TRANSACTION": "Punch in transactions",
+      "ATTENDANCE": "Attendance",
+      "CHANGE_ATTENDANCE_TIME":"Change attendance time direct"
+    },
+    "SHIFTS_SECTIONS": {
+      "SHIFTS": "Shifts",
+      "AUTOMATIC_SIGN": "Automatic sign",
+      "SHIFTS_ASSIGN": "Shifts assign",
+      "MISSING_DAYS": "Missing days with no shift",
+      "TIMTRAN_LOCK": "Timtran lock"
+    },
+     "VACATION_TASKS_SECTIONS": {
+      "ATTENDANCE_STATUS_CLASSIFICATION": "Attendance status classification",
+      "ATTENDANCE_STATUSES": "Attendance statuses",
+      "STATUS_PRIORITY_ORDER": "Handle statuses priority",
+      "DAYS_HANDLE": "Days handle",
+      "EMPLOYEE_BALANCES": "Handle statuses employee balance",
+      "MY_BALANCE": "My Balance"
+    },
+    "REQUESTS_APPROVALS_SECTIONS": {
+      "TIME_CHANGE_APPROVAL_STEPS": "Steps to approve changing time",
+      "ATTENDANCE_TIME_CHANGE_REQUEST": "Attendance time change request",
+      "POST_REQUEST": "Post request",
+      "REQUEST_APPROVAL_ROUTE": "Request approval route",
+      "REQUESTS_APPROVAL_VACATIONS": "Requests approval Vacations",
+      "DELETE_COMPLETED_REQUESTS": "Delete completed requests"
+    },
+    "TRACKING_LOCATIONS_SECTIONS": {
+      "LOCATION_TRACKING_DETAILS": "Location tracking details",
+      "LOCATION_TRACKING_TRANSACTIONS": "Location tracking transaction"
+    },
+    "MOBILE_APP_SECTIONS": {
+      "MAWJOOD_APP": "Mawjood App",
+      "SEND_APP_QR_CODE": "Send App QR Code",
+      "APP_DEVICES": "App devices",
+      "MOBILE_SIGN_LOCATION_ASSIGN": "Mobile sign location assign",
+      "MOBILE_SIGN_TRANSACTION": "Mobile sign transaction",
+      "MOBILE_SIGN_LOCATIONS": "Mobile sign locations"
+    },
+    "SALARIES_SECTIONS": {
+      "SALARY_ADDONS_DEDUCTS_ASSIGN": "Salary add-ons/deducts assign",
+      "SALARY_ADDONS_DEDUCTS": "Salary Add-ons/Deducts",
+      "SALARIES_CALCULATION": "Salaries calculation",
+      "MY_SALARY": "My Salary",
+      "SALARIES_DETAILS": "Salaries details"
+    },
+    "MESSAGES_NOTIFICATIONS_SECTIONS": {
+      "SYSTEM_MESSAGES": "System messages",
+      "NOTIFICATIONS_TEXTS": "Notifications texts",
+      "NEWS": "News",
+      "SEND_NOTIFICATIONS": "Send notifications",
+      "NOTIFICATIONS_SETTINGS": "Notifications settings"
+    },
+    "AUDIT_TRACING_SECTIONS": {
+      "TRACK_OPEN_DOCUMENT": "track open document",
+      "TRACK_OPEN_DOCUMENT_TRANSACTION": "track open document transaction",
+      "TRACK_CHANGES": "Track Changes",
+      "LOGIN_TRACE": "Login trace",
+      "ERROR_LOGS": "Error logs",
+      "TABLES_TRACE_SETTINGS": "Tables trace settings",
+      "WATERMARK_TRACING": "Watermark Tracing",
+      "TRACE_PARALLEL_DOCUMENT": "Trace Parallel Document"
+    },
+    "SYSTEM_MANAGEMENT_SECTIONS": {
+      "SYSTEM_SETUP": "System setup",
+      "HIJRI_DATE_DATA": "Hijri date data",
+      "LANGUAGE_DATA": "Language data",
+      "USER_PROFILE": "User profile",
+      "SESSIONS_MANAGEMENT": "Sessions management"
+    },
+    "CONSORSHIP":"Consorship",
+    "CONSORSHIP_SECTIONS": {
+      "CENSORSHIP_TOUR": "Censorship tour",
+      "ALARMS": "Alarms"
+    }
   },
   "PROFILE": {
     "PROFILE": "Profile",

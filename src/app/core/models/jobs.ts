@@ -17,3 +17,8 @@ export interface JobResponse {
     totalCount: number;
   };
 }
+
+export interface Jobs {
+  label: string;
+  value: number;
+}

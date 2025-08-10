@@ -204,7 +204,8 @@
       "VOTING_TYPES": "انواع التصويت",
       "MEETING_AND_SUBJECTS": "المحاضر و المواضيع"
     },
-    "VISIT": "زيارة",    "GENERAL_DATA": {
+    "VISIT": "زيارة",    
+    "GENERAL_DATA": {
       "BRANCHES": "الفروع",
       "DEPARTMENTS": "الاقسام",
       "EMPLOYEES": "الموظفيين",
@@ -256,7 +257,8 @@
           "SELECT_PARENT_DEPARTMENT": "اختر القسم الأب",
           "SELECT_BRANCH": "اختر الفرع",
           "SELECT_LEVEL": "اختر المستوى",
-          "SELECT_LOCATION": "اختر الموقع"
+          "SELECT_LOCATION": "اختر الموقع",
+          "New_Dept_Id":"رقم القسم الجديد"
         },
         "CHANGE_NUMBER_MODAL": {
           "TITLE": "تغيير رقم القسم",
@@ -343,7 +345,7 @@
           "NOTES": "ملاحظات",
           "CANCEL": "إلغاء",
           "SAVE": "حفظ التغيير",
-          "SELECT_NEW_NUMBER": "اختر الرقم الجديد",
+           "ENTER_NEW_NUMBER": "ادخل الرقم الجديد",
           "NOTES_PLACEHOLDER": "أدخل ملاحظات حول هذا التغيير"
         }
       },      "BRANCHES_PAGINATION": {
@@ -379,16 +381,19 @@
         "DELETE": "حذف",
         "CHANGE_NUMBER": "تغيير الرقم",
         "CHANGE_PASSWORD": "تغيير كلمة المرور"
-      },      "EMPLOYEES_ACTIONS": {
+      },     
+       "EMPLOYEES_ACTIONS": {
         "ADD_EMPLOYEE": "إضافة موظف",
         "SEARCH_PLACEHOLDER": "البحث في الموظفين...",
         "SEARCH_TITLE": "البحث",
         "ADD_EMPLOYEE_TITLE": "إضافة موظف جديد",
         "EDIT_EMPLOYEE": "تعديل الموظف",
         "DELETE_EMPLOYEE": "حذف الموظف",
-        "CHANGE_PASSWORD": "تغيير كلمة المرور"
+        "CHANGE_PASSWORD": "تغيير كلمة المرور",
+        "RESET_PASSWORD":"إعادة تعيين كلمة المرور"
       },
-      "EMPLOYEES_MODALS": {        "ADD_EMPLOYEE_MODAL": {
+      "EMPLOYEES_MODALS": {       
+         "ADD_EMPLOYEE_MODAL": {
           "TITLE": "إضافة موظف جديد",
           "EDIT_TITLE": "تعديل الموظف",
           "EMPLOYEE_NAME": "اسم الموظف",
@@ -413,7 +418,8 @@
           "EMAIL_PLACEHOLDER": "أدخل البريد الإلكتروني",
           "SMS_PHONE_PLACEHOLDER": "أدخل رقم الهاتف",
           "NATIONAL_ID_PLACEHOLDER": "أدخل الرقم الوطني",
-          "GOVERNMENT_ID_PLACEHOLDER": "أدخل الرقم الحكومي",          "NOTES_PLACEHOLDER": "أدخل الملاحظات",
+          "GOVERNMENT_ID_PLACEHOLDER": "أدخل الرقم الحكومي",         
+          "NOTES_PLACEHOLDER": "أدخل الملاحظات",
           "SELECT_MANAGER": "اختر المدير",
           "SELECT_DEPARTMENT": "اختر القسم",
           "SELECT_ACTIVE_STATUS": "اختر حالة النشاط",
@@ -421,7 +427,35 @@
           "INACTIVE_OPTION": "غير نشط",
           "SELECT_GENDER": "اختر الجنس",
           "SELECT_MARITAL_STATUS": "اختر الحالة الاجتماعية",
-          "SELECT_LANGUAGE": "اختر اللغة"
+          "SELECT_LANGUAGE": "اختر اللغة",
+          "FINGER_PRINT": "رقم البصمة",
+          "EMPLOYEE_NUMBER": "رقم الموظف",
+          "ARABIC_NAME": "الاسم بالعربى",
+          "ENGLISH_NAME": "الاسم بالإنجليزي",
+          "NATIONALITY": "الجنسية",
+          "PHONE_NUMBER": "رقم الجوال",
+          "HOME_LAND_LINE": "الخط الارضى/المنزل",
+          "PHYSICAL_ADDRESS": "العنوان الفعلي",
+          "BIRTH_DATE": "تاريخ الميلاد",
+          "HIRE_START_DATE": "تاريخ بداية العقد",
+          "HIRE_END_DATE": "تاريخ انتهاء العقد",
+          "EMPLOYEE_VAT_INFORMATION": "معلومات ضريبة القيمة المضافة للموظف",
+          "JOB": "الوظيفة",
+          "JOB_DESCRIPTION": "الوصف الوظيفي",
+          "NATIONAL_NUMBER": "رقم الهوية",
+          "NATIONAL_NUMBER_EXPIRATION": "تاريخ انتهاء الهوية",
+          "DRIVER_LICENCE_NUMBER": "رقم رخصة القيادة",
+          "DRIVER_LICENCE_EXPIRATION": "تاريخ انتهاء رخصة القيادة",
+          "INSURANCE_CARD_INFORMATION": "معلومات بطاقة التأمين",
+          "INSURANCE_CARD_EXPIRATION": "تاريخ انتهاء بطاقة التأمين",
+          "EMPLOYEE_CARD_NUMBER": "رقم بطاقة الموظف",
+          "HEALTH_CARD_NUMBER": "رقم البطاقة الصحية",
+          "EMPLOYEE_CARD_EXPIRATION": "تاريخ انتهاء بطاقة الموظف",
+          "HEALTH_CARD_EXPIRATION": "تاريخ انتهاء البطاقة الصحية",
+          "PASSPORT_NUMBER": "رقم جواز السفر",
+          "PASSPORT_EXPIRATION": "تاريخ انتهاء جواز السفر",
+          "USER_NAME": "اسم المستخدم",
+          "PASSWORD": "كلمة السر"
         },
         "CHANGE_NUMBER_MODAL": {
           "TITLE": "تغيير رقم الموظف",
@@ -430,7 +464,7 @@
           "NEW_NUMBER": "الرقم الجديد",
           "CANCEL": "إلغاء",
           "SAVE": "حفظ التغيير",
-          "SELECT_NEW_NUMBER": "اختر الرقم الجديد"
+          "ENTER_NEW_NUMBER": "ادخل الرقم الجديد"
         },
         "CHANGE_PASSWORD_MODAL": {
           "TITLE": "تغيير كلمة مرور الموظف",
@@ -649,6 +683,82 @@
         "EDIT_TOOLTIP": "تعديل",
         "DELETE_TOOLTIP": "حذف"
       }
+    },
+    "ATTENDANCE_DATA_SECTIONS": {
+      "PUNCH_TRANSACTION": "سجل البصمات",
+      "ATTENDANCE": "مشاهدة الحضور",
+      "CHANGE_ATTENDANCE_TIME":"تعديل بيانات الحضور مباشرة"
+    },
+     "SHIFTS_SECTIONS": {
+      "SHIFTS": "الورديات",
+      "AUTOMATIC_SIGN": "التوقيع الآلي",
+      "SHIFTS_ASSIGN": "إسناد الورديات",
+      "MISSING_DAYS": "الأيام المفتوحة بدون إسناد فترة",
+      "TIMTRAN_LOCK": "إغلاق الفترات"
+    },
+    "VACATION_TASKS_SECTIONS": {
+      "ATTENDANCE_STATUS_CLASSIFICATION": "تصنيف حالات الحضور",
+      "ATTENDANCE_STATUSES": "حالات الحضور",
+      "STATUS_PRIORITY_ORDER": "ترتيب أولوية الحالات",
+      "DAYS_HANDLE": "الإجازات والمهام",
+      "EMPLOYEE_BALANCES": "أرصدة الموظفين من الحالات",
+      "MY_BALANCE": "أرصدتي"
+    },
+    "REQUESTS_APPROVALS_SECTIONS": {
+      "TIME_CHANGE_APPROVAL_STEPS": "خطوات تعديل الوقت",
+      "ATTENDANCE_TIME_CHANGE_REQUEST": "طلب تعديل أوقات الحضور",
+      "POST_REQUEST": "رفع طلب",
+      "REQUEST_APPROVAL_ROUTE": "خطوات الموافقة على الطلبات",
+      "REQUESTS_APPROVAL_VACATIONS": "الموافقة على الطلبات",
+      "DELETE_COMPLETED_REQUESTS": "حذف الطلبات المكتملة"
+    },
+    "TRACKING_LOCATIONS_SECTIONS": {
+      "LOCATION_TRACKING_DETAILS": "تفاصيل تتبع المواقع",
+      "LOCATION_TRACKING_TRANSACTIONS": "حركات تتبع المواقع"
+    },
+    "MOBILE_APP_SECTIONS": {
+      "MAWJOOD_APP": "تطبيق موجود",
+      "SEND_APP_QR_CODE": "إرسال رمز الدخول للتطبيق",
+      "APP_DEVICES": "أجهزة التطبيق",
+      "MOBILE_SIGN_LOCATION_ASSIGN": "إسناد موقع بصمة الجوال",
+      "MOBILE_SIGN_TRANSACTION": "حركات التوقيع باستخدام الجوال",
+      "MOBILE_SIGN_LOCATIONS": "مواقع التبصيم باستخدام الجوال"
+    },
+     "SALARIES_SECTIONS": {
+      "SALARY_ADDONS_DEDUCTS_ASSIGN": "إسناد إضافات/خصومات الراتب",
+      "SALARY_ADDONS_DEDUCTS": "إضافات/خصومات الراتب",
+      "SALARIES_CALCULATION": "إحتساب الرواتب",
+      "MY_SALARY": "راتبي",
+      "SALARIES_DETAILS": "تفاصيل الرواتب"
+    },
+     "MESSAGES_NOTIFICATIONS_SECTIONS": {
+      "SYSTEM_MESSAGES": "رسائل النظام",
+      "NOTIFICATIONS_TEXTS": "نصوص الإشعارات",
+      "NEWS": "الأخبار",
+      "SEND_NOTIFICATIONS": "إرسال الإشعارات",
+      "NOTIFICATIONS_SETTINGS": "إعدادات الإشعارات"
+    },
+    "AUDIT_TRACING_SECTIONS": {
+      "TRACK_OPEN_DOCUMENT": "تتبع فتح المعاملات",
+      "TRACK_OPEN_DOCUMENT_TRANSACTION": "حركات تتبع المعاملات المفتوحة",
+      "TRACK_CHANGES": "متابعة التغييرات",
+      "LOGIN_TRACE": "بيانات الدخول على النظام",
+      "ERROR_LOGS": "سجلات الأخطاء",
+      "TABLES_TRACE_SETTINGS": "إعدادات تتبع تغيرات الجداول",
+      "WATERMARK_TRACING": "تتبع العالمة المائية",
+      "TRACE_PARALLEL_DOCUMENT": "تتبع اللجراءات الموازية"
+    },
+    "SYSTEM_MANAGEMENT_SECTIONS": {
+      "SYSTEM_SETUP": "جدول الإعدادات",
+      "HIJRI_DATE_DATA": "بيانات التاريخ الهجري",
+      "LANGUAGE_DATA": "بيانات اللغة",
+      "USER_PROFILE": "الملف الشخصي",
+      "SESSIONS_MANAGEMENT": "إدارة جلسات الإتصال"
+    },
+    "CONSORSHIP":"الرقابة",
+    "CONSORSHIP_SECTIONS": {
+      "CENSORSHIP_TOUR": "الجولات الرقابية",
+      "ALARMS": "الإنذارات"
     }
   },
   "PROFILE": {
