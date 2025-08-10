@@ -106,6 +106,67 @@ export class DropdownlistsService {
       { headers }
     );
   }
+
+  getNationalitiesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling nationalities API:', `${this.apiUrl}/Employees/GetNationalitiesDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetNationalitiesDropdownList`,
+      { headers }
+    );
+  }
+
+   getGendersDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling genders API:', `${this.apiUrl}/Employees/GetGendersDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetGendersDropdownList`,
+      { headers }
+    );
+  }
+
+   getMaritalStatusesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling Marital Statuses API:', `${this.apiUrl}/Employees/GetMaritalStatusesDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetMaritalStatusesDropdownList`,
+      { headers }
+    );
+  }
+
+  getJobTypesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling JobTypes API:', `${this.apiUrl}/Employees/GetJobTypesDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetJobTypesDropdownList`,
+      { headers }
+    );
+  }
+
+  getLanguagesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling Languages API:', `${this.apiUrl}/Employees/GetLanguagesDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Employees/GetLanguagesDropdownList`,
+      { headers }
+    );
+  }
+
   getBranchesDropdownList(lang: number): Observable<any> {
     const headers = new HttpHeaders({
       'lang': lang.toString()
@@ -174,6 +235,30 @@ export class DropdownlistsService {
     console.log('Calling branch managers API:', `${this.apiUrl}/Branches/GetBranchManagersDropdownList`);
     return this.http.get<any>(
       `${this.apiUrl}/Branches/GetBranchManagersDropdownList`,
+      { headers }
+    );
+  }
+
+    getParentDepartmentsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    // console.log('Calling epartments API:', `${this.apiUrl}/Departments/GetParentDepartmentsDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Departments/GetParentDepartmentsDropdownList`,
+      { headers }
+    );
+  }
+
+  getDepartmentLevelsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    // console.log('Calling epartments API:', `${this.apiUrl}/Departments/GetDepartmentLevelsDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Departments/GetDepartmentLevelsDropdownList`,
       { headers }
     );
   }

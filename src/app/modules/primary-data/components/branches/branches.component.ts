@@ -49,26 +49,6 @@ export class BranchesComponent implements OnInit {
   private currentLanguage: string = '';
   private isInitialized = false; // Prevent double API calls on init
 
-  // Available numbers for dropdown (dummy data)
-  availableNumbers = [
-    { value: '100', label: '100' },
-    { value: '101', label: '101' },
-    { value: '102', label: '102' },
-    { value: '103', label: '103' },
-    { value: '104', label: '104' },
-    { value: '105', label: '105' },
-    { value: '200', label: '200' },
-    { value: '201', label: '201' },
-    { value: '202', label: '202' },
-    { value: '203', label: '203' },
-    { value: '300', label: '300' },
-    { value: '301', label: '301' },
-    { value: '302', label: '302' },
-    { value: '400', label: '400' },
-    { value: '401', label: '401' },
-    { value: '500', label: '500' }
-  ];
-
   
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
@@ -101,6 +81,7 @@ export class BranchesComponent implements OnInit {
     this.loadBranches(); // Load branches only once on init
     // Don't preload dropdown data on init - load only when needed
   }
+  initialFormValues: any;
 
   initializeForms() {
     this.branchForm = this.fb.group({
@@ -116,6 +97,9 @@ export class BranchesComponent implements OnInit {
     this.changeNumberForm = this.fb.group({
       newNumber: ['', [Validators.required, Validators.pattern(/^\d+$/)]] // Only allow numbers
     });
+
+    
+  this.initialFormValues = this.branchForm.value;
   }
 
   // Custom pagination methods
@@ -283,12 +267,12 @@ export class BranchesComponent implements OnInit {
     }
 
     const branch = this.selectedBranch;
-    console.log('=== Updating form selections for branch ===');
-    console.log('Branch data:', branch);
-    console.log('Available managers:', this.managers);
-    console.log('Available locations:', this.locations);
-    console.log('Available parent branches:', this.parentBranches);
-    console.log('Current form value:', this.branchForm.value);
+    // console.log('=== Updating form selections for branch ===');
+    // console.log('Branch data:', branch);
+    // console.log('Available managers:', this.managers);
+    // console.log('Available locations:', this.locations);
+    // console.log('Available parent branches:', this.parentBranches);
+    // console.log('Current form value:', this.branchForm.value);
     
     // Get current form values
     const currentFormValue = this.branchForm.value;
@@ -381,10 +365,10 @@ export class BranchesComponent implements OnInit {
     console.log('Form after setValue:', this.branchForm.value);
     
     // Log individual form control values
-    console.log('Individual form controls:');
-    console.log('mgrId control value:', this.branchForm.get('mgrId')?.value);
-    console.log('locId control value:', this.branchForm.get('locId')?.value);
-    console.log('parentBranchId control value:', this.branchForm.get('parentBranchId')?.value);
+    // console.log('Individual form controls:');
+    // console.log('mgrId control value:', this.branchForm.get('mgrId')?.value);
+    // console.log('locId control value:', this.branchForm.get('locId')?.value);
+    // console.log('parentBranchId control value:', this.branchForm.get('parentBranchId')?.value);
   }
 
   goToPage(page: number) {
@@ -426,12 +410,17 @@ export class BranchesComponent implements OnInit {
 
   closeModal() {
     this.showAddModal = false;
-    this.isSubmitting = false;
+    this.isEditMode = false;
+    // this.loadingDropdowns=true
     this.resetForm();
+
   }
 
   resetForm() {
     this.branchForm.reset();
+      this.branchForm.reset(this.initialFormValues);
+
+    
   }
 
   submitBranch() {
@@ -620,7 +609,8 @@ export class BranchesComponent implements OnInit {
         });
       }
     });
-  }  deleteBranch(branch: Branch) {
+  }
+    deleteBranch(branch: Branch) {
     this.confirmationService.confirm({
       message: `هل أنت متأكد من حذف الفرع "${branch.branchName}"؟\nلا يمكن التراجع عن هذا الإجراء.`,
       header: 'تأكيد الحذف',

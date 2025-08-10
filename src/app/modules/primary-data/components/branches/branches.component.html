@@ -59,7 +59,8 @@
           <td>{{ branch.locationName }}</td>
           <td>{{ branch.locDesc }}</td>
           <td>{{ branch.note }}</td>
-          <td>            <button 
+          <td>           
+             <button 
               class="action-btn delete-btn"
               (click)="deleteBranch(branch)"
               [disabled]="deletingBranchId === branch.branchId"
@@ -68,7 +69,8 @@
               <i class="fas fa-spinner fa-spin" *ngIf="deletingBranchId === branch.branchId"></i>
             </button>
           </td>
-          <td>            <button 
+          <td>           
+             <button 
               class="action-btn number-btn"
               (click)="changeBranchNumber(branch)"
               [title]="'MENU.GENERAL_DATA.BRANCHES_GENERAL.CHANGE_NUMBER_TOOLTIP' | translate">
@@ -164,7 +166,8 @@
 </div>
 
 <!-- Add Branch Modal -->
-<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">  <div class="modal-container" (click)="$event.stopPropagation()">
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">  
+  <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h3 *ngIf="!isEditMode">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.TITLE' | translate }}</h3>
       <h3 *ngIf="isEditMode">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.EDIT_TITLE' | translate }}</h3>
@@ -195,7 +198,8 @@
             <div *ngIf="isFieldInvalid('ar')" class="error-message">
               {{ getFieldError('ar') }}
             </div>
-          </div>          <!-- English Name -->
+          </div>          
+          <!-- English Name -->
           <div class="form-group">
             <label for="englishName">{{ 'MENU.GENERAL_DATA.BRANCHES_MODALS.ADD_BRANCH_MODAL.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
             <input 

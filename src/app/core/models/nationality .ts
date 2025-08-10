@@ -19,3 +19,8 @@ export interface NationalityResponse {
     totalCount: number;
   };
 }
+
+export interface Nationalities {
+  label: string;
+  value: number;
+}

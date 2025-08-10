@@ -49,3 +49,8 @@ export interface BranchEditResponse {
     note: string;
   };
 }
+
+export interface Branch{
+  label: string;
+  value: number;
+}

@@ -1,3 +1,13 @@
+export interface Departments {
+  label: string;
+  value: number;
+}
+
+export interface ParentDepartment {
+  label: string;
+  value: number;
+}
+
 export interface Department {
   deptId: number;
   deptName: string;
@@ -23,5 +33,25 @@ export interface DepartmentResponse {
   isSuccess: boolean;
   data: {
     departments: Department[];
+    totalCount: number;
+
   };
 }
+
+export interface DepartmentLevel {
+  label: string;
+  value: number;
+}
+
+export interface DepartmentCreateUpdateRequest {
+  ar: string;
+  en: string;
+  mgrId: number;
+  parentDeptId: number;
+  branchId: number;
+  deptLevel: number;
+  locId: number;
+  locDesc: string;
+  note: string;
+}
+
