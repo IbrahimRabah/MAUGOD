@@ -1,1 +1,194 @@
-<p>shifts works!</p>
+<div class="shifts-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'SHIFTS_TABLE.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" 
+              (click)="createShift()" 
+              [title]="'SHIFTS_TABLE.CREATE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'SHIFTS_TABLE.CREATE' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text"
+            formControlName="searchTerm"
+            class="search-input"
+            [placeholder]="'SHIFTS_TABLE.SEARCH_PLACEHOLDER' | translate"
+            [title]="'SHIFTS_TABLE.SEARCH_TITLE' | translate"
+            (keyup.enter)="onSearch()">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'SHIFTS_TABLE.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'SHIFTS_TABLE.EDIT' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.NAME' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.SUNDAY' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.MONDAY' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.TUESDAY' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.WEDNESDAY' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.THURSDAY' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.FRIDAY' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.SATURDAY' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.IS_ACTIVE' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.DETAILS' | translate }}</th>
+          <th>{{ 'SHIFTS_TABLE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let shift of shifts" class="table-row">
+          <td>
+            <button class="action-btn edit-btn" 
+                    (click)="editShift(shift)"
+                    [title]="'SHIFTS_TABLE.EDIT_TOOLTIP' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ getDisplayValue(shift.shiftName) }}</td>
+          <td>{{ getDisplayValue(shift.sunday) }}</td>
+          <td>{{ getDisplayValue(shift.monday) }}</td>
+          <td>{{ getDisplayValue(shift.tuesday) }}</td>
+          <td>{{ getDisplayValue(shift.wednesday) }}</td>
+          <td>{{ getDisplayValue(shift.thursday) }}</td>
+          <td>{{ getDisplayValue(shift.friday) }}</td>
+          <td>{{ getDisplayValue(shift.saturday) }}</td>
+          <td>
+            <span class="boolean-badge" [class.yes]="shift.isActive === '1' || shift.isActive === 'true'" [class.no]="shift.isActive !== '1' && shift.isActive !== 'true'">
+              {{ getActiveStatus(shift.isActive) }}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn details-btn" 
+                    (click)="viewShiftDetails(shift)"
+                    [title]="'SHIFTS_TABLE.DETAILS_TOOLTIP' | translate">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+          <td>
+            <button class="action-btn delete-btn" 
+                    (click)="deleteShift(shift)"
+                    [title]="'SHIFTS_TABLE.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="shifts.length === 0" class="empty-row">
+          <td colspan="12" class="empty-message">
+            <i class="fas fa-inbox"></i>
+            {{ 'SHIFTS_TABLE.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && shifts.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'SHIFTS_TABLE.SHOWING' | translate }} {{ currentPageStart }} {{ 'SHIFTS_TABLE.TO' | translate }} {{ currentPageEnd }} {{ 'SHIFTS_TABLE.OF' | translate }} {{ totalRecords }} {{ 'SHIFTS_TABLE.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="!canGoNext || totalPages <= 1"
+          [title]="'SHIFTS_TABLE.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="!canGoNext"
+          [title]="'SHIFTS_TABLE.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'SHIFTS_TABLE.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'SHIFTS_TABLE.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="!canGoPrevious"
+          [title]="'SHIFTS_TABLE.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="!canGoPrevious"
+          [title]="'SHIFTS_TABLE.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="!canGoPrevious"
+          [title]="'SHIFTS_TABLE.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="!canGoPrevious"
+          [title]="'SHIFTS_TABLE.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SHIFTS_TABLE.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'SHIFTS_TABLE.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="!canGoNext"
+          [title]="'SHIFTS_TABLE.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="!canGoNext || totalPages <= 1"
+          [title]="'SHIFTS_TABLE.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'SHIFTS_TABLE.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>

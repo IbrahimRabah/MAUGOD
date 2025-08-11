@@ -1,1 +1,413 @@
-<p>timtran-lock works!</p>
+<div class="timtran-lock-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'TIMTRAN_LOCK.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="startDate">{{ 'TIMTRAN_LOCK.SDATE' | translate }}</label>
+          <input 
+            id="startDate"
+            type="date"
+            formControlName="startDate"
+            class="form-input"
+            [placeholder]="'TIMTRAN_LOCK.SELECT_DATE' | translate">
+        </div>
+        
+        <div class="filter-group">
+          <label for="endDate">{{ 'TIMTRAN_LOCK.EDATE' | translate }}</label>
+          <input 
+            id="endDate"
+            type="date"
+            formControlName="endDate"
+            class="form-input"
+            [placeholder]="'TIMTRAN_LOCK.SELECT_DATE' | translate">
+        </div>
+        
+        <div class="filter-actions">
+          <button type="button" class="filter-btn apply-btn" (click)="onFilter()" [title]="'TIMTRAN_LOCK.APPLY_FILTER' | translate">
+            <i class="fas fa-filter"></i>
+          </button>
+          <button type="button" class="filter-btn reset-btn" (click)="onResetFilter()" [title]="'TIMTRAN_LOCK.RESET_FILTER' | translate">
+            <i class="fas fa-undo"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" 
+              (click)="openCreateModal()" 
+              [title]="'TIMTRAN_LOCK.CREATE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'TIMTRAN_LOCK.CREATE' | translate }}
+      </button>
+      
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'TIMTRAN_LOCK.DELETE_SELECTED' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'TIMTRAN_LOCK.DELETE_SELECTED' | translate }}
+        <span *ngIf="selectedItems.length > 0" class="selection-count">({{ selectedItems.length }})</span>
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text"
+            formControlName="searchTerm"
+            class="search-input"
+            [placeholder]="'TIMTRAN_LOCK.SEARCH_PLACEHOLDER' | translate"
+            [title]="'TIMTRAN_LOCK.SEARCH_TITLE' | translate"
+            (keyup.enter)="onSearch()">
+          <button type="button" class="search-btn" (click)="onSearch()" [title]="'TIMTRAN_LOCK.SEARCH_TITLE' | translate">
+            <i class="fas fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" [title]="'TIMTRAN_LOCK.SCROLL_HINT' | translate">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="checkbox-column">
+            <input 
+              type="checkbox" 
+              [checked]="selectAll" 
+              (change)="onSelectAll()"
+              [title]="'TIMTRAN_LOCK.SELECT_ALL' | translate">
+          </th>
+          <th>{{ 'TIMTRAN_LOCK.SDATE' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.EDATE' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.TOTAL_LOCK' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.HANDLE_APPROVAL_REQ_LOCK' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.HANDLE_APPROVAL_REQ_TRAN_LOCK' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.TIMTRAN_APPROVAL_REQ_LOCK' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.TIMTRAN_APPROVAL_REQ_TRAN_LOCK' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.DAYS_HANDLE_DIRECT' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.DAYS_HANDLE_SYNC' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.TIMTRAN_MANUAL_CHANGE' | translate }}</th>
+          <th>{{ 'TIMTRAN_LOCK.NOTE' | translate }}</th>
+          <th class="actions-column">{{ 'TIMTRAN_LOCK.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let timtranLock of timtranLocks" class="table-row">
+          <td class="checkbox-column">
+            <input 
+              type="checkbox" 
+              (change)="onItemSelect(timtranLock)"
+              [title]="'TIMTRAN_LOCK.SELECT_ITEM' | translate">
+          </td>
+          <td>{{ formatDate(timtranLock.sDate) }}</td>
+          <td>{{ formatDate(timtranLock.eDate) }}</td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.totalLock)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.totalLock)"
+               [class.text-success]="getBooleanValue(timtranLock.totalLock)"
+               [class.text-danger]="!getBooleanValue(timtranLock.totalLock)"></i>
+          </td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.handleApprovalReqLock)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.handleApprovalReqLock)"
+               [class.text-success]="getBooleanValue(timtranLock.handleApprovalReqLock)"
+               [class.text-danger]="!getBooleanValue(timtranLock.handleApprovalReqLock)"></i>
+          </td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.handleApprovalReqTranLock)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.handleApprovalReqTranLock)"
+               [class.text-success]="getBooleanValue(timtranLock.handleApprovalReqTranLock)"
+               [class.text-danger]="!getBooleanValue(timtranLock.handleApprovalReqTranLock)"></i>
+          </td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.timtranApprovalReqLock)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.timtranApprovalReqLock)"
+               [class.text-success]="getBooleanValue(timtranLock.timtranApprovalReqLock)"
+               [class.text-danger]="!getBooleanValue(timtranLock.timtranApprovalReqLock)"></i>
+          </td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.timtranApprovalReqTranLock)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.timtranApprovalReqTranLock)"
+               [class.text-success]="getBooleanValue(timtranLock.timtranApprovalReqTranLock)"
+               [class.text-danger]="!getBooleanValue(timtranLock.timtranApprovalReqTranLock)"></i>
+          </td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.daysHandleDirect)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.daysHandleDirect)"
+               [class.text-success]="getBooleanValue(timtranLock.daysHandleDirect)"
+               [class.text-danger]="!getBooleanValue(timtranLock.daysHandleDirect)"></i>
+          </td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.daysHandleSync)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.daysHandleSync)"
+               [class.text-success]="getBooleanValue(timtranLock.daysHandleSync)"
+               [class.text-danger]="!getBooleanValue(timtranLock.daysHandleSync)"></i>
+          </td>
+          <td>
+            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.timtranManualChange)" 
+               [class.fa-times-circle]="!getBooleanValue(timtranLock.timtranManualChange)"
+               [class.text-success]="getBooleanValue(timtranLock.timtranManualChange)"
+               [class.text-danger]="!getBooleanValue(timtranLock.timtranManualChange)"></i>
+          </td>
+          <td>{{ timtranLock.note || '-' }}</td>
+          <td class="actions-column">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteTimtranLock(timtranLock)"
+              [title]="'TIMTRAN_LOCK.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="timtranLocks.length === 0" class="empty-row">
+          <td colspan="13" class="empty-message">
+            <i class="fas fa-info-circle"></i>
+            {{ 'TIMTRAN_LOCK.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && timtranLocks.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'TIMTRAN_LOCK.SHOWING' | translate }} {{ currentPageStart }} {{ 'TIMTRAN_LOCK.TO' | translate }} {{ currentPageEnd }} {{ 'TIMTRAN_LOCK.OF' | translate }} {{ totalRecords }} {{ 'TIMTRAN_LOCK.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext"
+          [title]="'TIMTRAN_LOCK.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'TIMTRAN_LOCK.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'TIMTRAN_LOCK.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'TIMTRAN_LOCK.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'TIMTRAN_LOCK.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'TIMTRAN_LOCK.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'TIMTRAN_LOCK.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'TIMTRAN_LOCK.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'TIMTRAN_LOCK.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'TIMTRAN_LOCK.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'TIMTRAN_LOCK.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext"
+          [title]="'TIMTRAN_LOCK.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'TIMTRAN_LOCK.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create Timtran Lock Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'TIMTRAN_LOCK.CREATE_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeCreateModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
+        
+        <!-- Date Range Section -->
+        <div class="form-section">
+          <h4>{{ 'TIMTRAN_LOCK.DATE_RANGE' | translate }}</h4>
+          <div class="date-row">
+            <div class="form-group">
+              <label for="startDate">{{ 'TIMTRAN_LOCK.SDATE' | translate }} <span class="required">*</span></label>
+              <input 
+                id="startDate"
+                type="date"
+                formControlName="startDate"
+                class="form-input w-100"
+                [class.error]="isFieldInvalid('startDate')"
+                [placeholder]="'TIMTRAN_LOCK.SELECT_DATE' | translate">
+              <div *ngIf="isFieldInvalid('startDate')" class="error-message">
+                {{ getFieldError('startDate') }}
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="endDate">{{ 'TIMTRAN_LOCK.EDATE' | translate }} <span class="required">*</span></label>
+              <input 
+                id="endDate"
+                type="date"
+                formControlName="endDate"
+                class="form-input w-100"
+                [class.error]="isFieldInvalid('endDate')"
+                [placeholder]="'TIMTRAN_LOCK.SELECT_DATE' | translate">
+              <div *ngIf="isFieldInvalid('endDate')" class="error-message">
+                {{ getFieldError('endDate') }}
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="createForm.hasError('dateRangeInvalid')" class="date-range-error">
+            {{ 'TIMTRAN_LOCK.END_DATE_BEFORE_START' | translate }}
+          </div>
+        </div>
+
+        <!-- Lock Settings Section -->
+        <div class="form-section">
+          <h4>{{ 'TIMTRAN_LOCK.LOCK_SETTINGS' | translate }}</h4>
+          
+          <!-- Total Lock Toggle -->
+          <div class="toggle-row">
+            <div class="toggle-item total-lock">
+              <input 
+                type="checkbox" 
+                id="totalLock" 
+                formControlName="totalLock"
+                (change)="onTotalLockToggle()">
+              <label for="totalLock" class="toggle-label">{{ 'TIMTRAN_LOCK.TOTAL_LOCK' | translate }}</label>
+            </div>
+          </div>
+
+          <!-- Individual Lock Toggles -->
+          <div class="toggles-grid">
+            <div class="toggle-item">
+              <input type="checkbox" id="handleApprovalReqLock" formControlName="handleApprovalReqLock">
+              <label for="handleApprovalReqLock" class="toggle-label">{{ 'TIMTRAN_LOCK.HANDLE_APPROVAL_REQ_LOCK' | translate }}</label>
+            </div>
+            
+            <div class="toggle-item">
+              <input type="checkbox" id="handleApprovalReqTranLock" formControlName="handleApprovalReqTranLock">
+              <label for="handleApprovalReqTranLock" class="toggle-label">{{ 'TIMTRAN_LOCK.HANDLE_APPROVAL_REQ_TRAN_LOCK' | translate }}</label>
+            </div>
+            
+            <div class="toggle-item">
+              <input type="checkbox" id="timtranApprovalReqLock" formControlName="timtranApprovalReqLock">
+              <label for="timtranApprovalReqLock" class="toggle-label">{{ 'TIMTRAN_LOCK.TIMTRAN_APPROVAL_REQ_LOCK' | translate }}</label>
+            </div>
+            
+            <div class="toggle-item">
+              <input type="checkbox" id="timtranApprovalReqTranLock" formControlName="timtranApprovalReqTranLock">
+              <label for="timtranApprovalReqTranLock" class="toggle-label">{{ 'TIMTRAN_LOCK.TIMTRAN_APPROVAL_REQ_TRAN_LOCK' | translate }}</label>
+            </div>
+            
+            <div class="toggle-item">
+              <input type="checkbox" id="daysHandleDirect" formControlName="daysHandleDirect">
+              <label for="daysHandleDirect" class="toggle-label">{{ 'TIMTRAN_LOCK.DAYS_HANDLE_DIRECT' | translate }}</label>
+            </div>
+            
+            <div class="toggle-item">
+              <input type="checkbox" id="daysHandleSync" formControlName="daysHandleSync">
+              <label for="daysHandleSync" class="toggle-label">{{ 'TIMTRAN_LOCK.DAYS_HANDLE_SYNC' | translate }}</label>
+            </div>
+            
+            <div class="toggle-item">
+              <input type="checkbox" id="timtranManualChange" formControlName="timtranManualChange">
+              <label for="timtranManualChange" class="toggle-label">{{ 'TIMTRAN_LOCK.TIMTRAN_MANUAL_CHANGE' | translate }}</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note Section -->
+        <div class="form-section">
+          <div class="form-group">
+            <label for="note">{{ 'TIMTRAN_LOCK.NOTE' | translate }}</label>
+            <textarea 
+              id="note"
+              formControlName="note"
+              class="form-input w-100"
+              rows="3"
+              [placeholder]="'TIMTRAN_LOCK.ENTER_NOTE' | translate">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeCreateModal()">
+            {{ 'TIMTRAN_LOCK.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
+            {{ 'TIMTRAN_LOCK.SUBMIT' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
