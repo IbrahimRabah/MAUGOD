@@ -686,7 +686,40 @@
       }
     },
     "VISIT": "Visit",
-<<<<<<< Updated upstream
+    "SHIFTS_SECTION_SHIFTS": "Shifts",
+    "SHIFTS_SECTION_AUTOMATIC_SIGN": "Automatic Sign",
+    "SHIFTS_SECTION_SHIFTS_ASSIGN": "Shifts Assignment",
+    "SHIFTS_SECTION_MISSING_DAYS": "Missing Days Without Period Assignment",
+    "SHIFTS_SECTION_TIMTRAN_LOCK": "Period Lock",
+    "SALARIES_SECTION_ADD_DEDUCTS_ASSIGN": "Salary Additions/Deductions Assignment",
+    "SALARIES_SECTION_ADD_ONS_DEDUCTS": "Salary Additions/Deductions",
+    "SALARIES_SECTION_CALCULATION": "Salary Calculation",
+    "SALARIES_SECTION_MY_SALARY": "My Salary",
+    "SALARIES_SECTION_DETAILS": "Salary Details",
+    "SHIFTS_PAGE_SHIFTS": "Shifts",
+    "SHIFTS_PAGE_AUTOMATIC_SIGN": "Automatic Sign",
+    "SHIFTS_PAGE_SHIFTS_ASSIGN": "Shifts Assignment",
+    "SHIFTS_PAGE_MISSING_DAYS": "Missing Days Without Period Assignment",
+    "SHIFTS_PAGE_TIMTRAN_LOCK": "Period Lock",
+    "SALARIES_PAGE_ADD_DEDUCTS_ASSIGN": "Salary Additions/Deductions Assignment",
+    "SALARIES_PAGE_ADD_ONS_DEDUCTS": "Salary Additions/Deductions",
+    "SALARIES_PAGE_CALCULATION": "Salary Calculation",
+    "SALARIES_PAGE_MY_SALARY": "My Salary",
+    "SALARIES_PAGE_DETAILS": "Salary Details",
+    "SHIFTS_SECTION": {
+      "SHIFTS": "Shifts",
+      "AUTOMATIC_SIGN": "Automatic Sign",
+      "SHIFTS_ASSIGN": "Shifts Assignment",
+      "MISSING_DAYS": "Missing Days Without Period Assignment",
+      "TIMTRAN_LOCK": "Period Lock"
+    },
+    "SALARIES_SECTION": {
+      "ADD_DEDUCTS_ASSIGN": "Salary Additions/Deductions Assignment",
+      "ADD_ONS_DEDUCTS": "Salary Additions/Deductions",
+      "CALCULATION": "Salary Calculation",
+      "MY_SALARY": "My Salary",
+      "DETAILS": "Salary Details"
+    },
     "ATTENDANCE_DATA_SECTIONS": {
       "PUNCH_TRANSACTION": "Punch in transactions",
       "ATTENDANCE": "Attendance",
@@ -699,7 +732,7 @@
       "MISSING_DAYS": "Missing days with no shift",
       "TIMTRAN_LOCK": "Timtran lock"
     },
-     "VACATION_TASKS_SECTIONS": {
+    "VACATION_TASKS_SECTIONS": {
       "ATTENDANCE_STATUS_CLASSIFICATION": "Attendance status classification",
       "ATTENDANCE_STATUSES": "Attendance statuses",
       "STATUS_PRIORITY_ORDER": "Handle statuses priority",
@@ -762,41 +795,6 @@
     "CONSORSHIP_SECTIONS": {
       "CENSORSHIP_TOUR": "Censorship tour",
       "ALARMS": "Alarms"
-=======
-    "SHIFTS_SECTION_SHIFTS": "Shifts",
-    "SHIFTS_SECTION_AUTOMATIC_SIGN": "Automatic Sign",
-    "SHIFTS_SECTION_SHIFTS_ASSIGN": "Shifts Assignment",
-    "SHIFTS_SECTION_MISSING_DAYS": "Missing Days Without Period Assignment",
-    "SHIFTS_SECTION_TIMTRAN_LOCK": "Period Lock",
-    "SALARIES_SECTION_ADD_DEDUCTS_ASSIGN": "Salary Additions/Deductions Assignment",
-    "SALARIES_SECTION_ADD_ONS_DEDUCTS": "Salary Additions/Deductions",
-    "SALARIES_SECTION_CALCULATION": "Salary Calculation",
-    "SALARIES_SECTION_MY_SALARY": "My Salary",
-    "SALARIES_SECTION_DETAILS": "Salary Details",
-    "SHIFTS_PAGE_SHIFTS": "Shifts",
-    "SHIFTS_PAGE_AUTOMATIC_SIGN": "Automatic Sign",
-    "SHIFTS_PAGE_SHIFTS_ASSIGN": "Shifts Assignment",
-    "SHIFTS_PAGE_MISSING_DAYS": "Missing Days Without Period Assignment",
-    "SHIFTS_PAGE_TIMTRAN_LOCK": "Period Lock",
-    "SALARIES_PAGE_ADD_DEDUCTS_ASSIGN": "Salary Additions/Deductions Assignment",
-    "SALARIES_PAGE_ADD_ONS_DEDUCTS": "Salary Additions/Deductions",
-    "SALARIES_PAGE_CALCULATION": "Salary Calculation",
-    "SALARIES_PAGE_MY_SALARY": "My Salary",
-    "SALARIES_PAGE_DETAILS": "Salary Details",
-    "SHIFTS_SECTION": {
-      "SHIFTS": "Shifts",
-      "AUTOMATIC_SIGN": "Automatic Sign",
-      "SHIFTS_ASSIGN": "Shifts Assignment",
-      "MISSING_DAYS": "Missing Days Without Period Assignment",
-      "TIMTRAN_LOCK": "Period Lock"
-    },
-    "SALARIES_SECTION": {
-      "ADD_DEDUCTS_ASSIGN": "Salary Additions/Deductions Assignment",
-      "ADD_ONS_DEDUCTS": "Salary Additions/Deductions",
-      "CALCULATION": "Salary Calculation",
-      "MY_SALARY": "My Salary",
-      "DETAILS": "Salary Details"
->>>>>>> Stashed changes
     }
   },
   "PROFILE": {
