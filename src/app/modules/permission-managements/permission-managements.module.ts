@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 // PrimeNG Modules
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 import { PermissionManagementsRoutingModule } from './permission-managements-routing.module';
 import { PremissionsManaagementComponent } from './components/premissions-manaagement/premissions-manaagement.component';
@@ -54,7 +55,8 @@ import { PermissionsDelegationsComponent } from './components/permissions-delega
     PermissionManagementsRoutingModule,
     TranslateModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    MultiSelectModule
   ]
 })
 export class PermissionManagementsModule { }
