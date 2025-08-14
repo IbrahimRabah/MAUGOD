@@ -1,6 +1,8 @@
 .branches-container {
-  padding: 20px;
-}
+  padding: 1.5rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Arial', sans-serif;}
 
 /* Loading Spinner */
 .loading-spinner {
@@ -30,12 +32,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background-color: #F2F2F2;
-  border: 1px solid #ddd;
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  margin-bottom: 0;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .left-actions {
@@ -52,7 +51,7 @@
 
 /* Add Button */
 .add-btn {
-  background-color: #28a745;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -68,8 +67,8 @@
 }
 
 .add-btn:hover {
-  background-color: #218838;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
 }
 
@@ -161,8 +160,8 @@
 
 /* Table Header */
 .custom-table thead tr.table-header th {
-  background-color: #F2F2F2 !important;
-  color: #333333 !important;
+  background: #F2F2F2;
+  color: #056ac8;
   padding: 15px 10px !important;
   font-weight: 600 !important;
   text-align: center !important;
@@ -213,31 +212,16 @@
   font-size: 14px;
 }
 
-.edit-btn {
-  color: #007bff;
-}
-
 .edit-btn:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.delete-btn {
-  color: #dc3545;
+  transform: translateY(-2px);
 }
 
 .delete-btn:hover {
-  background-color: #dc3545;
-  color: white;
-}
-
-.number-btn {
-  color: #28a745;
+  transform: translateY(-2px);
 }
 
 .number-btn:hover {
-  background-color: #28a745;
-  color: white;
+  transform: translateY(-2px);
 }
 
 /* Pagination */

@@ -305,12 +305,12 @@
 
 /* Table Header */
 .custom-table thead tr.table-header th {
-  background: linear-gradient(135deg, #34495e, #2c3e50);
-  color: white;
+  background: #F2F2F2;
+  color: #056ac8;
   padding: 15px 12px;
   text-align: left;
   font-weight: 600;
-  border-bottom: 2px solid #2c3e50;
+  border: 1px solid #cccbcb;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -331,7 +331,7 @@
 .custom-table tbody tr.table-row td {
   padding: 12px;
   vertical-align: middle;
-  border-right: 1px solid #e9ecef;
+  border: 1px solid #cccbcb;
   white-space: nowrap;
 }
 
@@ -378,15 +378,8 @@
   margin: 0 2px;
 }
 
-.delete-btn {
-  color: #e74c3c;
-  background: rgba(231, 76, 60, 0.1);
-}
-
 .delete-btn:hover {
-  background: #e74c3c;
-  color: white;
-  transform: scale(1.1);
+  transform: translateY(-2px);
 }
 
 /* Form Input Styling */

@@ -42,7 +42,7 @@
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.EDIT' | translate }}</th>
+          <th></th>
           <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.EMPLOYEE_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.DEPARTMENT_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.DIRECT_MANAGER' | translate }}</th>
@@ -68,7 +68,7 @@
               class="action-btn edit-btn" 
               (click)="editEmployee(employee)"
               [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.EDIT_EMPLOYEE' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td>{{ employee.empName }}</td>
@@ -85,7 +85,7 @@
               class="action-btn password-btn" 
               (click)="changePassword(employee)"
               [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.CHANGE_PASSWORD' | translate">
-              <i class="fas fa-key"></i>
+              <i class="text-warning fs-4 fas fa-key"></i>
             </button>
           </td>
           <!-- <td>
@@ -101,7 +101,7 @@
               class="action-btn number-btn" 
               (click)="changeEmployeeNumber(employee)"
               [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.CHANGE_NUMBER' | translate">
-              <i class="fas fa-hashtag"></i>
+              <i class="text-success fs-4 fas fa-hashtag"></i>
             </button>
           </td>
           <td>

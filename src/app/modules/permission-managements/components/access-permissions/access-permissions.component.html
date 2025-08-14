@@ -131,9 +131,9 @@
           <td>{{ permission.sourceId || '-' }}</td>
           <td>{{ permission.note || '-' }}</td>
           <td class="actions-column">
-            <button class="action-btn delete-btn" (click)="deleteItem(permission)" 
+            <button class="action-btn" (click)="deleteItem(permission)" 
                     [title]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DELETE' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
         </tr>

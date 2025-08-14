@@ -17,7 +17,7 @@
   }
 
   :host-context([dir="rtl"]) :host-context(.sidebar-expanded) {
-    margin-right: 280px;
+    margin-right: 350px;
     margin-left: 0;
   }
 
@@ -28,7 +28,7 @@
   }
 
   :host-context([dir="ltr"]) :host-context(.sidebar-expanded) {
-    margin-left: 280px;
+    margin-left: 350px;
     margin-right: 0;
   }
 }
