@@ -7,6 +7,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 import { PermissionManagementsRoutingModule } from './permission-managements-routing.module';
 import { PremissionsManaagementComponent } from './components/premissions-manaagement/premissions-manaagement.component';
@@ -53,10 +55,12 @@ import { PermissionsDelegationsComponent } from './components/permissions-delega
     ReactiveFormsModule,
     FormsModule,
     PermissionManagementsRoutingModule,
-    TranslateModule,
+    TranslateModule.forChild(),
     ToastModule,
     ConfirmDialogModule,
-    MultiSelectModule
+    MultiSelectModule,
+    DropdownModule,
+    ToggleButtonModule
   ]
 })
 export class PermissionManagementsModule { }

@@ -36,6 +36,8 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSize = 10;
   showCreateModal = false;
+  isEditMode = false;
+  editingRecordId?: number;
   
   private langSubscription: Subscription = new Subscription();
   private searchSubscription: Subscription = new Subscription();
@@ -153,12 +155,12 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     });
 
     this.createForm = this.fb.group({
-      empId: [null, Validators.required],
-      deptId: [null, Validators.required],
-      mgrOfDeptId: [null, Validators.required],
-      branchId: [null, Validators.required],
-      mgrOfBranchId: [null, Validators.required],
-      roleId: [null, Validators.required],
+      empId: [null], // Removed Validators.required
+      deptId: [null], // Removed Validators.required
+      mgrOfDeptId: [null], // Removed Validators.required
+      branchId: [null], // Removed Validators.required
+      mgrOfBranchId: [null], // Removed Validators.required
+      roleId: [null], // Removed Validators.required
       sDate: ['', Validators.required],
       eDate: ['', Validators.required],
       shiftPart: [1, Validators.required],
@@ -177,7 +179,9 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       thu: [0],
       fri: [0],
       note: ['']
-    }, { validators: this.dateRangeValidator });
+    }, { 
+      validators: [this.dateRangeValidator, this.autoInOutValidator]
+    });
 
     // Add listeners for date changes to trigger validation
     this.createForm.get('sDate')?.valueChanges.subscribe(() => {
@@ -185,6 +189,15 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     });
 
     this.createForm.get('eDate')?.valueChanges.subscribe(() => {
+      this.createForm.updateValueAndValidity();
+    });
+
+    // Add listeners for Auto In/Out changes to trigger validation
+    this.createForm.get('autoIn')?.valueChanges.subscribe(() => {
+      this.createForm.updateValueAndValidity();
+    });
+
+    this.createForm.get('autoOut')?.valueChanges.subscribe(() => {
       this.createForm.updateValueAndValidity();
     });
   }
@@ -207,6 +220,23 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
 
     if (end < start) {
       return { dateRange: { message: 'End date must be after start date' } };
+    }
+
+    return null;
+  };
+
+  // Custom validator to ensure at least one of Auto In or Auto Out is selected
+  private autoInOutValidator = (group: FormGroup) => {
+    const autoIn = group.get('autoIn')?.value;
+    const autoOut = group.get('autoOut')?.value;
+
+    // Convert to numbers in case they come as strings
+    const autoInValue = Number(autoIn);
+    const autoOutValue = Number(autoOut);
+
+    // At least one must be 1 (enabled)
+    if (autoInValue !== 1 && autoOutValue !== 1) {
+      return { autoInOut: { message: 'At least one of Auto In or Auto Out must be enabled' } };
     }
 
     return null;
@@ -329,6 +359,8 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
 
   // Modal methods
   openCreateModal() {
+    this.isEditMode = false;
+    this.editingRecordId = undefined;
     this.showCreateModal = true;
     this.resetCreateForm();
     // Don't reload dropdown data if already cached - just show modal faster
@@ -337,8 +369,21 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     }
   }
 
+  openEditModal(autoSign: AutoSign) {
+    this.isEditMode = true;
+    this.editingRecordId = autoSign.recId;
+    this.showCreateModal = true;
+    this.populateEditForm(autoSign);
+    // Don't reload dropdown data if already cached - just show modal faster
+    if (!this.isAllDataCached()) {
+      this.loadMissingDropdownData();
+    }
+  }
+
   closeCreateModal() {
     this.showCreateModal = false;
+    this.isEditMode = false;
+    this.editingRecordId = undefined;
     this.resetCreateForm();
   }
 
@@ -361,6 +406,50 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       outRandomBfor: 0,
       outRandomAftr: 0
     });
+  }
+
+  private populateEditForm(autoSign: AutoSign) {
+    // Format dates for the form (remove time part)
+    const sDate = autoSign.sDate ? this.formatDateForForm(autoSign.sDate) : '';
+    const eDate = autoSign.eDate ? this.formatDateForForm(autoSign.eDate) : '';
+
+    this.createForm.patchValue({
+      empId: autoSign.empId,
+      deptId: autoSign.deptId,
+      mgrOfDeptId: autoSign.mgrOfDeptId,
+      branchId: autoSign.branchId,
+      mgrOfBranchId: autoSign.mgrOfBranchId,
+      roleId: autoSign.roleId,
+      sDate: sDate,
+      eDate: eDate,
+      shiftPart: autoSign.shiftPart,
+      autoIn: autoSign.autoIn,
+      inRandomBfor: 0, // These might not be in the AutoSign model, so using defaults
+      inRandomAftr: 0,
+      autoOut: autoSign.autoOut,
+      outRandomBfor: 0,
+      outRandomAftr: 0,
+      sts: autoSign.sts,
+      sat: autoSign.sat,
+      sun: autoSign.sun,
+      mon: autoSign.mon,
+      tue: autoSign.tue,
+      wed: autoSign.wed,
+      thu: autoSign.thu,
+      fri: autoSign.fri,
+      note: autoSign.note || ''
+    });
+  }
+
+  private formatDateForForm(dateString: string): string {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
+    }
   }
 
   // Load dropdown data - optimized to call endpoints only once per data type
@@ -498,7 +587,7 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
 
   // Submit form
   submitCreate() {
-    if (this.createForm.valid && this.areDatesValid()) {
+    if (this.createForm.valid) {
       const formValue = this.createForm.value;
       
       // Console log the form values before calling the API
@@ -511,12 +600,12 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       });
       
       const autoSignRequest: AutoSignRequest = {
-        empId: formValue.empId,
-        deptId: formValue.deptId,
-        mgrOfDeptId: formValue.mgrOfDeptId,
-        branchId: formValue.branchId,
-        mgrOfBranchId: formValue.mgrOfBranchId,
-        roleId: formValue.roleId,
+        empId: formValue.empId || 0, // Use 0 as default for optional fields
+        deptId: formValue.deptId || 0,
+        mgrOfDeptId: formValue.mgrOfDeptId || 0,
+        branchId: formValue.branchId || 0,
+        mgrOfBranchId: formValue.mgrOfBranchId || 0,
+        roleId: formValue.roleId || 0,
         sDate: this.formatDateForApi(formValue.sDate),
         eDate: this.formatDateForApi(formValue.eDate),
         shiftPart: formValue.shiftPart,
@@ -540,26 +629,51 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
 
       console.log('🚀 API Request Payload:', autoSignRequest);
 
-      this.automaticSignService.insertAutomaticSign(autoSignRequest, this.currentLang).subscribe({
-        next: (response) => {
-          console.log('✅ API Response:', response);
-          this.showSuccessMessage(
-            this.langService.getCurrentLang() === 'ar' ? 
-              'تم إنشاء التوقيع الآلي بنجاح' : 
-              'Automatic sign created successfully'
-          );
-          this.closeCreateModal();
-          this.loadAutoSigns();
-        },
-        error: (error) => {
-          console.error('❌ API Error:', error);
-          this.showErrorMessage(
-            this.langService.getCurrentLang() === 'ar' ? 
-              'حدث خطأ أثناء إنشاء التوقيع الآلي' : 
-              'Error occurred while creating automatic sign'
-          );
-        }
-      });
+      if (this.isEditMode && this.editingRecordId) {
+        // Update existing record
+        this.automaticSignService.updateAutoSign(this.currentLang, autoSignRequest).subscribe({
+          next: (response) => {
+            console.log('✅ Update API Response:', response);
+            this.showSuccessMessage(
+              this.langService.getCurrentLang() === 'ar' ? 
+                'تم تحديث التوقيع الآلي بنجاح' : 
+                'Automatic sign updated successfully'
+            );
+            this.closeCreateModal();
+            this.loadAutoSigns();
+          },
+          error: (error) => {
+            console.error('❌ Update API Error:', error);
+            this.showErrorMessage(
+              this.langService.getCurrentLang() === 'ar' ? 
+                'حدث خطأ أثناء تحديث التوقيع الآلي' : 
+                'Error occurred while updating automatic sign'
+            );
+          }
+        });
+      } else {
+        // Create new record
+        this.automaticSignService.insertAutomaticSign(autoSignRequest, this.currentLang).subscribe({
+          next: (response) => {
+            console.log('✅ Create API Response:', response);
+            this.showSuccessMessage(
+              this.langService.getCurrentLang() === 'ar' ? 
+                'تم إنشاء التوقيع الآلي بنجاح' : 
+                'Automatic sign created successfully'
+            );
+            this.closeCreateModal();
+            this.loadAutoSigns();
+          },
+          error: (error) => {
+            console.error('❌ Create API Error:', error);
+            this.showErrorMessage(
+              this.langService.getCurrentLang() === 'ar' ? 
+                'حدث خطأ أثناء إنشاء التوقيع الآلي' : 
+                'Error occurred while creating automatic sign'
+            );
+          }
+        });
+      }
     } else {
       console.warn('⚠️ Form is invalid:', this.createForm.errors);
       console.log('🔧 Invalid form controls:', this.getInvalidControls());
@@ -570,6 +684,15 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
           this.langService.getCurrentLang() === 'ar' ? 
             'تاريخ الانتهاء يجب أن يكون بعد تاريخ البداية' : 
             'End date must be after start date'
+        );
+      }
+      
+      // Show specific error for Auto In/Out validation
+      if (this.createForm.errors?.['autoInOut']) {
+        this.showErrorMessage(
+          this.langService.getCurrentLang() === 'ar' ? 
+            'يجب تفعيل واحد على الأقل من الدخول التلقائي أو الخروج التلقائي' : 
+            'At least one of Auto In or Auto Out must be enabled'
         );
       }
       
@@ -601,13 +724,51 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Placeholder methods for edit and delete
+  // Edit and delete methods
   editAutoSign(autoSign: AutoSign) {
-    console.log('Edit auto sign:', autoSign);
+    this.openEditModal(autoSign);
   }
 
   deleteAutoSign(autoSign: AutoSign) {
-    console.log('Delete auto sign:', autoSign);
+    this.confirmationService.confirm({
+      message: this.langService.getCurrentLang() === 'ar' ? 
+        `هل أنت متأكد من حذف التوقيع الآلي للموظف: ${autoSign.empName}؟` :
+        `Are you sure you want to delete the automatic sign for employee: ${autoSign.empName}?`,
+      header: this.langService.getCurrentLang() === 'ar' ? 'تأكيد الحذف' : 'Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.langService.getCurrentLang() === 'ar' ? 'نعم' : 'Yes',
+      rejectLabel: this.langService.getCurrentLang() === 'ar' ? 'لا' : 'No',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-secondary',
+      accept: () => {
+        this.automaticSignService.deleteAutoSign(this.currentLang, autoSign.recId).subscribe({
+          next: (response) => {
+            if (response.isSuccess) {
+              this.showSuccessMessage(
+                this.langService.getCurrentLang() === 'ar' ? 
+                  'تم حذف التوقيع الآلي بنجاح' : 
+                  'Automatic sign deleted successfully'
+              );
+              this.loadAutoSigns();
+            } else {
+              this.showErrorMessage(response.message || 
+                (this.langService.getCurrentLang() === 'ar' ? 
+                  'فشل في حذف التوقيع الآلي' : 
+                  'Failed to delete automatic sign')
+              );
+            }
+          },
+          error: (error) => {
+            console.error('❌ Delete API Error:', error);
+            this.showErrorMessage(
+              this.langService.getCurrentLang() === 'ar' ? 
+                'حدث خطأ أثناء حذف التوقيع الآلي' : 
+                'Error occurred while deleting automatic sign'
+            );
+          }
+        });
+      }
+    });
   }
 
   // Format display values

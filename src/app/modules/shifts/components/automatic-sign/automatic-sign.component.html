@@ -245,7 +245,7 @@
 <div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>{{ 'AUTOMATIC_SIGN.CREATE_MODAL_TITLE' | translate }}</h3>
+      <h3>{{ (isEditMode ? 'AUTOMATIC_SIGN.EDIT_MODAL_TITLE' : 'AUTOMATIC_SIGN.CREATE_MODAL_TITLE') | translate }}</h3>
       <button class="close-btn" (click)="closeCreateModal()">
         <i class="fas fa-times"></i>
       </button>
@@ -256,7 +256,7 @@
         <div class="row">
           <!-- Employee Dropdown -->
           <div class="form-group">
-            <label class="required">{{ 'AUTOMATIC_SIGN.EMPLOYEE' | translate }}</label>
+            <label>{{ 'AUTOMATIC_SIGN.EMPLOYEE' | translate }}</label>
             <p-dropdown 
               #empDropdown
               formControlName="empId"
@@ -280,7 +280,7 @@
 
           <!-- Department Dropdown -->
           <div class="form-group">
-            <label class="required">{{ 'AUTOMATIC_SIGN.DEPARTMENT' | translate }}</label>
+            <label>{{ 'AUTOMATIC_SIGN.DEPARTMENT' | translate }}</label>
             <p-dropdown 
               #deptDropdown
               formControlName="deptId"
@@ -302,7 +302,7 @@
 
           <!-- Manager of Department -->
           <div class="form-group">
-            <label class="required">{{ 'AUTOMATIC_SIGN.MANAGER_OF_DEPARTMENT' | translate }}</label>
+            <label>{{ 'AUTOMATIC_SIGN.MANAGER_OF_DEPARTMENT' | translate }}</label>
             <p-dropdown 
               #mgrDeptDropdown
               formControlName="mgrOfDeptId"
@@ -324,7 +324,7 @@
 
           <!-- Branch Dropdown -->
           <div class="form-group">
-            <label class="required">{{ 'AUTOMATIC_SIGN.BRANCH' | translate }}</label>
+            <label>{{ 'AUTOMATIC_SIGN.BRANCH' | translate }}</label>
             <p-dropdown 
               #branchDropdown
               formControlName="branchId"
@@ -346,7 +346,7 @@
 
           <!-- Manager of Branch -->
           <div class="form-group">
-            <label class="required">{{ 'AUTOMATIC_SIGN.MANAGER_OF_BRANCH' | translate }}</label>
+            <label>{{ 'AUTOMATIC_SIGN.MANAGER_OF_BRANCH' | translate }}</label>
             <p-dropdown 
               #mgrBranchDropdown
               formControlName="mgrOfBranchId"
@@ -368,7 +368,7 @@
 
           <!-- Role Dropdown -->
           <div class="form-group">
-            <label class="required">{{ 'AUTOMATIC_SIGN.ROLE' | translate }}</label>
+            <label>{{ 'AUTOMATIC_SIGN.ROLE' | translate }}</label>
             <p-dropdown 
               #roleDropdown
               formControlName="roleId"
@@ -455,6 +455,16 @@
                 <p-inputSwitch formControlName="autoOut" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
               </div>
             </div>
+            
+            <!-- Auto In/Out Validation Error -->
+            <small *ngIf="createForm.errors?.['autoInOut'] && (createForm.get('autoIn')?.touched || createForm.get('autoOut')?.touched)" 
+                   class="error-message auto-in-out-error">
+              {{ 
+                langService.getCurrentLang() === 'ar' ? 
+                  'يجب تفعيل واحد على الأقل من الدخول التلقائي أو الخروج التلقائي' : 
+                  'At least one of Auto In or Auto Out must be enabled'
+              }}
+            </small>
 
             <!-- Week Days Toggles -->
             <h5 class="toggle-section-title" style="font-size: 1rem; margin-top: 1.5rem;">{{ 'AUTOMATIC_SIGN.WEEK_DAYS' | translate }}</h5>
@@ -513,7 +523,7 @@
             {{ 'AUTOMATIC_SIGN.CANCEL' | translate }}
           </button>
           <button type="submit" class="submit-btn" [disabled]="createForm.invalid">
-            {{ 'AUTOMATIC_SIGN.CREATE' | translate }}
+            {{ (isEditMode ? 'AUTOMATIC_SIGN.UPDATE' : 'AUTOMATIC_SIGN.CREATE') | translate }}
           </button>
         </div>
       </form>

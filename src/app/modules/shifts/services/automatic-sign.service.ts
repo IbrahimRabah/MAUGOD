@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AutoSign, AutoSignRequest, AutoSignsResponse } from '../../../core/models/AutoSign';
+import { AutoSign, AutoSignDeleteResponse, AutoSignRequest, AutoSignsResponse } from '../../../core/models/AutoSign';
 import { ShiftsResponse } from '../../../core/models/shifts';
 
 @Injectable({
@@ -22,7 +22,7 @@ export class AutomaticSignService {
         'pageIndex': pageNumber.toString()
       };
 
-      return this.http.get<AutoSignsResponse>(`${this.apiUrl}/Shifts/GetAutomaticSign`, { headers });
+      return this.http.get<AutoSignsResponse>(`${this.apiUrl}/AutomaticSign/GetAutomaticSign`, { headers });
     }
 
     insertAutomaticSign(automaticSign: AutoSignRequest, lang: number): Observable<any> {
@@ -34,4 +34,20 @@ export class AutomaticSignService {
 
       return this.http.post(`${this.apiUrl}/Attendance/InsertAutomaticSign`, automaticSign, { headers });
     }
+   deleteAutoSign(lang: number, id: number): Observable<AutoSignDeleteResponse> {
+    const url = `${this.apiUrl}/AutomaticSign/Delete/${id}`;
+    const headers = new HttpHeaders()
+      .set('accept', 'text/plain')
+      .set('lang', lang.toString());
+
+    return this.http.delete<AutoSignDeleteResponse>(url, { headers });
+  }
+  updateAutoSign(lang: number, data: any): Observable<AutoSignRequest> {
+    const headers = new HttpHeaders()
+      .set('accept', 'text/plain')
+      .set('lang', lang.toString())
+      .set('Content-Type', 'application/json');
+
+    return this.http.put<AutoSignRequest>(`${this.apiUrl}/AutomaticSign/Update`, data, { headers });
+  }
   }

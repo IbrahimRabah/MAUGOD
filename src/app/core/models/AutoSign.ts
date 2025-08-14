@@ -90,3 +90,10 @@ export interface AutoSignRequest {
   note: string;
   lang: number;
 }
+
+export interface AutoSignDeleteResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: boolean;
+}

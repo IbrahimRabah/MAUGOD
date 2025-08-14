@@ -1,1 +1,617 @@
-<p>role-module-rights works!</p>
+<div class="role-module-rights-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Add filter controls here if needed -->
+        <div class="filter-actions">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="create-btn" 
+              (click)="openCreateModal()" 
+              [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CREATE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CREATE' | translate }}
+      </button>
+
+      <button class="copy-existing-btn" 
+              (click)="openCopyModal()" 
+              [title]="'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_MODULE_RIGHTS.COPY_EXISTING_TITLE' | translate">
+        <i class="fas fa-copy"></i>
+        {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.COPY_EXISTING' | translate }}
+      </button>
+
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED' | translate }}
+        <span *ngIf="selectedItems.length > 0" class="selection-count">({{ selectedItems.length }})</span>
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            formControlName="searchTerm"
+            class="search-input" 
+            [placeholder]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SEARCH_PLACEHOLDER' | translate"
+            [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SEARCH_TITLE' | translate">
+          <button class="search-btn" type="button" (click)="onSearch()" [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SEARCH' | translate">
+            <i class="fas fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="checkbox-column">
+            <input 
+              type="checkbox" 
+              [checked]="selectAll" 
+              (change)="onSelectAll()"
+              [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_ALL' | translate">
+          </th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ROLE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.MODULE' | translate }}</th>
+          <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_VIEW' | translate }}</th>
+          <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_CREATE' | translate }}</th>
+          <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_EDIT' | translate }}</th>
+          <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_DELETE' | translate }}</th>
+          <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_ADD_PUBLIC_REPORT' | translate }}</th>
+          <th class="actions-column text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let right of userRoleModuleRights" class="table-row">
+          <td class="checkbox-column">
+            <input 
+              type="checkbox" 
+              [checked]="isItemSelected(right)" 
+              (change)="onItemSelect(right)"
+              [disabled]="!canDeleteOrSelect(right)"
+              [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_ITEM' | translate">
+          </td>
+          <td>{{ right.roleName }}</td>
+          <td>{{ right.modName }}</td>
+          <td class="text-center">
+            <i [class]="getPermissionIcon(right.canView)" 
+               [title]="getPermissionDisplayText(right.canView, right.canViewTrans)"></i>
+          </td>
+          <td class="text-center">
+            <i [class]="getPermissionIcon(right.canCreate)" 
+               [title]="getPermissionDisplayText(right.canCreate, right.canCreateTrans)"></i>
+          </td>
+          <td class="text-center">
+            <i [class]="getPermissionIcon(right.canEdit)" 
+               [title]="getPermissionDisplayText(right.canEdit, right.canEditTrans)"></i>
+          </td>
+          <td class="text-center">
+            <i [class]="getPermissionIcon(right.canDelete)" 
+               [title]="getPermissionDisplayText(right.canDelete, right.canDeleteTrans)"></i>
+          </td>
+          <td class="text-center">
+            <i [class]="getPermissionIcon(right.canAddPublicRep)" 
+               [title]="getPermissionDisplayText(right.canAddPublicRep, right.canAddPublicRepTrans)"></i>
+          </td>
+          <td class="actions-column text-center">
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editUserRoleModuleRight(right)"
+              [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteUserRoleModuleRight(right)"
+              [disabled]="!canDeleteOrSelect(right)"
+              [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="userRoleModuleRights.length === 0" class="empty-row">
+          <td colspan="9" class="empty-message text-center">
+            <i class="fas fa-inbox fa-2x mb-3"></i>
+            <div>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.NO_DATA_AVAILABLE' | translate }}</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && userRoleModuleRights.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.OF' | translate }} {{ totalRecords }} {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext"
+          [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Copy Existing Role Module Rights Modal -->
+<div *ngIf="showCopyModal" class="modal-overlay" (click)="closeCopyModal()">
+  <div class="modal-container copy-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.COPY_EXISTING_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeCopyModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body copy-modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="copyForm" (ngSubmit)="submitCopy()">
+        
+        <!-- Source and Destination Roles Section -->
+        <div class="form-section">
+          <h4>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.COPY_ROLES_SELECTION' | translate }}</h4>
+          
+          <div class="roles-row">
+            <!-- Source Role Dropdown -->
+            <div class="form-group">
+              <label for="sourceRole">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SOURCE_ROLE' | translate }} *</label>
+              <p-dropdown 
+                id="sourceRole"
+                formControlName="sourceRoleId"
+                [options]="sourceRoles"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_SOURCE_ROLE' | translate"
+                [filter]="true"
+                [filterBy]="'label'"
+                [showClear]="true"
+                [loading]="loadingSourceRoles"
+                (onChange)="onSourceRoleChange()"
+                [class.error]="copyForm.get('sourceRoleId')?.invalid && copyForm.get('sourceRoleId')?.touched">
+              </p-dropdown>
+              <div *ngIf="copyForm.get('sourceRoleId')?.invalid && copyForm.get('sourceRoleId')?.touched" class="error-message">
+                {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SOURCE_ROLE_REQUIRED' | translate }}
+              </div>
+            </div>
+
+            <!-- Destination Role Dropdown -->
+            <div class="form-group">
+              <label for="destinationRole">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DESTINATION_ROLE' | translate }} *</label>
+              <p-dropdown 
+                id="destinationRole"
+                formControlName="destinationRoleId"
+                [options]="destinationRoles"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_DESTINATION_ROLE' | translate"
+                [filter]="true"
+                [filterBy]="'label'"
+                [showClear]="true"
+                [loading]="loadingDestinationRoles"
+                [class.error]="copyForm.get('destinationRoleId')?.invalid && copyForm.get('destinationRoleId')?.touched">
+              </p-dropdown>
+              <div *ngIf="copyForm.get('destinationRoleId')?.invalid && copyForm.get('destinationRoleId')?.touched" class="error-message">
+                {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DESTINATION_ROLE_REQUIRED' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Copy Type Selection Section -->
+        <div class="form-section">
+          <h4>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.COPY_TYPE_SELECTION' | translate }}</h4>
+          
+          <div class="radio-group">
+            <div class="radio-item" [class.selected]="copyType === 'typical'" (click)="onCopyTypeChange('typical')">
+              <input 
+                type="radio" 
+                id="typical" 
+                value="typical"
+                formControlName="copyType"
+                name="copyType">
+              <label for="typical">
+                <span class="radio-label">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.TYPICAL_COPY' | translate }}</span>
+                <small class="radio-description">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.TYPICAL_COPY_DESCRIPTION' | translate }}</small>
+              </label>
+            </div>
+
+            <div class="radio-item" [class.selected]="copyType === 'custom'" (click)="onCopyTypeChange('custom')">
+              <input 
+                type="radio" 
+                id="custom" 
+                value="custom"
+                formControlName="copyType"
+                name="copyType">
+              <label for="custom">
+                <span class="radio-label">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CUSTOM_COPY' | translate }}</span>
+                <small class="radio-description">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CUSTOM_COPY_DESCRIPTION' | translate }}</small>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Rights Selection Table (visible when custom type is selected) -->
+        <div class="form-section" *ngIf="copyType === 'custom'">
+          <h4>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_RIGHTS_TO_COPY' | translate }}</h4>
+          
+          <div *ngIf="loadingCustomRights" class="loading-message">
+            <i class="fas fa-spinner fa-spin"></i>
+            {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.LOADING_RIGHTS' | translate }}
+          </div>
+
+          <div *ngIf="!loadingCustomRights && copyForm.get('sourceRoleId')?.value && customRoleRights.length === 0" class="no-data-message">
+            <i class="fas fa-info-circle"></i>
+            {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.NO_RIGHTS_FOUND' | translate }}
+          </div>
+
+          <div *ngIf="!loadingCustomRights && customRoleRights.length > 0" class="custom-rights-table-wrapper">
+            <div class="table-header-actions-small">
+              <label class="select-all-label">
+                <input 
+                  type="checkbox" 
+                  [checked]="selectAllCustom" 
+                  (change)="onSelectAllCustom()">
+                {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_ALL_RIGHTS' | translate }}
+              </label>
+              <span class="selected-count">
+                {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECTED_COUNT' | translate }}: {{ selectedCustomRights.length }}/{{ customRoleRights.length }}
+              </span>
+            </div>
+
+            <table class="custom-rights-table">
+              <thead>
+                <tr>
+                  <th class="checkbox-column"></th>
+                  <th>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.MODULE' | translate }}</th>
+                  <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_VIEW' | translate }}</th>
+                  <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_CREATE' | translate }}</th>
+                  <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_EDIT' | translate }}</th>
+                  <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_DELETE' | translate }}</th>
+                  <th class="text-center">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_ADD_PUBLIC_REPORT' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let right of customRoleRights" class="custom-right-row">
+                  <td class="checkbox-column">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isCustomRightSelected(right)" 
+                      (change)="onCustomRightSelect(right)">
+                  </td>
+                  <td>{{ right.modName }}</td>
+                  <td class="text-center">
+                    <i [class]="getPermissionIcon(right.canView)" 
+                       [title]="getPermissionDisplayText(right.canView, right.canViewTrans)"></i>
+                  </td>
+                  <td class="text-center">
+                    <i [class]="getPermissionIcon(right.canCreate)" 
+                       [title]="getPermissionDisplayText(right.canCreate, right.canCreateTrans)"></i>
+                  </td>
+                  <td class="text-center">
+                    <i [class]="getPermissionIcon(right.canEdit)" 
+                       [title]="getPermissionDisplayText(right.canEdit, right.canEditTrans)"></i>
+                  </td>
+                  <td class="text-center">
+                    <i [class]="getPermissionIcon(right.canDelete)" 
+                       [title]="getPermissionDisplayText(right.canDelete, right.canDeleteTrans)"></i>
+                  </td>
+                  <td class="text-center">
+                    <i [class]="getPermissionIcon(right.canAddPublicRep)" 
+                       [title]="getPermissionDisplayText(right.canAddPublicRep, right.canAddPublicRepTrans)"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="copyType === 'custom' && selectedCustomRights.length === 0 && customRoleRights.length > 0" class="error-message">
+            {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_AT_LEAST_ONE_RIGHT' | translate }}
+          </div>
+        </div>
+
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeCopyModal()">
+        {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CANCEL' | translate }}
+      </button>
+      <button class="submit-btn" 
+              (click)="submitCopy()"
+              [disabled]="!isCopyFormValid">
+        <i class="fas fa-copy"></i>
+        {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.COPY' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Role Module Rights Modal -->
+<div *ngIf="showCreateEditModal" class="modal-overlay" (click)="closeCreateEditModal()">
+  <div class="modal-container create-edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditMode ? ('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.EDIT_MODAL_TITLE' | translate) : ('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CREATE_MODAL_TITLE' | translate) }}</h3>
+      <button class="close-btn" (click)="closeCreateEditModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body create-edit-modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <div *ngIf="loadingFormData" class="loading-message">
+        <i class="fas fa-spinner fa-spin"></i>
+        {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.LOADING_FORM_DATA' | translate }}
+      </div>
+
+      <form [formGroup]="createEditForm" (ngSubmit)="submitCreateEdit()" *ngIf="!loadingFormData">
+        
+        <!-- Role Selection Section -->
+        <div class="form-section">
+          <div class="form-group">
+            <label for="roleSelect">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ROLE' | translate }} *</label>
+            <p-dropdown 
+              id="roleSelect"
+              formControlName="roleId"
+              [options]="roleOptions"
+              optionLabel="label"
+              optionValue="value"
+              [placeholder]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_ROLE' | translate"
+              [filter]="true"
+              [filterBy]="'label'"
+              [showClear]="true"
+              [loading]="loadingRoles"
+              (onChange)="onRoleSelectionChange()"
+              [disabled]="isEditMode"
+              [class.error]="createEditForm.get('roleId')?.invalid && createEditForm.get('roleId')?.touched">
+            </p-dropdown>
+            <div *ngIf="createEditForm.get('roleId')?.invalid && createEditForm.get('roleId')?.touched" class="error-message">
+              {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ROLE_REQUIRED' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Modules Selection Section -->
+        <div class="form-section">
+          <div class="form-group">
+            <label for="modulesSelect">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.MODULES_LABEL' | translate }} *</label>
+            
+            <div *ngIf="loadingModules" class="loading-message">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.LOADING_MODULES' | translate }}
+            </div>
+
+            <div *ngIf="!loadingModules && !createEditForm.get('roleId')?.value" class="no-data-message">
+              <i class="fas fa-info-circle"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_ROLE_FIRST' | translate }}
+            </div>
+
+            <div *ngIf="!loadingModules && createEditForm.get('roleId')?.value && moduleOptions.length === 0" class="no-data-message">
+              <i class="fas fa-info-circle"></i>
+              {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.NO_MODULES_FOUND' | translate }}
+            </div>
+
+            <div *ngIf="!loadingModules && createEditForm.get('roleId')?.value && moduleOptions.length > 0" class="multiselect-wrapper">
+              <p-multiSelect 
+                id="modulesSelect"
+                formControlName="moduleIds"
+                [options]="moduleOptions"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_MODULES' | translate"
+                [filter]="true"
+                [filterBy]="'label'"
+                [showToggleAll]="true"
+                [showClear]="true"
+                [disabled]="isEditMode"
+                [class.error]="createEditForm.get('moduleIds')?.invalid && createEditForm.get('moduleIds')?.touched">
+                
+                <ng-template pTemplate="header">
+                  <div class="multiselect-header">
+                    <button type="button" class="select-all-btn" (click)="selectAllModules()">
+                      <i class="fas fa-check-square"></i>
+                      {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_ALL_MODULES' | translate }}
+                    </button>
+                    <button type="button" class="clear-all-btn" (click)="clearAllModules()">
+                      <i class="fas fa-times-circle"></i>
+                      {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CLEAR_ALL' | translate }}
+                    </button>
+                  </div>
+                </ng-template>
+              </p-multiSelect>
+              
+              <div *ngIf="createEditForm.get('moduleIds')?.invalid && createEditForm.get('moduleIds')?.touched" class="error-message">
+                {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.MODULES_REQUIRED' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Permissions Section -->
+        <div class="form-section permissions-section">
+          <h4>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.PERMISSIONS_SECTION' | translate }}</h4>
+          
+          <div *ngIf="!createEditForm.get('moduleIds')?.value?.length && !isEditMode" class="no-data-message">
+            <i class="fas fa-info-circle"></i>
+            {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SELECT_MODULES_FIRST' | translate }}
+          </div>
+          
+          <div class="permissions-grid">
+            <div class="permission-item">
+              <div class="permission-label">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_VIEW' | translate }}</div>
+              <p-toggleButton 
+                formControlName="canView"
+                [onLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ENABLED' | translate"
+                [offLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DISABLED' | translate"
+                onIcon="fas fa-eye"
+                offIcon="fas fa-eye-slash"
+                styleClass="permission-toggle permission-toggle-view">
+              </p-toggleButton>
+            </div>
+
+            <div class="permission-item">
+              <div class="permission-label">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_CREATE' | translate }}</div>
+              <p-toggleButton 
+                formControlName="canCreate"
+                [onLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ENABLED' | translate"
+                [offLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DISABLED' | translate"
+                onIcon="fas fa-plus"
+                offIcon="fas fa-plus"
+                styleClass="permission-toggle permission-toggle-create">
+              </p-toggleButton>
+            </div>
+
+            <div class="permission-item">
+              <div class="permission-label">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_EDIT' | translate }}</div>
+              <p-toggleButton 
+                formControlName="canEdit"
+                [onLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ENABLED' | translate"
+                [offLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DISABLED' | translate"
+                onIcon="fas fa-edit"
+                offIcon="fas fa-edit"
+                styleClass="permission-toggle permission-toggle-edit">
+              </p-toggleButton>
+            </div>
+
+            <div class="permission-item">
+              <div class="permission-label">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_DELETE' | translate }}</div>
+              <p-toggleButton 
+                formControlName="canDelete"
+                [onLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ENABLED' | translate"
+                [offLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DISABLED' | translate"
+                onIcon="fas fa-trash"
+                offIcon="fas fa-trash"
+                styleClass="permission-toggle permission-toggle-delete">
+              </p-toggleButton>
+            </div>
+
+            <div class="permission-item">
+              <div class="permission-label">{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_ADD_PUBLIC_REPORT' | translate }}</div>
+              <p-toggleButton 
+                formControlName="canAddPublicRep"
+                [onLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ENABLED' | translate"
+                [offLabel]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DISABLED' | translate"
+                onIcon="fas fa-file-export"
+                offIcon="fas fa-file-export"
+                styleClass="permission-toggle permission-toggle-report">
+              </p-toggleButton>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeCreateEditModal()">
+        {{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CANCEL' | translate }}
+      </button>
+      <button class="submit-btn" 
+              (click)="submitCreateEdit()"
+              [disabled]="!isCreateEditFormValid || loadingFormData">
+        <i class="fas" [class.fa-plus]="!isEditMode" [class.fa-save]="isEditMode"></i>
+        {{ isEditMode ? ('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.SAVE' | translate) : ('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CREATE' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>
