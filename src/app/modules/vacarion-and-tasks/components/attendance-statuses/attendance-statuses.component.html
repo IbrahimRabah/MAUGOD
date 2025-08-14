@@ -1,1 +1,536 @@
-<p>attendance-statuses works!</p>
+<div class="attendance-statuses-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'ATTENDANCE_STATUSES.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Add filter controls here if needed -->
+        <div class="filter-actions">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="create-btn" 
+              (click)="openCreateModal()" 
+              [title]="'ATTENDANCE_STATUSES.CREATE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'ATTENDANCE_STATUSES.CREATE' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input type="text" 
+                 formControlName="searchTerm"
+                 class="search-input" 
+                 [placeholder]="'ATTENDANCE_STATUSES.SEARCH_PLACEHOLDER' | translate"
+                 [title]="'ATTENDANCE_STATUSES.SEARCH_TITLE' | translate">
+          <button type="submit" 
+                  class="search-btn" 
+                  (click)="onSearch()"
+                  [title]="'ATTENDANCE_STATUSES.SEARCH_TITLE' | translate">
+            <i class="fas fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" [title]="'ATTENDANCE_STATUSES.SCROLL_HINT' | translate">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.ACTIONS' | translate }}</th>
+          <th>{{ 'ATTENDANCE_STATUSES.STATUS_NAME' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.COUNT_IN' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_IN' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.COUNT_OUT' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_OUT' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.CALCULATE_AS_VACATION' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.CALCULATE_AS_PAID_VACATION' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.CALCULATE_AS_ABSENT' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.WORKING_DAY' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.CREATED_BY' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.APPLICATION_CLASSIFY_AS' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.WEB_CLASSIFY_AS' | translate }}</th>
+          <th>{{ 'ATTENDANCE_STATUSES.NOTE' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.DELETE' | translate }}</th>
+          <th class="text-center">{{ 'ATTENDANCE_STATUSES.CHANGE_ID' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of attendanceStatuses" class="table-row">
+          <td class="actions-column text-center">
+            <button class="action-btn edit-btn" 
+                    (click)="editAttendanceStatus(item)"
+                    [title]="'ATTENDANCE_STATUSES.EDIT_TITLE' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ getStatusName(item) }}</td>
+          <td class="text-center">{{ item.count_in }}</td>
+          <td class="text-center">{{ item.insert_default_in }}</td>
+          <td class="text-center">{{ item.count_out }}</td>
+          <td class="text-center">{{ item.insert_default_out }}</td>
+          <td class="text-center">
+            <i [class]="getBooleanIcon(item.is_it_vaction_when_calc_salry)"></i>
+            {{ getBooleanDisplayText(item.is_it_vaction_when_calc_salry) }}
+          </td>
+          <td class="text-center">
+            <i [class]="getBooleanIcon(item.is_it_paid_vaction_when_calc_salry)"></i>
+            {{ getBooleanDisplayText(item.is_it_paid_vaction_when_calc_salry) }}
+          </td>
+          <td class="text-center">
+            <i [class]="getBooleanIcon(item.is_it_absent_when_calc_salry)"></i>
+            {{ getBooleanDisplayText(item.is_it_absent_when_calc_salry) }}
+          </td>
+          <td class="text-center">
+            <i [class]="getBooleanIcon(item.is_it_working_day)"></i>
+            {{ getBooleanDisplayText(item.is_it_working_day) }}
+          </td>
+          <td class="text-center">{{ item.created_by }}</td>
+          <td class="text-center">{{ item.app_calssifay_as }}</td>
+          <td class="text-center">{{ item.web_calssifay_as }}</td>
+          <td>{{ item.note || '-' }}</td>
+          <td class="text-center">
+            <button class="action-btn delete-btn" 
+                    [disabled]="!canDelete(item)"
+                    (click)="deleteAttendanceStatus(item)"
+                    [title]="'ATTENDANCE_STATUSES.DELETE_TITLE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+          <td class="text-center">
+            <button class="action-btn change-id-btn" 
+                    (click)="changeAttendanceStatusId(item)"
+                    [title]="'ATTENDANCE_STATUSES.CHANGE_ID' | translate">
+              <i class="fas fa-exchange-alt"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="attendanceStatuses.length === 0" class="empty-row">
+          <td colspan="16" class="empty-message text-center">
+            <i class="fas fa-info-circle"></i>
+            {{ 'ATTENDANCE_STATUSES.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && attendanceStatuses.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'ATTENDANCE_STATUSES.SHOWING' | translate }} {{ currentPageStart }} {{ 'ATTENDANCE_STATUSES.TO' | translate }} {{ currentPageEnd }} {{ 'ATTENDANCE_STATUSES.OF' | translate }} {{ totalRecords }} {{ 'ATTENDANCE_STATUSES.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext" 
+                (click)="nextPage()"
+                [title]="'ATTENDANCE_STATUSES.NEXT_PAGE' | translate">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="pagination-btn" 
+                [disabled]="currentPage >= totalPages" 
+                (click)="goToPage(totalPages)"
+                [title]="'ATTENDANCE_STATUSES.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <span class="page-info">{{ 'ATTENDANCE_STATUSES.PAGE' | translate }} {{ currentPage }} {{ 'ATTENDANCE_STATUSES.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button class="pagination-btn" 
+                [disabled]="currentPage <= 1" 
+                (click)="goToPage(1)"
+                [title]="'ATTENDANCE_STATUSES.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="previousPage()"
+                [title]="'ATTENDANCE_STATUSES.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="previousPage()"
+                [title]="'ATTENDANCE_STATUSES.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="pagination-btn" 
+                [disabled]="currentPage <= 1" 
+                (click)="goToPage(1)"
+                [title]="'ATTENDANCE_STATUSES.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <span class="page-info">{{ 'ATTENDANCE_STATUSES.PAGE' | translate }} {{ currentPage }} {{ 'ATTENDANCE_STATUSES.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button class="pagination-btn" 
+                [disabled]="currentPage >= totalPages" 
+                (click)="goToPage(totalPages)"
+                [title]="'ATTENDANCE_STATUSES.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext" 
+                (click)="nextPage()"
+                [title]="'ATTENDANCE_STATUSES.NEXT_PAGE' | translate">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'ATTENDANCE_STATUSES.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Attendance Status Modal -->
+<div *ngIf="showCreateEditModal" class="modal-overlay" (click)="closeCreateEditModal()">
+  <div class="modal-container create-edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditMode ? ('ATTENDANCE_STATUSES.EDIT_MODAL_TITLE' | translate) : ('ATTENDANCE_STATUSES.CREATE_MODAL_TITLE' | translate) }}</h3>
+      <button class="close-btn" (click)="closeCreateEditModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body create-edit-modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <div *ngIf="loadingFormData" class="loading-message">
+        <div class="spinner"></div>
+        <p>{{ 'ATTENDANCE_STATUSES.LOADING_FORM_DATA' | translate }}</p>
+      </div>
+
+      <form [formGroup]="createEditForm" (ngSubmit)="submitCreateEdit()" *ngIf="!loadingFormData">
+        
+        <!-- Language Names Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.LANGUAGE_NAMES' | translate }}</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ar">{{ 'ATTENDANCE_STATUSES.ARABIC_NAME' | translate }} <span class="required">*</span></label>
+              <input type="text" 
+                     id="ar" 
+                     formControlName="ar" 
+                     class="form-input"
+                     [class.error]="createEditForm.get('ar')?.invalid && createEditForm.get('ar')?.touched"
+                     [placeholder]="'ATTENDANCE_STATUSES.ENTER_ARABIC_NAME' | translate">
+              <div *ngIf="createEditForm.get('ar')?.invalid && createEditForm.get('ar')?.touched" class="error-message">
+                {{ 'ATTENDANCE_STATUSES.ARABIC_NAME_REQUIRED' | translate }}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="en">{{ 'ATTENDANCE_STATUSES.ENGLISH_NAME' | translate }} <span class="required">*</span></label>
+              <input type="text" 
+                     id="en" 
+                     formControlName="en" 
+                     class="form-input"
+                     [class.error]="createEditForm.get('en')?.invalid && createEditForm.get('en')?.touched"
+                     [placeholder]="'ATTENDANCE_STATUSES.ENTER_ENGLISH_NAME' | translate">
+              <div *ngIf="createEditForm.get('en')?.invalid && createEditForm.get('en')?.touched" class="error-message">
+                {{ 'ATTENDANCE_STATUSES.ENGLISH_NAME_REQUIRED' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Count In Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.COUNT_IN_SETTINGS' | translate }}</h4>
+          <div class="form-group">
+            <label>{{ 'ATTENDANCE_STATUSES.COUNT_IN' | translate }} <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item" for="countIn1">
+                <input type="radio" 
+                       id="countIn1" 
+                       formControlName="countIn" 
+                       value="1">
+                <span>{{ 'ATTENDANCE_STATUSES.LATE_IN_COUNTED' | translate }}</span>
+              </label>
+              <label class="radio-item" for="countIn0">
+                <input type="radio" 
+                       id="countIn0" 
+                       formControlName="countIn" 
+                       value="0">
+                <span>{{ 'ATTENDANCE_STATUSES.LATE_IN_NOT_COUNTED' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insert Default In Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_IN_SETTINGS' | translate }}</h4>
+          <div class="form-group">
+            <label>{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_IN' | translate }} <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item" for="insertDefaultIn0">
+                <input type="radio" 
+                       id="insertDefaultIn0" 
+                       formControlName="insertDefaultIn" 
+                       value="0">
+                <span>{{ 'ATTENDANCE_STATUSES.DONT_INSERT_DEFAULT_CHECKIN' | translate }}</span>
+              </label>
+              <label class="radio-item" for="insertDefaultIn1">
+                <input type="radio" 
+                       id="insertDefaultIn1" 
+                       formControlName="insertDefaultIn" 
+                       value="1">
+                <span>{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_CHECKIN' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Count Out Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.COUNT_OUT_SETTINGS' | translate }}</h4>
+          <div class="form-group">
+            <label>{{ 'ATTENDANCE_STATUSES.COUNT_OUT' | translate }} <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item" for="countOut1">
+                <input type="radio" 
+                       id="countOut1" 
+                       formControlName="countOut" 
+                       value="1">
+                <span>{{ 'ATTENDANCE_STATUSES.EARLY_OUT_COUNTED' | translate }}</span>
+              </label>
+              <label class="radio-item" for="countOut0">
+                <input type="radio" 
+                       id="countOut0" 
+                       formControlName="countOut" 
+                       value="0">
+                <span>{{ 'ATTENDANCE_STATUSES.EARLY_OUT_NOT_COUNTED' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insert Default Out Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_OUT_SETTINGS' | translate }}</h4>
+          <div class="form-group">
+            <label>{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_OUT' | translate }} <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item" for="insertDefaultOut0">
+                <input type="radio" 
+                       id="insertDefaultOut0" 
+                       formControlName="insertDefaultOut" 
+                       value="0">
+                <span>{{ 'ATTENDANCE_STATUSES.DONT_INSERT_DEFAULT_CHECKOUT' | translate }}</span>
+              </label>
+              <label class="radio-item" for="insertDefaultOut1">
+                <input type="radio" 
+                       id="insertDefaultOut1" 
+                       formControlName="insertDefaultOut" 
+                       value="1">
+                <span>{{ 'ATTENDANCE_STATUSES.INSERT_DEFAULT_CHECKOUT' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toggle Inputs Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.CALCULATION_SETTINGS' | translate }}</h4>
+          <div class="toggle-grid">
+            <div class="toggle-item">
+              <label class="toggle-label" (click)="onCustomToggleChange('isVacationWhenCalcSalary')">
+                {{ 'ATTENDANCE_STATUSES.CALCULATE_AS_VACATION' | translate }}
+              </label>
+              <div class="custom-toggle">
+                <button type="button" 
+                        class="toggle-btn"
+                        [class.active]="createEditForm.get('isVacationWhenCalcSalary')?.value === 1"
+                        (click)="onCustomToggleChange('isVacationWhenCalcSalary')">
+                  {{ createEditForm.get('isVacationWhenCalcSalary')?.value === 1 ? ('ATTENDANCE_STATUSES.YES' | translate) : ('ATTENDANCE_STATUSES.NO' | translate) }}
+                </button>
+              </div>
+            </div>
+            <div class="toggle-item">
+              <label class="toggle-label" (click)="onCustomToggleChange('isPaidVacationWhenCalcSalary')">
+                {{ 'ATTENDANCE_STATUSES.CALCULATE_AS_PAID_VACATION' | translate }}
+              </label>
+              <div class="custom-toggle">
+                <button type="button" 
+                        class="toggle-btn"
+                        [class.active]="createEditForm.get('isPaidVacationWhenCalcSalary')?.value === 1"
+                        (click)="onCustomToggleChange('isPaidVacationWhenCalcSalary')">
+                  {{ createEditForm.get('isPaidVacationWhenCalcSalary')?.value === 1 ? ('ATTENDANCE_STATUSES.YES' | translate) : ('ATTENDANCE_STATUSES.NO' | translate) }}
+                </button>
+              </div>
+            </div>
+            <div class="toggle-item">
+              <label class="toggle-label" (click)="onCustomToggleChange('isWorkingDay')">
+                {{ 'ATTENDANCE_STATUSES.WORKING_DAY' | translate }}
+              </label>
+              <div class="custom-toggle">
+                <button type="button" 
+                        class="toggle-btn"
+                        [class.active]="createEditForm.get('isWorkingDay')?.value === 1"
+                        (click)="onCustomToggleChange('isWorkingDay')">
+                  {{ createEditForm.get('isWorkingDay')?.value === 1 ? ('ATTENDANCE_STATUSES.YES' | translate) : ('ATTENDANCE_STATUSES.NO' | translate) }}
+                </button>
+              </div>
+            </div>
+            <div class="toggle-item">
+              <label class="toggle-label" (click)="onCustomToggleChange('isAbsentWhenCalcSalary')">
+                {{ 'ATTENDANCE_STATUSES.CALCULATE_AS_ABSENT' | translate }}
+              </label>
+              <div class="custom-toggle">
+                <button type="button" 
+                        class="toggle-btn"
+                        [class.active]="createEditForm.get('isAbsentWhenCalcSalary')?.value === 1"
+                        (click)="onCustomToggleChange('isAbsentWhenCalcSalary')">
+                  {{ createEditForm.get('isAbsentWhenCalcSalary')?.value === 1 ? ('ATTENDANCE_STATUSES.YES' | translate) : ('ATTENDANCE_STATUSES.NO' | translate) }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Classification Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.CLASSIFICATION_SETTINGS' | translate }}</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appClassifyAs">{{ 'ATTENDANCE_STATUSES.APPLICATION_CLASSIFY_AS' | translate }} <span class="required">*</span></label>
+              <select id="appClassifyAs" 
+                      formControlName="appClassifyAs" 
+                      class="form-input"
+                      [class.error]="createEditForm.get('appClassifyAs')?.invalid && createEditForm.get('appClassifyAs')?.touched">
+                <option value="">{{ 'ATTENDANCE_STATUSES.SELECT_CLASSIFICATION' | translate }}</option>
+                <option *ngFor="let option of classificationOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+              <div *ngIf="createEditForm.get('appClassifyAs')?.invalid && createEditForm.get('appClassifyAs')?.touched" class="error-message">
+                {{ 'ATTENDANCE_STATUSES.APPLICATION_CLASSIFY_REQUIRED' | translate }}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="webClassifyAs">{{ 'ATTENDANCE_STATUSES.WEB_CLASSIFY_AS' | translate }} <span class="required">*</span></label>
+              <select id="webClassifyAs" 
+                      formControlName="webClassifyAs" 
+                      class="form-input"
+                      [class.error]="createEditForm.get('webClassifyAs')?.invalid && createEditForm.get('webClassifyAs')?.touched">
+                <option value="">{{ 'ATTENDANCE_STATUSES.SELECT_CLASSIFICATION' | translate }}</option>
+                <option *ngFor="let option of classificationOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+              <div *ngIf="createEditForm.get('webClassifyAs')?.invalid && createEditForm.get('webClassifyAs')?.touched" class="error-message">
+                {{ 'ATTENDANCE_STATUSES.WEB_CLASSIFY_REQUIRED' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note Section -->
+        <div class="form-section">
+          <h4>{{ 'ATTENDANCE_STATUSES.NOTE_SECTION' | translate }}</h4>
+          <div class="form-group">
+            <label for="note">{{ 'ATTENDANCE_STATUSES.NOTE' | translate }}</label>
+            <textarea id="note" 
+                      formControlName="note" 
+                      class="form-input"
+                      rows="3"
+                      [placeholder]="'ATTENDANCE_STATUSES.ENTER_NOTE' | translate"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeCreateEditModal()">
+        {{ 'ATTENDANCE_STATUSES.CANCEL' | translate }}
+      </button>
+      <button class="submit-btn" 
+              [disabled]="!isCreateEditFormValid || loadingFormData"
+              (click)="submitCreateEdit()">
+        {{ isEditMode ? ('ATTENDANCE_STATUSES.UPDATE' | translate) : ('ATTENDANCE_STATUSES.CREATE' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Change ID Modal -->
+<div *ngIf="showChangeIdModal" class="modal-overlay" (click)="closeChangeIdModal()">
+  <div class="modal-content change-id-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'ATTENDANCE_STATUSES.CHANGE_ID_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeChangeIdModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="changeIdForm" class="change-id-form">
+        <div class="form-group">
+          <label for="oldStatusId">{{ 'ATTENDANCE_STATUSES.OLD_STATUS_ID' | translate }}</label>
+          <input id="oldStatusId" 
+                 type="text" 
+                 class="form-control" 
+                 [value]="currentChangeItem?.sts_id || ''"
+                 readonly
+                 disabled>
+        </div>
+
+        <div class="form-group">
+          <label for="newStatusId">{{ 'ATTENDANCE_STATUSES.NEW_STATUS_ID' | translate }} *</label>
+          <input id="newStatusId" 
+                 type="text" 
+                 class="form-control" 
+                 formControlName="newStatusId"
+                 [placeholder]="'ATTENDANCE_STATUSES.ENTER_NEW_STATUS_ID' | translate">
+          <div *ngIf="changeIdForm.get('newStatusId')?.invalid && changeIdForm.get('newStatusId')?.touched" 
+               class="error-message">
+            {{ 'ATTENDANCE_STATUSES.NEW_STATUS_ID_REQUIRED' | translate }}
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeChangeIdModal()">
+        {{ 'ATTENDANCE_STATUSES.CANCEL' | translate }}
+      </button>
+      <button class="submit-btn" 
+              [disabled]="!changeIdForm.valid"
+              (click)="submitChangeId()">
+        {{ 'ATTENDANCE_STATUSES.UPDATE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
