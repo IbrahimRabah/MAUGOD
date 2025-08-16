@@ -7,7 +7,7 @@
   },
   "MENU": {
     "DASHBOARD": "Dashboard",
-    "ATTENDANCE": "View Attendance",
+    "ATTENDANCE": "Attendance",
     "MAWJOOD_APP": "Mawjood App",
     "REPORTS": "Reports",
     "ATTENDANCE_DATA": "Attendance",
@@ -471,7 +471,8 @@
         "DELETE": "Delete",
         "CHANGE_NUMBER": "Change Number",
         "CHANGE_PASSWORD": "Change Password"
-      },      "EMPLOYEES_ACTIONS": {
+      },      
+      "EMPLOYEES_ACTIONS": {
         "ADD_EMPLOYEE": "Add Employee",
         "SEARCH_PLACEHOLDER": "Search in employees...",
         "SEARCH_TITLE": "Search",
@@ -1402,6 +1403,38 @@
       "PREVIOUS_PAGE": "Previous Page"
     }
   },
+
+  "Attendance":{
+    "DATE_FILTER": {
+    "TITLE": "Filter by date",
+    "START_DATE": "Start date",
+    "END_DATE": "End date",
+    "EMPLOYEE": "Employee",
+    "DEPARTMENT": "Department",
+    "ALL_DEPARTMENTS":"All Departments",
+    "ALL_EMPLOYEES":"All Employees"
+    },
+    "RESULTS_TABLE": {
+      "EMPLOYEE_HEADER": "Employee",
+      "DEPARTMENT_HEADER": "Department",
+      "DATE_SIGN": "Sign date",
+      "DAY_HEADER": "Day",
+      "SHIFT_HEADER": "Shift",
+      "STATUS_HEADER": "Status",
+      "IN_HEADER": "In",
+      "LATE_IN_HEADER": "Late in",
+      "OUT_HEADER": "Out",
+      "EARLY_OUT_HEADER": "Early out",
+      "DETAILS_HEADER": "Details",
+      "DELETE_HEADER": "Delete",
+      "ROWS_PER_PAGE": "Rows",
+      "ACTIONS": "Actions",
+      "DELETE_SELECTED": "Delete selected",
+      "RECORD_DATE":"Record date",
+      "DATA_SOURCE":"Data source"
+    }
+
+  }
   "SHIFTS_TABLE": {
     "LOADING": "Loading...",
     "CREATE": "Create Shift",
@@ -1759,5 +1792,7 @@
     "NEW_STATUS_ID_REQUIRED": "New status ID is required",
     "CHANGE_ID_VALIDATION_ERROR": "Please enter a valid new status ID",
     "CHANGE_ID_NOT_IMPLEMENTED": "Change ID functionality is not yet implemented"
+
   }
+
 }

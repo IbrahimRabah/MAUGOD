@@ -15,7 +15,6 @@ const routes: Routes = [
     path: 'data',
     component: AttendaceComponent
   },
-
   {
     path: 'punch-in-transactions',
     component: PunchInTransactionsComponent

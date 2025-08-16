@@ -73,3 +73,4 @@ Thumbs.db
 *.tar
 *.tar.gz
 *.tar.bz2
+/.vs

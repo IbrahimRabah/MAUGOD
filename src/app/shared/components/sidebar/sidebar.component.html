@@ -42,7 +42,7 @@
 
       <!-- 5. بيانات الحضور -->
       <li class="nav-item" routerLinkActive="active">
-        <div [routerLink]="['/attendance/data']">
+        <div [routerLink]="['/attendance']">
           <a class="nav-link" (click)="toggleSubmenu('attendance')" [class.expanded]="isSubmenuOpen('attendance')">
             <i class="fa-regular fa-check-square"></i>
             <span class="ps-1">{{ 'MENU.ATTENDANCE_DATA' | translate }}</span>

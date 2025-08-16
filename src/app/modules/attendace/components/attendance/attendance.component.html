@@ -1,1 +1,403 @@
-<p>attendance works!</p>
+<div class="attendance-container" >
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <!-- Start Date -->
+      <div class="custom-form-field">
+        <label>{{ 'Attendance.DATE_FILTER.START_DATE' | translate }}</label>
+        <input type="date" [(ngModel)]="startDate" (change)="onFilterChange()" class="form-input date-input">
+      </div>
+
+      <!-- End Date -->
+      <div class="custom-form-field">
+        <label>{{ 'Attendance.DATE_FILTER.END_DATE' | translate }}</label>
+        <input type="date" [(ngModel)]="endDate" (change)="onFilterChange()" class="form-input date-input">
+      </div>
+    </div>
+    
+
+    <div class="right-actions">
+      <!-- Employee -->
+      <div class="custom-form-field">
+        <label>{{ 'Attendance.DATE_FILTER.EMPLOYEE' | translate }}</label>
+        <select [(ngModel)]="selectedEmp" class="form-select" (change)="onFilterChange()">
+          <option value="null" disabled >{{ 'Attendance.DATE_FILTER.ALL_EMPLOYEES' | translate }}</option>
+          <option *ngFor="let emp of employees" [ngValue]="emp.value">{{ emp.label }}</option>
+        </select>
+      </div>
+
+      <!-- Department -->
+      <div class="custom-form-field">
+        <label>{{ 'Attendance.DATE_FILTER.DEPARTMENT' | translate }}</label>
+        <select [(ngModel)]="selectedDepartment" class="form-select" (change)="onFilterChange()">
+          <option value="null" disabled >{{ 'Attendance.DATE_FILTER.ALL_DEPARTMENTS' | translate }}</option>
+          <option *ngFor="let dept of departments" [ngValue]="dept.value">{{ dept.label }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Department Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.TITLE' | translate }}</h3>
+
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+
+      <div *ngIf="loadingInfo" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>{{ 'MENU.GENERAL_DATA.EMPLOYEES_GENERAL.LOADING' | translate }}</p>
+      </div>
+
+      <!-- Fingerprints -->
+      <div *ngIf="!loadingInfo && Fingerprints.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Fingerprints</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Punch id</th>
+              <th>Employee</th>
+              <th>Sign date</th>
+              <th>Data source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let Fingerprint of Fingerprints" class="table-row">
+              <td>{{ Fingerprint.recId }}</td>
+              <td>{{ Fingerprint.empName }}</td>
+              <td>{{ Fingerprint.signDate }}</td>
+              <td>{{ Fingerprint.dataSourceName}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Fingerprints -->
+
+      <!-- Mobile sign -->
+      <div *ngIf="!loadingInfo && MobileSigns.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Mobile sign</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Sign id</th>
+              <th>Employee</th>
+              <th>Sign date</th>
+              <th>Status</th>
+              <th>Sign type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let MobileSign of MobileSigns" class="table-row">
+              <td>{{ MobileSign.mobTranId }}</td>
+              <td>{{ MobileSign.empName }}</td>
+              <td>{{ MobileSign.signDate }}</td>
+              <td>{{ MobileSign.stsName}}</td>
+              <td>{{ MobileSign.fpTypName }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Mobile sign -->
+
+      <!-- Days handle -->
+      <div *ngIf="!loadingInfo && DaysHandle.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Days handle</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Handle id</th>
+              <th>Employee</th>
+              <th>Status</th>
+              <th>Part</th>
+              <th>Sdate</th>
+              <th>Edate</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let DayHandle of DaysHandle" class="table-row">
+              <td>{{ DayHandle.recId }}</td>
+              <td>{{ DayHandle.empName }}</td>
+              <td>{{ DayHandle.stsName }}</td>
+              <td>{{ DayHandle.partName}}</td>
+              <td>{{ DayHandle.sDate }}</td>
+              <td>{{ DayHandle.eDate }}</td>
+              <td>{{ DayHandle.note }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Days handle -->
+
+      <!-- Changed Times -->
+      <div *ngIf="!loadingInfo && ChangedTimes.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Days handle</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>timID</th>
+              <th>txt</th>
+              <th>oldDate</th>
+              <th>editDateTime</th>
+              <th>changedByEmp</th>
+              <th>changedByEmpName</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ChangedTime of ChangedTimes" class="table-row">
+              <td>{{ ChangedTime.timId }}</td>
+              <td>{{ ChangedTime.txt }}</td>
+              <td>{{ ChangedTime.oldDate }}</td>
+              <td>{{ ChangedTime.editDateTime}}</td>
+              <td>{{ ChangedTime.changedByEmp }}</td>
+              <td>{{ ChangedTime.changedByEmpName }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Changed Times -->
+
+      <!-- Shift information -->
+      <div *ngIf="!loadingInfo && shifts.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Shift information</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Shift Name</th>
+              <th>Part</th>
+              <th>Open shift</th>
+              <th>Early In</th>
+              <th>In</th>
+              <th>In Allow</th>
+              <th>Max In</th>
+              <th>Makeup In</th>
+              <th>Early Out</th>
+              <th>Out</th>
+              <th>Out Allow</th>
+              <th>Max Out</th>
+              <th>Makeup Out</th>
+              <th>Two Days</th>
+              <th>Per Actual Work</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let shift of shifts" class="table-row">
+              <td>{{ shift.shiftName }}</td>
+              <td>{{ shift.part }}</td>
+              <td>{{ shift.openShift }}</td>
+              <td>{{ shift.earlyIn}}</td>
+              <td>{{ shift.in }}</td>
+              <td>{{ shift.inAllow }}</td>
+              <td>{{ shift.maxIn }}</td>
+              <td>{{ shift.makeupIn}}</td>
+              <td>{{ shift.earlyOut }}</td>
+              <td>{{ shift.out }}</td>
+              <td>{{ shift.outAllow }}</td>
+              <td>{{ shift.maxOut }}</td>
+              <td>{{ shift.makeupOut }}</td>
+              <td>{{ shift.twoDays }}</td>
+              <td>{{ shift.perActualWorkValue }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Shift information -->
+
+    </div>
+  </div>
+</div>
+
+<div class="attendance-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.GENERAL_DATA.EMPLOYEES_GENERAL.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="resetPass-btn" (click)="deleteForSelected()">
+        {{ 'Attendance.RESULTS_TABLE.DELETE_SELECTED' | translate }}
+      </button>
+    </div>
+    <div class="right-actions">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text" 
+          class="search-input" 
+          [placeholder]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_PLACEHOLDER' | translate"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'Attendance.RESULTS_TABLE.EMPLOYEE_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.DEPARTMENT_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.DATE_SIGN' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.DAY_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.SHIFT_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.STATUS_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.IN_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.LATE_IN_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.OUT_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.EARLY_OUT_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.DETAILS_HEADER' | translate }}</th>
+          <th>{{ 'Attendance.RESULTS_TABLE.DELETE_HEADER' | translate }}</th>
+          <th>
+            <input type="checkbox" 
+            >
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let attendance of attendances" class="table-row">
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.empName }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.deptName }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.signDate | date:'yyyy-MM-dd' }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.dayName}}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.shiftName }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.stsName }}</td>
+          <td [ngStyle]="attendance.overtimeInStyle ? styleStringToObject(attendance.overtimeInStyle) : {}">{{ attendance.in1 | date:'HH:mm' }}</td>
+          <td>{{ attendance.lateIn}}</td>
+          <td>{{ attendance.out1 | date:'HH:mm' }}</td>
+          <td [ngStyle]="attendance.earlyOutStyle ? styleStringToObject(attendance.earlyOutStyle) : {}">{{ attendance.earlyOut }}</td>
+          <td>
+            <button 
+              class="action-btn password-btn" 
+              (click)="showInfo(attendance.timId)"
+              [title]="'Attendance.RESULTS_TABLE.DETAILS_HEADER' | translate">
+              <i class="text-primary fs-4 fas fa-info"></i>
+            </button>
+          </td>
+          <td>
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteAttendance(attendance)"
+              [title]="'Attendance.RESULTS_TABLE.DELETE_HEADER' | translate">
+              <i class="text-danger fs-4 fas fa-trash"></i>
+            </button>
+          </td>
+          <td>
+            <input 
+              type="checkbox" 
+              name="select{{attendance.timId}}"
+              (change)="toggleAttendanceSelection(attendance.timId, $event)">
+          </td>
+        </tr>
+        <tr *ngIf="attendances.length === 0" class="empty-row">
+          <td colspan="13" class="empty-message">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NO_DATA' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+    <div class="pagination-info">
+      <span>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+
+
+

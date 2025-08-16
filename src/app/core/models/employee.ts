@@ -71,3 +71,8 @@ export interface EmployeeCreateUpdateRequest {
   lang: number;
   note?: string;
 }
+
+export interface Employees {
+  label: string;
+  value: number;
+}
