@@ -11,8 +11,6 @@ import { ChangeAttendanceTimeDirectlyComponent } from './components/change-atten
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
-
-
 // PrimeNG Modules
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
@@ -27,18 +25,6 @@ import { MessageModule } from 'primeng/message';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 
-
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
-
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-
-import { MatButtonModule } from '@angular/material/button';
-
 @NgModule({
   declarations: [
     AttendaceComponent,
@@ -51,7 +37,6 @@ import { MatButtonModule } from '@angular/material/button';
     AttendaceRoutingModule,
     ReactiveFormsModule,
     SharedModule,
-     // PrimeNG Modules
     TableModule,
     InputTextModule,
     ButtonModule,
@@ -64,17 +49,7 @@ import { MatButtonModule } from '@angular/material/button';
     ToolbarModule,
     MessagesModule,
     MessageModule,
-    
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-MatNativeDateModule,
-MatSelectModule,
-MatIconModule
-,MatMenuModule,
-MatButtonModule,
-    FormsModule,
-
+    FormsModule
   ],
   providers: [
     MessageService,

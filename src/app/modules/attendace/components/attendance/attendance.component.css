@@ -162,7 +162,6 @@
 /* Table Header */
 .custom-table thead tr.table-header th {
   background-color: #F2F2F2 !important;
-  color: #333333 !important;
   padding: 15px 10px !important;
   font-weight: 600 !important;
   text-align: center !important;
@@ -187,7 +186,6 @@
   padding: 12px 10px !important;
   text-align: center !important;
   border: 1px solid #ddd !important;
-  color: #333333 !important;
   font-size: 13px;
   vertical-align: middle;
 }
@@ -204,7 +202,7 @@
 /* Action Buttons */
 .action-btn {
   border: none;
-  background-color: transparent;
+  background: none;
   padding: 8px 10px;
   margin: 0 2px;
   border-radius: 4px;
@@ -213,40 +211,12 @@
   font-size: 14px;
 }
 
-.edit-btn {
-  color: #007bff;
-}
-
-.edit-btn:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.delete-btn {
-  color: #dc3545;
-}
-
 .delete-btn:hover {
-  background-color: #dc3545;
-  color: white;
-}
-
-.number-btn {
-  color: #28a745;
-}
-
-.number-btn:hover {
-  background-color: #28a745;
-  color: white;
-}
-
-.password-btn {
-  color: #ffc107;
+  transform: translateY(-2px);
 }
 
 .password-btn:hover {
-  background-color: #ffc107;
-  color: white;
+  transform: translateY(-2px);
 }
 
 /* Pagination */

@@ -38,6 +38,182 @@
   </div>
 </div>
 
+<!-- Add/Edit Department Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.TITLE' | translate }}</h3>
+
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+
+      <div *ngIf="loadingInfo" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>{{ 'MENU.GENERAL_DATA.EMPLOYEES_GENERAL.LOADING' | translate }}</p>
+      </div>
+
+      <!-- Fingerprints -->
+      <div *ngIf="!loadingInfo && Fingerprints.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Fingerprints</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Punch id</th>
+              <th>Employee</th>
+              <th>Sign date</th>
+              <th>Data source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let Fingerprint of Fingerprints" class="table-row">
+              <td>{{ Fingerprint.recId }}</td>
+              <td>{{ Fingerprint.empName }}</td>
+              <td>{{ Fingerprint.signDate }}</td>
+              <td>{{ Fingerprint.dataSourceName}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Fingerprints -->
+
+      <!-- Mobile sign -->
+      <div *ngIf="!loadingInfo && MobileSigns.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Mobile sign</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Sign id</th>
+              <th>Employee</th>
+              <th>Sign date</th>
+              <th>Status</th>
+              <th>Sign type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let MobileSign of MobileSigns" class="table-row">
+              <td>{{ MobileSign.mobTranId }}</td>
+              <td>{{ MobileSign.empName }}</td>
+              <td>{{ MobileSign.signDate }}</td>
+              <td>{{ MobileSign.stsName}}</td>
+              <td>{{ MobileSign.fpTypName }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Mobile sign -->
+
+      <!-- Days handle -->
+      <div *ngIf="!loadingInfo && DaysHandle.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Days handle</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Handle id</th>
+              <th>Employee</th>
+              <th>Status</th>
+              <th>Part</th>
+              <th>Sdate</th>
+              <th>Edate</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let DayHandle of DaysHandle" class="table-row">
+              <td>{{ DayHandle.recId }}</td>
+              <td>{{ DayHandle.empName }}</td>
+              <td>{{ DayHandle.stsName }}</td>
+              <td>{{ DayHandle.partName}}</td>
+              <td>{{ DayHandle.sDate }}</td>
+              <td>{{ DayHandle.eDate }}</td>
+              <td>{{ DayHandle.note }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Days handle -->
+
+      <!-- Changed Times -->
+      <div *ngIf="!loadingInfo && ChangedTimes.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Days handle</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>timID</th>
+              <th>txt</th>
+              <th>oldDate</th>
+              <th>editDateTime</th>
+              <th>changedByEmp</th>
+              <th>changedByEmpName</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ChangedTime of ChangedTimes" class="table-row">
+              <td>{{ ChangedTime.timId }}</td>
+              <td>{{ ChangedTime.txt }}</td>
+              <td>{{ ChangedTime.oldDate }}</td>
+              <td>{{ ChangedTime.editDateTime}}</td>
+              <td>{{ ChangedTime.changedByEmp }}</td>
+              <td>{{ ChangedTime.changedByEmpName }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Changed Times -->
+
+      <!-- Shift information -->
+      <div *ngIf="!loadingInfo && shifts.length > 0" class="table-wrapper px-3">
+        <h2 class="py-2">Shift information</h2>
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>Shift Name</th>
+              <th>Part</th>
+              <th>Open shift</th>
+              <th>Early In</th>
+              <th>In</th>
+              <th>In Allow</th>
+              <th>Max In</th>
+              <th>Makeup In</th>
+              <th>Early Out</th>
+              <th>Out</th>
+              <th>Out Allow</th>
+              <th>Max Out</th>
+              <th>Makeup Out</th>
+              <th>Two Days</th>
+              <th>Per Actual Work</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let shift of shifts" class="table-row">
+              <td>{{ shift.shiftName }}</td>
+              <td>{{ shift.part }}</td>
+              <td>{{ shift.openShift }}</td>
+              <td>{{ shift.earlyIn}}</td>
+              <td>{{ shift.in }}</td>
+              <td>{{ shift.inAllow }}</td>
+              <td>{{ shift.maxIn }}</td>
+              <td>{{ shift.makeupIn}}</td>
+              <td>{{ shift.earlyOut }}</td>
+              <td>{{ shift.out }}</td>
+              <td>{{ shift.outAllow }}</td>
+              <td>{{ shift.maxOut }}</td>
+              <td>{{ shift.makeupOut }}</td>
+              <td>{{ shift.twoDays }}</td>
+              <td>{{ shift.perActualWorkValue }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Shift information -->
+
+    </div>
+  </div>
+</div>
+
 <div class="attendance-container">
   <!-- Toast Messages -->
   <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
@@ -97,22 +273,22 @@
       </thead>
       <tbody>
         <tr *ngFor="let attendance of attendances" class="table-row">
-          <td>{{ attendance.empName }}</td>
-          <td>{{ attendance.deptName }}</td>
-          <td>{{ attendance.signDate }}</td>
-          <td>{{ attendance.dayName}}</td>
-          <td>{{ attendance.shiftName }}</td>
-          <td>{{ attendance.stsName }}</td>
-          <td>{{ attendance.in1 }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.empName }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.deptName }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.signDate | date:'yyyy-MM-dd' }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.dayName}}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.shiftName }}</td>
+          <td [ngStyle]="attendance.stsIdStyle ? styleStringToObject(attendance.stsIdStyle) : {}">{{ attendance.stsName }}</td>
+          <td [ngStyle]="attendance.overtimeInStyle ? styleStringToObject(attendance.overtimeInStyle) : {}">{{ attendance.in1 | date:'HH:mm' }}</td>
           <td>{{ attendance.lateIn}}</td>
-          <td>{{ attendance.out1 }}</td>
-          <td>{{ attendance.earlyOut }}</td>
+          <td>{{ attendance.out1 | date:'HH:mm' }}</td>
+          <td [ngStyle]="attendance.earlyOutStyle ? styleStringToObject(attendance.earlyOutStyle) : {}">{{ attendance.earlyOut }}</td>
           <td>
             <button 
               class="action-btn password-btn" 
-              (click)="attendance"
+              (click)="showInfo(attendance.timId)"
               [title]="'Attendance.RESULTS_TABLE.DETAILS_HEADER' | translate">
-              <i class="fas fa-info"></i>
+              <i class="text-primary fs-4 fas fa-info"></i>
             </button>
           </td>
           <td>
@@ -120,7 +296,7 @@
               class="action-btn delete-btn" 
               (click)="deleteAttendance(attendance)"
               [title]="'Attendance.RESULTS_TABLE.DELETE_HEADER' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
           <td>

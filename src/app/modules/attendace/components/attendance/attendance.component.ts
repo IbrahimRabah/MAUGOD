@@ -7,7 +7,7 @@ import { DropdownlistsService } from '../../../../shared/services/dropdownlists.
 
 import { AttendanceService } from '../../services/attendance.service';
 import { Departments } from '../../../../core/models/department';
-import { Attendance, AttendanceResponse } from '../../../../core/models/attendance';
+import { Attendance, AttendanceResponse, ChangedTime, ChangedTimesIformation, DaysHandle, DaysHandleIformation, Fingerprint, FingerprintInformation, MobileSign, MobileSignInformation, Shift, ShiftInformation } from '../../../../core/models/attendance';
 
 
 
@@ -21,26 +21,24 @@ import { Attendance, AttendanceResponse } from '../../../../core/models/attendan
 
 export class AttendanceComponent implements OnInit{
   attendances: Attendance[] = [];
+  shifts: Shift[] = [];
+  Fingerprints: Fingerprint[] = [];
+  MobileSigns: MobileSign[] = [];
+  DaysHandle: DaysHandle[] = [];
+  ChangedTimes: ChangedTime[] = [];
   loading: boolean = false;
   totalRecords: number = 0;
   currentPage: number = 1;
   searchTerm: string = '';
   deletingAttendanceId: number | null = null;
   loadingDropdowns: boolean = false;
-  
-
-
-
+  showAddModal: boolean = false;
+  loadingInfo: boolean = false;
   departments:Departments[] = [];
-  
   employees :Employees []= [];
-
-
   selectedDepartment :string | null = null;
   selectedEmp :string | null = null;
   employeeName = null;
-
-
   startDate: string | null=null;
   endDate: string | null=null;
 
@@ -59,7 +57,6 @@ export class AttendanceComponent implements OnInit{
     endDate:this.endDate
   };
 
-
   // Smart loading state tracking
   private dropdownDataLoaded = {
     employees: false,
@@ -68,9 +65,6 @@ export class AttendanceComponent implements OnInit{
 
   private currentLanguage: string = '';
   private isInitialized = false;
-
-
-
 
   constructor(
     private attendanceService: AttendanceService,
@@ -120,7 +114,6 @@ export class AttendanceComponent implements OnInit{
     this.loadAttendances();
   }
 
- 
   onFilterChange() {
     this.paginationRequest.deptFilter = this.selectedDepartment;
     this.paginationRequest.empFilter = this.selectedEmp;
@@ -397,5 +390,130 @@ export class AttendanceComponent implements OnInit{
     }
   }
   
+styleStringToObject(style?: string): { [key: string]: string } {
+  if (!style) {
+    return {}; 
+  }
+
+  return style.split(';').reduce((acc, rule) => {
+    if (rule.trim()) {
+      const [key, value] = rule.split(':');
+      if (key && value) {
+        acc[key.trim()] = value.trim();
+      }
+    }
+    return acc;
+  }, {} as { [key: string]: string });
+}
+
+showInfo(timID:number) {
+    this.showAddModal = true;
+    this.loadShiftInformation(timID);
+    this.loadFingerprintInformation(timID);
+    this.loadMobileSign(timID);
+    this.loadDaysHandleformation(timID);
+    this.loadChangedTimesInfo(timID);
+  }
+
+  closeModal() {
+    this.showAddModal = false;
+  }
+
+  loadShiftInformation(timID:number) {
+    this.loadingInfo = true;
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    this.attendanceService.getShiftInformation(currentLang, timID).subscribe({
+      next: (response: ShiftInformation) => {
+        if (response.isSuccess) {
+          this.shifts = response.data;
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: response.message });
+        }
+    this.loadingInfo = false;
+      },
+      error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load attendances' });
+        this.loading = false;
+      }
+    });
+  }
+
+  loadFingerprintInformation(timID:number) {
+    this.loadingInfo = true;
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    this.attendanceService.getFingerprints(currentLang, timID).subscribe({
+      next: (response: FingerprintInformation) => {
+        if (response.isSuccess) {
+          this.Fingerprints = response.data;
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: response.message });
+        }
+    this.loadingInfo = false;
+      },
+      error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load attendances' });
+        this.loading = false;
+      }
+    });
+  }
+  
+  loadMobileSign(timID:number) {
+    this.loadingInfo = true;
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    this.attendanceService.getMobileSign(currentLang, timID).subscribe({
+      next: (response: MobileSignInformation) => {
+        if (response.isSuccess) {
+          this.MobileSigns = response.data;
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: response.message });
+        }
+    this.loadingInfo = false;
+      },
+      error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load attendances' });
+        this.loading = false;
+      }
+    });
+  }
+
+  loadDaysHandleformation(timID:number) {
+    this.loadingInfo = true;
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    this.attendanceService.getDaysHandle(currentLang, timID).subscribe({
+      next: (response: DaysHandleIformation) => {
+        if (response.isSuccess) {
+          this.DaysHandle = response.data;
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: response.message });
+        }
+    this.loadingInfo = false;
+      },
+      error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load attendances' });
+        this.loading = false;
+      }
+    });
+  }
+
+  loadChangedTimesInfo(timID:number) {
+    this.loadingInfo = true;
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    this.attendanceService.getChangedTimesInfo(currentLang, timID).subscribe({
+      next: (response: ChangedTimesIformation) => {
+        if (response.isSuccess) {
+          this.ChangedTimes = response.data;
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: response.message });
+        }
+    this.loadingInfo = false;
+      },
+      error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load attendances' });
+        this.loading = false;
+      }
+    });
+  }
+
+
 
 }

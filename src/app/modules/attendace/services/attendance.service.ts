@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginationAttendanceRequest, PaginationPunchTransactionsRequest} from '../../../core/models/pagination';
-import { AttendanceResponse, PunchTransactionsResponse } from '../../../core/models/attendance';
+import { AttendanceResponse, ChangedTimesIformation, DaysHandleIformation, FingerprintInformation, MobileSignInformation, PunchTransactionsResponse, ShiftInformation } from '../../../core/models/attendance';
 
 @Injectable({
   providedIn: 'root'
@@ -66,4 +66,70 @@ export class AttendanceService {
       { headers }
     );
   }
+
+  getShiftInformation(lang: number, timtranId: number): Observable<ShiftInformation> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'lang': lang.toString(),
+      'timtranId':timtranId
+    });
+    
+    return this.http.get<ShiftInformation>(
+      `${this.apiUrl}/GetShiftsInfo`,
+      { headers }
+    );
+  }
+
+  getFingerprints(lang: number, timtranId: number): Observable<FingerprintInformation> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'lang': lang.toString(),
+      'timtranId':timtranId
+    });
+    
+    return this.http.get<FingerprintInformation>(
+      `${this.apiUrl}/GetFingerPrints`,
+      { headers }
+    );
+  }
+
+  getMobileSign(lang: number, timtranId: number): Observable<MobileSignInformation> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'lang': lang.toString(),
+      'timtranId':timtranId
+    });
+    
+    return this.http.get<MobileSignInformation>(
+      `${this.apiUrl}/GetMobileSigns`,
+      { headers }
+    );
+  }
+
+  getDaysHandle(lang: number, timtranId: number): Observable<DaysHandleIformation> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'lang': lang.toString(),
+      'timtranId':timtranId
+    });
+    
+    return this.http.get<DaysHandleIformation>(
+      `${this.apiUrl}/GetMobileSigns`,
+      { headers }
+    );
+  }
+
+  getChangedTimesInfo(lang: number, timtranId: number): Observable<ChangedTimesIformation> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'lang': lang.toString(),
+      'timtranId':timtranId
+    });
+    
+    return this.http.get<ChangedTimesIformation>(
+      `${this.apiUrl}/GetChangedTimesInfo`,
+      { headers }
+    );
+  }
+
 }

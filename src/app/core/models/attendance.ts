@@ -70,3 +70,104 @@ export interface PunchTransactionsResponse {
     totalCount: number;
   };
 }
+
+export interface ShiftInformation {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: Shift[];
+}
+
+export interface Shift{
+  shiftId: number;
+  partId: number;
+  timtranId: number;
+  shiftName: string;
+  part: string;
+  openShift: string;      // looks like time in "HHmm" format
+  earlyIn: number;
+  in: string;             // "HH:mm:ss"
+  inAllow: number;
+  maxIn: number;
+  makeupIn: number;
+  earlyOut: number;
+  out: string;            // "HH:mm:ss"
+  outAllow: number;
+  maxOut: number;
+  makeupOut: number;
+  twoDays: string;        // "Yes" | "No"
+  twoDaysValue: number;
+  perActualWork: string;  // "Yes" | "No"
+  perActualWorkValue: number;
+}
+
+
+export interface FingerprintInformation {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: Fingerprint[];
+}
+
+export interface Fingerprint{
+  recId: number;
+  empId: number;
+  empName?: string;
+  signDate?: string; // ISO string (e.g., "2023-05-24T00:00:00")
+  dataSource?: number;
+  dataSourceName?: string;
+}
+
+
+export interface MobileSignInformation {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: MobileSign[];
+}
+
+export interface MobileSign{
+  mobTranId: number;        
+  empId: number;            
+  empName?: string;         
+  signDate?: string;        
+  sts?: number;             
+  stsName?: string;         
+  fpTyp?: number;           
+  fpTypName?: string;       
+}
+
+export interface DaysHandleIformation {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: DaysHandle[];
+}
+
+export interface DaysHandle{
+   recId: number;   
+  empId: number;    
+  empName?: string;  
+  stsId: number;    
+  stsName?: string;   
+  part: number;      
+  partName?: string;   
+  sDate?: string;   
+  eDate?: string;    
+  note?: string;    
+}
+export interface ChangedTimesIformation {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: ChangedTime[];
+}
+
+export interface ChangedTime{
+  timId: number;               
+  txt?: string;                
+  oldDate?: string;            
+  editDateTime?: string;       
+  changedByEmp?: number;       
+  changedByEmpName?: string;   
+}
