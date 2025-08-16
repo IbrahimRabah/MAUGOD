@@ -238,6 +238,17 @@ export class DropdownlistsService {
       { headers }
     );
   }
+  getShiftsDropDownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling shifts API:', `${this.apiUrl}/Attendance/GetShiftsDropdownList`);
+    return this.http.get<any>(
+      `${this.apiUrl}/Attendance/GetShiftsDropdownList`,
+      { headers }
+    );
+  }
 
     getParentDepartmentsDropdownList(lang: number): Observable<any> {
     const headers = new HttpHeaders({

@@ -1,1 +1,61 @@
-<p>shifts-section works!</p>
+<div class="cards-container">
+    <!-- Shifts Card -->
+    <a [routerLink]="['/shifts-section/shifts']" class="card shifts">
+        <div class="icon-container">
+            <i class="fas fa-clock"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.SHIFTS_SECTION_SHIFTS' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Automatic Sign Card -->
+    <a [routerLink]="['/shifts-section/automatic-sign']" class="card automatic-sign">
+        <div class="icon-container">
+            <i class="fas fa-signature"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.SHIFTS_SECTION_AUTOMATIC_SIGN' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Shifts Assign Card -->
+    <a [routerLink]="['/shifts-section/shifts-assign']" class="card shifts-assign">
+        <div class="icon-container">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.SHIFTS_SECTION_SHIFTS_ASSIGN' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Missing Days Card -->
+    <a [routerLink]="['/shifts-section/missing-days']" class="card missing-days">
+        <div class="icon-container">
+            <i class="fas fa-calendar-times"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.SHIFTS_SECTION_MISSING_DAYS' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Time Transaction Lock Card -->
+    <a [routerLink]="['/shifts-section/timtran-lock']" class="card timtran-lock">
+        <div class="icon-container">
+            <i class="fas fa-lock"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.SHIFTS_SECTION_TIMTRAN_LOCK' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.VISIT' | translate }}</span>
+        </div>
+    </a>
+</div>

@@ -197,8 +197,8 @@
 
 /* Table Header */
 .custom-table thead tr.table-header th {
-  background-color: #F2F2F2 !important;
-  color: #333333 !important;
+  background: #F2F2F2;
+  color: #056ac8;
   padding: 12px 8px !important;
   font-weight: 600 !important;
   text-align: center !important;
@@ -283,15 +283,8 @@
   transform: scale(1.1);
 }
 
-.delete-btn {
-  color: #dc3545;
-  background-color: rgba(220, 53, 69, 0.1);
-}
-
 .delete-btn:hover {
-  background-color: #dc3545;
-  color: white;
-  transform: scale(1.1);
+  transform: translateY(-2px);
 }
 
 /* Checkboxes */

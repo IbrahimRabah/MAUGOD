@@ -1,5 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 import { ShiftsRoutingModule } from './shifts-routing.module';
 import { ShiftsSectionComponent } from './components/shifts-section/shifts-section.component';
@@ -21,6 +29,15 @@ import { TimtranLockComponent } from './components/timtran-lock/timtran-lock.com
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslateModule,
+    ToastModule,
+    ConfirmDialogModule,
+    DropdownModule,
+    CalendarModule,
+    InputSwitchModule,
+    MultiSelectModule,
     ShiftsRoutingModule
   ]
 })

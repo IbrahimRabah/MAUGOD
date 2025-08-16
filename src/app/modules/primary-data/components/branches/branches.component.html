@@ -10,12 +10,14 @@
     <p>{{ 'MENU.GENERAL_DATA.BRANCHES_GENERAL.LOADING' | translate }}</p>
   </div>
   <!-- Table Header Actions -->
-  <div *ngIf="!loading" class="table-header-actions">    <div class="left-actions">
+  <div *ngIf="!loading" class="table-header-actions">    
+    <div class="left-actions">
       <button class="add-btn" (click)="addBranch()" [title]="'MENU.GENERAL_DATA.BRANCHES_ACTIONS.ADD_BRANCH_TITLE' | translate">
         <i class="fas fa-plus"></i>
         {{ 'MENU.GENERAL_DATA.BRANCHES_ACTIONS.ADD_BRANCH' | translate }}
       </button>
-    </div>    <div class="right-actions">
+    </div>    
+    <div class="right-actions">
       <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
         <input 
           type="text" 
@@ -33,7 +35,7 @@
   <div *ngIf="!loading" class="table-wrapper">
     <table class="custom-table">
       <thead>        <tr class="table-header">
-          <th>{{ 'MENU.GENERAL_DATA.BRANCHES_TABLE.EDIT' | translate }}</th>
+          <th></th>
           <th>{{ 'MENU.GENERAL_DATA.BRANCHES_TABLE.BRANCH_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.BRANCHES_TABLE.MANAGER' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.BRANCHES_TABLE.PARENT_BRANCH' | translate }}</th>
@@ -50,7 +52,7 @@
               class="action-btn edit-btn"
               (click)="editBranch(branch)"
               [title]="'MENU.GENERAL_DATA.BRANCHES_GENERAL.EDIT_TOOLTIP' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td>{{ branch.branchName }}</td>
@@ -65,7 +67,7 @@
               (click)="deleteBranch(branch)"
               [disabled]="deletingBranchId === branch.branchId"
               [title]="'MENU.GENERAL_DATA.BRANCHES_GENERAL.DELETE_TOOLTIP' | translate">
-              <i class="fas fa-trash" *ngIf="deletingBranchId !== branch.branchId"></i>
+              <i class="text-danger fs-4 fas fa-trash" *ngIf="deletingBranchId !== branch.branchId"></i>
               <i class="fas fa-spinner fa-spin" *ngIf="deletingBranchId === branch.branchId"></i>
             </button>
           </td>
@@ -74,7 +76,7 @@
               class="action-btn number-btn"
               (click)="changeBranchNumber(branch)"
               [title]="'MENU.GENERAL_DATA.BRANCHES_GENERAL.CHANGE_NUMBER_TOOLTIP' | translate">
-              <i class="fas fa-sort-numeric-down"></i>
+              <i class="text-success fs-4 fas fa-sort-numeric-down"></i>
             </button>
           </td>
         </tr>        <tr *ngIf="branches.length === 0" class="empty-row">
