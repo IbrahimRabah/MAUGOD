@@ -1,1 +1,532 @@
-<p>automatic-sign works!</p>
+<div class="automatic-sign-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'AUTOMATIC_SIGN.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" 
+              (click)="openCreateModal()" 
+              [title]="'AUTOMATIC_SIGN.CREATE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'AUTOMATIC_SIGN.CREATE' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text"
+            formControlName="searchTerm"
+            class="search-input"
+            [placeholder]="'AUTOMATIC_SIGN.SEARCH_PLACEHOLDER' | translate"
+            [title]="'AUTOMATIC_SIGN.SEARCH_TITLE' | translate"
+            (keyup.enter)="onSearch()">
+          <button type="button" class="search-btn" (click)="onSearch()" [title]="'AUTOMATIC_SIGN.SEARCH' | translate">
+            <i class="fas fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'AUTOMATIC_SIGN.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'AUTOMATIC_SIGN.EDIT' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.EMPLOYEE' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.DEPARTMENT' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.MANAGER_OF_DEPARTMENT' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.BRANCH' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.MANAGER_OF_BRANCH' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.ROLE' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.START_DATE' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.END_DATE' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.SHIFT_PART' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.AUTO_IN' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.AUTO_OUT' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.STATUS' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.SATURDAY' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.SUNDAY' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.MONDAY' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.TUESDAY' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.WEDNESDAY' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.THURSDAY' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.FRIDAY' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.NOTE' | translate }}</th>
+          <th>{{ 'AUTOMATIC_SIGN.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let autoSign of autoSigns" class="table-row">
+          <td>
+            <button class="action-btn edit-btn" 
+                    (click)="editAutoSign(autoSign)"
+                    [title]="'AUTOMATIC_SIGN.EDIT_TITLE' | translate">
+              <i class="text-primary fs-4 fas fa-edit"></i>
+            </button>
+          </td>
+          <td [title]="getDisplayValue(autoSign.empName)">{{ getDisplayValue(autoSign.empName) }}</td>
+          <td [title]="getDisplayValue(autoSign.deptName)">{{ getDisplayValue(autoSign.deptName) }}</td>
+          <td [title]="getDisplayValue(autoSign.mgrOfDeptName)">{{ getDisplayValue(autoSign.mgrOfDeptName) }}</td>
+          <td [title]="getDisplayValue(autoSign.branchName)">{{ getDisplayValue(autoSign.branchName) }}</td>
+          <td [title]="getDisplayValue(autoSign.mgrOfBranchName)">{{ getDisplayValue(autoSign.mgrOfBranchName) }}</td>
+          <td [title]="getDisplayValue(autoSign.roleName)">{{ getDisplayValue(autoSign.roleName) }}</td>
+          <td [title]="formatDate(autoSign.sDate)">{{ formatDate(autoSign.sDate) }}</td>
+          <td [title]="formatDate(autoSign.eDate)">{{ formatDate(autoSign.eDate) }}</td>
+          <td [title]="getDisplayValue(autoSign.shiftPartName)">{{ getDisplayValue(autoSign.shiftPartName) }}</td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.autoIn === 1" [class.no]="autoSign.autoIn === 0">
+              {{ getYesNoDisplay(autoSign.autoIn) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.autoOut === 1" [class.no]="autoSign.autoOut === 0">
+              {{ getYesNoDisplay(autoSign.autoOut) }}
+            </span>
+          </td>
+          <td [title]="getDisplayValue(autoSign.stsDesc)">{{ getDisplayValue(autoSign.stsDesc) }}</td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.sat === 1" [class.no]="autoSign.sat === 0">
+              {{ getYesNoDisplay(autoSign.sat) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.sun === 1" [class.no]="autoSign.sun === 0">
+              {{ getYesNoDisplay(autoSign.sun) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.mon === 1" [class.no]="autoSign.mon === 0">
+              {{ getYesNoDisplay(autoSign.mon) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.tue === 1" [class.no]="autoSign.tue === 0">
+              {{ getYesNoDisplay(autoSign.tue) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.wed === 1" [class.no]="autoSign.wed === 0">
+              {{ getYesNoDisplay(autoSign.wed) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.thu === 1" [class.no]="autoSign.thu === 0">
+              {{ getYesNoDisplay(autoSign.thu) }}
+            </span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="autoSign.fri === 1" [class.no]="autoSign.fri === 0">
+              {{ getYesNoDisplay(autoSign.fri) }}
+            </span>
+          </td>
+          <td [title]="getDisplayValue(autoSign.note)">{{ getDisplayValue(autoSign.note) }}</td>
+          <td>
+            <button class="action-btn delete-btn" 
+                    (click)="deleteAutoSign(autoSign)"
+                    [title]="'AUTOMATIC_SIGN.DELETE_TITLE' | translate">
+              <i class="text-danger fs-4 fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="autoSigns.length === 0" class="empty-row">
+          <td colspan="22" class="empty-message">
+            <i class="fas fa-inbox"></i>
+            {{ 'AUTOMATIC_SIGN.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && autoSigns.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'AUTOMATIC_SIGN.SHOWING' | translate }} {{ currentPageStart }} {{ 'AUTOMATIC_SIGN.TO' | translate }} {{ currentPageEnd }} {{ 'AUTOMATIC_SIGN.OF' | translate }} {{ totalRecords }} {{ 'AUTOMATIC_SIGN.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext || totalPages === 0"
+          [title]="'AUTOMATIC_SIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'AUTOMATIC_SIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'AUTOMATIC_SIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'AUTOMATIC_SIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'AUTOMATIC_SIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'AUTOMATIC_SIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'AUTOMATIC_SIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'AUTOMATIC_SIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'AUTOMATIC_SIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'AUTOMATIC_SIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'AUTOMATIC_SIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext || totalPages === 0"
+          [title]="'AUTOMATIC_SIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'AUTOMATIC_SIGN.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create Automatic Sign Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ (isEditMode ? 'AUTOMATIC_SIGN.EDIT_MODAL_TITLE' : 'AUTOMATIC_SIGN.CREATE_MODAL_TITLE') | translate }}</h3>
+      <button class="close-btn" (click)="closeCreateModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
+        <div class="row">
+          <!-- Employee Dropdown -->
+          <div class="form-group">
+            <label>{{ 'AUTOMATIC_SIGN.EMPLOYEE' | translate }}</label>
+            <p-dropdown 
+              #empDropdown
+              formControlName="empId"
+              [options]="employees"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_EMPLOYEE' | translate"
+              [filter]="true"
+              [filterBy]="'name'"
+              [loading]="loadingEmployees"
+              appendTo="body"
+              (onShow)="onDropdownShow('empDropdown')"
+              [class.error]="isFieldInvalid('empId')">
+            </p-dropdown>
+            <small *ngIf="isFieldInvalid('empId')" class="error-message">
+              {{ getFieldError('empId') }}
+            </small>
+          </div>
+
+          
+
+          <!-- Department Dropdown -->
+          <div class="form-group">
+            <label>{{ 'AUTOMATIC_SIGN.DEPARTMENT' | translate }}</label>
+            <p-dropdown 
+              #deptDropdown
+              formControlName="deptId"
+              [options]="departments"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_DEPARTMENT' | translate"
+              [filter]="true"
+              [filterBy]="'name'"
+              [loading]="loadingDepartments"
+              appendTo="body"
+              (onShow)="onDropdownShow('deptDropdown')"
+              [class.error]="isFieldInvalid('deptId')">
+            </p-dropdown>
+            <small *ngIf="isFieldInvalid('deptId')" class="error-message">
+              {{ getFieldError('deptId') }}
+            </small>
+          </div>
+
+          <!-- Manager of Department -->
+          <div class="form-group">
+            <label>{{ 'AUTOMATIC_SIGN.MANAGER_OF_DEPARTMENT' | translate }}</label>
+            <p-dropdown 
+              #mgrDeptDropdown
+              formControlName="mgrOfDeptId"
+              [options]="managersOfDepartments"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_MANAGER_DEPARTMENT' | translate"
+              [filter]="true"
+              [filterBy]="'name'"
+              [loading]="loadingDepartments"
+              appendTo="body"
+              (onShow)="onDropdownShow('mgrDeptDropdown')"
+              [class.error]="isFieldInvalid('mgrOfDeptId')">
+            </p-dropdown>
+            <small *ngIf="isFieldInvalid('mgrOfDeptId')" class="error-message">
+              {{ getFieldError('mgrOfDeptId') }}
+            </small>
+          </div>
+
+          <!-- Branch Dropdown -->
+          <div class="form-group">
+            <label>{{ 'AUTOMATIC_SIGN.BRANCH' | translate }}</label>
+            <p-dropdown 
+              #branchDropdown
+              formControlName="branchId"
+              [options]="branches"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_BRANCH' | translate"
+              [filter]="true"
+              [filterBy]="'name'"
+              [loading]="loadingBranches"
+              appendTo="body"
+              (onShow)="onDropdownShow('branchDropdown')"
+              [class.error]="isFieldInvalid('branchId')">
+            </p-dropdown>
+            <small *ngIf="isFieldInvalid('branchId')" class="error-message">
+              {{ getFieldError('branchId') }}
+            </small>
+          </div>
+
+          <!-- Manager of Branch -->
+          <div class="form-group">
+            <label>{{ 'AUTOMATIC_SIGN.MANAGER_OF_BRANCH' | translate }}</label>
+            <p-dropdown 
+              #mgrBranchDropdown
+              formControlName="mgrOfBranchId"
+              [options]="managersOfBranches"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_MANAGER_BRANCH' | translate"
+              [filter]="true"
+              [filterBy]="'name'"
+              [loading]="loadingBranches"
+              appendTo="body"
+              (onShow)="onDropdownShow('mgrBranchDropdown')"
+              [class.error]="isFieldInvalid('mgrOfBranchId')">
+            </p-dropdown>
+            <small *ngIf="isFieldInvalid('mgrOfBranchId')" class="error-message">
+              {{ getFieldError('mgrOfBranchId') }}
+            </small>
+          </div>
+
+          <!-- Role Dropdown -->
+          <div class="form-group">
+            <label>{{ 'AUTOMATIC_SIGN.ROLE' | translate }}</label>
+            <p-dropdown 
+              #roleDropdown
+              formControlName="roleId"
+              [options]="roles"
+              optionLabel="name"
+              optionValue="id"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_ROLE' | translate"
+              [filter]="true"
+              [filterBy]="'name'"
+              [loading]="loadingRoles"
+              appendTo="body"
+              (onShow)="onDropdownShow('roleDropdown')"
+              [class.error]="isFieldInvalid('roleId')">
+            </p-dropdown>
+            <small *ngIf="isFieldInvalid('roleId')" class="error-message">
+              {{ getFieldError('roleId') }}
+            </small>
+          </div>
+
+          <!-- Start Date -->
+          <div class="form-group">
+            <label class="required">{{ 'AUTOMATIC_SIGN.START_DATE' | translate }}</label>
+            <p-calendar 
+              formControlName="sDate"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_START_DATE' | translate"
+              [showIcon]="true"
+              inputId="sDate"
+              dateFormat="yy-mm-dd"
+              [class.error]="isFieldInvalid('sDate') || createForm.errors?.['dateRange']">
+            </p-calendar>
+            <small *ngIf="isFieldInvalid('sDate')" class="error-message">
+              {{ getFieldError('sDate') }}
+            </small>
+          </div>
+
+          <!-- End Date -->
+          <div class="form-group">
+            <label class="required">{{ 'AUTOMATIC_SIGN.END_DATE' | translate }}</label>
+            <p-calendar 
+              formControlName="eDate"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_END_DATE' | translate"
+              [showIcon]="true"
+              inputId="eDate"
+              dateFormat="yy-mm-dd"
+              [class.error]="isFieldInvalid('eDate')">
+            </p-calendar>
+            <small *ngIf="isFieldInvalid('eDate')" 
+                   class="error-message" 
+                   [class.date-range-error]="createForm.errors?.['dateRange']">
+              {{ getFieldError('eDate') }}
+            </small>
+          </div>
+
+          <!-- Shift Part -->
+          <div class="form-group">
+            <label class="required">{{ 'AUTOMATIC_SIGN.SHIFT_PART' | translate }}</label>
+            <p-dropdown 
+              formControlName="shiftPart"
+              [options]="shiftPartOptions"
+              optionLabel="name"
+              appendTo="body"
+              optionValue="id"
+              [placeholder]="'AUTOMATIC_SIGN.SELECT_SHIFT_PART' | translate"
+              [class.error]="isFieldInvalid('shiftPart')">
+            </p-dropdown>
+            <small *ngIf="isFieldInvalid('shiftPart')" class="error-message">
+              {{ getFieldError('shiftPart') }}
+            </small>
+          </div>
+
+          <!-- Toggle Section -->
+          <div class="toggle-section">
+            <h4 class="toggle-section-title">{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS' | translate }}</h4>
+            
+            <!-- Auto In/Out Toggles -->
+            <div class="auto-toggle-grid">
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.AUTO_IN' | translate }}</label>
+                <p-inputSwitch formControlName="autoIn" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+              
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.AUTO_OUT' | translate }}</label>
+                <p-inputSwitch formControlName="autoOut" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+            </div>
+            
+            <!-- Auto In/Out Validation Error -->
+            <small *ngIf="createForm.errors?.['autoInOut'] && (createForm.get('autoIn')?.touched || createForm.get('autoOut')?.touched)" 
+                   class="error-message auto-in-out-error">
+              {{ 
+                langService.getCurrentLang() === 'ar' ? 
+                  'يجب تفعيل واحد على الأقل من الدخول التلقائي أو الخروج التلقائي' : 
+                  'At least one of Auto In or Auto Out must be enabled'
+              }}
+            </small>
+
+            <!-- Week Days Toggles -->
+            <h5 class="toggle-section-title" style="font-size: 1rem; margin-top: 1.5rem;">{{ 'AUTOMATIC_SIGN.WEEK_DAYS' | translate }}</h5>
+            <div class="weekdays-grid">
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.SATURDAY' | translate }}</label>
+                <p-inputSwitch formControlName="sat" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.SUNDAY' | translate }}</label>
+                <p-inputSwitch formControlName="sun" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.MONDAY' | translate }}</label>
+                <p-inputSwitch formControlName="mon" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.TUESDAY' | translate }}</label>
+                <p-inputSwitch formControlName="tue" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.WEDNESDAY' | translate }}</label>
+                <p-inputSwitch formControlName="wed" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.THURSDAY' | translate }}</label>
+                <p-inputSwitch formControlName="thu" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+
+              <div class="toggle-item">
+                <label>{{ 'AUTOMATIC_SIGN.FRIDAY' | translate }}</label>
+                <p-inputSwitch formControlName="fri" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div class="form-group full-width">
+            <label>{{ 'AUTOMATIC_SIGN.NOTE' | translate }}</label>
+            <textarea 
+              formControlName="note"
+              class="form-textarea"
+              rows="3"
+              [placeholder]="'AUTOMATIC_SIGN.ENTER_NOTE' | translate">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeCreateModal()">
+            {{ 'AUTOMATIC_SIGN.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="createForm.invalid">
+            {{ (isEditMode ? 'AUTOMATIC_SIGN.UPDATE' : 'AUTOMATIC_SIGN.CREATE') | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

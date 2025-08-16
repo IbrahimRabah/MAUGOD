@@ -1,1 +1,442 @@
-<p>request-post-premisions works!</p>
+<div class="request-post-permissions-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'REQUEST_POST_PERMISSIONS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <!-- Add filter controls here if needed -->
+        <div class="filter-actions">
+          <!-- Filter buttons can be added here -->
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" 
+              (click)="openCreateModal()" 
+              [title]="'REQUEST_POST_PERMISSIONS.CREATE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'REQUEST_POST_PERMISSIONS.CREATE' | translate }}
+      </button>
+      
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'REQUEST_POST_PERMISSIONS.DELETE_SELECTED' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'REQUEST_POST_PERMISSIONS.DELETE_SELECTED' | translate }}
+        <span *ngIf="selectedItems.length > 0" class="selection-count">({{ selectedItems.length }})</span>
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            class="search-input"
+            formControlName="searchTerm"
+            [placeholder]="'REQUEST_POST_PERMISSIONS.SEARCH_PLACEHOLDER' | translate">
+          <button type="button" class="search-btn" (click)="onSearch()">
+            <i class="fas fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'REQUEST_POST_PERMISSIONS.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="checkbox-column">
+            <input 
+              type="checkbox" 
+              [checked]="selectAll" 
+              (change)="onSelectAll()"
+              [title]="'REQUEST_POST_PERMISSIONS.SELECT_ALL' | translate">
+          </th>
+          <th class="actions-column">{{ 'REQUEST_POST_PERMISSIONS.EDIT' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.EMPLOYEE' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.MANAGER_OF_DEPARTMENT' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.DEPARTMENT' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.MANAGER_OF_BRANCH' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.BRANCH' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.ROLE' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.EVERYONE' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.STATUS' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.START_DATE' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.HIJRI_START' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.END_DATE' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.HIJRI_END' | translate }}</th>
+          <th>{{ 'REQUEST_POST_PERMISSIONS.NOTE' | translate }}</th>
+          <th class="actions-column">{{ 'REQUEST_POST_PERMISSIONS.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permission of requestPostPermissions" class="table-row">
+          <td class="checkbox-column">
+            <input 
+              type="checkbox" 
+              [checked]="isItemSelected(permission)"
+              [disabled]="!canDeleteOrSelect(permission)"
+              (change)="onItemSelect(permission)"
+              [title]="'REQUEST_POST_PERMISSIONS.SELECT_ITEM' | translate">
+          </td>
+          <td class="actions-column">
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editRequestPostPermission(permission)"
+              [title]="'REQUEST_POST_PERMISSIONS.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td [title]="getEmployeeName(permission)">{{ getEmployeeName(permission) }}</td>
+          <td [title]="getManagerOfDepartmentName(permission)">{{ getManagerOfDepartmentName(permission) }}</td>
+          <td [title]="getDepartmentName(permission)">{{ getDepartmentName(permission) }}</td>
+          <td [title]="getManagerOfBranchName(permission)">{{ getManagerOfBranchName(permission) }}</td>
+          <td [title]="getBranchName(permission)">{{ getBranchName(permission) }}</td>
+          <td [title]="getRoleName(permission)">{{ getRoleName(permission) }}</td>
+          <td class="text-center">
+            <i class="fas" [class.fa-check-circle]="permission.everyone" [class.fa-times-circle]="!permission.everyone" 
+               [style.color]="permission.everyone ? '#28a745' : '#dc3545'"></i>
+          </td>
+          <td [title]="getStatusName(permission)">{{ getStatusName(permission) }}</td>
+          <td [title]="formatDate(permission.sDate)">{{ formatDate(permission.sDate) }}</td>
+          <td [title]="permission.hsDate || '-'">{{ permission.hsDate || '-' }}</td>
+          <td [title]="formatDate(permission.eDate)">{{ formatDate(permission.eDate) }}</td>
+          <td [title]="permission.heDate || '-'">{{ permission.heDate || '-' }}</td>
+          <td [title]="permission.note || '-'">{{ permission.note || '-' }}</td>
+          <td class="actions-column">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteRequestPostPermission(permission)"
+              [disabled]="!canDeleteOrSelect(permission)"
+              [title]="canDeleteOrSelect(permission) ? ('REQUEST_POST_PERMISSIONS.DELETE' | translate) : ('REQUEST_POST_PERMISSIONS.CANNOT_DELETE' | translate)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="requestPostPermissions.length === 0" class="empty-row">
+          <td colspan="16" class="empty-message">
+            <i class="fas fa-inbox"></i>
+            {{ 'REQUEST_POST_PERMISSIONS.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && requestPostPermissions.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'REQUEST_POST_PERMISSIONS.SHOWING' | translate }} {{ currentPageStart }} {{ 'REQUEST_POST_PERMISSIONS.TO' | translate }} {{ currentPageEnd }} {{ 'REQUEST_POST_PERMISSIONS.OF' | translate }} {{ totalRecords }} {{ 'REQUEST_POST_PERMISSIONS.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext"
+          [title]="'REQUEST_POST_PERMISSIONS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'REQUEST_POST_PERMISSIONS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'REQUEST_POST_PERMISSIONS.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'REQUEST_POST_PERMISSIONS.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'REQUEST_POST_PERMISSIONS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'REQUEST_POST_PERMISSIONS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="!canGoPrevious"
+          [title]="'REQUEST_POST_PERMISSIONS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious"
+          [title]="'REQUEST_POST_PERMISSIONS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'REQUEST_POST_PERMISSIONS.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'REQUEST_POST_PERMISSIONS.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="!canGoNext"
+          [title]="'REQUEST_POST_PERMISSIONS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="!canGoNext"
+          [title]="'REQUEST_POST_PERMISSIONS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'REQUEST_POST_PERMISSIONS.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create Request Post Permission Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'REQUEST_POST_PERMISSIONS.CREATE_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeCreateModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
+        
+        <!-- Permission Type Section -->
+        <div class="form-section">
+          <h4>{{ 'REQUEST_POST_PERMISSIONS.PERMISSION_TYPE' | translate }}</h4>
+          <div class="radio-group">
+            <div class="radio-item" [class.selected]="createForm.get('everyoneType')?.value" (click)="selectEveryoneType(true); statusDropdown.show()">
+              <input 
+                type="radio" 
+                id="everyone" 
+                formControlName="everyoneType" 
+                [value]="true">
+              <label for="everyone">{{ 'REQUEST_POST_PERMISSIONS.EVERYONE' | translate }}</label>
+            </div>
+            <div class="radio-item" [class.selected]="!createForm.get('everyoneType')?.value" (click)="selectEveryoneType(false); targetDropdown.show()">
+              <input 
+                type="radio" 
+                id="notEveryone" 
+                formControlName="everyoneType" 
+                [value]="false">
+              <label for="notEveryone">{{ 'REQUEST_POST_PERMISSIONS.NOT_EVERYONE' | translate }}</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Type Section (visible when not everyone) -->
+        <div class="form-section" *ngIf="!createForm.get('everyoneType')?.value">
+          <h4>{{ 'REQUEST_POST_PERMISSIONS.TARGET_TYPE' | translate }}</h4>
+          <div class="radio-group">
+            <div class="radio-item" 
+                 *ngFor="let option of targetTypeOptions" 
+                 [class.selected]="createForm.get('targetType')?.value === option.id"
+                 (click)="selectTargetType(option.id); targetDropdown.show()">
+              <input 
+                type="radio" 
+                [id]="'target_' + option.id" 
+                formControlName="targetType" 
+                [value]="option.id">
+              <label [for]="'target_' + option.id">
+                {{ (currentLang === 2 ? option.nameAr : option.name) }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Selection Section (visible when not everyone) -->
+        <div class="form-section" *ngIf="!createForm.get('everyoneType')?.value">
+          <h4>{{ 'REQUEST_POST_PERMISSIONS.SELECT_TARGETS' | translate }}</h4>
+          <div class="form-group">
+            <div class="multiselect-wrapper" (click)="targetDropdown.show()">
+              <p-multiSelect 
+                #targetDropdown
+                formControlName="selectedTargets"
+                [options]="currentTargetOptions"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="'REQUEST_POST_PERMISSIONS.SELECT_TARGETS_PLACEHOLDER' | translate"
+                [filter]="true"
+                [filterBy]="'label'"
+                [showToggleAll]="true"
+                [showHeader]="true"
+                (onShow)="onDropdownShow('target')"
+                (onChange)="onTargetSelectionChange($event.value)"
+                [class.error]="isFieldInvalid('selectedTargets')"
+                class="w-100"
+                [maxSelectedLabels]="3">
+                
+                <ng-template let-option pTemplate="item">
+                  <div class="multiselect-item">
+                    <span>{{ option.label }}</span>
+                  </div>
+                </ng-template>
+              </p-multiSelect>
+            </div>
+            
+            <div *ngIf="loadingEmployees || loadingDepartments || loadingBranches || loadingRoles" class="loading-message">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'REQUEST_POST_PERMISSIONS.LOADING_DATA' | translate }}
+            </div>
+            
+            <div *ngIf="isFieldInvalid('selectedTargets')" class="error-message">
+              {{ getFieldError('selectedTargets') }}
+            </div>
+            
+            <div class="selected-summary" *ngIf="createForm.get('selectedTargets')?.value?.length > 0">
+              <span>{{ createForm.get('selectedTargets')?.value?.length }} {{ 'REQUEST_POST_PERMISSIONS.SELECT_TARGETS' | translate | lowercase }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Selection Section -->
+        <div class="form-section">
+          <h4>{{ 'REQUEST_POST_PERMISSIONS.SELECT_STATUSES' | translate }}</h4>
+          <div class="form-group">
+            <div class="multiselect-wrapper" >
+              <p-multiSelect 
+                #statusDropdown
+                formControlName="selectedStatuses"
+                [options]="statuses"
+                optionLabel="label"
+                optionValue="value"
+                [placeholder]="'REQUEST_POST_PERMISSIONS.SELECT_STATUSES_PLACEHOLDER' | translate"
+                [filter]="true"
+                [filterBy]="'label'"
+                [showToggleAll]="true"
+                [showHeader]="true"
+                (onShow)="onDropdownShow('status')"
+                (onChange)="onStatusSelectionChange($event.value)"
+                [class.error]="isFieldInvalid('selectedStatuses')"
+                class="w-100"
+                [maxSelectedLabels]="3">
+                
+                <ng-template let-option pTemplate="item">
+                  <div class="multiselect-item">
+                    <span>{{ option.label }}</span>
+                  </div>
+                </ng-template>
+              </p-multiSelect>
+            </div>
+            
+            <div *ngIf="loadingStatuses" class="loading-message">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'REQUEST_POST_PERMISSIONS.LOADING_STATUSES' | translate }}
+            </div>
+            
+            <div *ngIf="isFieldInvalid('selectedStatuses')" class="error-message">
+              {{ getFieldError('selectedStatuses') }}
+            </div>
+            
+            <div class="selected-summary" *ngIf="createForm.get('selectedStatuses')?.value?.length > 0">
+              <span>{{ createForm.get('selectedStatuses')?.value?.length }} {{ 'REQUEST_POST_PERMISSIONS.STATUSES' | translate | lowercase }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Range Section -->
+        <div class="form-section">
+          <h4>{{ 'REQUEST_POST_PERMISSIONS.DATE_RANGE' | translate }}</h4>
+          <div class="date-row">
+            <div class="form-group">
+              <label for="startDate">{{ 'REQUEST_POST_PERMISSIONS.START_DATE' | translate }} *</label>
+              <input 
+                type="date" 
+                id="startDate" 
+                formControlName="startDate"
+                class="form-input"
+                [class.error]="isFieldInvalid('startDate')">
+              <div *ngIf="isFieldInvalid('startDate')" class="error-message">
+                {{ getFieldError('startDate') }}
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="endDate">{{ 'REQUEST_POST_PERMISSIONS.END_DATE' | translate }} *</label>
+              <input 
+                type="date" 
+                id="endDate" 
+                formControlName="endDate"
+                class="form-input"
+                [class.error]="isFieldInvalid('endDate')">
+              <div *ngIf="isFieldInvalid('endDate')" class="error-message">
+                {{ getFieldError('endDate') }}
+              </div>
+              <div *ngIf="createForm.errors?.['dateRangeInvalid']" class="error-message">
+                {{ 'REQUEST_POST_PERMISSIONS.DATE_RANGE_ERROR' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note Section -->
+        <div class="form-section">
+          <h4>{{ 'REQUEST_POST_PERMISSIONS.NOTE' | translate }}</h4>
+          <div class="form-group">
+            <textarea 
+              formControlName="note"
+              class="form-input"
+              rows="3"
+              [placeholder]="'REQUEST_POST_PERMISSIONS.NOTE_PLACEHOLDER' | translate">
+            </textarea>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeCreateModal()">
+        {{ 'REQUEST_POST_PERMISSIONS.CANCEL' | translate }}
+      </button>
+      <button class="submit-btn" 
+              (click)="submitCreate()"
+              [disabled]="!isFormValid">
+        {{ 'REQUEST_POST_PERMISSIONS.CREATE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

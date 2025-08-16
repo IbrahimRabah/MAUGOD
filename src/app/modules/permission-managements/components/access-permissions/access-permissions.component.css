@@ -320,7 +320,6 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #007bff, #28a745, #ffc107, #dc3545);
   opacity: 0.8;
   z-index: 1;
 }
@@ -340,15 +339,15 @@
 
 /* Table Header */
 .custom-table thead tr.table-header th {
-  
+  background: #F2F2F2;
+  color: #056ac8;
   padding: 20px 16px !important;
-  border-bottom: 3px solid #343a40 !important;
-  border-right: 1px solid rgba(23, 12, 12, 0.2) !important;
   font-weight: 700 !important;
   text-align: center !important;
   vertical-align: middle !important;
   position: sticky;
   top: 0;
+  border: 1px solid #e9ecef;
   z-index: 10;
   font-size: 14px !important;
   text-transform: uppercase !important;
@@ -356,15 +355,6 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
-
-.custom-table thead tr.table-header th:last-child {
-  border-right: none !important;
-}
-
-.custom-table thead tr.table-header th:first-child {
-  border-radius: 0;
-}
-
 
 .permission-header {
   position: relative;
@@ -388,7 +378,6 @@
 .custom-table tbody tr.table-row {
   border-bottom: 1px solid #e9ecef;
   transition: all 0.3s ease;
-  background-color: #ffffff;
 }
 
 .custom-table tbody tr.table-row:nth-child(even) {
@@ -397,32 +386,18 @@
 
 .custom-table tbody tr.table-row:hover {
   background-color: #e3f2fd !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
 }
 
 .custom-table tbody tr.table-row td {
   padding: 16px 14px;
   vertical-align: middle;
-  border-right: 1px solid #e9ecef;
+  border: 1px solid #c4c5c5;
+  border-collapse: collapse;
   text-align: center;
   color: #495057;
   font-size: 13px;
   line-height: 1.4;
   transition: all 0.2s ease;
-}
-
-.custom-table tbody tr.table-row td:last-child {
-  border-right: none;
-}
-
-.custom-table tbody tr.table-row td:first-child {
-  border-left: 3px solid transparent;
-  transition: border-left-color 0.3s ease;
-}
-
-.custom-table tbody tr.table-row:hover td:first-child {
-  border-left-color: #007bff;
 }
 
 /* Checkbox Columns */
@@ -451,18 +426,12 @@
 
 /* Action Buttons in Table */
 .action-btn {
+  background: none;
   border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 12px;
-  margin: 0 3px;
   transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-weight: 500;
+  padding: 10px 15px;
 }
 
 .edit-btn {
@@ -689,33 +658,9 @@
   top: 0;
   width: 3px;
   height: 100%;
-  background: transparent;
   transition: background-color 0.3s ease;
 }
 
-.custom-table tbody tr.table-row:hover td::before {
-  background: linear-gradient(180deg, #007bff, #0056b3);
-}
-
-/* Data emphasis for important columns */
-.custom-table tbody tr.table-row td:nth-child(2),
-.custom-table tbody tr.table-row td:nth-child(7) {
-  font-weight: 600;
-  color: #495057;
-}
-
-/* Status indicators */
-.custom-table tbody tr.table-row td[title*="Active"],
-.custom-table tbody tr.table-row td[title*="Enabled"] {
-  color: #28a745;
-  font-weight: 600;
-}
-
-.custom-table tbody tr.table-row td[title*="Inactive"],
-.custom-table tbody tr.table-row td[title*="Disabled"] {
-  color: #dc3545;
-  font-weight: 600;
-}
 
 /* Smooth scrollbar for table wrapper */
 .table-wrapper::-webkit-scrollbar {

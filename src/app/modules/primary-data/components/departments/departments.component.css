@@ -30,12 +30,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background-color: #F2F2F2;
-  border: 1px solid #ddd;
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  margin-bottom: 0;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .left-actions {
@@ -52,7 +49,7 @@
 
 /* Add Button */
 .add-btn {
-  background-color: #28a745;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -68,7 +65,7 @@
 }
 
 .add-btn:hover {
-  background-color: #218838;
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
 }
@@ -161,8 +158,8 @@
 
 /* Table Header */
 .custom-table thead tr.table-header th {
-  background-color: #F2F2F2 !important;
-  color: #333333 !important;
+  background: #F2F2F2;
+  color: #056ac8;
   padding: 15px 10px !important;
   font-weight: 600 !important;
   text-align: center !important;
@@ -200,47 +197,24 @@
 
 /* Action Buttons */
 .action-btn {
-  padding: 6px 10px;
+  background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 12px;
   transition: all 0.3s ease;
-  margin: 0 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.edit-btn {
-  background-color: #007bff;
-  color: white;
+  padding: 10px 15px;
 }
 
 .edit-btn:hover {
-  background-color: #0056b3;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
+  transform: translateY(-2px);
 }
 
 .delete-btn:hover {
-  background-color: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
-}
-
-.number-btn {
-  background-color: #6c757d;
-  color: white;
+  transform: translateY(-2px);
 }
 
 .number-btn:hover {
-  background-color: #545b62;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3);
+  transform: translateY(-2px);
 }
 
 /* Pagination */

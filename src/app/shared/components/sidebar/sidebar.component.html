@@ -45,12 +45,12 @@
         <div [routerLink]="['/attendance']">
           <a class="nav-link" (click)="toggleSubmenu('attendance')" [class.expanded]="isSubmenuOpen('attendance')">
             <i class="fa-regular fa-check-square"></i>
-            <span>{{ 'MENU.ATTENDANCE_DATA' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <span class="ps-1">{{ 'MENU.ATTENDANCE_DATA' | translate }}</span>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
 
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('attendance')">
+        <ul class="nav flex-column submenu ps-3" [class.show]="isSubmenuOpen('attendance')">
           <li><a class="nav-link" [routerLink]="['/attendance/punch-in-transactions']"
               routerLinkActive="active"><span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.PUNCH_TRANSACTION' | translate }}</span></a></li>
           <li><a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active">
@@ -65,11 +65,11 @@
         <div [routerLink]="['/shifts-section']">
           <a class="nav-link" (click)="toggleSubmenu('shifts')" [class.expanded]="isSubmenuOpen('shifts')">
             <i class="fa-regular fa-calendar-days"></i>
-            <span>{{ 'MENU.SHIFTS' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <span class="ps-1">{{ 'MENU.SHIFTS' | translate }}</span>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('shifts')">
+        <ul class="nav flex-column submenu ps-3" [class.show]="isSubmenuOpen('shifts')">
           <li><a class="nav-link" [routerLink]="['/shifts-section/shifts']" routerLinkActive="active">{{ 'MENU.SHIFTS_SECTIONS.SHIFTS' | translate }}</a></li>
           <li><a class="nav-link" [routerLink]="['/shifts-section/automatic-sign']" routerLinkActive="active">
             {{ 'MENU.SHIFTS_SECTIONS.AUTOMATIC_SIGN' | translate }}
@@ -93,10 +93,10 @@
           <a class="nav-link" (click)="toggleSubmenu('leaves')" [class.expanded]="isSubmenuOpen('leaves')">
             <i class="fa fa fa-tasks"></i>
             <span>{{ 'MENU.VACATION_TASKS' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <i class=" ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
+        <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
           <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-status-classifications']"
               routerLinkActive="active">{{ 'MENU.VACATION_TASKS_SECTIONS.ATTENDANCE_STATUS_CLASSIFICATION' | translate }}</a></li>
           <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-statuses']" routerLinkActive="active">
@@ -122,10 +122,10 @@
           <a class="nav-link" (click)="toggleSubmenu('requests')" [class.expanded]="isSubmenuOpen('requests')">
             <i class="fas fa-check-square"></i>
             <span>{{ 'MENU.REQUESTS_APPROVALS' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('requests')">
+        <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('requests')">
           <li><a class="nav-link" [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" routerLinkActive="active">
             {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.TIME_CHANGE_APPROVAL_STEPS' | translate }}</a></li>
           <li><a class="nav-link" [routerLink]="['/requests-and-approvals/attendance-time-change-request']" routerLinkActive="active">
@@ -146,11 +146,11 @@
         <div [routerLink]="['/tracking-locations']">
           <a class="nav-link" (click)="toggleSubmenu('locations')" [class.expanded]="isSubmenuOpen('locations')">
             <i class="fa-solid fa-location-arrow"></i>
-            <span>{{ 'MENU.TRACKING_LOCATIONS' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <span class="ps-1">{{ 'MENU.TRACKING_LOCATIONS' | translate }}</span>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('locations')">
+        <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('locations')">
           <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-details']" routerLinkActive="active">
             {{ 'MENU.TRACKING_LOCATIONS_SECTIONS.LOCATION_TRACKING_DETAILS' | translate }}</a></li>
           <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-transactions']" routerLinkActive="active">
@@ -164,10 +164,10 @@
           <a class="nav-link" (click)="toggleSubmenu('mobile')" [class.expanded]="isSubmenuOpen('mobile')">
             <i class="fas fa-mobile-alt"></i>
             <span>{{ 'MENU.MOBILE_APP' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('mobile')">
+        <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('mobile')">
           <li><a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">
             {{ 'MENU.MOBILE_APP_SECTIONS.MAWJOOD_APP' | translate }}</a></li>
           <li><a class="nav-link" [routerLink]="['/mobile-and-app/send-app-qr-code']" routerLinkActive="active">
@@ -189,10 +189,10 @@
           <a class="nav-link" (click)="toggleSubmenu('salaries')" [class.expanded]="isSubmenuOpen('salaries')">
             <i class="fas fa-money-bill-alt"></i>
             <span>{{ 'MENU.SALARIES' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('salaries')">
+        <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('salaries')">
           <li><a class="nav-link" [routerLink]="['/salaries/salary-add-deducts']" routerLinkActive="active">
             {{ 'MENU.SALARIES_SECTIONS.SALARY_ADDONS_DEDUCTS_ASSIGN' | translate }}</a></li>
           <li><a class="nav-link" [routerLink]="['/salaries/salary-add-ons-deducts']" routerLinkActive="active">
@@ -211,17 +211,17 @@
         <a class="nav-link" (click)="toggleSubmenu('basicData')" [class.expanded]="isSubmenuOpen('basicData')">
           <i class="fas fa-info"></i>
           <span>{{ 'MENU.PRIMARY_DATA' | translate }}</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
+          <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
         </a>
         </div>
-        <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('basicData')">
+        <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('basicData')">
           <!-- 12.1 البيانات العامه -->
           <li>
             <div [routerLink]="['/primary-data/general-data']" routerLinkActive="active">
-            <a class="nav-link" (click)="toggleSubmenu('generalData')" [class.expanded]="isSubmenuOpen('generalData')">
+            <a class="pe-3 nav-link" (click)="toggleSubmenu('generalData')" [class.expanded]="isSubmenuOpen('generalData')">
               <i class="fas fa-database"></i>
               <span>{{ 'MENU.PRIMARY_DATA_SECTIONS.GENERAL_DATA' | translate }}</span>
-              <i class="fas fa-chevron-down submenu-arrow"></i>
+              <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('generalData')">
@@ -238,10 +238,10 @@
           <!-- 12.2 بيانات موجود -->
           <li>
           <div [routerLink]="['/primary-data/mawjood-data']">
-            <a class="nav-link" (click)="toggleSubmenu('mawjoodData')" [class.expanded]="isSubmenuOpen('mawjoodData')">
+            <a class="pe-3 nav-link" (click)="toggleSubmenu('mawjoodData')" [class.expanded]="isSubmenuOpen('mawjoodData')">
               <i class="fas fa-file-alt"></i>
               <span>{{ 'MENU.PRIMARY_DATA_SECTIONS.MAWJOOD_DATA' | translate }}</span>
-              <i class="fas fa-chevron-down submenu-arrow"></i>
+              <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('mawjoodData')">
@@ -253,10 +253,10 @@
           <!-- 12.3 بيانات الاتصالات الادارية -->
           <li>
             <div [routerLink]="['/primary-data/cts-data']">
-              <a class="nav-link" (click)="toggleSubmenu('ctsData')" [class.expanded]="isSubmenuOpen('ctsData')">
+              <a class="pe-3 nav-link" (click)="toggleSubmenu('ctsData')" [class.expanded]="isSubmenuOpen('ctsData')">
                 <i class="fas fa-exchange-alt"></i>
                 <span>{{ 'MENU.CTS_DATA.TITLE' | translate }}</span>
-                <i class="fas fa-chevron-down submenu-arrow"></i>
+                <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
               </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('ctsData')">
@@ -283,10 +283,10 @@
           <!-- 12.4 بيانات المجالس و اللجان -->
           <li>
             <div [routerLink]="['/primary-data/committees-data']">
-              <a class="nav-link" (click)="toggleSubmenu('committeesData')" [class.expanded]="isSubmenuOpen('committeesData')">
+              <a class="pe-3 nav-link" (click)="toggleSubmenu('committeesData')" [class.expanded]="isSubmenuOpen('committeesData')">
                 <i class="fas fa-users-cog"></i>
                 <span>{{ 'MENU.COMMITTEES_DATA.TITLE' | translate }}</span>
-                <i class="fas fa-chevron-down submenu-arrow"></i>
+                <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
               </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('committeesData')">
@@ -308,7 +308,7 @@
           <a class="nav-link" (click)="toggleSubmenu('notifications')" [class.expanded]="isSubmenuOpen('notifications')">
             <i class="fas fa-envelope"></i>
             <span>{{ 'MENU.MESSAGES_NOTIFICATIONS' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('notifications')">
@@ -340,19 +340,19 @@
         <div [routerLink]="['/permission-managements']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('permissions')" [class.expanded]="isSubmenuOpen('permissions')">
           <i class="fa-solid fa-users"></i>
-          <span>{{ 'MENU.PERMISSION_MANAGEMENT.TITLE' | translate }}</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
+          <span class="ps-1">{{ 'MENU.PERMISSION_MANAGEMENT.TITLE' | translate }}</span>
+          <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
         </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('permissions')">
           <!-- 14.1 الصلاحيات علي النظام -->
           <li>
             <div [routerLink]="['/permission-managements/premissions-on-system']" routerLinkActive="active">
-            <a class="nav-link" (click)="toggleSubmenu('systemPermissions')"
+            <a class="pe-3 nav-link" (click)="toggleSubmenu('systemPermissions')"
               [class.expanded]="isSubmenuOpen('systemPermissions')">
               <i class="fas fa-shield-alt"></i>
               <span>{{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_SYSTEM' | translate }}</span>
-              <i class="fas fa-chevron-down submenu-arrow"></i>
+              <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemPermissions')">
@@ -367,11 +367,11 @@
           <!-- 14.2 عناصر النظام الاساسي -->
           <li>
             <div [routerLink]="['/permission-managements/basic-system-items']" routerLinkActive="active">
-            <a class="nav-link" (click)="toggleSubmenu('systemElements')"
+            <a class="pe-3 nav-link" (click)="toggleSubmenu('systemElements')"
               [class.expanded]="isSubmenuOpen('systemElements')">
               <i class="fas fa-cogs"></i>
               <span>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM_ITEMS' | translate }}</span>
-              <i class="fas fa-chevron-down submenu-arrow"></i>
+              <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemElements')">
@@ -384,11 +384,11 @@
           <!-- 14.3 الصلاحيات علي البيانات -->
           <li>
             <div [routerLink]="['/permission-managements/permission-on-data']" routerLinkActive="active">
-            <a class="nav-link" (click)="toggleSubmenu('dataPermissions')"
+            <a class="pe-3 nav-link" (click)="toggleSubmenu('dataPermissions')"
               [class.expanded]="isSubmenuOpen('dataPermissions')">
               <i class="fas fa-key"></i>
               <span>{{ 'MENU.PERMISSION_MANAGEMENT.PERMISSIONS_ON_DATA' | translate }}</span>
-              <i class="fas fa-chevron-down submenu-arrow"></i>
+              <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('dataPermissions')">
@@ -406,8 +406,8 @@
         <div [routerLink]="['/audit-and-tracing']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('audit')" [class.expanded]="isSubmenuOpen('audit')">
           <i class="fa-regular fa-rectangle-list"></i>
-          <span>{{ 'MENU.AUDIT_TRACING' | translate }}</span>
-          <i class="fas fa-chevron-down submenu-arrow"></i>
+          <span class="ps-1">{{ 'MENU.AUDIT_TRACING' | translate }}</span>
+          <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
         </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('audit')">
@@ -452,7 +452,7 @@
           <a class="nav-link" (click)="toggleSubmenu('systemManagement')" [class.expanded]="isSubmenuOpen('systemManagement')">
             <i class="fas fa-cogs"></i>
             <span>{{ 'MENU.SYSTEM_MANAGEMENT' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('systemManagement')">
@@ -495,7 +495,7 @@
           <a class="nav-link" (click)="toggleSubmenu('supervision')" [class.expanded]="isSubmenuOpen('supervision')">
             <i class="fas fa-shield-alt"></i>
             <span>{{ 'MENU.CONSORSHIP' | translate }}</span>
-            <i class="fas fa-chevron-down submenu-arrow"></i>
+            <i class="ms-auto fas fa-chevron-down submenu-arrow"></i>
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('supervision')">

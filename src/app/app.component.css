@@ -34,8 +34,8 @@
   }
 
   :host-context([dir="ltr"]) .sidebar-expanded .main-content {
-    margin-left: 280px;
-    width: calc(100% - 280px);
+    margin-left: 350px;
+    width: calc(100% - 350px);
   }
 
   /* RTL */
@@ -45,8 +45,8 @@
   }
 
   :host-context([dir="rtl"]) .sidebar-expanded .main-content {
-    margin-right: 280px;
-    width: calc(100% - 280px);
+    margin-right: 350px;
+    width: calc(100% - 350px);
   }
 }
 
