@@ -1,5 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+
+// PrimeNG Modules
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { MobileAndAppRoutingModule } from './mobile-and-app-routing.module';
 import { MobileAndAppComponent } from './components/mobile-and-app/mobile-and-app.component';
@@ -23,7 +29,12 @@ import { MobileSignLocationsComponent } from './components/mobile-sign-locations
   ],
   imports: [
     CommonModule,
-    MobileAndAppRoutingModule
+    ReactiveFormsModule,
+    FormsModule,
+    MobileAndAppRoutingModule,
+    TranslateModule.forChild(),
+    ToastModule,
+    ConfirmDialogModule
   ]
 })
 export class MobileAndAppModule { }

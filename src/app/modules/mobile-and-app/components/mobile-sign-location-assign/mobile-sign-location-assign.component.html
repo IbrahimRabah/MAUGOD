@@ -1,1 +1,556 @@
-<p>mobile-sign-location-assign works!</p>
+<div class="mobile-sign-location-assign-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addMobileSignLocationAssign()" [title]="'MOBILE_SIGN_LOCATION_ASSIGN.ADD_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MOBILE_SIGN_LOCATION_ASSIGN.ADD' | translate }}
+      </button>
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'MOBILE_SIGN_LOCATION_ASSIGN.DELETE_SELECTED_TITLE' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'MOBILE_SIGN_LOCATION_ASSIGN.DELETE_SELECTED' | translate }} ({{ selectedItems.length }})
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            class="search-input" 
+            formControlName="searchTerm"
+            [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_PLACEHOLDER' | translate"
+            (keyup.enter)="onSearch()"
+            [title]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_TITLE' | translate">
+          <i class="fas fa-search search-icon" (click)="onSearch()"></i>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="text-center">
+            <input 
+              type="checkbox" 
+              [checked]="isAllSelected" 
+              [indeterminate]="isPartiallySelected"
+              (change)="toggleSelectAll()"
+              [title]="'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ALL' | translate">
+          </th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ACTIONS' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.FOR_EVERYONE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.EMPLOYEE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.MANAGER_OF_DEPARTMENT' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.DEPARTMENT' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.MANAGER_OF_BRANCH' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.BRANCH' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ROLE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.LOCATION' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.START_DATE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.END_DATE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.NOTE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of mobileSignLocationAssigns" class="table-row">
+          <td class="text-center">
+            <input 
+              type="checkbox" 
+              [checked]="isSelected(item)"
+              (change)="toggleSelection(item)"
+              [title]="'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ITEM' | translate">
+          </td>
+          <td class="text-center">
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editMobileSignLocationAssign(item)"
+              [title]="'MOBILE_SIGN_LOCATION_ASSIGN.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td class="text-center">
+            <span class="boolean-badge" [class.yes]="item.forEveryoneId === 1" [class.no]="item.forEveryoneId !== 1">
+              {{ getForEveryoneText(item.forEveryoneId) | translate }}
+            </span>
+          </td>
+          <td class="text-center">{{ item.empName || '-' }}</td>
+          <td class="text-center">{{ item.deptMgrName || '-' }}</td>
+          <td class="text-center">{{ item.deptName || '-' }}</td>
+          <td class="text-center">{{ item.branchMgrName || '-' }}</td>
+          <td class="text-center">{{ item.branchName || '-' }}</td>
+          <td class="text-center">{{ item.roleName || '-' }}</td>
+          <td class="text-center">{{ item.locName || '-' }}</td>
+          <td class="text-center">{{ formatDate(item.sDate) }}</td>
+          <td class="text-center">{{ formatDate(item.eDate) }}</td>
+          <td class="text-center">{{ item.note || '-' }}</td>
+          <td class="text-center">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteMobileSignLocationAssign(item)"
+              [title]="'MOBILE_SIGN_LOCATION_ASSIGN.DELETE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="mobileSignLocationAssigns.length === 0" class="empty-row">
+          <td colspan="14" class="empty-message text-center">
+            {{ 'MOBILE_SIGN_LOCATION_ASSIGN.NO_DATA_FOUND' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SHOWING' | translate }} {{ currentPageStart }} {{ 'MOBILE_SIGN_LOCATION_ASSIGN.TO' | translate }} {{ currentPageEnd }} {{ 'MOBILE_SIGN_LOCATION_ASSIGN.OF' | translate }} {{ totalRecords }} {{ 'MOBILE_SIGN_LOCATION_ASSIGN.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.PAGE' | translate }} {{ currentPage }} {{ 'MOBILE_SIGN_LOCATION_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.PAGE' | translate }} {{ currentPage }} {{ 'MOBILE_SIGN_LOCATION_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_LOCATION_ASSIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Mobile Sign Location Assignment Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 *ngIf="!isEditMode">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ADD_MODAL_TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.EDIT_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="assignmentForm" (ngSubmit)="submitMobileSignLocationAssign()">
+        
+        <!-- Step 1: Assignment Type Selection -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ASSIGN_TYPE_SECTION' | translate }}</h4>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" formControlName="assignType" value="everyone" (change)="onAssignTypeChange()">
+              <span class="radio-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.FOR_EVERYONE' | translate }}</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" formControlName="assignType" value="group" (change)="onAssignTypeChange()">
+              <span class="radio-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.FOR_GROUP' | translate }}</span>
+            </label>
+          </div>
+          <div *ngIf="isFieldInvalid('assignType')" class="error-message">
+            {{ getFieldError('assignType') | translate }}
+          </div>
+        </div>
+
+        <!-- Step 2: Group Selection (Only shown when "For Group" is selected) -->
+        <div class="form-section" *ngIf="assignmentForm.get('assignType')?.value === 'group'">
+          <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.GROUP_SELECTION_SECTION' | translate }}</h4>
+          <div class="checkbox-grid" formGroupName="groupTypes">
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="employees" (change)="onGroupTypeChange('employees')">
+              <span class="checkbox-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.EMPLOYEES' | translate }}</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="departments" (change)="onGroupTypeChange('departments')">
+              <span class="checkbox-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.DEPARTMENTS' | translate }}</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="branches" (change)="onGroupTypeChange('branches')">
+              <span class="checkbox-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.BRANCHES' | translate }}</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="roles" (change)="onGroupTypeChange('roles')">
+              <span class="checkbox-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ROLES' | translate }}</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="departmentManagers" (change)="onGroupTypeChange('departmentManagers')">
+              <span class="checkbox-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.DEPARTMENT_MANAGERS' | translate }}</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" formControlName="branchManagers" (change)="onGroupTypeChange('branchManagers')">
+              <span class="checkbox-custom"></span>
+              <span>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.BRANCH_MANAGERS' | translate }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: Multi-select Lists -->
+        <div class="form-section" *ngIf="assignmentForm.get('assignType')?.value === 'group'">
+          
+          <!-- Employees Multi-select -->
+          <div class="picklist-container" *ngIf="assignmentForm.get('groupTypes.employees')?.value">
+            <div class="picklist-section">
+              <label class="picklist-label">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_EMPLOYEES' | translate }}</label>
+              <div class="picklist-search">
+                <input type="text" 
+                       [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_EMPLOYEES' | translate"
+                       [value]="multiSelectStates['employees'].searchTerm || ''"
+                       (input)="onSearchInput($event, 'employees')">
+                <button type="button" (click)="selectAllItems('employees')" 
+                        [disabled]="!hasSelectableItems('employees') || areAllItemsSelected('employees')">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" (click)="clearSelection('employees')" 
+                        [disabled]="getSelectedCount('employees') === 0">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <label *ngFor="let item of getFilteredItems('employees')" class="picklist-item">
+                  <input type="checkbox" 
+                         [checked]="isItemSelected('employees', item)"
+                         (change)="toggleItemSelection('employees', item)">
+                  <span>{{ item.name }}</span>
+                </label>
+              </div>
+              <div class="selected-count">
+                {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECTED_COUNT' | translate }}: {{ getSelectedCount('employees') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Departments Multi-select -->
+          <div class="picklist-container" *ngIf="assignmentForm.get('groupTypes.departments')?.value">
+            <div class="picklist-section">
+              <label class="picklist-label">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_DEPARTMENTS' | translate }}</label>
+              <div class="picklist-search">
+                <input type="text" 
+                       [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_DEPARTMENTS' | translate"
+                       [value]="multiSelectStates['departments'].searchTerm || ''"
+                       (input)="onSearchInput($event, 'departments')">
+                <button type="button" (click)="selectAllItems('departments')" 
+                        [disabled]="!hasSelectableItems('departments') || areAllItemsSelected('departments')">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" (click)="clearSelection('departments')" 
+                        [disabled]="getSelectedCount('departments') === 0">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <label *ngFor="let item of getFilteredItems('departments')" class="picklist-item">
+                  <input type="checkbox" 
+                         [checked]="isItemSelected('departments', item)"
+                         (change)="toggleItemSelection('departments', item)">
+                  <span>{{ item.name }}</span>
+                </label>
+              </div>
+              <div class="selected-count">
+                {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECTED_COUNT' | translate }}: {{ getSelectedCount('departments') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Branches Multi-select -->
+          <div class="picklist-container" *ngIf="assignmentForm.get('groupTypes.branches')?.value">
+            <div class="picklist-section">
+              <label class="picklist-label">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_BRANCHES' | translate }}</label>
+              <div class="picklist-search">
+                <input type="text" 
+                       [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_BRANCHES' | translate"
+                       [value]="multiSelectStates['branches'].searchTerm || ''"
+                       (input)="onSearchInput($event, 'branches')">
+                <button type="button" (click)="selectAllItems('branches')" 
+                        [disabled]="!hasSelectableItems('branches') || areAllItemsSelected('branches')">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" (click)="clearSelection('branches')" 
+                        [disabled]="getSelectedCount('branches') === 0">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <label *ngFor="let item of getFilteredItems('branches')" class="picklist-item">
+                  <input type="checkbox" 
+                         [checked]="isItemSelected('branches', item)"
+                         (change)="toggleItemSelection('branches', item)">
+                  <span>{{ item.name }}</span>
+                </label>
+              </div>
+              <div class="selected-count">
+                {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECTED_COUNT' | translate }}: {{ getSelectedCount('branches') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Roles Multi-select -->
+          <div class="picklist-container" *ngIf="assignmentForm.get('groupTypes.roles')?.value">
+            <div class="picklist-section">
+              <label class="picklist-label">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ROLES' | translate }}</label>
+              <div class="picklist-search">
+                <input type="text" 
+                       [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_ROLES' | translate"
+                       [value]="multiSelectStates['roles'].searchTerm || ''"
+                       (input)="onSearchInput($event, 'roles')">
+                <button type="button" (click)="selectAllItems('roles')" 
+                        [disabled]="!hasSelectableItems('roles') || areAllItemsSelected('roles')">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" (click)="clearSelection('roles')" 
+                        [disabled]="getSelectedCount('roles') === 0">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <label *ngFor="let item of getFilteredItems('roles')" class="picklist-item">
+                  <input type="checkbox" 
+                         [checked]="isItemSelected('roles', item)"
+                         (change)="toggleItemSelection('roles', item)">
+                  <span>{{ item.name }}</span>
+                </label>
+              </div>
+              <div class="selected-count">
+                {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECTED_COUNT' | translate }}: {{ getSelectedCount('roles') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Department Managers Multi-select -->
+          <div class="picklist-container" *ngIf="assignmentForm.get('groupTypes.departmentManagers')?.value">
+            <div class="picklist-section">
+              <label class="picklist-label">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_DEPARTMENT_MANAGERS' | translate }}</label>
+              <div class="picklist-search">
+                <input type="text" 
+                       [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_DEPARTMENT_MANAGERS' | translate"
+                       [value]="multiSelectStates['departmentManagers'].searchTerm || ''"
+                       (input)="onSearchInput($event, 'departmentManagers')">
+                <button type="button" (click)="selectAllItems('departmentManagers')" 
+                        [disabled]="!hasSelectableItems('departmentManagers') || areAllItemsSelected('departmentManagers')">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" (click)="clearSelection('departmentManagers')" 
+                        [disabled]="getSelectedCount('departmentManagers') === 0">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <label *ngFor="let item of getFilteredItems('departmentManagers')" class="picklist-item">
+                  <input type="checkbox" 
+                         [checked]="isItemSelected('departmentManagers', item)"
+                         (change)="toggleItemSelection('departmentManagers', item)">
+                  <span>{{ item.name }}</span>
+                </label>
+              </div>
+              <div class="selected-count">
+                {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECTED_COUNT' | translate }}: {{ getSelectedCount('departmentManagers') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Branch Managers Multi-select -->
+          <div class="picklist-container" *ngIf="assignmentForm.get('groupTypes.branchManagers')?.value">
+            <div class="picklist-section">
+              <label class="picklist-label">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_BRANCH_MANAGERS' | translate }}</label>
+              <div class="picklist-search">
+                <input type="text" 
+                       [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_BRANCH_MANAGERS' | translate"
+                       [value]="multiSelectStates['branchManagers'].searchTerm || ''"
+                       (input)="onSearchInput($event, 'branchManagers')">
+                <button type="button" (click)="selectAllItems('branchManagers')" 
+                        [disabled]="!hasSelectableItems('branchManagers') || areAllItemsSelected('branchManagers')">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" (click)="clearSelection('branchManagers')" 
+                        [disabled]="getSelectedCount('branchManagers') === 0">
+                  {{ 'MOBILE_SIGN_LOCATION_ASSIGN.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <label *ngFor="let item of getFilteredItems('branchManagers')" class="picklist-item">
+                  <input type="checkbox" 
+                         [checked]="isItemSelected('branchManagers', item)"
+                         (change)="toggleItemSelection('branchManagers', item)">
+                  <span>{{ item.name }}</span>
+                </label>
+              </div>
+              <div class="selected-count">
+                {{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECTED_COUNT' | translate }}: {{ getSelectedCount('branchManagers') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Location Selection -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.LOCATION_SECTION' | translate }}</h4>
+          <div class="form-group">
+            <label class="required">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.LOCATION' | translate }}</label>
+            <select formControlName="locationId" 
+                    class="form-select"
+                    [class.error]="isFieldInvalid('locationId')">
+              <option value="">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.SELECT_LOCATION' | translate }}</option>
+              <option *ngFor="let location of locations" [value]="location.value">
+                {{ location.label }}
+              </option>
+            </select>
+            <div *ngIf="isFieldInvalid('locationId')" class="error-message">
+              {{ getFieldError('locationId') | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Date Range -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.DATE_RANGE_SECTION' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.START_DATE' | translate }}</label>
+              <input type="date" 
+                     formControlName="startDate" 
+                     class="form-input"
+                     [class.error]="isFieldInvalid('startDate')">
+              <div *ngIf="isFieldInvalid('startDate')" class="error-message">
+                {{ getFieldError('startDate') | translate }}
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="required">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.END_DATE' | translate }}</label>
+              <input type="date" 
+                     formControlName="endDate" 
+                     class="form-input"
+                     [class.error]="isFieldInvalid('endDate') || !isDateRangeValid()">
+              <div *ngIf="isFieldInvalid('endDate')" class="error-message">
+                {{ getFieldError('endDate') | translate }}
+              </div>
+              <div *ngIf="!isDateRangeValid() && assignmentForm.get('startDate')?.value && assignmentForm.get('endDate')?.value" class="error-message">
+                {{ 'MOBILE_SIGN_LOCATION_ASSIGN.END_DATE_BEFORE_START_DATE_ERROR' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Notes -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.NOTE_SECTION' | translate }}</h4>
+          <div class="form-group full-width">
+            <label>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.NOTE' | translate }}</label>
+            <textarea formControlName="note" 
+                      class="form-textarea"
+                      rows="3"
+                      [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.ENTER_NOTE' | translate"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'MOBILE_SIGN_LOCATION_ASSIGN.CANCEL' | translate }}
+          </button>
+          <button type="submit" 
+                  class="submit-btn" 
+                  [disabled]="!isAssignmentFormValid || loading">
+            <i *ngIf="loading" class="fas fa-spinner fa-spin"></i>
+            {{ (!isEditMode ? 'MOBILE_SIGN_LOCATION_ASSIGN.CREATE' : 'MOBILE_SIGN_LOCATION_ASSIGN.UPDATE') | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

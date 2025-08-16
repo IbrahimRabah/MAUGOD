@@ -1,6 +1,26 @@
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
+
+export interface UpdateEmployeeHandleBalanceRequest {
+  recId: number;
+  allEmployee: boolean;
+  empId: number;
+  deptId: number;
+  branchId: number;
+  roleId: number;
+  stsId: string;
+  allSts: boolean;
+  maxPerWeek: number;
+  maxPerMonth: number;
+  maxPerYear: number;
+  forwardBalance: boolean;
+  countBaseContractStart: boolean;
+  fractionFloorCeil: boolean;
+  includeWeekendInBetween: boolean;
+  note: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +47,8 @@ export class EmployeeHandlesBalanceService {
   addEmployeeHandleBalance(employeeHandleBalance: any) {
     return this.http.post(`${this.apiUrl}/AddEmployeeHandleBalance`, employeeHandleBalance);
   }
-  updateEmployeeHandleBalance(employeeHandleBalance: any) {
-    return this.http.post(`${this.apiUrl}/UpdateEmployeeHandleBalance`, employeeHandleBalance);
+  updateEmployeeHandleBalance(body: UpdateEmployeeHandleBalanceRequest) {
+    return this.http.put(`${this.apiUrl}`, body);
   }
   deleteEmployeeHandleBalance(id: number) {
     return this.http.delete(`${this.apiUrl}/DeleteEmployeeHandleBalanceById/${id}`);

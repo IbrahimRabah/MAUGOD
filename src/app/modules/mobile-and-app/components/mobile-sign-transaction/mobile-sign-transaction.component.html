@@ -1,1 +1,262 @@
-<p>mobile-sign-transaction works!</p>
+
+<div class="mobile-sign-transaction-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Filter Section -->
+  <div class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-grid">
+        <!-- Start Date -->
+        <div class="filter-group">
+          <label for="startDate">{{ 'MOBILE_SIGN_TRANSACTION.START_DATE' | translate }}</label>
+          <input 
+            type="date" 
+            id="startDate"
+            formControlName="startDate"
+            class="form-input"
+            [placeholder]="'MOBILE_SIGN_TRANSACTION.START_DATE_PLACEHOLDER' | translate">
+        </div>
+
+        <!-- End Date -->
+        <div class="filter-group">
+          <label for="endDate">{{ 'MOBILE_SIGN_TRANSACTION.END_DATE' | translate }}</label>
+          <input 
+            type="date" 
+            id="endDate"
+            formControlName="endDate"
+            class="form-input"
+            [placeholder]="'MOBILE_SIGN_TRANSACTION.END_DATE_PLACEHOLDER' | translate">
+        </div>
+
+        <!-- Employee Dropdown -->
+        <div class="filter-group">
+          <label for="employee">{{ 'MOBILE_SIGN_TRANSACTION.EMPLOYEE' | translate }}</label>
+          <div class="employee-dropdown" [class.open]="showEmployeeDropdown">
+            <div class="employee-input-container">
+              <input 
+                type="text"
+                class="form-input employee-search"
+                [value]="selectedEmployee?.label || employeeSearchTerm"
+                (input)="onEmployeeSearch($event)"
+                (focus)="showEmployeeDropdown = true"
+                [placeholder]="'MOBILE_SIGN_TRANSACTION.SELECT_EMPLOYEE' | translate">
+              <button 
+                type="button" 
+                class="clear-employee-btn"
+                *ngIf="selectedEmployee"
+                (click)="clearEmployeeSelection()">
+                <i class="fas fa-times"></i>
+              </button>
+              <i class="fas fa-chevron-down dropdown-arrow" 
+                 [class.rotated]="showEmployeeDropdown"></i>
+            </div>
+            
+            <div class="employee-options" *ngIf="showEmployeeDropdown">
+              <div class="employee-loading" *ngIf="loadingEmployees">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'COMMON.LOADING' | translate }}
+              </div>
+              <div class="employee-option" 
+                   *ngFor="let employee of filteredEmployees" 
+                   (click)="selectEmployee(employee)"
+                   [class.selected]="selectedEmployee?.value === employee.value">
+                {{ employee.label }}
+              </div>
+              <div class="no-employees" *ngIf="!loadingEmployees && filteredEmployees.length === 0">
+                {{ 'MOBILE_SIGN_TRANSACTION.NO_EMPLOYEES_FOUND' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-actions">
+          <button type="button" class="filter-btn" (click)="onFilter()">
+            <i class="fas fa-search"></i>
+            {{ 'MOBILE_SIGN_TRANSACTION.FILTER' | translate }}
+          </button>
+          <button type="button" class="clear-btn" (click)="onClearFilters()">
+            <i class="fas fa-eraser"></i>
+            {{ 'MOBILE_SIGN_TRANSACTION.CLEAR' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MOBILE_SIGN_TRANSACTION.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="recalculate-btn" 
+              (click)="recalculateSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'MOBILE_SIGN_TRANSACTION.RECALCULATE_SELECTED_TITLE' | translate">
+        <i class="fas fa-calculator"></i>
+        {{ 'MOBILE_SIGN_TRANSACTION.RECALCULATE_SELECTED' | translate }} ({{ selectedItems.length }})
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <div class="records-info">
+        {{ 'MOBILE_SIGN_TRANSACTION.TOTAL_RECORDS' | translate }}: {{ totalRecords }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="text-center">
+            <input 
+              type="checkbox" 
+              [checked]="isAllSelected" 
+              [indeterminate]="isPartiallySelected"
+              (change)="toggleSelectAll()"
+              [title]="'MOBILE_SIGN_TRANSACTION.SELECT_ALL' | translate">
+          </th>
+          <th class="text-center">{{ 'MOBILE_SIGN_TRANSACTION.EMPLOYEE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_TRANSACTION.SIGN_DATE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_TRANSACTION.STATUS' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_TRANSACTION.PHONE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_TRANSACTION.ACCEPTED_BY_LOCATION' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_TRANSACTION.PREVIEW' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of mobileSignTransactions" class="table-row">
+          <td class="text-center">
+            <input 
+              type="checkbox" 
+              [checked]="isSelected(item)"
+              (change)="toggleSelection(item)"
+              [title]="'COMMON.SELECT_ITEM' | translate">
+          </td>
+          <td class="text-center">{{ item.empName }}</td>
+          <td class="text-center">{{ formatDate(item.signDate) }}</td>
+          <td class="text-center">
+            <span [class]="getStatusBadgeClass(item.sts)">
+              {{ item.statusName }}
+            </span>
+          </td>
+          <td class="text-center">{{ item.phoneId }}</td>
+          <td class="text-center">{{ item.acceptedBy }}</td>
+          <td class="text-center">
+            <button 
+              class="action-btn preview-btn" 
+              (click)="previewTransaction(item)"
+              [title]="'MOBILE_SIGN_TRANSACTION.PREVIEW' | translate">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="mobileSignTransactions.length === 0" class="empty-row">
+          <td colspan="7" class="empty-message text-center">
+            {{ 'MOBILE_SIGN_TRANSACTION.NO_DATA_FOUND' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'MOBILE_SIGN_TRANSACTION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MOBILE_SIGN_TRANSACTION.TO' | translate }} {{ currentPageEnd }} {{ 'MOBILE_SIGN_TRANSACTION.OF' | translate }} {{ totalRecords }} {{ 'MOBILE_SIGN_TRANSACTION.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="page-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage >= totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="page-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage >= totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MOBILE_SIGN_TRANSACTION.PAGE' | translate }} {{ currentPage }} {{ 'MOBILE_SIGN_TRANSACTION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="page-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage <= 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="page-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage <= 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="page-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage <= 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="page-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage <= 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MOBILE_SIGN_TRANSACTION.PAGE' | translate }} {{ currentPage }} {{ 'MOBILE_SIGN_TRANSACTION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="page-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage >= totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="page-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage >= totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'MOBILE_SIGN_TRANSACTION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [value]="pageSize" (change)="onPageSizeChangeEvent($event)">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Click outside handler for employee dropdown -->
+<div *ngIf="showEmployeeDropdown" class="dropdown-backdrop" (click)="showEmployeeDropdown = false"></div>

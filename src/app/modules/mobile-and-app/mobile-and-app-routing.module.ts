@@ -6,6 +6,7 @@ import { SendAppQrCodeComponent } from './components/send-app-qr-code/send-app-q
 import { MobileSignLocationAssignComponent } from './components/mobile-sign-location-assign/mobile-sign-location-assign.component';
 import { MobileSignTransactionComponent } from './components/mobile-sign-transaction/mobile-sign-transaction.component';
 import { MobileSignLocationsComponent } from './components/mobile-sign-locations/mobile-sign-locations.component';
+import { AppDevicesComponent } from './components/app-devices/app-devices.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'send-app-qr-code',
     component: SendAppQrCodeComponent
+  },
+  {
+    path: 'app-devices',
+    component: AppDevicesComponent
   },
   {
     path: 'mobile-sign-location-assign',

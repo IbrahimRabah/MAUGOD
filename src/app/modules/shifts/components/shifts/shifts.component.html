@@ -66,14 +66,14 @@
               <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
-          <td>{{ getDisplayValue(shift.shiftName) }}</td>
-          <td>{{ getDisplayValue(shift.sunday) }}</td>
-          <td>{{ getDisplayValue(shift.monday) }}</td>
-          <td>{{ getDisplayValue(shift.tuesday) }}</td>
-          <td>{{ getDisplayValue(shift.wednesday) }}</td>
-          <td>{{ getDisplayValue(shift.thursday) }}</td>
-          <td>{{ getDisplayValue(shift.friday) }}</td>
-          <td>{{ getDisplayValue(shift.saturday) }}</td>
+          <td>{{ getDisplayValue(langService.getCurrentLang() === 'ar' ? shift.shiftNameAr : shift.shiftNameEn) }}</td>
+          <td [innerHTML]="getDisplayValue(shift.sun)"></td>
+          <td [innerHTML]="getDisplayValue(shift.mon)"></td>
+          <td [innerHTML]="getDisplayValue(shift.tue)"></td>
+          <td [innerHTML]="getDisplayValue(shift.wed)"></td>
+          <td [innerHTML]="getDisplayValue(shift.thu)"></td>
+          <td [innerHTML]="getDisplayValue(shift.fri)"></td>
+          <td [innerHTML]="getDisplayValue(shift.sat)"></td>
           <td>
             <span class="boolean-badge" [class.yes]="shift.isActive === '1' || shift.isActive === 'true'" [class.no]="shift.isActive !== '1' && shift.isActive !== 'true'">
               {{ getActiveStatus(shift.isActive) }}
@@ -189,6 +189,325 @@
           <option value="50">50</option>
         </select>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create Shift Modal -->
+<div *ngIf="showCreateShiftModal" class="modal-overlay" (click)="closeCreateShiftModal()">
+  <div class="modal-container create-edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditMode ? ('SHIFTS_TABLE.EDIT_SHIFT_TITLE' | translate) : ('SHIFTS_TABLE.CREATE_SHIFT_TITLE' | translate) }}</h3>
+      <button class="close-btn" (click)="closeCreateShiftModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body create-edit-modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="createShiftForm" (ngSubmit)="onSubmitCreateShift()">
+        
+        <!-- Two Parts Toggle -->
+        <div class="form-section">
+          <div class="form-group">
+            <label>{{ 'SHIFTS_TABLE.TWO_PARTS' | translate }}</label>
+            <input type="checkbox" formControlName="isTwoParts" class="form-checkbox">
+          </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h4>{{ 'SHIFTS_TABLE.BASIC_INFO' | translate }}</h4>
+          <div class="form-group">
+            <label>{{ 'SHIFTS_TABLE.ARABIC_NAME' | translate }} *</label>
+            <input type="text" formControlName="ar" class="form-input" [placeholder]="'SHIFTS_TABLE.ARABIC_NAME_PLACEHOLDER' | translate">
+          </div>
+          <div class="form-group">
+            <label>{{ 'SHIFTS_TABLE.ENGLISH_NAME' | translate }} *</label>
+            <input type="text" formControlName="en" class="form-input" [placeholder]="'SHIFTS_TABLE.ENGLISH_NAME_PLACEHOLDER' | translate">
+          </div>
+        </div>
+
+        <!-- Weekdays Selection -->
+        <div class="form-section">
+          <h4>{{ 'SHIFTS_TABLE.WEEKDAYS' | translate }}</h4>
+          <div class="weekdays-grid">
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.SUNDAY' | translate }} *</label>
+              <p-dropdown 
+                formControlName="sun" 
+                [options]="weekdayOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
+                [filter]="true"
+                [showClear]="true"
+                filterBy="label"
+                class="form-dropdown">
+              </p-dropdown>
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.MONDAY' | translate }} *</label>
+              <p-dropdown 
+                formControlName="mon" 
+                [options]="weekdayOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
+                [filter]="true"
+                [showClear]="true"
+                filterBy="label"
+                class="form-dropdown">
+              </p-dropdown>
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.TUESDAY' | translate }} *</label>
+              <p-dropdown 
+                formControlName="tue" 
+                [options]="weekdayOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
+                [filter]="true"
+                [showClear]="true"
+                filterBy="label"
+                class="form-dropdown">
+              </p-dropdown>
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.WEDNESDAY' | translate }} *</label>
+              <p-dropdown 
+                formControlName="wed" 
+                [options]="weekdayOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
+                [filter]="true"
+                [showClear]="true"
+                filterBy="label"
+                class="form-dropdown">
+              </p-dropdown>
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.THURSDAY' | translate }} *</label>
+              <p-dropdown 
+                formControlName="thu" 
+                [options]="weekdayOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
+                [filter]="true"
+                [showClear]="true"
+                filterBy="label"
+                class="form-dropdown">
+              </p-dropdown>
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.FRIDAY' | translate }} *</label>
+              <p-dropdown 
+                formControlName="fri" 
+                [options]="weekdayOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
+                [filter]="true"
+                [showClear]="true"
+                filterBy="label"
+                class="form-dropdown">
+              </p-dropdown>
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.SATURDAY' | translate }} *</label>
+              <p-dropdown 
+                formControlName="sat" 
+                [options]="weekdayOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
+                [filter]="true"
+                [showClear]="true"
+                filterBy="label"
+                class="form-dropdown">
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part 1 (Always visible) -->
+        <div class="form-section">
+          <h4>{{ 'SHIFTS_TABLE.PART_1' | translate }}</h4>
+          
+          <!-- Part 1 Toggles -->
+          <div class="toggles-row">
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT' | translate }}</label>
+              <input type="checkbox" formControlName="openShift1" class="form-checkbox">
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.TWO_DAYS' | translate }}</label>
+              <input type="checkbox" formControlName="twoDays1" class="form-checkbox">
+            </div>
+          </div>
+
+          <!-- Open Shift Minutes (conditional) -->
+          <div class="form-group" *ngIf="createShiftForm.get('openShift1')?.value">
+            <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT_MINUTES' | translate }}</label>
+            <input type="number" formControlName="openShiftMinutes1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- In Section -->
+          <div class="time-section">
+            <h5>{{ 'SHIFTS_TABLE.IN_SECTION' | translate }}</h5>
+            <div class="time-row">
+              <div class="form-group time-input">
+                <label>{{ 'SHIFTS_TABLE.IN_TIME' | translate }} *</label>
+                <input type="time" formControlName="in1" class="form-input">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.EARLY_IN' | translate }}</label>
+                <input type="number" formControlName="earlyIn1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.IN_ALLOW' | translate }}</label>
+                <input type="number" formControlName="inAllowMin1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.MAX_IN' | translate }}</label>
+                <input type="number" formControlName="maxIn1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.OVERTIME_IN' | translate }}</label>
+                <input type="number" formControlName="makeupIn1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+            </div>
+          </div>
+
+          <!-- Out Section -->
+          <div class="time-section">
+            <h5>{{ 'SHIFTS_TABLE.OUT_SECTION' | translate }}</h5>
+            <div class="time-row">
+              <div class="form-group time-input">
+                <label>{{ 'SHIFTS_TABLE.OUT_TIME' | translate }} *</label>
+                <input type="time" formControlName="out1" class="form-input">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.EARLY_OUT' | translate }}</label>
+                <input type="number" formControlName="earlyOut1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.OUT_ALLOW' | translate }}</label>
+                <input type="number" formControlName="outAllowMin1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.MAX_OUT' | translate }}</label>
+                <input type="number" formControlName="maxOut1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.OVERTIME_OUT' | translate }}</label>
+                <input type="number" formControlName="makeupOut1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part 2 (Conditional based on isTwoParts) -->
+        <div class="form-section" *ngIf="createShiftForm.get('isTwoParts')?.value">
+          <h4>{{ 'SHIFTS_TABLE.PART_2' | translate }}</h4>
+          
+          <!-- Part 2 Toggles -->
+          <div class="toggles-row">
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT' | translate }}</label>
+              <input type="checkbox" formControlName="openShift2" class="form-checkbox">
+            </div>
+            <div class="form-group">
+              <label>{{ 'SHIFTS_TABLE.TWO_DAYS' | translate }}</label>
+              <input type="checkbox" formControlName="twoDays2" class="form-checkbox">
+            </div>
+          </div>
+
+          <!-- Open Shift Minutes (conditional) -->
+          <div class="form-group" *ngIf="createShiftForm.get('openShift2')?.value">
+            <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT_MINUTES' | translate }}</label>
+            <input type="number" formControlName="openShiftMinutes2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+          </div>
+
+          <!-- In Section -->
+          <div class="time-section">
+            <h5>{{ 'SHIFTS_TABLE.IN_SECTION' | translate }}</h5>
+            <div class="time-row">
+              <div class="form-group time-input">
+                <label>{{ 'SHIFTS_TABLE.IN_TIME' | translate }}</label>
+                <input type="time" formControlName="in2" class="form-input">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.EARLY_IN' | translate }}</label>
+                <input type="number" formControlName="earlyIn2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.IN_ALLOW' | translate }}</label>
+                <input type="number" formControlName="inAllowMin2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.MAX_IN' | translate }}</label>
+                <input type="number" formControlName="maxIn2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.OVERTIME_IN' | translate }}</label>
+                <input type="number" formControlName="makeupIn2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+            </div>
+          </div>
+
+          <!-- Out Section -->
+          <div class="time-section">
+            <h5>{{ 'SHIFTS_TABLE.OUT_SECTION' | translate }}</h5>
+            <div class="time-row">
+              <div class="form-group time-input">
+                <label>{{ 'SHIFTS_TABLE.OUT_TIME' | translate }}</label>
+                <input type="time" formControlName="out2" class="form-input">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.EARLY_OUT' | translate }}</label>
+                <input type="number" formControlName="earlyOut2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.OUT_ALLOW' | translate }}</label>
+                <input type="number" formControlName="outAllowMin2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.MAX_OUT' | translate }}</label>
+                <input type="number" formControlName="maxOut2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+              <div class="form-group">
+                <label>{{ 'SHIFTS_TABLE.OVERTIME_OUT' | translate }}</label>
+                <input type="number" formControlName="makeupOut2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Status -->
+        <div class="form-section">
+          <div class="form-group">
+            <label>{{ 'SHIFTS_TABLE.IS_ACTIVE' | translate }}</label>
+            <input type="checkbox" formControlName="isActive" class="form-checkbox">
+          </div>
+        </div>
+
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="cancel-btn" type="button" (click)="closeCreateShiftModal()">
+        {{ 'SHIFTS_TABLE.CANCEL' | translate }}
+      </button>
+      <button class="submit-btn" 
+              type="button"
+              (click)="onSubmitCreateShift()"
+              [disabled]="isSubmittingShift || !isCreateShiftFormValid">
+        <span *ngIf="!isSubmittingShift">{{ isEditMode ? ('SHIFTS_TABLE.UPDATE' | translate) : ('SHIFTS_TABLE.CREATE' | translate) }}</span>
+        <span *ngIf="isSubmittingShift">{{ isEditMode ? ('SHIFTS_TABLE.UPDATING' | translate) : ('SHIFTS_TABLE.CREATING' | translate) }}</span>
+      </button>
     </div>
   </div>
 </div>

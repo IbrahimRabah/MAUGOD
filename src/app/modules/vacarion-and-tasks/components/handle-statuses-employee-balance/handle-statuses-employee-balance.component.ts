@@ -309,9 +309,9 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
       roleIds: [[]],
       stsId: [''],
       allSts: [false],
-      maxPerWeek: [''],
-      maxPerMonth: [''],
-      maxPerYear: [''],
+      maxPerWeek: [0],
+      maxPerMonth: [0],
+      maxPerYear: [0],
       forwardBalance: [false],
       countBaseContractStart: [false],
       fractionFloorCeil: [false],
@@ -556,6 +556,9 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
       branchIds: [],
       roleIds: [],
       allSts: false,
+      maxPerWeek: 0,
+      maxPerMonth: 0,
+      maxPerYear: 0,
       forwardBalance: false,
       countBaseContractStart: false,
       fractionFloorCeil: false,
@@ -919,18 +922,30 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
   editBalance(balance: EmployeeHandleBalance) {
     this.isEditMode = true;
     this.selectedBalance = balance;
-    
+
     // Reset form first
     this.resetForm();
-    
-    // Set form values
+
+    // Patch all form values
     this.balanceForm.patchValue({
       allEmployee: balance.allEmployee,
-      stsId: balance.stsId,
+      includeEmployees: !!balance.empId,
+      includeDepartments: !!balance.deptId,
+      includeBranches: !!balance.branchId,
+      includeRoles: !!balance.roleId,
+      empIds: balance.empId ? [balance.empId] : [],
+      deptIds: balance.deptId ? [balance.deptId] : [],
+      branchIds: balance.branchId ? [balance.branchId] : [],
+      roleIds: balance.roleId ? [balance.roleId] : [],
+      stsId: balance.stsId ?? '',
+      empId: balance.empId ?? '',
+      deptId: balance.deptId ?? '',
+      branchId: balance.branchId ?? '',
+      roleId: balance.roleId ?? '',
       allSts: balance.allSts,
-      maxPerWeek: balance.maxPerWeek,
-      maxPerMonth: balance.maxPerMonth,
-      maxPerYear: balance.maxPerYear,
+      maxPerWeek: balance.maxPerWeek ?? 0,
+      maxPerMonth: balance.maxPerMonth ?? 0,
+      maxPerYear: balance.maxPerYear ?? 0,
       forwardBalance: balance.forwardBalance,
       countBaseContractStart: balance.countBaseContractStart,
       fractionFloorCeil: balance.fractionFloorCeil,
@@ -938,62 +953,39 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
       note: balance.note
     });
 
-    // If not all employees, we need to set specific selections
-    if (!balance.allEmployee) {
-      if (balance.empId) {
-        this.balanceForm.patchValue({ 
-          includeEmployees: true,
-          empIds: [balance.empId]
-        });
-        this.selectedEmployeeIds = [balance.empId];
-        // Find and set the selected employee in multiselect state
-        const employee = this.employees.find(emp => emp.empId === balance.empId);
-        if (employee) {
-          this.multiSelectStates['employees'].selected = [{ id: employee.empId, name: employee.empName }];
-        }
-      }
-      
-      if (balance.deptId) {
-        this.balanceForm.patchValue({ 
-          includeDepartments: true,
-          deptIds: [balance.deptId]
-        });
-        this.selectedDepartmentIds = [balance.deptId];
-        // Find and set the selected department in multiselect state
-        const department = this.departments.find(dept => dept.deptId === balance.deptId);
-        if (department) {
-          this.multiSelectStates['departments'].selected = [{ id: department.deptId, name: department.deptName }];
-        }
-      }
-      
-      if (balance.branchId) {
-        this.balanceForm.patchValue({ 
-          includeBranches: true,
-          branchIds: [balance.branchId]
-        });
-        this.selectedBranchIds = [balance.branchId];
-        // Find and set the selected branch in multiselect state
-        const branch = this.branches.find(br => br.branchId === balance.branchId);
-        if (branch) {
-          this.multiSelectStates['branches'].selected = [{ id: branch.branchId, name: branch.branchName }];
-        }
-      }
-      
-      if (balance.roleId) {
-        this.balanceForm.patchValue({ 
-          includeRoles: true,
-          roleIds: [balance.roleId]
-        });
-        this.selectedRoleIds = [balance.roleId];
-        // Find and set the selected role in multiselect state
-        const role = this.roles.find(r => r.jobId === balance.roleId);
-        if (role) {
-          const roleName = this.currentLang === 2 ? role.arTitle : role.enTitle; // 2 = Arabic, 1 = English
-          this.multiSelectStates['roles'].selected = [{ id: role.jobId, name: roleName }];
-        }
+    // Set selected IDs arrays
+    this.selectedEmployeeIds = balance.empId ? [balance.empId] : [];
+    this.selectedDepartmentIds = balance.deptId ? [balance.deptId] : [];
+    this.selectedBranchIds = balance.branchId ? [balance.branchId] : [];
+    this.selectedRoleIds = balance.roleId ? [balance.roleId] : [];
+
+    // Set multiSelectStates for UI
+    if (balance.empId) {
+      const employee = this.employees.find(emp => emp.empId === balance.empId);
+      if (employee) {
+        this.multiSelectStates['employees'].selected = [{ id: employee.empId, name: employee.empName }];
       }
     }
-    
+    if (balance.deptId) {
+      const department = this.departments.find(dept => dept.deptId === balance.deptId);
+      if (department) {
+        this.multiSelectStates['departments'].selected = [{ id: department.deptId, name: department.deptName }];
+      }
+    }
+    if (balance.branchId) {
+      const branch = this.branches.find(br => br.branchId === balance.branchId);
+      if (branch) {
+        this.multiSelectStates['branches'].selected = [{ id: branch.branchId, name: branch.branchName }];
+      }
+    }
+    if (balance.roleId) {
+      const role = this.roles.find(r => r.jobId === balance.roleId);
+      if (role) {
+        const roleName = this.currentLang === 2 ? role.arTitle : role.enTitle;
+        this.multiSelectStates['roles'].selected = [{ id: role.jobId, name: roleName }];
+      }
+    }
+
     // Load all dropdown data when modal opens for editing
     this.loadAllData();
     this.showAddModal = true;

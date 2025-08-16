@@ -1,1 +1,264 @@
-<p>mobile-sign-locations works!</p>
+<div class="mobile-sign-locations-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Search Section -->
+  <div class="search-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="searchForm" class="search-form">
+      <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+        <input 
+          type="text" 
+          class="search-input" 
+          formControlName="searchTerm"
+          [placeholder]="'MOBILE_SIGN_LOCATIONS.SEARCH_PLACEHOLDER' | translate"
+          (keyup.enter)="onSearch()">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MOBILE_SIGN_LOCATIONS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addLocation()">
+        <i class="fas fa-plus"></i>
+        {{ 'MOBILE_SIGN_LOCATIONS.ADD_LOCATION' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <div class="records-info">
+        {{ 'MOBILE_SIGN_LOCATIONS.TOTAL_RECORDS' | translate }}: {{ totalRecords }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATIONS.EDIT' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATIONS.ARABIC_NAME' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATIONS.ENGLISH_NAME' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATIONS.STATUS' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATIONS.NOTE' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATIONS.PREVIEW' | translate }}</th>
+          <th class="text-center">{{ 'MOBILE_SIGN_LOCATIONS.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of mobileSignLocations" class="table-row">
+          <td class="text-center">
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editLocation(item)"
+              [title]="'MOBILE_SIGN_LOCATIONS.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td class="text-center">{{ item.ar }}</td>
+          <td class="text-center">{{ item.en }}</td>
+          <td class="text-center">
+            <span [class]="getStatusBadgeClass(item.status)">
+              {{ getStatusText(item.status) }}
+            </span>
+          </td>
+          <td class="text-center">{{ item.note }}</td>
+          <td class="text-center">
+            <button 
+              class="action-btn preview-btn" 
+              (click)="previewLocation(item)"
+              [title]="'MOBILE_SIGN_LOCATIONS.PREVIEW' | translate">
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
+          <td class="text-center">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteLocation(item)"
+              [title]="'MOBILE_SIGN_LOCATIONS.DELETE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="mobileSignLocations.length === 0" class="empty-row">
+          <td colspan="7" class="empty-message text-center">
+            {{ 'MOBILE_SIGN_LOCATIONS.NO_DATA' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'MOBILE_SIGN_LOCATIONS.SHOWING' | translate }} {{ currentPageStart }} {{ 'MOBILE_SIGN_LOCATIONS.TO' | translate }} {{ currentPageEnd }} {{ 'MOBILE_SIGN_LOCATIONS.OF' | translate }} {{ totalRecords }} {{ 'MOBILE_SIGN_LOCATIONS.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="page-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="page-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MOBILE_SIGN_LOCATIONS.PAGE' | translate }} {{ currentPage }} {{ 'MOBILE_SIGN_LOCATIONS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="page-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="page-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="page-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="page-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MOBILE_SIGN_TRANSACTION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MOBILE_SIGN_LOCATIONS.PAGE' | translate }} {{ currentPage }} {{ 'MOBILE_SIGN_LOCATIONS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="page-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="page-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MOBILE_SIGN_TRANSACTION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'MOBILE_SIGN_LOCATIONS.ITEMS_PER_PAGE' | translate }}</label>
+      <select [value]="pageSize" (change)="onPageSizeChangeEvent($event)">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Add/Edit Location Modal -->
+  <div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditMode ? ('MOBILE_SIGN_LOCATIONS.EDIT_LOCATION' | translate) : ('MOBILE_SIGN_LOCATIONS.ADD_LOCATION' | translate) }}</h3>
+        <button class="close-btn" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="locationForm" (ngSubmit)="onSubmitLocation()">
+          <div class="form-grid">
+            <!-- Arabic Name -->
+            <div class="form-group">
+              <label for="ar" class="required">{{ 'MOBILE_SIGN_LOCATIONS.ARABIC_NAME' | translate }}</label>
+              <input 
+                type="text" 
+                id="ar"
+                class="form-input"
+                [class.error]="isFieldInvalid('ar')"
+                formControlName="ar"
+                [placeholder]="'MOBILE_SIGN_LOCATIONS.ARABIC_NAME' | translate">
+              <div *ngIf="isFieldInvalid('ar')" class="error-message">
+                {{ getFieldError('ar') }}
+              </div>
+            </div>
+
+            <!-- English Name -->
+            <div class="form-group">
+              <label for="en" class="required">{{ 'MOBILE_SIGN_LOCATIONS.ENGLISH_NAME' | translate }}</label>
+              <input 
+                type="text" 
+                id="en"
+                class="form-input"
+                [class.error]="isFieldInvalid('en')"
+                formControlName="en"
+                [placeholder]="'MOBILE_SIGN_LOCATIONS.ENGLISH_NAME' | translate">
+              <div *ngIf="isFieldInvalid('en')" class="error-message">
+                {{ getFieldError('en') }}
+              </div>
+            </div>
+
+            <!-- Note -->
+            <div class="form-group full-width">
+              <label for="note">{{ 'MOBILE_SIGN_LOCATIONS.NOTE' | translate }}</label>
+              <textarea 
+                id="note"
+                class="form-textarea"
+                formControlName="note"
+                rows="3"
+                [placeholder]="'MOBILE_SIGN_LOCATIONS.NOTE' | translate">
+              </textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="cancel-btn" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+          {{ 'MOBILE_SIGN_LOCATIONS.CANCEL' | translate }}
+        </button>
+        <button 
+          type="button" 
+          class="submit-btn" 
+          [disabled]="!isLocationFormValid"
+          (click)="onSubmitLocation()">
+          <i class="fas fa-save"></i>
+          {{ 'MOBILE_SIGN_LOCATIONS.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
