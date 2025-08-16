@@ -38,7 +38,7 @@
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.EDIT' | translate }}</th>
+          <th></th>
           <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.ARABIC_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.ENGLISH_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.NOTES' | translate }}</th>
@@ -49,7 +49,7 @@
         <tr *ngFor="let nationality of nationalities" class="table-row">
           <td>
             <button class="action-btn edit-btn" (click)="editNationality(nationality)" [title]="'MENU.GENERAL_DATA.NATIONALITIES_GENERAL.EDIT_TOOLTIP' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td>{{ nationality.ar_Name }}</td>
@@ -57,7 +57,7 @@
           <td>{{ nationality.note }}</td>
           <td>
             <button class="action-btn delete-btn" (click)="deleteNationality(nationality)" [title]="'MENU.GENERAL_DATA.NATIONALITIES_GENERAL.DELETE_TOOLTIP' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
         </tr>

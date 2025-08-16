@@ -38,7 +38,7 @@
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th>{{ 'MENU.GENERAL_DATA.BANKS_TABLE.EDIT' | translate }}</th>
+          <th></th>
           <th>{{ 'MENU.GENERAL_DATA.BANKS_TABLE.ARABIC_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.BANKS_TABLE.ENGLISH_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.BANKS_TABLE.BANK_DATA' | translate }}</th>
@@ -53,7 +53,7 @@
               class="action-btn edit-btn" 
               (click)="editBank(bank)"
               [title]="'MENU.GENERAL_DATA.BANKS_GENERAL.EDIT_TOOLTIP' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td>{{ bank.ar_Name }}</td>
@@ -65,7 +65,7 @@
               class="action-btn delete-btn" 
               (click)="deleteBank(bank)"
               [title]="'MENU.GENERAL_DATA.BANKS_GENERAL.DELETE_TOOLTIP' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
         </tr>

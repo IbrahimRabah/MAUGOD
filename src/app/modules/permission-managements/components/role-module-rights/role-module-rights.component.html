@@ -125,14 +125,14 @@
               class="action-btn edit-btn" 
               (click)="editUserRoleModuleRight(right)"
               [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.EDIT' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-6 fas fa-edit"></i>
             </button>
             <button 
               class="action-btn delete-btn" 
               (click)="deleteUserRoleModuleRight(right)"
               [disabled]="!canDeleteOrSelect(right)"
               [title]="'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-6 fas fa-trash"></i>
             </button>
           </td>
         </tr>

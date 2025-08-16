@@ -31,13 +31,13 @@
 /* For small screens, hide sidebar by default */
 @media (max-width: 768px) {
   .sidebar {
-    right: -280px; /* Start hidden */
+    right: -350px; /* Start hidden */
     display: none;
   }
 
   .sidebar.expanded {
     right: 0;
-    width: 280px;
+    width: 350px;
     display: block;
   }
 }
@@ -50,7 +50,7 @@
   }
 
   .sidebar.expanded {
-    width: 280px;
+    width: 350px;
   }
 }
 
@@ -59,7 +59,7 @@
   height: 100%;
   overflow-y: auto;
   background-color: #2e3439;
-  width: 280px; /* Full width for content */
+  width: 350px; /* Full width for content */
 }
 
 /* Main menu items */
@@ -81,6 +81,7 @@
   color: white;
   text-decoration: none;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .nav-link:hover {

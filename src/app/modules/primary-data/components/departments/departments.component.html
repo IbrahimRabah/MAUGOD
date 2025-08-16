@@ -39,7 +39,7 @@
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.EDIT' | translate }}</th>
+          <th></th>
           <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.DEPARTMENT_NAME' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.MANAGER' | translate }}</th>
           <th>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.PARENT_DEPARTMENT' | translate }}</th>
@@ -56,7 +56,7 @@
         <tr *ngFor="let department of departments" class="table-row">
           <td>
             <button class="action-btn edit-btn" (click)="editDepartment(department)" [title]="'MENU.GENERAL_DATA.DEPARTMENTS_GENERAL.EDIT_TOOLTIP' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td>{{ department.deptName }}</td>
@@ -69,12 +69,12 @@
           <td>{{ department.note || '-' }}</td>
           <td>
             <button class="action-btn delete-btn" (click)="deleteDepartment(department)" [title]="'MENU.GENERAL_DATA.DEPARTMENTS_GENERAL.DELETE_TOOLTIP' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
           <td>
             <button class="action-btn number-btn" (click)="changeDepartmentNumber(department)" [title]="'MENU.GENERAL_DATA.DEPARTMENTS_GENERAL.CHANGE_NUMBER_TOOLTIP' | translate">
-              <i class="fas fa-hashtag"></i>
+              <i class="text-success fs-4 fas fa-hashtag"></i>
             </button>
           </td>
         </tr>

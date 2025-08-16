@@ -81,7 +81,7 @@
             <button class="action-btn edit-btn" 
                     (click)="editAttendanceStatus(item)"
                     [title]="'ATTENDANCE_STATUSES.EDIT_TITLE' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td>{{ getStatusName(item) }}</td>
@@ -114,14 +114,14 @@
                     [disabled]="!canDelete(item)"
                     (click)="deleteAttendanceStatus(item)"
                     [title]="'ATTENDANCE_STATUSES.DELETE_TITLE' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
           <td class="text-center">
             <button class="action-btn change-id-btn" 
                     (click)="changeAttendanceStatusId(item)"
                     [title]="'ATTENDANCE_STATUSES.CHANGE_ID' | translate">
-              <i class="fas fa-exchange-alt"></i>
+              <i class="text-primary fs-4 fas fa-exchange-alt"></i>
             </button>
           </td>
         </tr>

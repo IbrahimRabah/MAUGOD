@@ -75,7 +75,7 @@
             <button class="action-btn edit-btn" 
                     (click)="editAutoSign(autoSign)"
                     [title]="'AUTOMATIC_SIGN.EDIT_TITLE' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td [title]="getDisplayValue(autoSign.empName)">{{ getDisplayValue(autoSign.empName) }}</td>
@@ -138,7 +138,7 @@
             <button class="action-btn delete-btn" 
                     (click)="deleteAutoSign(autoSign)"
                     [title]="'AUTOMATIC_SIGN.DELETE_TITLE' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
         </tr>

@@ -43,7 +43,7 @@
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th>{{ 'SHIFTS_TABLE.EDIT' | translate }}</th>
+          <th></th>
           <th>{{ 'SHIFTS_TABLE.NAME' | translate }}</th>
           <th>{{ 'SHIFTS_TABLE.SUNDAY' | translate }}</th>
           <th>{{ 'SHIFTS_TABLE.MONDAY' | translate }}</th>
@@ -63,7 +63,7 @@
             <button class="action-btn edit-btn" 
                     (click)="editShift(shift)"
                     [title]="'SHIFTS_TABLE.EDIT_TOOLTIP' | translate">
-              <i class="fas fa-edit"></i>
+              <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
           <td>{{ getDisplayValue(shift.shiftName) }}</td>
@@ -83,14 +83,14 @@
             <button class="action-btn details-btn" 
                     (click)="viewShiftDetails(shift)"
                     [title]="'SHIFTS_TABLE.DETAILS_TOOLTIP' | translate">
-              <i class="fas fa-eye"></i>
+              <i class="text-primary fs-4 fas fa-eye"></i>
             </button>
           </td>
           <td>
             <button class="action-btn delete-btn" 
                     (click)="deleteShift(shift)"
                     [title]="'SHIFTS_TABLE.DELETE_TOOLTIP' | translate">
-              <i class="fas fa-trash"></i>
+              <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
         </tr>

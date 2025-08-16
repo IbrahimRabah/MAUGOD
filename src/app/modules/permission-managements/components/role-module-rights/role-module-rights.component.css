@@ -321,13 +321,13 @@
 
 /* Table Header */
 .custom-table thead tr.table-header th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #F2F2F2;
+  color: #056ac8;
   padding: 15px 12px;
   text-align: left;
   font-weight: 600;
   font-size: 14px;
-  border: none;
+  border: 1px solid #c5c3c3;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -346,7 +346,7 @@
 .custom-table tbody tr.table-row td {
   padding: 12px;
   vertical-align: middle;
-  border: none;
+  border: 1px solid #c5c3c3;
   font-size: 14px;
 }
 
@@ -384,6 +384,7 @@
 /* Action Buttons */
 .action-btn {
   border: none;
+  background: none;
   padding: 6px 10px;
   margin: 0 2px;
   border-radius: 4px;
@@ -392,24 +393,12 @@
   transition: all 0.3s ease;
 }
 
-.edit-btn {
-  background-color: #28a745;
-  color: white;
-}
-
 .edit-btn:hover {
-  background-color: #218838;
-  transform: translateY(-1px);
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
+  transform: translateY(-2px);
 }
 
 .delete-btn:hover {
-  background-color: #c82333;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .delete-btn:disabled {
