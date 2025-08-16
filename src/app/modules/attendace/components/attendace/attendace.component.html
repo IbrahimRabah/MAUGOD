@@ -1,1 +1,39 @@
-<p>attendace works!</p>
+<div class="cards-container">
+    <!-- Branches Card -->
+    <a [routerLink]="['/attendance/punch-in-transactions']" class="card branches">
+        <div class="icon-container">
+            <i class="fas fa-code-branch"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.ATTENDANCE_DATA_SECTIONS.PUNCH_TRANSACTION' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.PUNCH_TRANSACTION' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Departments Card -->
+    <a [routerLink]="['/attendance']" class="card departments">
+        <div class="icon-container">
+            <i class="fas fa-sitemap"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.ATTENDANCE_DATA_SECTIONS.ATTENDANCE' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.ATTENDANCE' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Employees Card -->
+    <a [routerLink]="['/attendance/change-attendance-time']" class="card employees">
+        <div class="icon-container">
+            <i class="fas fa-users"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.ATTENDANCE_DATA_SECTIONS.CHANGE_ATTENDANCE_TIME' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.CHANGE_ATTENDANCE_TIME' | translate }}</span>
+        </div>
+    </a>
+
+
+</div>

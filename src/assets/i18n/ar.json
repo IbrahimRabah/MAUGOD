@@ -1277,5 +1277,36 @@
       "NEXT_PAGE": "الصفحة التالية",
       "PREVIOUS_PAGE": "الصفحة السابقة"
     }
+  },
+  "Attendance":{
+    "DATE_FILTER": {
+    "TITLE": "البحث بالتاريخ",
+    "START_DATE": "تاريخ البداية",
+    "END_DATE": "تاريخ النهاية",
+    "EMPLOYEE": "الموظف",
+    "DEPARTMENT": "القسم",
+    "ALL_DEPARTMENTS":"جميع الاقسام",
+    "ALL_EMPLOYEES":"جميع الموظفين"
+    },
+    "RESULTS_TABLE": {
+      "EMPLOYEE_HEADER": "الموظف",
+      "DEPARTMENT_HEADER": "القسم",
+      "DATE_SIGN": "تاريخ التبصيم",
+      "DAY_HEADER": "اليوم",
+      "SHIFT_HEADER": "الوردية",
+      "STATUS_HEADER": "الحالة",
+      "IN_HEADER": "الدخول",
+      "LATE_IN_HEADER": "الدخول المبكر",
+      "OUT_HEADER": "الخروج",
+      "EARLY_OUT_HEADER": "الخروج المبكر",
+      "DETAILS_HEADER": "التفاصيل",
+      "DELETE_HEADER": "حذف",
+      "ROWS_PER_PAGE": "الصفوف",
+      "ACTIONS": "الإجراءات",
+      "DELETE_SELECTED": "حذف المحدد",
+      "RECORD_DATE":"تاريخ السجل",
+      "DATA_SOURCE":"مصدر البيانات"
+    }
+
   }
 }
