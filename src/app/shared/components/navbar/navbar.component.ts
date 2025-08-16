@@ -9,11 +9,14 @@ import { AuthenticationService } from '../../../modules/authentication/services/
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
+  UserName: string = '';
   constructor(
     public sidebarService: SidebarService,
     private languageService: LanguageService,
      private authenticationService: AuthenticationService
-  ) { }
+  ) { 
+    this.getEmpName();
+  }
 
   toggleSidebar() {
     console.log('NavbarComponent: Toggle button clicked');
@@ -32,5 +35,8 @@ export class NavbarComponent {
 
   getCurrentLang() {
     return this.languageService.getCurrentLang();
+  }
+  getEmpName() {
+    this.UserName = this.authenticationService.getEmpName();
   }
 }

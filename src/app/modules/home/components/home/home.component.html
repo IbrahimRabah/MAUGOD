@@ -1,1 +1,205 @@
-<p>home works!</p>
+<div class="cards-container">
+  <!-- Dashboard Card -->
+  <a [routerLink]="['/dashboard']" class="card dashboard">
+    <div class="icon-container">
+      <i class="fa fa-dashboard"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.DASHBOARD' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Attendance Card -->
+  <a [routerLink]="['/attendance/view-attendance']" class="card attendance-view">
+    <div class="icon-container">
+      <i class="fas fa-table-list"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.ATTENDANCE' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Mawjood App Card -->
+  <a [routerLink]="['/mobile-and-app/mawjood-app']" class="card mawjood-app">
+    <div class="icon-container">
+      <i class="fa fa-mobile-alt"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MAWJOOD_APP' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Reports Card -->
+  <a [routerLink]="['/reports']" class="card reports">
+    <div class="icon-container">
+      <i class="fa fa-print"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.REPORTS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Attendance Data Card -->
+  <a [routerLink]="['/attendance']" class="card attendance-data">
+    <div class="icon-container">
+      <i class="fas fa-clock"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.ATTENDANCE_DATA' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Shifts Card -->
+  <a [routerLink]="['/shifts-section']" class="card shifts">
+    <div class="icon-container">
+      <i class="fas fa-business-time"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SHIFTS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Vacation and Tasks Card -->
+  <a [routerLink]="['/vacation-tasks']" class="card vacation-tasks">
+    <div class="icon-container">
+      <i class="fas fa-calendar-days"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.VACATION_TASKS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Requests and Approvals Card -->
+  <a [routerLink]="['/requests-and-approvals']" class="card requests-approvals">
+    <div class="icon-container">
+      <i class="fas fa-file-signature"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.REQUESTS_APPROVALS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Tracking Locations Card -->
+  <a [routerLink]="['/tracking-locations']" class="card tracking-locations">
+    <div class="icon-container">
+      <i class="fas fa-map-marker-alt"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.TRACKING_LOCATIONS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Mobile and App Card -->
+  <a [routerLink]="['/mobile-and-app']" class="card mobile-app">
+    <div class="icon-container">
+      <i class="fas fa-mobile-screen"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MOBILE_APP' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Salaries Card -->
+  <a [routerLink]="['/salaries']" class="card salaries">
+    <div class="icon-container">
+      <i class="fas fa-money-bill-wave"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SALARIES' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Primary Data Card -->
+  <a [routerLink]="['/primary-data']" class="card primary-data">
+    <div class="icon-container">
+      <i class="fas fa-database"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.PRIMARY_DATA' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Messages and Notifications Card -->
+  <a [routerLink]="['/messages-and-notifications']" class="card messages-notifications">
+    <div class="icon-container">
+      <i class="fas fa-envelope"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MESSAGES_NOTIFICATIONS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Permission Management Card -->
+  <a [routerLink]="['/permission-managements']" class="card permission-management">
+    <div class="icon-container">
+      <i class="fa-solid fa-users"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.PERMISSION_MANAGEMENT.TITLE' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Audit and Tracing Card -->
+  <a [routerLink]="['/audit-and-tracing']" class="card audit-tracing">
+    <div class="icon-container">
+      <i class="fa-regular fa-rectangle-list"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.AUDIT_TRACING' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- System Management Card -->
+  <a [routerLink]="['/system-management']" class="card system-management">
+    <div class="icon-container">
+      <i class="fas fa-cogs"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SYSTEM_MANAGEMENT' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Consorship Card -->
+  <a [routerLink]="['/consorship']" class="card consorship">
+    <div class="icon-container">
+      <i class="fas fa-shield-alt"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.CONSORSHIP' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+</div>

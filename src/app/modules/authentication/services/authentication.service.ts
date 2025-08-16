@@ -54,6 +54,16 @@ export class AuthenticationService {
   getEmpId(): string {
     return localStorage.getItem('empId') || '';
   }
+getEmpName(): string {
+  const empName = localStorage.getItem('empName')?.trim(); // remove spaces
+
+  if (empName) {
+    return empName;  // non-null, non-empty, not just spaces
+  }
+
+  return 'User Name';
+}
+
 
   getEmpIdAsNumber(): number | null {
     const empId = localStorage.getItem('empId');
