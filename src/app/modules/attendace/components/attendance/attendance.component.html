@@ -58,21 +58,21 @@
 
       <!-- Fingerprints -->
       <div *ngIf="!loadingInfo && Fingerprints.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Fingerprints</h2>
+        <h2 class="py-2">{{ 'Attendance.RESULTS_TABLE.FINGERPRINTS' | translate }}</h2>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
-              <th>Punch id</th>
-              <th>Employee</th>
-              <th>Sign date</th>
-              <th>Data source</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.PUNCH_ID' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.EMPLOYEE' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.SIGN_DATE' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.DATA_SOURCE' | translate }}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let Fingerprint of Fingerprints" class="table-row">
               <td>{{ Fingerprint.recId }}</td>
               <td>{{ Fingerprint.empName }}</td>
-              <td>{{ Fingerprint.signDate }}</td>
+              <td>{{ Fingerprint.signDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
               <td>{{ Fingerprint.dataSourceName}}</td>
             </tr>
           </tbody>
@@ -82,22 +82,22 @@
 
       <!-- Mobile sign -->
       <div *ngIf="!loadingInfo && MobileSigns.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Mobile sign</h2>
+        <h2 class="py-2">{{ 'Attendance.RESULTS_TABLE.MOBILE_SIGN' | translate }}</h2>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
-              <th>Sign id</th>
-              <th>Employee</th>
-              <th>Sign date</th>
-              <th>Status</th>
-              <th>Sign type</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.SIGN_ID' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.EMPLOYEE' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.SIGN_DATE' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.STATUS' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.SIGN_TYPE' | translate }}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let MobileSign of MobileSigns" class="table-row">
               <td>{{ MobileSign.mobTranId }}</td>
               <td>{{ MobileSign.empName }}</td>
-              <td>{{ MobileSign.signDate }}</td>
+              <td>{{ MobileSign.signDate | date:'dd-MM-yyyy HH:mm:ss'}}</td>
               <td>{{ MobileSign.stsName}}</td>
               <td>{{ MobileSign.fpTypName }}</td>
             </tr>
@@ -108,17 +108,17 @@
 
       <!-- Days handle -->
       <div *ngIf="!loadingInfo && DaysHandle.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Days handle</h2>
+        <h2 class="py-2">{{ 'Attendance.RESULTS_TABLE.DAYS_HANDLE' | translate }}</h2>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
-              <th>Handle id</th>
-              <th>Employee</th>
-              <th>Status</th>
-              <th>Part</th>
-              <th>Sdate</th>
-              <th>Edate</th>
-              <th>Note</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.HANDLE_ID' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.EMPLOYEE' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.STATUS' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.PART' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.SDATE' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.EDATE' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.NOTE' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -166,25 +166,25 @@
 
       <!-- Shift information -->
       <div *ngIf="!loadingInfo && shifts.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Shift information</h2>
+        <h2 class="py-2">{{ 'Attendance.RESULTS_TABLE.SHIFT_INFORMATION' | translate }}</h2>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
-              <th>Shift Name</th>
-              <th>Part</th>
-              <th>Open shift</th>
-              <th>Early In</th>
-              <th>In</th>
-              <th>In Allow</th>
-              <th>Max In</th>
-              <th>Makeup In</th>
-              <th>Early Out</th>
-              <th>Out</th>
-              <th>Out Allow</th>
-              <th>Max Out</th>
-              <th>Makeup Out</th>
-              <th>Two Days</th>
-              <th>Per Actual Work</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.SHIFT_NAME' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.PART' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.OPEN_SHIFT' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.EARLY_IN' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.IN' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.IN_ALLOW' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.MAX_IN' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.MAKEUP_IN' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.EARLY_OUT' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.OUT' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.OUT_ALLOW' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.MAX_OUT' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.MAKEUP_OUT' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.TWO_DAYS' | translate }}</th>
+              <th>{{ 'Attendance.RESULTS_TABLE.PER_ACTUAL_WORK' | translate }}</th>
             </tr>
           </thead>
           <tbody>
