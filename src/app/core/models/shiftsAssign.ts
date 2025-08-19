@@ -27,10 +27,10 @@ export interface DeleteShiftsAssignRequest {
 }
 
 export interface CreateShiftsAssignRequest {
-  empId: number;
-  deptId: number;
-  branchId: number;
-  roleId: number;
+  empId: number | null;
+  deptId: number | null;
+  branchId: number | null;
+  roleId: number | null;
   shiftId: number;
   startDate: string; // ISO date string
   endDate: string;   // ISO date string

@@ -696,10 +696,10 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     // Create requests for each selected target
     selectedTargets.forEach(target => {
       const payload: CreateShiftsAssignRequest = {
-        empId: assignmentType === 1 ? target.id : 0,
-        deptId: assignmentType === 2 ? target.id : 0,
-        branchId: assignmentType === 3 ? target.id : 0,
-        roleId: assignmentType === 4 ? target.id : 0,
+        empId: assignmentType === 1 ? target.id : null,
+        deptId: assignmentType === 2 ? target.id : null,
+        branchId: assignmentType === 3 ? target.id : null,
+        roleId: assignmentType === 4 ? target.id : null,
         shiftId: parseInt(formValue.shiftId),
         startDate: this.formatDateForApi(formValue.startDate),
         endDate: this.formatDateForApi(formValue.endDate),
