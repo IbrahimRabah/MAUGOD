@@ -222,7 +222,7 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
   }
 
   onItemSelect(item: TimtranLock) {
-    const index = this.selectedItems.findIndex(selected => selected.id === item.id);
+    const index = this.selectedItems.findIndex(selected => selected.recId === item.recId);
     if (index > -1) {
       this.selectedItems.splice(index, 1);
     } else {
@@ -253,7 +253,7 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
       header: this.translateService.instant('TIMTRAN_LOCK.DELETE_SELECTED'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        const ids = this.selectedItems.map(item => item.id);
+        const ids = this.selectedItems.map(item => item.recId);
         this.performDelete(ids);
       }
     });
@@ -265,7 +265,7 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
       header: this.translateService.instant('TIMTRAN_LOCK.DELETE_SELECTED'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.performDelete([item.id]);
+        this.performDelete([item.recId]);
       }
     });
   }
