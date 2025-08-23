@@ -928,9 +928,9 @@
           <h4 class="section-title">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.VALIDITY_PERIOD_TITLE' | translate }}</h4>
           <div class="form-grid">
             <div class="form-group">
-              <label class="required">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.START_DATE' | translate }}</label>
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.START_DATE' | translate }}</label>
               <input 
-                type="datetime-local" 
+                type="date" 
                 formControlName="sDate" 
                 class="form-input"
                 [class.error]="isFieldInvalid('sDate')">
@@ -940,9 +940,9 @@
             </div>
 
             <div class="form-group">
-              <label class="required">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.END_DATE' | translate }}</label>
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.END_DATE' | translate }}</label>
               <input 
-                type="datetime-local" 
+                type="date" 
                 formControlName="eDate" 
                 class="form-input"
                 [class.error]="isFieldInvalid('eDate')">
