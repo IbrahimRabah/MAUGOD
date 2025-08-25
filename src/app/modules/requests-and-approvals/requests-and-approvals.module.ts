@@ -1,5 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+
+// PrimeNG Components
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { RequestsAndApprovalsRoutingModule } from './requests-and-approvals-routing.module';
 import { RequestsAndApprovalsComponent } from './components/requests-and-approvals/requests-and-approvals.component';
@@ -9,6 +15,8 @@ import { PostRequestComponent } from './components/post-request/post-request.com
 import { RequestApprovalRouteComponent } from './components/request-approval-route/request-approval-route.component';
 import { RequestApprovalVacationsComponent } from './components/request-approval-vacations/request-approval-vacations.component';
 import { DeleteCompletedRequestComponent } from './components/delete-completed-request/delete-completed-request.component';
+import { RequestDetailsModalComponent } from './components/request-details-modal/request-details-modal.component';
+import { AttachmentsModalComponent } from './components/attachments-modal/attachments-modal.component';
 
 
 @NgModule({
@@ -19,10 +27,17 @@ import { DeleteCompletedRequestComponent } from './components/delete-completed-r
     PostRequestComponent,
     RequestApprovalRouteComponent,
     RequestApprovalVacationsComponent,
-    DeleteCompletedRequestComponent
+    DeleteCompletedRequestComponent,
+    RequestDetailsModalComponent,
+    AttachmentsModalComponent
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslateModule,
+    ToastModule,
+    ConfirmDialogModule,
     RequestsAndApprovalsRoutingModule
   ]
 })

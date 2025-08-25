@@ -1,1 +1,236 @@
-<p>attantance-time-change-request works!</p>
+<div class="attendance-time-change-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'ATTENDANCE_TIME_CHANGE.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="startDate">{{ 'ATTENDANCE_TIME_CHANGE.START_DATE' | translate }}</label>
+          <input type="date" 
+                 id="startDate" 
+                 formControlName="startDate" 
+                 class="form-input"
+                 [placeholder]="'ATTENDANCE_TIME_CHANGE.START_DATE_PLACEHOLDER' | translate">
+        </div>
+
+        <div class="filter-group">
+          <label for="endDate">{{ 'ATTENDANCE_TIME_CHANGE.END_DATE' | translate }}</label>
+          <input type="date" 
+                 id="endDate" 
+                 formControlName="endDate" 
+                 class="form-input"
+                 [placeholder]="'ATTENDANCE_TIME_CHANGE.END_DATE_PLACEHOLDER' | translate">
+        </div>
+
+        <div class="filter-actions">
+          <button type="button" 
+                  class="filter-btn apply-btn" 
+                  (click)="applyFilter()">
+            <i class="fa fa-search"></i>
+            {{ 'ATTENDANCE_TIME_CHANGE.APPLY_FILTER' | translate }}
+          </button>
+          
+          <button type="button" 
+                  class="filter-btn reset-btn" 
+                  (click)="resetFilter()">
+            <i class="fa fa-refresh"></i>
+            {{ 'ATTENDANCE_TIME_CHANGE.RESET_FILTER' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="create-btn" 
+              (click)="createRequest()">
+        <i class="fa fa-plus"></i>
+        {{ 'ATTENDANCE_TIME_CHANGE.CREATE_REQUEST' | translate }}
+      </button>
+
+      <button class="copy-existing-btn" 
+              (click)="manualAttendance()">
+        <i class="fa fa-clock"></i>
+        {{ 'ATTENDANCE_TIME_CHANGE.MANUAL_ATTENDANCE' | translate }}
+      </button>
+
+      <button class="copy-existing-btn" 
+              (click)="attendanceByDepartment()">
+        <i class="fa fa-building"></i>
+        {{ 'ATTENDANCE_TIME_CHANGE.ATTENDANCE_BY_DEPARTMENT' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input type="text" 
+                 formControlName="searchTerm"
+                 class="search-input" 
+                 [placeholder]="'ATTENDANCE_TIME_CHANGE.SEARCH_PLACEHOLDER' | translate">
+          <button type="button" class="search-btn" (click)="onSearch()">
+            <i class="fa fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'ATTENDANCE_TIME_CHANGE.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.REQUEST_ID' | translate }}</th>
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.EMPLOYEE' | translate }}</th>
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.REQUESTED_BY' | translate }}</th>
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.SIGN_DATE' | translate }}</th>
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.IN_TIME' | translate }}</th>
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.OUT_TIME' | translate }}</th>
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.REQUEST_STATUS' | translate }}</th>
+          <th>{{ 'ATTENDANCE_TIME_CHANGE.NOTE' | translate }}</th>
+          <th class="action-column">{{ 'ATTENDANCE_TIME_CHANGE.DETAILS' | translate }}</th>
+          <th class="action-column">{{ 'ATTENDANCE_TIME_CHANGE.GRAPH' | translate }}</th>
+          <th class="action-column">{{ 'ATTENDANCE_TIME_CHANGE.ATTACHMENTS' | translate }}</th>
+          <th class="action-column">{{ 'ATTENDANCE_TIME_CHANGE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of filteredTimeTransactionRequests; trackBy: trackByRequestId" class="table-row">
+          <td>{{ request.reqId }}</td>
+          <td>{{ request.empName }}</td>
+          <td>{{ request.requestByEmpName }}</td>
+          <td>{{ request.signDate | date:'short' }}</td>
+          <td>{{ request.in }}</td>
+          <td>{{ request.out }}</td>
+          <td>
+            <span [class]="getStatusIcon(request.reqSts)">
+              {{ getStatusDisplayText(request.reqSts, request.reqStsName) }}
+            </span>
+          </td>
+          <td>{{ request.note || '-' }}</td>
+          <td class="action-column">
+            <button class="action-btn details-btn" 
+                    (click)="viewDetails(request)"
+                    [title]="'ATTENDANCE_TIME_CHANGE.VIEW_DETAILS' | translate">
+              <i class="fa fa-eye"></i>
+            </button>
+          </td>
+          <td class="action-column">
+            <button class="action-btn graph-btn" 
+                    (click)="viewGraph(request)"
+                    [title]="'ATTENDANCE_TIME_CHANGE.VIEW_GRAPH' | translate">
+              <i class="fa fa-chart-line"></i>
+            </button>
+          </td>
+          <td class="action-column">
+            <button class="action-btn attachments-btn" 
+                    (click)="viewAttachments(request)"
+                    [title]="'ATTENDANCE_TIME_CHANGE.VIEW_ATTACHMENTS' | translate">
+              <i class="fa fa-paperclip"></i>
+            </button>
+          </td>
+          <td class="action-column">
+            <button class="action-btn delete-btn" 
+                    (click)="deleteTimeTransactionRequest(request)"
+                    [disabled]="!canDeleteOrSelect(request)"
+                    [title]="'ATTENDANCE_TIME_CHANGE.DELETE' | translate">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Empty state row -->
+        <tr *ngIf="filteredTimeTransactionRequests.length === 0" class="empty-row">
+          <td colspan="12" class="empty-message text-center">
+            <i class="fa fa-inbox"></i>
+            <p>{{ 'ATTENDANCE_TIME_CHANGE.NO_DATA_FOUND' | translate }}</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && filteredTimeTransactionRequests.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'ATTENDANCE_TIME_CHANGE.SHOWING' | translate }} {{ currentPageStart }} {{ 'ATTENDANCE_TIME_CHANGE.TO' | translate }} {{ currentPageEnd }} {{ 'ATTENDANCE_TIME_CHANGE.OF' | translate }} {{ totalRecords }} {{ 'ATTENDANCE_TIME_CHANGE.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext" 
+                (click)="nextPage()">
+          <i class="fa fa-chevron-left"></i>
+        </button>
+        
+        <span class="page-info">{{ 'ATTENDANCE_TIME_CHANGE.PAGE' | translate }} {{ currentPage }} {{ 'ATTENDANCE_TIME_CHANGE.OF' | translate }} {{ totalPages }}</span>
+        
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="previousPage()">
+          <i class="fa fa-chevron-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="previousPage()">
+          <i class="fa fa-chevron-left"></i>
+        </button>
+        
+        <span class="page-info">{{ 'ATTENDANCE_TIME_CHANGE.PAGE' | translate }} {{ currentPage }} {{ 'ATTENDANCE_TIME_CHANGE.OF' | translate }} {{ totalPages }}</span>
+        
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext" 
+                (click)="nextPage()">
+          <i class="fa fa-chevron-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'ATTENDANCE_TIME_CHANGE.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" class="form-input">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Request Details Modal -->
+  <app-request-details-modal
+    [showModal]="showRequestDetailsModal"
+    [requestId]="selectedRequestId"
+    (closeModal)="onCloseModal()">
+  </app-request-details-modal>
+  
+  <!-- Attachments Modal -->
+  <app-attachments-modal
+    [showModal]="showAttachmentsModal"
+    [requestId]="selectedAttachmentRequestId"
+    (closeModal)="onCloseAttachmentsModal()">
+  </app-attachments-modal>
+</div>
