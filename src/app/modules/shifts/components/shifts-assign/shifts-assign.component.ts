@@ -9,6 +9,7 @@ import { ShiftsAssignService } from '../../services/shifts-assign.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface DropdownItem {
   id: number;
@@ -90,6 +91,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     private dropdownlistsService: DropdownlistsService,
     public langService: LanguageService,
     private messageService: MessageService,
+    private translate: TranslateService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder
   ) {
@@ -287,7 +289,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     }
 
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${this.selectedItems.length} selected items?`,
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

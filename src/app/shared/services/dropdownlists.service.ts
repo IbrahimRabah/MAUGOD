@@ -189,6 +189,19 @@ export class DropdownlistsService {
       { headers }
     );
   }
+
+getGetRequestStatsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling Request Stats API:', `${this.apiUrl}/RequestPostPermissions/GetRequestStats`);
+    return this.http.get<any>(
+      `${this.apiUrl}/api/RequestPostPermissions/GetRequestStats`,
+      { headers }
+    );
+  }
+
   getEmployeeRolesDropdownList(lang: number): Observable<any> {
     const headers = new HttpHeaders({
       'lang': lang.toString()
