@@ -28,6 +28,7 @@ export interface UserRoleModuleRight {
 
 export interface UserRoleModuleRightsData {
   userRoleModuleRights: UserRoleModuleRight[];
+  totalCount : number;
 }
 
 export interface ApiResponse<T> {

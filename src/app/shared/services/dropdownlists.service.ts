@@ -232,9 +232,9 @@ export class DropdownlistsService {
       'lang': lang.toString()
     });
 
-    console.log('Calling branch managers API:', `${this.apiUrl}/Branches/GetBranchManagersDropdownList`);
+    console.log('Calling branch managers API:', `${this.apiUrl}/Branches/GetManagersDropdownList`);
     return this.http.get<any>(
-      `${this.apiUrl}/Branches/GetBranchManagersDropdownList`,
+      `${this.apiUrl}/Branches/GetManagersDropdownList`,
       { headers }
     );
   }

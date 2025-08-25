@@ -172,8 +172,7 @@ export class RoleModuleRightsComponent implements OnInit, OnDestroy {
           this.userRoleModuleRights = response.data.userRoleModuleRights || [];
           // For now, we'll use the array length as total records since total count might not be available
           // If your API returns total count, update this line accordingly
-          this.totalRecords = this.userRoleModuleRights.length;
-          
+          this.totalRecords = response.data.totalCount;
           // If API returns total in response.data.totalCount, use:
           // this.totalRecords = response.data.totalCount || this.userRoleModuleRights.length;
         } else {
@@ -758,7 +757,7 @@ export class RoleModuleRightsComponent implements OnInit, OnDestroy {
 
   private submitCreate() {
     const formValue = this.createEditForm.value;
-    const moduleIdsString = formValue.moduleIds.join(',');
+    const moduleIdsString = formValue.moduleIds.join(':');
     
     const request = {
       roleId: parseInt(formValue.roleId),

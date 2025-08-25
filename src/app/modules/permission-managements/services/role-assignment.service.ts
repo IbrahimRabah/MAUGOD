@@ -17,7 +17,7 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
       'lang': pagination.lang,
       'pageNumber': pagination.pageNumber,
       'pageSize': pagination.pageSize,
-      'empId': pagination.empId ? pagination.empId: ''
+      'empId': pagination.empId ? pagination.empId: 0
     });
 
     return this.http.get<UserRoleAssignmentsResponse>(`${this.apiUrl}/GetUserRoleAssignment`, { headers });
@@ -46,13 +46,13 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
 
     return this.http.put<UserRoleAssignment>(`${this.apiUrl}/UpdateUserRoleAssignment`, userRoleAssignment, { headers });
   }
-  deleteUserRoleAssignment(id: number): Observable<UserRoleAssignmentsResponse> {
+  deleteUserRoleAssignment(lang:number,id: number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
-      'lang': 'en',
-      'id': id.toString()
+      'lang': lang,
+      'id': id
     });
 
-    return this.http.delete<UserRoleAssignmentsResponse>(`${this.apiUrl}/DeleteUserRoleAssignment`, { headers });
+    return this.http.delete<UserRoleAssignmentsResponse>(`${this.apiUrl}/DeleteRoleByID`, { headers });
   }
 
   
