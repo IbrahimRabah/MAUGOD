@@ -7,6 +7,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AttendanceStatusService } from '../../services/attendance-status.service';
 import { AttendanceStatusData, AttendanceStatusResponse, AttendanceStatusCreate, AttendanceStatusUpdate } from '../../../../core/models/attendanceStatus';
+import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
+
+interface DropdownItem {
+  label: string;
+  value: string | number;
+}
 
 @Component({
   selector: 'app-attendance-statuses',
@@ -22,7 +28,13 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
   totalRecords = 0;
   currentPage = 1;
   pageSize = 10;
-  
+
+  statuses: DropdownItem[] = [];
+
+  private dataCache = {
+    statuses: false
+  };
+
   private langSubscription: Subscription = new Subscription();
   private searchSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic (2) - made public for template access
@@ -43,21 +55,18 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
   changeIdForm!: FormGroup;
   currentChangeItem?: AttendanceStatusData;
 
-  // Static dropdown options
-  classificationOptions = [
-    { value: 1, label: 'Others' },
-    { value: 2, label: 'Any Thing' }
-  ];
-
   constructor(
     private attendanceStatusService: AttendanceStatusService,
     public langService: LanguageService,
     private messageService: MessageService,
+    private dropdownlistsService: DropdownlistsService,
     private confirmationService: ConfirmationService,
     private translateService: TranslateService,
     private fb: FormBuilder
   ) {
     this.initializeForms();
+    this.loadStatuses();
+
   }
 
   ngOnInit() {
@@ -179,6 +188,23 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
       this.currentPage++;
       this.loadAttendanceStatuses();
     }
+  }
+
+private loadStatuses() {
+    if (this.dataCache.statuses) return;
+    
+    this.dropdownlistsService.getGetRequestStatsDropdownList(this.currentLang).subscribe({
+      next: (response) => {
+        // Handle API response format { data: { statuses: [{ label, value }] } }
+        const statusData = response.data?.statuses || response.data?.dropdownListsForRoleModuleRights || [];
+        this.statuses = Array.isArray(statusData) ? statusData : [];
+        this.dataCache.statuses = true;
+      },
+      error: (error) => {
+        console.error('Error loading statuses:', error);
+        this.showErrorMessage('Failed to load statuses');
+      }
+    });
   }
 
   previousPage() {

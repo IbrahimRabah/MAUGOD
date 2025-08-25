@@ -32,10 +32,10 @@ export class RequestPostPermissionsService {
       { headers }
     );
   }
-  deleteSelectedPermissions(recIds: number[], lang: number): Observable<void> {
+  deleteSelectedPermissions(recIds: number[], lang: number): Observable<any> {
     const payload: DeleteSelectedPayload = { recIds };
     const headers = new HttpHeaders().set('lang', lang.toString());
-    return this.http.request<void>(
+    return this.http.request<any>(
       'DELETE',
       `${this.apiUrl}/RequestPostPermissions/selected-permissions`,
       { body: payload, headers }
