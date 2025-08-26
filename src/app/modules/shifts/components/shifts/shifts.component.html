@@ -233,12 +233,15 @@
         <div class="form-section">
           <h4>{{ 'SHIFTS_TABLE.BASIC_INFO' | translate }}</h4>
           <div class="form-group">
-            <label>{{ 'SHIFTS_TABLE.ARABIC_NAME' | translate }} *</label>
+            <label class="required">{{ 'SHIFTS_TABLE.ARABIC_NAME' | translate }}</label>
             <input type="text" formControlName="ar" class="form-input"
-              [placeholder]="'SHIFTS_TABLE.ARABIC_NAME_PLACEHOLDER' | translate">
+              [placeholder]="'SHIFTS_TABLE.ARABIC_NAME_PLACEHOLDER' | translate" [class.error]="isFieldInvalid('ar')">
+            <div *ngIf="isFieldInvalid('ar')" class="error-message">
+              {{ getFieldError('ar') }}
+            </div>
           </div>
           <div class="form-group">
-            <label>{{ 'SHIFTS_TABLE.ENGLISH_NAME' | translate }} *</label>
+            <label>{{ 'SHIFTS_TABLE.ENGLISH_NAME' | translate }} </label>
             <input type="text" formControlName="en" class="form-input"
               [placeholder]="'SHIFTS_TABLE.ENGLISH_NAME_PLACEHOLDER' | translate">
           </div>
@@ -249,72 +252,93 @@
           <!-- <h4>{{ 'SHIFTS_TABLE.WEEKDAYS' | translate }}</h4> -->
           <div class="weekdays-grid">
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.SUNDAY' | translate }} *</label>
+              <label class="required">{{ 'SHIFTS_TABLE.SUNDAY' | translate }} </label>
               <p-dropdown formControlName="sun" [options]="daysShifts" optionLabel="label" optionValue="value"
                 [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
                 filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
                 [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
-                class="form-dropdown">
+                class="form-dropdown" [class.error]="isFieldInvalid('sun')">
+                <div *ngIf="isFieldInvalid('sun')" class="error-message">
+                  {{ getFieldError('sun') }}
+                </div>
               </p-dropdown>
             </div>
 
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.MONDAY' | translate }} *</label>
+              <label class="required">{{ 'SHIFTS_TABLE.MONDAY' | translate }} </label>
               <p-dropdown formControlName="mon" [options]="daysShifts" optionLabel="label" optionValue="value"
                 [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
                 filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
                 [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
-                class="form-dropdown">
+                class="form-dropdown" [class.error]="isFieldInvalid('mon')">
+                <div *ngIf="isFieldInvalid('mon')" class="error-message">
+                  {{ getFieldError('mon') }}
+                </div>
               </p-dropdown>
             </div>
 
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.TUESDAY' | translate }} *</label>
+              <label class="required">{{ 'SHIFTS_TABLE.TUESDAY' | translate }} </label>
               <p-dropdown formControlName="tue" [options]="daysShifts" optionLabel="label" optionValue="value"
                 [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
                 filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
                 [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
-                class="form-dropdown">
+                class="form-dropdown" [class.error]="isFieldInvalid('tue')">
+                <div *ngIf="isFieldInvalid('tue')" class="error-message">
+                  {{ getFieldError('tue') }}
+                </div>
               </p-dropdown>
             </div>
 
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.WEDNESDAY' | translate }} *</label>
+              <label class="required">{{ 'SHIFTS_TABLE.WEDNESDAY' | translate }} </label>
               <p-dropdown formControlName="wed" [options]="daysShifts" optionLabel="label" optionValue="value"
                 [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
                 filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
                 [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
-                class="form-dropdown">
+                class="form-dropdown" [class.error]="isFieldInvalid('wed')">
+                <div *ngIf="isFieldInvalid('wed')" class="error-message">
+                  {{ getFieldError('wed') }}
+                </div>
               </p-dropdown>
             </div>
 
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.THURSDAY' | translate }} *</label>
+              <label class="required">{{ 'SHIFTS_TABLE.THURSDAY' | translate }} </label>
               <p-dropdown formControlName="thu" [options]="daysShifts" optionLabel="label" optionValue="value"
                 [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
                 filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
                 [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
-                class="form-dropdown">
+                class="form-dropdown" [class.error]="isFieldInvalid('thu')">
+                <div *ngIf="isFieldInvalid('thu')" class="error-message">
+                  {{ getFieldError('thu') }}
+                </div>
               </p-dropdown>
             </div>
 
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.FRIDAY' | translate }} *</label>
+              <label class="required">{{ 'SHIFTS_TABLE.FRIDAY' | translate }} </label>
               <p-dropdown formControlName="fri" [options]="daysShifts" optionLabel="label" optionValue="value"
                 [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
                 filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
                 [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
-                class="form-dropdown">
+                class="form-dropdown" [class.error]="isFieldInvalid('fri')">
+                <div *ngIf="isFieldInvalid('fri')" class="error-message">
+                  {{ getFieldError('fri') }}
+                </div>
               </p-dropdown>
             </div>
 
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.SATURDAY' | translate }} *</label>
+              <label class="required">{{ 'SHIFTS_TABLE.SATURDAY' | translate }} </label>
               <p-dropdown formControlName="sat" [options]="daysShifts" optionLabel="label" optionValue="value"
                 [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
                 filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
                 [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
-                class="form-dropdown">
+                class="form-dropdown" [class.error]="isFieldInvalid('sat')">
+                <div *ngIf="isFieldInvalid('sat')" class="error-message">
+                  {{ getFieldError('sat') }}
+                </div>
               </p-dropdown>
             </div>
 
@@ -328,7 +352,7 @@
           <!-- Part 1 Toggles -->
           <div class="toggles-row">
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT' | translate }}</label>
+              <label >{{ 'SHIFTS_TABLE.OPEN_SHIFT' | translate }}</label>
               <input type="checkbox" formControlName="openShift1" class="form-checkbox">
             </div>
             <div class="form-group">
@@ -349,8 +373,12 @@
             <h5>{{ 'SHIFTS_TABLE.IN_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.IN_TIME' | translate }} *</label>
-                <input type="time" formControlName="in1" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.IN_TIME' | translate }}</label>
+                <input type="time" formControlName="in1" class="form-input"
+                [class.error]="isFieldInvalid('in1')">
+                <div *ngIf="isFieldInvalid('in1')" class="error-message">
+                  {{ getFieldError('in1') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_IN' | translate }}</label>
@@ -380,8 +408,12 @@
             <h5>{{ 'SHIFTS_TABLE.OUT_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.OUT_TIME' | translate }} *</label>
-                <input type="time" formControlName="out1" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.OUT_TIME' | translate }} </label>
+                <input type="time" formControlName="out1" class="form-input"
+                [class.error]="isFieldInvalid('out1')">
+                <div *ngIf="isFieldInvalid('out1')" class="error-message">
+                  {{ getFieldError('out1') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_OUT' | translate }}</label>
@@ -435,8 +467,12 @@
             <h5>{{ 'SHIFTS_TABLE.IN_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.IN_TIME' | translate }}</label>
-                <input type="time" formControlName="in2" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.IN_TIME' | translate }}</label>
+                <input type="time" formControlName="in2" class="form-input"
+                [class.error]="isFieldInvalid('in2')">
+                <div *ngIf="isFieldInvalid('in2')" class="error-message">
+                  {{ getFieldError('in2') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_IN' | translate }}</label>
@@ -466,8 +502,12 @@
             <h5>{{ 'SHIFTS_TABLE.OUT_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.OUT_TIME' | translate }}</label>
-                <input type="time" formControlName="out2" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.OUT_TIME' | translate }}</label>
+                <input type="time" formControlName="out2" class="form-input"
+                [class.error]="isFieldInvalid('out2')">
+                <div *ngIf="isFieldInvalid('out2')" class="error-message">
+                  {{ getFieldError('out2') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_OUT' | translate }}</label>
@@ -559,26 +599,26 @@
           </thead>
           <tbody>
             <tr *ngFor="let shiftDetails of shiftDetails" class="table-row">
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.dayName }}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.shiftName }}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.part }}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.openShift}}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.earlyIn}}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.in}}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.allowIn}}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.maxIn}}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.overtimeIn}}</td>
-              <td
-              [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.out}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.dayName
+                }}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.shiftName }}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.part }}
+              </td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.openShift}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.earlyIn}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.in}}
+              </td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.allowIn}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.maxIn}}
+              </td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.overtimeIn}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.out}}
+              </td>
             </tr>
           </tbody>
         </table>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CreatShift, ShiftDetailsResponse, ShiftsResponse } from '../../../core/models/shifts';
+import { CreatShift, GetShiftByIdResponse, ShiftDetailsResponse, ShiftsResponse } from '../../../core/models/shifts';
 import { Observable } from 'rxjs';
 import { PaginationRequest } from '../../../core/models/pagination';
 
@@ -69,6 +69,15 @@ export class ShiftsService {
     'withDetails':withDetails
   });
   return this.http.get<ShiftDetailsResponse>(`${this.apiUrl}/GetShiftDetails`, { headers});
+}
+
+  getShiftByIdShow(lang: number, shiftId: number): Observable<GetShiftByIdResponse> {
+  const headers = new HttpHeaders({
+    'accept': 'text/plain',
+    'lang': lang.toString(),
+    'shiftId':shiftId,
+  });
+  return this.http.get<GetShiftByIdResponse>(`${this.apiUrl}/GetShiftToUpdate`, { headers});
 }
 
 }

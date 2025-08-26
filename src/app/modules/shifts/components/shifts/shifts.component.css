@@ -1200,3 +1200,24 @@ input[type="checkbox"] {
   white-space: normal;   /* ✅ allow wrapping */
 
 }
+
+
+.required {
+  position: relative;
+}
+
+/* Required field indicator */
+.required::after {
+  content: " *";
+  color: #dc3545;
+}
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.form-group .error-message {
+  margin-top: 5px;
+}

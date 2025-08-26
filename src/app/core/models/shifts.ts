@@ -68,7 +68,12 @@ export interface ShiftDetails {
   shiftName:string
 }
 
-
+export interface GetShiftByIdResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: CreatShift[];
+}
 export interface CreatShift {
   shiftId: number;
   ar: string;
@@ -78,12 +83,12 @@ export interface CreatShift {
   twoDays1: number;
   perActualWork1: number;
   earlyIn1: number;
-  in1: string; // ISO Date string
+  in1?: string; // ISO Date string
   inAllowMin1: number;
   maxIn1: number;
   makeupIn1: number;
   earlyOut1: number;
-  out1: string; // ISO Date string
+  out1?: string|null; // ISO Date string
   outAllowMin1: number;
   maxOut1: number;
   makeupOut1: number;
@@ -92,12 +97,12 @@ export interface CreatShift {
   twoDays2?: number;
   perActualWork2?: number;
   earlyIn2?: number;
-  in2?: string;
+  in2?: string|null;
   inAllowMin2?: number;
   maxIn2?: number;
   makeupIn2?: number;
   earlyOut2?: number;
-  out2?: string;
+  out2?: string|null;
   outAllowMin2?: number;
   maxOut2?: number;
   makeupOut2?: number;
