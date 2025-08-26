@@ -9,6 +9,7 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
 import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
 import { RequestPostPermission, ProcessEmployeeDto, ProcessDepartmentDto, ProcessBranchesDto, ProcessRolesDto, ProcessManagersOfDepartmentsDto, ProcessManagersOfBranchesDto, ProcessEveryOneDto } from '../../../../core/models/RequestPostPermission ';
+import { TranslateService } from '@ngx-translate/core';
 
 interface DropdownItem {
   label: string;
@@ -93,10 +94,18 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
     private dropdownlistsService: DropdownlistsService,
     public langService: LanguageService,
     private messageService: MessageService,
+    private translate: TranslateService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder
   ) {
     this.initializeForms();
+    this.loadStatuses();
+    this.loadEmployees();
+    this.loadDepartments();
+    this.loadBranches();
+    this.loadRoles();
+    this.loadDepartments(); 
+    this.loadBranches(); 
   }
 
   ngOnInit() {
@@ -133,8 +142,8 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
       targetType: [1], // Default to Employee (1)
       selectedTargets: [[]],
       selectedStatuses: [[], Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
+      startDate: [''],
+      endDate: [''],
       note: ['']
     }, { validators: this.dateRangeValidator });
   }
@@ -276,7 +285,7 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
 
     const itemCount = this.selectedItems.length;
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${itemCount} selected permission(s)?`,
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -294,7 +303,7 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
     }
 
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this permission?',
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -318,8 +327,8 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
 
   private performDeleteSelected(ids: number[]) {
     this.requestPostPermissionsService.deleteSelectedPermissions(ids, this.currentLang).subscribe({
-      next: () => {
-        this.showSuccessMessage(`${ids.length} permission(s) deleted successfully`);
+      next: (response) => {
+        this.showSuccessMessage(response.message);
         this.loadRequestPostPermissions();
       },
       error: (error) => {
@@ -435,7 +444,6 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
   openCreateModal() {
     this.showCreateModal = true;
     this.resetCreateForm();
-    this.loadStatuses();
   }
 
   closeCreateModal() {
@@ -607,7 +615,7 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
     if (this.dataCache.statuses) return;
     
     this.loadingStatuses = true;
-    this.dropdownlistsService.getEmployeeStatusesDropdownList(this.currentLang).subscribe({
+    this.dropdownlistsService.getGetRequestStatsDropdownList(this.currentLang).subscribe({
       next: (response) => {
         // Handle API response format { data: { statuses: [{ label, value }] } }
         const statusData = response.data?.statuses || response.data?.dropdownListsForRoleModuleRights || [];

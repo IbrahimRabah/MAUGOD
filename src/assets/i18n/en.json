@@ -605,6 +605,57 @@
         "ERROR_OCCURRED": "An error occurred. Please try again.",
         "NO_EMPLOYEES_FOUND": "No employees found."
       },
+            "ROLEREPORTRIGHTS_TABLE": {
+        "ROLE": "Role",
+        "REPORT": "Report",
+        "DELEGATE": "Delegate",
+        "DELETE": "Delete",
+        "DELETE_SELECTED": "Delete Selected"
+      },
+      "ROLEREPORTRIGHTS_ACTIONS": {
+        "ADD_ROLEREPORTRIGHT": "Add Role Report Right",
+        "SEARCH_PLACEHOLDER": "Search in role report rights...",
+        "SEARCH_TITLE": "Search",
+        "ADD_ROLEREPORTRIGHT_TITLE": "Add New Role Report Right",
+        "DELETE_SELECTED": "Delete Selected",
+        "DELETE_SELECTED_TITLE": "Delete Selected Items"
+      },
+      "ROLEREPORTRIGHTS_GENERAL": {
+        "LOADING": "Loading...",
+        "LOADING_REPORTS": "Loading reports...",
+        "EDIT_TOOLTIP": "Edit",
+        "DELETE_TOOLTIP": "Delete",
+        "SELECT_ALL": "Select All",
+        "SELECT_ITEM": "Select Item",
+        "NO_REPORTS_FOUND": "No reports found."
+      },
+      "ROLEREPORTRIGHTS_PAGINATION": {
+        "SHOWING": "Showing",
+        "TO": "-",
+        "OF": "of",
+        "ITEMS": "items",
+        "PAGE": "Page",
+        "PAGE_OF": "of",
+        "ITEMS_PER_PAGE": "Items per page:",
+        "NO_DATA": "No data available",
+        "FIRST_PAGE": "First Page",
+        "PREVIOUS_PAGE": "Previous Page",
+        "NEXT_PAGE": "Next Page",
+        "LAST_PAGE": "Last Page"
+      },
+      "ROLEREPORTRIGHTS_MODALS": {
+        "ADD_ROLEREPORTRIGHTS_MODAL": {
+          "TITLE": "Add New Role report right",
+          "ROLE_ID": "Role",
+          "SELECT_REPORTS": "Select Reports",
+          "SEARCH_ROLE_PLACEHOLDER": "Search for a role...",
+          "SEARCH_REPORTS": "Search reports...",
+          "NO_ROLES_FOUND": "No roles found.",
+          "ROLE_REQUIRED": "Role selection is required",
+          "CANCEL": "Cancel",
+          "SAVE": "Save"
+        }
+      },
       "NATIONALITIES_TABLE": {
         "EDIT": "Edit",
         "ARABIC_NAME": "Arabic Name",

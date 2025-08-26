@@ -121,53 +121,53 @@
           </td>
           <td>{{ formatDate(timtranLock.sDate) }}</td>
           <td>{{ formatDate(timtranLock.eDate) }}</td>
-          <td>
-            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.totalLock)" 
-               [class.fa-times-circle]="!getBooleanValue(timtranLock.totalLock)"
-               [class.text-success]="getBooleanValue(timtranLock.totalLock)"
-               [class.text-danger]="!getBooleanValue(timtranLock.totalLock)"></i>
+          <td class="text-center fs-6">
+            <i class="fas" [class.fa-check-circle]="timtranLock.totalLock" 
+               [class.fa-times-circle]="!timtranLock.totalLock"
+               [class.text-success]="timtranLock.totalLock"
+               [class.text-danger]="!timtranLock.totalLock"></i>
           </td>
-          <td>
-            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.handleApprovalReqLock)" 
-               [class.fa-times-circle]="!getBooleanValue(timtranLock.handleApprovalReqLock)"
-               [class.text-success]="getBooleanValue(timtranLock.handleApprovalReqLock)"
-               [class.text-danger]="!getBooleanValue(timtranLock.handleApprovalReqLock)"></i>
+          <td class="text-center fs-6">
+            <i class="fas" [class.fa-check-circle]="timtranLock.handleApprovalReqLock" 
+               [class.fa-times-circle]="!timtranLock.handleApprovalReqLock"
+               [class.text-success]="timtranLock.handleApprovalReqLock"
+               [class.text-danger]="!timtranLock.handleApprovalReqLock"></i>
           </td>
-          <td>
-            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.handleApprovalReqTranLock)" 
-               [class.fa-times-circle]="!getBooleanValue(timtranLock.handleApprovalReqTranLock)"
-               [class.text-success]="getBooleanValue(timtranLock.handleApprovalReqTranLock)"
-               [class.text-danger]="!getBooleanValue(timtranLock.handleApprovalReqTranLock)"></i>
+          <td class="text-center fs-6">
+            <i class="fas" [class.fa-check-circle]="timtranLock.handleApprovalReqTranLock" 
+               [class.fa-times-circle]="!timtranLock.handleApprovalReqTranLock"
+               [class.text-success]="timtranLock.handleApprovalReqTranLock"
+               [class.text-danger]="!timtranLock.handleApprovalReqTranLock"></i>
           </td>
-          <td>
-            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.timtranApprovalReqLock)" 
-               [class.fa-times-circle]="!getBooleanValue(timtranLock.timtranApprovalReqLock)"
-               [class.text-success]="getBooleanValue(timtranLock.timtranApprovalReqLock)"
-               [class.text-danger]="!getBooleanValue(timtranLock.timtranApprovalReqLock)"></i>
+          <td class="text-center fs-6">
+            <i class="fas" [class.fa-check-circle]="timtranLock.timtranApprovalReqLock" 
+               [class.fa-times-circle]="!timtranLock.timtranApprovalReqLock"
+               [class.text-success]="timtranLock.timtranApprovalReqLock"
+               [class.text-danger]="!timtranLock.timtranApprovalReqLock"></i>
           </td>
-          <td>
-            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.timtranApprovalReqTranLock)" 
-               [class.fa-times-circle]="!getBooleanValue(timtranLock.timtranApprovalReqTranLock)"
-               [class.text-success]="getBooleanValue(timtranLock.timtranApprovalReqTranLock)"
-               [class.text-danger]="!getBooleanValue(timtranLock.timtranApprovalReqTranLock)"></i>
+          <td class="text-center fs-6">
+            <i class="fas" [class.fa-check-circle]="timtranLock.timtranApprovalReqTranLock" 
+               [class.fa-times-circle]="!timtranLock.timtranApprovalReqTranLock"
+               [class.text-success]="timtranLock.timtranApprovalReqTranLock"
+               [class.text-danger]="!timtranLock.timtranApprovalReqTranLock"></i>
           </td>
-          <td>
+          <td class="text-center fs-6">
             <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.daysHandleDirect)" 
                [class.fa-times-circle]="!getBooleanValue(timtranLock.daysHandleDirect)"
                [class.text-success]="getBooleanValue(timtranLock.daysHandleDirect)"
                [class.text-danger]="!getBooleanValue(timtranLock.daysHandleDirect)"></i>
           </td>
-          <td>
+          <td class="text-center fs-6">
             <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.daysHandleSync)" 
                [class.fa-times-circle]="!getBooleanValue(timtranLock.daysHandleSync)"
                [class.text-success]="getBooleanValue(timtranLock.daysHandleSync)"
                [class.text-danger]="!getBooleanValue(timtranLock.daysHandleSync)"></i>
           </td>
-          <td>
-            <i class="fas" [class.fa-check-circle]="getBooleanValue(timtranLock.timtranManualChange)" 
-               [class.fa-times-circle]="!getBooleanValue(timtranLock.timtranManualChange)"
-               [class.text-success]="getBooleanValue(timtranLock.timtranManualChange)"
-               [class.text-danger]="!getBooleanValue(timtranLock.timtranManualChange)"></i>
+          <td class="text-center fs-6">
+            <i class="fas" [class.fa-check-circle]="timtranLock.timtranManualChange" 
+               [class.fa-times-circle]="!timtranLock.timtranManualChange"
+               [class.text-success]="timtranLock.timtranManualChange"
+               [class.text-danger]="!timtranLock.timtranManualChange"></i>
           </td>
           <td>{{ timtranLock.note || '-' }}</td>
           <td class="actions-column">

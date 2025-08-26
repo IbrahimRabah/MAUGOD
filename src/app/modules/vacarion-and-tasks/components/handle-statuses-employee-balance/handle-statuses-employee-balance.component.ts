@@ -104,7 +104,6 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
       
       if (this.isInitialized) {
         this.loadEmployeeBalances();
-        this.loadAllData();
       }
     });
   }
@@ -115,6 +114,8 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
     this.paginationRequest.lang = this.currentLang;
     
     this.loadEmployeeBalances();
+    this.loadAllData();
+
     this.isInitialized = true;
   }
 
@@ -262,7 +263,7 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
   private loadStatuses() {
     this.loadingStatuses = true;
 
-    this.dropdownlistsService.getEmployeeStatusesDropdownList(this.currentLang).subscribe({
+    this.dropdownlistsService.getGetRequestStatsDropdownList(this.currentLang).subscribe({
       next: (response) => {
         if (response.isSuccess && response.data) {
           this.statuses = response.data.statuses.map((status: any) => ({

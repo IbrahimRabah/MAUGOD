@@ -6,6 +6,12 @@ import { UserRoleAssignment } from '../../../../core/models/roleAssignment';
 import { PaginationRequest } from '../../../../core/models/pagination';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
+import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
+import { Employees } from '../../../../core/models/employee';
+import { Departments } from '../../../../core/models/department';
+import { Manager } from '../../../../core/models/managers';
+import { Branch } from '../../../../core/models/branch';
+import { Role } from '../../../../core/models/Role';
 
 @Component({
   selector: 'app-user-role-assignment',
@@ -22,7 +28,14 @@ export class UserRoleAssignmentComponent implements OnInit {
   showAddModal: boolean = false;
   selectedRoleAssignment: UserRoleAssignment | null = null;
   isEditMode: boolean = false;
-  
+  private dropdownDataLoaded = {
+    employees: false,
+    departments: false,
+    deptManager:false,
+    branches:false,
+    brancheManager:false,
+    roles:false,
+  };
   // Selection management
   selectedItems: Set<number> = new Set();
   
@@ -30,59 +43,13 @@ export class UserRoleAssignmentComponent implements OnInit {
   userRoleAssignmentForm!: FormGroup;
 
   // Dropdown options (dummy data - replace with actual service calls)
-  employees = [
-    { id: 1, name: 'مالك عبدالله مصعب عبدالله' },
-    { id: 2, name: 'صالح الصالح' },
-    { id: 3, name: 'خالد الخالد' },
-    { id: 4, name: 'مانع المانع' },
-    { id: 5, name: 'سالم السالم' },
-    { id: 6, name: 'فهد الفهد' },
-    { id: 7, name: 'طارق سالم عمر طارق' },
-    { id: 8, name: 'مدير النظام' }
-  ];
+  employees :Employees []= [];
+  departments:Departments[] = [];
+  deptManager: Manager[] = [];
+  branches: Branch[] = [];
+  brancheManager: Manager[] = [];
+  roles: Role[] = []
 
-  departments = [
-    { id: 1, name: 'المركز الرئيسي' },
-    { id: 2, name: 'الجامعة' },
-    { id: 3, name: 'فرع المجمعة' },
-    { id: 4, name: 'فرع الحوطة' },
-    { id: 5, name: 'فرع الزلفي' },
-    { id: 6, name: 'مشفى سليمان الحبيب' }
-  ];
-
-  managers = [
-    { id: 1, name: 'مالك عبدالله مصعب عبدالله' },
-    { id: 2, name: 'صالح الصالح' },
-    { id: 3, name: 'خالد الخالد' },
-    { id: 4, name: 'مانع المانع' },
-    { id: 5, name: 'سالم السالم' },
-    { id: 6, name: 'فهد الفهد' },
-    { id: 7, name: 'طارق سالم عمر طارق' },
-    { id: 8, name: 'مدير النظام' }
-  ];
-
-  branches = [
-    { id: 1, name: 'المركز الرئيسي' },
-    { id: 2, name: 'الجامعة' },
-    { id: 3, name: 'فرع المجمعة' },
-    { id: 4, name: 'فرع رماح' },
-    { id: 5, name: 'فرع الزلفي' },
-    { id: 6, name: 'فرع الغاط' },
-    { id: 7, name: 'فرع الحوطة' },
-    { id: 8, name: 'فرع حرمة' }
-  ];
-
-  roles = [
-    { id: 1, name: 'نظام الإتصالات الإدارية - إضافة كلمات مفتاحية' },
-    { id: 2, name: 'نظام الإتصالات الإدارية - مدير النظام' },
-    { id: 3, name: 'نظام الموارد البشرية - إدارة الموظفين' },
-    { id: 4, name: 'نظام الموارد البشرية - مدير النظام' },
-    { id: 5, name: 'نظام المحاسبة - محاسب' },
-    { id: 6, name: 'نظام المحاسبة - مدير مالي' },
-    { id: 7, name: 'نظام التقارير - مراجع' },
-    { id: 8, name: 'نظام التقارير - مدير التقارير' }
-  ];
-  
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
     pageSize: 10,
@@ -94,6 +61,7 @@ export class UserRoleAssignmentComponent implements OnInit {
     public langService: LanguageService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
+    private dropdownService: DropdownlistsService,
     private fb: FormBuilder,
     private authService: AuthenticationService
   ) {
@@ -111,6 +79,7 @@ export class UserRoleAssignmentComponent implements OnInit {
 
   ngOnInit() {
     this.loadUserRoleAssignments();
+    this.loadDropdownData();
   }
 
   initializeForms() {
@@ -223,12 +192,12 @@ export class UserRoleAssignmentComponent implements OnInit {
         const updatedRoleAssignment: UserRoleAssignment = {
           ...this.selectedRoleAssignment,
           // Map form data to model properties
-          fromEmployeeName: this.employees.find(e => e.id == formData.employeeId)?.name || '',
-          fromDepartmentName: this.departments.find(d => d.id == formData.departmentId)?.name || null,
-          fromManagerOfDepartmentName: this.managers.find(m => m.id == formData.managerOfDepartmentId)?.name || null,
-          fromBranchName: this.branches.find(b => b.id == formData.branchId)?.name || null,
-          fromManagerOfBranchName: this.managers.find(m => m.id == formData.managerOfBranchId)?.name || null,
-          fromRoleName: this.roles.find(r => r.id == formData.roleId)?.name || '',
+          fromEmployeeName: this.employees.find(e => e.value == formData.employeeId)?.label || '',
+          fromDepartmentName: this.departments.find(d => d.value == formData.departmentId)?.label || null,
+          fromManagerOfDepartmentName: this.deptManager.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
+          fromBranchName: this.branches.find(b => b.value == formData.branchId)?.label || null,
+          fromManagerOfBranchName: this.brancheManager.find(m => m.value == formData.managerOfBranchId)?.label || null,
+          fromRoleName: this.roles.find(r => r.value == formData.roleId)?.label || '',
           startDate: formData.startDate || null,
           endDate: formData.endDate || null,
           note: formData.notes || null
@@ -256,12 +225,12 @@ export class UserRoleAssignmentComponent implements OnInit {
         // Add new role assignment
         const newRoleAssignment: UserRoleAssignment = {
           recId: 0, // This will be set by the backend
-          fromEmployeeName: this.employees.find(e => e.id == formData.employeeId)?.name || '',
-          fromDepartmentName: this.departments.find(d => d.id == formData.departmentId)?.name || null,
-          fromManagerOfDepartmentName: this.managers.find(m => m.id == formData.managerOfDepartmentId)?.name || null,
-          fromBranchName: this.branches.find(b => b.id == formData.branchId)?.name || null,
-          fromManagerOfBranchName: this.managers.find(m => m.id == formData.managerOfBranchId)?.name || null,
-          fromRoleName: this.roles.find(r => r.id == formData.roleId)?.name || '',
+          fromEmployeeName: this.employees.find(e => e.value == formData.employeeId)?.label || '',
+          fromDepartmentName: this.departments.find(d => d.value == formData.departmentId)?.label || null,
+          fromManagerOfDepartmentName: this.deptManager.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
+          fromBranchName: this.branches.find(b => b.value == formData.branchId)?.label || null,
+          fromManagerOfBranchName: this.brancheManager.find(m => m.value == formData.managerOfBranchId)?.label || null,
+          fromRoleName: this.roles.find(r => r.value == formData.roleId)?.label || '',
           startDate: formData.startDate || null,
           startHijriDate: null,
           endDate: formData.endDate || null,
@@ -296,12 +265,174 @@ export class UserRoleAssignmentComponent implements OnInit {
     }
   }
 
+  getStoredEmpId(): number  {
+    const empId = localStorage.getItem('empId');
+    return Number(empId);
+  }
+
+  async loadDropdownData() {
+    await this.loadDropdownDataIfNeeded();
+  }
+
+private areAllDropdownsLoaded(): boolean {
+    return this.dropdownDataLoaded.employees && 
+           this.dropdownDataLoaded.departments && 
+           this.dropdownDataLoaded.deptManager && 
+           this.dropdownDataLoaded.branches && 
+           this.dropdownDataLoaded.brancheManager && 
+           this.dropdownDataLoaded.roles && 
+           this.employees.length > 0 &&
+           this.departments.length > 0 &&
+           this.deptManager.length > 0 &&
+           this.branches.length > 0 &&
+           this.brancheManager.length > 0 &&
+           this.roles.length > 0 ;
+  }
+
+private async loadDropdownDataIfNeeded(): Promise<void> {
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    const langKey = this.langService.getCurrentLang();
+    const empId = this.getStoredEmpId();
+
+    // Check if we already have data for this language
+    if (this.areAllDropdownsLoaded()) {
+      console.log('Dropdown data already loaded for current language, skipping API calls');
+      return Promise.resolve();
+    }
+
+    console.log('Loading dropdown data for language:', langKey, 'API lang code:', currentLang);
+
+    try {
+      const loadPromises: Promise<any>[] = [];
+      // Only load Employee if not already loaded for this language
+      if (!this.dropdownDataLoaded.employees || this.employees.length === 0) {
+        console.log('Loading employees...');
+        const employeePromise = this.dropdownService.getEmpsDropdownList(currentLang,empId).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.employees = response.data.employees || [];
+              this.dropdownDataLoaded.employees = true;
+              console.log('Employees loaded:', this.employees.length);
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading employees';
+              console.error('Failed to load employees:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(employeePromise);
+      }
+
+      if (!this.dropdownDataLoaded.departments || this.departments.length === 0) {
+        console.log('Loading departments...');
+        const departmentPromise = this.dropdownService.getDepartmentsDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.departments = response.data.departments || [];
+              this.dropdownDataLoaded.departments = true;
+              console.log('Departments loaded:', this.departments.length);
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading departments';
+              console.error('Failed to load departments:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(departmentPromise);
+      }
+
+      if (!this.dropdownDataLoaded.deptManager || this.deptManager.length === 0) {
+        console.log('Loading deptManager...');
+        const departmentPromise = this.dropdownService.getManagersDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.deptManager = response.data.managers || [];
+              this.dropdownDataLoaded.deptManager = true;
+              console.log('deptManager loaded:', this.deptManager.length);
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading deptManager';
+              console.error('Failed to load deptManager:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(departmentPromise);
+      }
+
+      if (!this.dropdownDataLoaded.branches || this.branches.length === 0) {
+        console.log('Loading branches...');
+        const departmentPromise = this.dropdownService.getBranchesDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.branches = response.data.parentBranches || [];
+              this.dropdownDataLoaded.branches = true;
+              console.log('branches loaded:', this.branches.length);
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading branches';
+              console.error('Failed to load branches:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(departmentPromise);
+      }
+
+      if (!this.dropdownDataLoaded.brancheManager || this.brancheManager.length === 0) {
+        console.log('Loading brancheManager...');
+        const departmentPromise = this.dropdownService.getBranchManagersDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.brancheManager = response.data.managers || [];
+              this.dropdownDataLoaded.brancheManager = true;
+              console.log('brancheManager loaded:', this.brancheManager.length);
+              console.log(response.data)
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading brancheManager';
+              console.error('Failed to load brancheManager:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(departmentPromise);
+      }
+
+      if (!this.dropdownDataLoaded.roles || this.roles.length === 0) {
+        console.log('Loading roles...');
+        const departmentPromise = this.dropdownService.getEmployeeRolesDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.roles = response.data.dropdownListsForRoleModuleRights || [];
+              this.dropdownDataLoaded.roles = true;
+              console.log('roles loaded:', this.roles.length);
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading roles';
+              console.error('Failed to load roles:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(departmentPromise);
+      }
+
+      // If no API calls needed, resolve immediately
+      if (loadPromises.length === 0) {
+        console.log('All dropdown data already available');
+        return;
+      }
+
+      // Wait for all needed API calls to complete
+      await Promise.all(loadPromises);
+      console.log('Smart dropdown loading completed');
+
+    } catch (error) {
+      console.error('Error in smart dropdown loading:', error);
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'تحذير',
+        detail: 'فشل في تحميل بعض البيانات'
+      });
+    }
+  }
+
   loadUserRoleAssignments() {
     this.loading = true;
     
     // Set empId from authentication service
     this.paginationRequest.empId = this.authService.getEmpIdAsNumber();
-    
     this.roleAssignmentService.getAllUserRoleAssignments(this.paginationRequest).subscribe({
       next: (response) => {
         if (response.isSuccess) {
@@ -333,12 +464,12 @@ export class UserRoleAssignmentComponent implements OnInit {
     this.selectedRoleAssignment = roleAssignment;
     
     // Find the IDs from the names (reverse lookup)
-    const employeeId = this.employees.find(e => e.name === roleAssignment.fromEmployeeName)?.id || '';
-    const departmentId = this.departments.find(d => d.name === roleAssignment.fromDepartmentName)?.id || '';
-    const managerOfDepartmentId = this.managers.find(m => m.name === roleAssignment.fromManagerOfDepartmentName)?.id || '';
-    const branchId = this.branches.find(b => b.name === roleAssignment.fromBranchName)?.id || '';
-    const managerOfBranchId = this.managers.find(m => m.name === roleAssignment.fromManagerOfBranchName)?.id || '';
-    const roleId = this.roles.find(r => r.name === roleAssignment.fromRoleName)?.id || '';
+    const employeeId = this.employees.find(e => e.label === roleAssignment.fromEmployeeName)?.value || '';
+    const departmentId = this.departments.find(d => d.label === roleAssignment.fromDepartmentName)?.value || '';
+    const managerOfDepartmentId = this.deptManager.find(m => m.label === roleAssignment.fromManagerOfDepartmentName)?.value || '';
+    const branchId = this.branches.find(b => b.label === roleAssignment.fromBranchName)?.value || '';
+    const managerOfBranchId = this.brancheManager.find(m => m.label === roleAssignment.fromManagerOfBranchName)?.value || '';
+    const roleId = this.roles.find(r => r.label === roleAssignment.fromRoleName)?.value || '';
     
     this.userRoleAssignmentForm.patchValue({
       employeeId: employeeId,
@@ -365,13 +496,22 @@ export class UserRoleAssignmentComponent implements OnInit {
       acceptLabel: this.langService.getCurrentLang() === 'ar' ? 'نعم، احذف' : 'Yes, Delete',
       rejectLabel: this.langService.getCurrentLang() === 'ar' ? 'إلغاء' : 'Cancel',
       accept: () => {
-        this.roleAssignmentService.deleteUserRoleAssignment(roleAssignment.recId).subscribe({
+        this.roleAssignmentService.deleteUserRoleAssignment(this.langService.getLangValue(), roleAssignment.recId).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-              detail: this.langService.getCurrentLang() === 'ar' ? 'تم حذف تخصيص الدور بنجاح' : 'User role assignment deleted successfully' 
-            });
+            if(response.isSuccess){
+              this.messageService.add({ 
+                severity: 'success', 
+                summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+                detail: response.message
+              });
+            }
+            else{
+              this.messageService.add({ 
+                severity: 'faild', 
+                summary: this.langService.getCurrentLang() === 'ar' ? 'فشل' : 'faild', 
+                detail: response.message
+              });
+            }
             this.loadUserRoleAssignments();
           },
           error: (error) => {
@@ -410,7 +550,7 @@ export class UserRoleAssignmentComponent implements OnInit {
         let errorCount = 0;
 
         selectedIds.forEach(id => {
-          this.roleAssignmentService.deleteUserRoleAssignment(id).subscribe({
+          this.roleAssignmentService.deleteUserRoleAssignment(this.langService.getLangValue(),id).subscribe({
             next: (response) => {
               deletedCount++;
               if (deletedCount + errorCount === selectedIds.length) {

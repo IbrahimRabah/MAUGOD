@@ -14,6 +14,7 @@ import {
   SaveDepartmentManagerPermissionsRequest, 
   SaveBranchManagerPermissionsRequest
 } from '../../../../core/models/DataPermissionRequests';
+import { TranslateService } from '@ngx-translate/core';
 
 interface SelectableItem {
   id: number | string;
@@ -164,9 +165,9 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     private dropdownlistsService: DropdownlistsService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
+    private translate: TranslateService,
     private fb: FormBuilder
   ) {
-    this.initializeForm();
   }
 
   ngOnInit() {
@@ -188,6 +189,8 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     
     // Load access permissions data by default when component initializes
     this.loadData();
+    this.loadBasicDropdownData();
+
   }
 
   ngOnDestroy() {
@@ -237,8 +240,8 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       
       // Additional fields
       changeDataEmp: [0],
-      sDate: ['', Validators.required],
-      eDate: ['', Validators.required],
+      sDate: [''],
+      eDate: [''],
       note: ['']
     });
 
@@ -561,7 +564,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     }
 
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected items?',
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -590,7 +593,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Selected permissions deleted successfully'
+            detail: response.message
           });
           this.selectedItems = [];
           this.selectAll = false;
@@ -613,7 +616,6 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     this.resetCreateForm();
     this.clearAllToSelections();
     // Only load basic dropdown data, target-specific data will be loaded on demand
-    this.loadBasicDropdownData();
   }
 
   closeCreateModal() {
@@ -675,7 +677,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
-                  detail: 'Access permission created successfully'
+                  detail: response.message
                 });
                 this.closeCreateModal();
                 this.loadData();
@@ -700,7 +702,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
-                  detail: 'Access permission created successfully'
+                  detail: response.message
                 });
                 this.closeCreateModal();
                 this.loadData();
@@ -725,7 +727,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
-                  detail: 'Access permission created successfully'
+                  detail: response.message
                 });
                 this.closeCreateModal();
                 this.loadData();
@@ -750,7 +752,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
-                  detail: 'Access permission created successfully'
+                  detail: response.message
                 });
                 this.closeCreateModal();
                 this.loadData();
@@ -775,7 +777,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
-                  detail: 'Access permission created successfully'
+                  detail: response.message
                 });
                 this.closeCreateModal();
                 this.loadData();
@@ -800,7 +802,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
                 this.messageService.add({
                   severity: 'success',
                   summary: 'Success',
-                  detail: 'Access permission created successfully'
+                  detail: response.message
                 });
                 this.closeCreateModal();
                 this.loadData();

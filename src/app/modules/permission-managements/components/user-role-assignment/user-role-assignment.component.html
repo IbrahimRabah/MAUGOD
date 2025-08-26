@@ -204,7 +204,7 @@
               [class.error]="isFieldInvalid('employeeId')"
               formControlName="employeeId">
               <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_EMPLOYEE' | translate }}</option>
-              <option *ngFor="let employee of employees" [value]="employee.id">{{ employee.name }}</option>
+              <option *ngFor="let employee of employees" [value]="employee.value">{{ employee.label }}</option>
             </select>
             <div class="error-message" *ngIf="isFieldInvalid('employeeId')">
               {{ getFieldError('employeeId') }}
@@ -219,7 +219,7 @@
               class="form-select"
               formControlName="departmentId">
               <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_DEPARTMENT' | translate }}</option>
-              <option *ngFor="let department of departments" [value]="department.id">{{ department.name }}</option>
+              <option *ngFor="let department of departments" [value]="department.value">{{ department.label }}</option>
             </select>
           </div>
 
@@ -231,7 +231,7 @@
               class="form-select"
               formControlName="managerOfDepartmentId">
               <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_MANAGER' | translate }}</option>
-              <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+              <option *ngFor="let manager of deptManager" [value]="manager.value">{{ manager.label }}</option>
             </select>
           </div>
 
@@ -243,7 +243,7 @@
               class="form-select"
               formControlName="branchId">
               <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_BRANCH' | translate }}</option>
-              <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
+              <option *ngFor="let branch of branches" [value]="branch.value">{{ branch.label }}</option>
             </select>
           </div>
 
@@ -255,7 +255,7 @@
               class="form-select"
               formControlName="managerOfBranchId">
               <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_MANAGER' | translate }}</option>
-              <option *ngFor="let manager of managers" [value]="manager.id">{{ manager.name }}</option>
+              <option *ngFor="let manager of brancheManager" [value]="manager.value">{{ manager.label }}</option>
             </select>
           </div>
 
@@ -268,7 +268,7 @@
               [class.error]="isFieldInvalid('roleId')"
               formControlName="roleId">
               <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_ROLE' | translate }}</option>
-              <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+              <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
             </select>
             <div class="error-message" *ngIf="isFieldInvalid('roleId')">
               {{ getFieldError('roleId') }}

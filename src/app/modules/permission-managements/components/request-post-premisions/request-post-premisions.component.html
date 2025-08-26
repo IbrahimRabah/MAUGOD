@@ -274,7 +274,7 @@
             <div class="radio-item" 
                  *ngFor="let option of targetTypeOptions" 
                  [class.selected]="createForm.get('targetType')?.value === option.id"
-                 (click)="selectTargetType(option.id); targetDropdown.show()">
+                 (click)="selectTargetType(option.id);">
               <input 
                 type="radio" 
                 [id]="'target_' + option.id" 
@@ -291,7 +291,7 @@
         <div class="form-section" *ngIf="!createForm.get('everyoneType')?.value">
           <h4>{{ 'REQUEST_POST_PERMISSIONS.SELECT_TARGETS' | translate }}</h4>
           <div class="form-group">
-            <div class="multiselect-wrapper" (click)="targetDropdown.show()">
+            <div class="multiselect-wrapper">
               <p-multiSelect 
                 #targetDropdown
                 formControlName="selectedTargets"

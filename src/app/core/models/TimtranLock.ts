@@ -1,15 +1,15 @@
 export interface TimtranLock {
-  id: number;
+  recId: number;
   sDate: string;
   eDate: string;
-  totalLock: number;
-  handleApprovalReqLock: number;
-  handleApprovalReqTranLock: number;
-  timtranApprovalReqLock: number;
-  timtranApprovalReqTranLock: number;
+  totalLock: boolean;
+  handleApprovalReqLock: boolean;
+  handleApprovalReqTranLock: boolean;
+  timtranApprovalReqLock: boolean;
+  timtranApprovalReqTranLock: boolean;
   daysHandleDirect: number;
   daysHandleSync: number;
-  timtranManualChange: number;
+  timtranManualChange: boolean;
   note: string;
 }
 

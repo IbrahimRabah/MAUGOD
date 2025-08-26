@@ -641,6 +641,57 @@
         "ERROR_OCCURRED": "حدث خطأ. يرجى المحاولة مرة أخرى.",
         "NO_EMPLOYEES_FOUND": "لم يتم العثور على موظفين."
       },
+            "ROLEREPORTRIGHTS_TABLE": {
+        "ROLE": "الدور",
+        "REPORT": "التقرير",
+        "DELEGATE": "رقم التفويض",
+        "DELETE": "حذف",
+        "DELETE_SELECTED": "حذف المحدد"
+      },
+      "ROLEREPORTRIGHTS_ACTIONS": {
+        "ADD_ROLEREPORTRIGHT": "إضافة صلاحية",
+        "SEARCH_PLACEHOLDER": "البحث في الصلاحيات...",
+        "SEARCH_TITLE": "البحث",
+        "ADD_ROLEREPORTRIGHT_TITLE": "إضافة صلاحية جديدة",
+        "DELETE_SELECTED": "حذف المحدد",
+        "DELETE_SELECTED_TITLE": "حذف العناصر المحددة"
+      },
+      "ROLEREPORTRIGHTS_GENERAL": {
+        "LOADING": "جاري التحميل...",
+        "LOADING_REPORTS": "جاري تحميل التقارير...",
+        "EDIT_TOOLTIP": "تعديل",
+        "DELETE_TOOLTIP": "حذف",
+        "SELECT_ALL": "تحديد الكل",
+        "SELECT_ITEM": "تحديد العنصر",
+        "NO_REPORTS_FOUND": "لم يتم العثور على تقارير."
+      },
+      "ROLEREPORTRIGHTS_PAGINATION": {
+        "SHOWING": "عرض",
+        "TO": "-",
+        "OF": "من",
+        "ITEMS": "عنصر",
+        "PAGE": "صفحة",
+        "PAGE_OF": "من",
+        "ITEMS_PER_PAGE": "عدد العناصر في الصفحة:",
+        "NO_DATA": "لا توجد بيانات",
+        "FIRST_PAGE": "الصفحة الأولى",
+        "PREVIOUS_PAGE": "الصفحة السابقة",
+        "NEXT_PAGE": "الصفحة التالية",
+        "LAST_PAGE": "الصفحة الأخيرة"
+      },
+      "ROLEREPORTRIGHTS_MODALS": {
+        "ADD_ROLEREPORTRIGHTS_MODAL": {
+          "TITLE": "إضافة صلاحية جديدة",
+          "ROLE_ID": "الدور",
+          "SELECT_REPORTS": "اختر التقارير",
+          "SEARCH_ROLE_PLACEHOLDER": "البحث عن دور ...",
+          "SEARCH_REPORTS": "البحث عن التقارير...",
+          "NO_ROLES_FOUND": "لم يتم العثور على أدوار.",
+          "ROLE_REQUIRED": "اختيار الدور مطلوب",
+          "CANCEL": "إلغاء",
+          "SAVE": "حفظ"
+        }
+      },
       "NATIONALITIES_TABLE": {
         "EDIT": "تعديل",
         "ARABIC_NAME": "الاسم بالعربي",
