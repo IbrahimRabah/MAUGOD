@@ -1,9 +1,10 @@
 <div class="shifts-container">
   <!-- Toast Messages -->
   <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
-  
+
   <!-- Confirmation Dialog -->
-  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="loading-spinner">
@@ -14,27 +15,48 @@
   <!-- Table Header Actions -->
   <div *ngIf="!loading" class="table-header-actions">
     <div class="left-actions">
-      <button class="add-btn" 
-              (click)="createShift()" 
-              [title]="'SHIFTS_TABLE.CREATE_TITLE' | translate">
+      <button class="add-btn" (click)="createShift()" [title]="'SHIFTS_TABLE.CREATE_TITLE' | translate">
         <i class="fas fa-plus"></i>
         {{ 'SHIFTS_TABLE.CREATE' | translate }}
       </button>
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input 
-            type="text"
-            formControlName="searchTerm"
-            class="search-input"
-            [placeholder]="'SHIFTS_TABLE.SEARCH_PLACEHOLDER' | translate"
-            [title]="'SHIFTS_TABLE.SEARCH_TITLE' | translate"
-            (keyup.enter)="onSearch()">
-          <i class="fas fa-search search-icon"></i>
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
   </div>
 
@@ -60,36 +82,41 @@
       <tbody>
         <tr *ngFor="let shift of shifts" class="table-row">
           <td>
-            <button class="action-btn edit-btn" 
-                    (click)="editShift(shift)"
-                    [title]="'SHIFTS_TABLE.EDIT_TOOLTIP' | translate">
+            <button class="action-btn edit-btn" (click)="editShift(shift)"
+              [title]="'SHIFTS_TABLE.EDIT_TOOLTIP' | translate">
               <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
-          <td>{{ getDisplayValue(langService.getCurrentLang() === 'ar' ? shift.shiftNameAr : shift.shiftNameEn) }}</td>
-          <td [innerHTML]="getDisplayValue(shift.sun)"></td>
-          <td [innerHTML]="getDisplayValue(shift.mon)"></td>
-          <td [innerHTML]="getDisplayValue(shift.tue)"></td>
-          <td [innerHTML]="getDisplayValue(shift.wed)"></td>
-          <td [innerHTML]="getDisplayValue(shift.thu)"></td>
-          <td [innerHTML]="getDisplayValue(shift.fri)"></td>
-          <td [innerHTML]="getDisplayValue(shift.sat)"></td>
+          <td>{{ getDisplayValue( shift.shiftName) }}</td>
+          <td [innerHTML]="getDisplayValue(shift.sun)"
+            [ngStyle]="shift.sunStyle ? styleStringToObject(shift.sunStyle) : {}"></td>
+          <td [innerHTML]="getDisplayValue(shift.mon)"
+            [ngStyle]="shift.monStyle ? styleStringToObject(shift.monStyle) : {}"></td>
+          <td [innerHTML]="getDisplayValue(shift.tue)"
+            [ngStyle]="shift.tueStyle ? styleStringToObject(shift.tueStyle) : {}"></td>
+          <td [innerHTML]="getDisplayValue(shift.wed)"
+            [ngStyle]="shift.wedStyle ? styleStringToObject(shift.wedStyle) : {}"></td>
+          <td [innerHTML]="getDisplayValue(shift.thu)"
+            [ngStyle]="shift.thuStyle ? styleStringToObject(shift.thuStyle) : {}"></td>
+          <td [innerHTML]="getDisplayValue(shift.fri)"
+            [ngStyle]="shift.friStyle ? styleStringToObject(shift.friStyle) : {}"></td>
+          <td [innerHTML]="getDisplayValue(shift.sat)"
+            [ngStyle]="shift.satStyle ? styleStringToObject(shift.satStyle) : {}"></td>
           <td>
-            <span class="boolean-badge" [class.yes]="shift.isActive === '1' || shift.isActive === 'true'" [class.no]="shift.isActive !== '1' && shift.isActive !== 'true'">
-              {{ getActiveStatus(shift.isActive) }}
+            <span class="boolean-badge" [class.yes]="shift.isActive === '1' || shift.isActive === 'true'"
+              [class.no]="shift.isActive !== '1' && shift.isActive !== 'true'">
+              {{ shift.isActiveLabel }}
             </span>
           </td>
           <td>
-            <button class="action-btn details-btn" 
-                    (click)="viewShiftDetails(shift)"
-                    [title]="'SHIFTS_TABLE.DETAILS_TOOLTIP' | translate">
+            <button class="action-btn details-btn" (click)="viewShiftDetails(shift.shiftId)"
+              [title]="'SHIFTS_TABLE.DETAILS_TOOLTIP' | translate">
               <i class="text-primary fs-4 fas fa-eye"></i>
             </button>
           </td>
           <td>
-            <button class="action-btn delete-btn" 
-                    (click)="deleteShift(shift)"
-                    [title]="'SHIFTS_TABLE.DELETE_TOOLTIP' | translate">
+            <button class="action-btn delete-btn" (click)="deleteShift(shift)"
+              [title]="'SHIFTS_TABLE.DELETE_TOOLTIP' | translate">
               <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
           </td>
@@ -106,73 +133,54 @@
   </div>
 
   <!-- Custom Pagination -->
-  <div *ngIf="!loading && shifts.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+  <div *ngIf="!loading && shifts.length > 0" class="pagination-wrapper"
+    [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
     <div class="pagination-info">
-      <span>{{ 'SHIFTS_TABLE.SHOWING' | translate }} {{ currentPageStart }} {{ 'SHIFTS_TABLE.TO' | translate }} {{ currentPageEnd }} {{ 'SHIFTS_TABLE.OF' | translate }} {{ totalRecords }} {{ 'SHIFTS_TABLE.ITEMS' | translate }}</span>
+      <span>{{ 'SHIFTS_TABLE.SHOWING' | translate }} {{ currentPageStart }} {{ 'SHIFTS_TABLE.TO' | translate }} {{
+        currentPageEnd }} {{ 'SHIFTS_TABLE.OF' | translate }} {{ totalRecords }} {{ 'SHIFTS_TABLE.ITEMS' | translate
+        }}</span>
     </div>
 
     <div class="pagination-controls">
       <!-- RTL (Arabic) Layout -->
       <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
-        <button 
-          class="pagination-btn" 
-          (click)="goToPage(totalPages)" 
-          [disabled]="!canGoNext || totalPages <= 1"
+        <button class="pagination-btn" (click)="goToPage(totalPages)" [disabled]="!canGoNext || totalPages <= 1"
           [title]="'SHIFTS_TABLE.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
-        <button 
-          class="pagination-btn" 
-          (click)="nextPage()" 
-          [disabled]="!canGoNext"
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="!canGoNext"
           [title]="'SHIFTS_TABLE.NEXT_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
-        <span class="page-info">{{ 'SHIFTS_TABLE.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'SHIFTS_TABLE.PAGE_OF' | translate }} {{ totalPages }}</span></span>
-        <button 
-          class="pagination-btn" 
-          (click)="previousPage()" 
-          [disabled]="!canGoPrevious"
+        <span class="page-info">{{ 'SHIFTS_TABLE.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{
+            'SHIFTS_TABLE.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button class="pagination-btn" (click)="previousPage()" [disabled]="!canGoPrevious"
           [title]="'SHIFTS_TABLE.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
-        <button 
-          class="pagination-btn" 
-          (click)="goToPage(1)" 
-          [disabled]="!canGoPrevious"
+        <button class="pagination-btn" (click)="goToPage(1)" [disabled]="!canGoPrevious"
           [title]="'SHIFTS_TABLE.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
       </ng-container>
-      
+
       <!-- LTR (English) Layout -->
       <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
-        <button 
-          class="pagination-btn" 
-          (click)="goToPage(1)" 
-          [disabled]="!canGoPrevious"
+        <button class="pagination-btn" (click)="goToPage(1)" [disabled]="!canGoPrevious"
           [title]="'SHIFTS_TABLE.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
-        <button 
-          class="pagination-btn" 
-          (click)="previousPage()" 
-          [disabled]="!canGoPrevious"
+        <button class="pagination-btn" (click)="previousPage()" [disabled]="!canGoPrevious"
           [title]="'SHIFTS_TABLE.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
-        <span class="page-info">{{ 'SHIFTS_TABLE.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'SHIFTS_TABLE.PAGE_OF' | translate }} {{ totalPages }}</span></span>
-        <button 
-          class="pagination-btn" 
-          (click)="nextPage()" 
-          [disabled]="!canGoNext"
+        <span class="page-info">{{ 'SHIFTS_TABLE.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{
+            'SHIFTS_TABLE.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="!canGoNext"
           [title]="'SHIFTS_TABLE.NEXT_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
-        <button 
-          class="pagination-btn" 
-          (click)="goToPage(totalPages)" 
-          [disabled]="!canGoNext || totalPages <= 1"
+        <button class="pagination-btn" (click)="goToPage(totalPages)" [disabled]="!canGoNext || totalPages <= 1"
           [title]="'SHIFTS_TABLE.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
@@ -197,15 +205,22 @@
 <div *ngIf="showCreateShiftModal" class="modal-overlay" (click)="closeCreateShiftModal()">
   <div class="modal-container create-edit-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>{{ isEditMode ? ('SHIFTS_TABLE.EDIT_SHIFT_TITLE' | translate) : ('SHIFTS_TABLE.CREATE_SHIFT_TITLE' | translate) }}</h3>
+      <h3>{{ isEditMode ? ('SHIFTS_TABLE.EDIT_SHIFT_TITLE' | translate) : ('SHIFTS_TABLE.CREATE_SHIFT_TITLE' |
+        translate) }}</h3>
       <button class="close-btn" (click)="closeCreateShiftModal()">
         <i class="fas fa-times"></i>
       </button>
     </div>
-    
-    <div class="modal-body create-edit-modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+
+    <div *ngIf="loadingDropdowns" class="dropdown-loading">
+      <div class="spinner"></div>
+      <p>{{ 'MENU.GENERAL_DATA.BRANCHES_GENERAL.LOADING' | translate }}...</p>
+    </div>
+
+    <div class="modal-body create-edit-modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'"
+      [class.ltr]="langService.getCurrentLang() === 'en'">
       <form [formGroup]="createShiftForm" (ngSubmit)="onSubmitCreateShift()">
-        
+
         <!-- Two Parts Toggle -->
         <div class="form-section">
           <div class="form-group">
@@ -218,128 +233,126 @@
         <div class="form-section">
           <h4>{{ 'SHIFTS_TABLE.BASIC_INFO' | translate }}</h4>
           <div class="form-group">
-            <label>{{ 'SHIFTS_TABLE.ARABIC_NAME' | translate }} *</label>
-            <input type="text" formControlName="ar" class="form-input" [placeholder]="'SHIFTS_TABLE.ARABIC_NAME_PLACEHOLDER' | translate">
+            <label class="required">{{ 'SHIFTS_TABLE.ARABIC_NAME' | translate }}</label>
+            <input type="text" formControlName="ar" class="form-input"
+              [placeholder]="'SHIFTS_TABLE.ARABIC_NAME_PLACEHOLDER' | translate" [class.error]="isFieldInvalid('ar')">
+            <div *ngIf="isFieldInvalid('ar')" class="error-message">
+              {{ getFieldError('ar') }}
+            </div>
           </div>
           <div class="form-group">
-            <label>{{ 'SHIFTS_TABLE.ENGLISH_NAME' | translate }} *</label>
-            <input type="text" formControlName="en" class="form-input" [placeholder]="'SHIFTS_TABLE.ENGLISH_NAME_PLACEHOLDER' | translate">
+            <label>{{ 'SHIFTS_TABLE.ENGLISH_NAME' | translate }} </label>
+            <input type="text" formControlName="en" class="form-input"
+              [placeholder]="'SHIFTS_TABLE.ENGLISH_NAME_PLACEHOLDER' | translate">
           </div>
         </div>
 
         <!-- Weekdays Selection -->
         <div class="form-section">
-          <h4>{{ 'SHIFTS_TABLE.WEEKDAYS' | translate }}</h4>
+          <!-- <h4>{{ 'SHIFTS_TABLE.WEEKDAYS' | translate }}</h4> -->
           <div class="weekdays-grid">
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.SUNDAY' | translate }} *</label>
-              <p-dropdown 
-                formControlName="sun" 
-                [options]="weekdayOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
-                [filter]="true"
-                [showClear]="true"
-                filterBy="label"
-                class="form-dropdown">
+              <label class="required">{{ 'SHIFTS_TABLE.SUNDAY' | translate }} </label>
+              <p-dropdown formControlName="sun" [options]="daysShifts" optionLabel="label" optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
+                filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
+                [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
+                class="form-dropdown" [class.error]="isFieldInvalid('sun')">
+                <div *ngIf="isFieldInvalid('sun')" class="error-message">
+                  {{ getFieldError('sun') }}
+                </div>
               </p-dropdown>
             </div>
+
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.MONDAY' | translate }} *</label>
-              <p-dropdown 
-                formControlName="mon" 
-                [options]="weekdayOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
-                [filter]="true"
-                [showClear]="true"
-                filterBy="label"
-                class="form-dropdown">
+              <label class="required">{{ 'SHIFTS_TABLE.MONDAY' | translate }} </label>
+              <p-dropdown formControlName="mon" [options]="daysShifts" optionLabel="label" optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
+                filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
+                [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
+                class="form-dropdown" [class.error]="isFieldInvalid('mon')">
+                <div *ngIf="isFieldInvalid('mon')" class="error-message">
+                  {{ getFieldError('mon') }}
+                </div>
               </p-dropdown>
             </div>
+
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.TUESDAY' | translate }} *</label>
-              <p-dropdown 
-                formControlName="tue" 
-                [options]="weekdayOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
-                [filter]="true"
-                [showClear]="true"
-                filterBy="label"
-                class="form-dropdown">
+              <label class="required">{{ 'SHIFTS_TABLE.TUESDAY' | translate }} </label>
+              <p-dropdown formControlName="tue" [options]="daysShifts" optionLabel="label" optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
+                filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
+                [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
+                class="form-dropdown" [class.error]="isFieldInvalid('tue')">
+                <div *ngIf="isFieldInvalid('tue')" class="error-message">
+                  {{ getFieldError('tue') }}
+                </div>
               </p-dropdown>
             </div>
+
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.WEDNESDAY' | translate }} *</label>
-              <p-dropdown 
-                formControlName="wed" 
-                [options]="weekdayOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
-                [filter]="true"
-                [showClear]="true"
-                filterBy="label"
-                class="form-dropdown">
+              <label class="required">{{ 'SHIFTS_TABLE.WEDNESDAY' | translate }} </label>
+              <p-dropdown formControlName="wed" [options]="daysShifts" optionLabel="label" optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
+                filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
+                [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
+                class="form-dropdown" [class.error]="isFieldInvalid('wed')">
+                <div *ngIf="isFieldInvalid('wed')" class="error-message">
+                  {{ getFieldError('wed') }}
+                </div>
               </p-dropdown>
             </div>
+
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.THURSDAY' | translate }} *</label>
-              <p-dropdown 
-                formControlName="thu" 
-                [options]="weekdayOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
-                [filter]="true"
-                [showClear]="true"
-                filterBy="label"
-                class="form-dropdown">
+              <label class="required">{{ 'SHIFTS_TABLE.THURSDAY' | translate }} </label>
+              <p-dropdown formControlName="thu" [options]="daysShifts" optionLabel="label" optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
+                filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
+                [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
+                class="form-dropdown" [class.error]="isFieldInvalid('thu')">
+                <div *ngIf="isFieldInvalid('thu')" class="error-message">
+                  {{ getFieldError('thu') }}
+                </div>
               </p-dropdown>
             </div>
+
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.FRIDAY' | translate }} *</label>
-              <p-dropdown 
-                formControlName="fri" 
-                [options]="weekdayOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
-                [filter]="true"
-                [showClear]="true"
-                filterBy="label"
-                class="form-dropdown">
+              <label class="required">{{ 'SHIFTS_TABLE.FRIDAY' | translate }} </label>
+              <p-dropdown formControlName="fri" [options]="daysShifts" optionLabel="label" optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
+                filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
+                [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
+                class="form-dropdown" [class.error]="isFieldInvalid('fri')">
+                <div *ngIf="isFieldInvalid('fri')" class="error-message">
+                  {{ getFieldError('fri') }}
+                </div>
               </p-dropdown>
             </div>
+
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.SATURDAY' | translate }} *</label>
-              <p-dropdown 
-                formControlName="sat" 
-                [options]="weekdayOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate"
-                [filter]="true"
-                [showClear]="true"
-                filterBy="label"
-                class="form-dropdown">
+              <label class="required">{{ 'SHIFTS_TABLE.SATURDAY' | translate }} </label>
+              <p-dropdown formControlName="sat" [options]="daysShifts" optionLabel="label" optionValue="value"
+                [placeholder]="'SHIFTS_TABLE.SELECT_OPTION' | translate" [filter]="true" [showClear]="true"
+                filterBy="label" [virtualScroll]="true" [itemSize]="40" [style]="{'width':'100%'}"
+                [panelStyle]="{'max-height':'300px', 'overflow':'auto'}" [disabled]="loadingDropdowns"
+                class="form-dropdown" [class.error]="isFieldInvalid('sat')">
+                <div *ngIf="isFieldInvalid('sat')" class="error-message">
+                  {{ getFieldError('sat') }}
+                </div>
               </p-dropdown>
             </div>
+
           </div>
         </div>
 
         <!-- Part 1 (Always visible) -->
         <div class="form-section">
           <h4>{{ 'SHIFTS_TABLE.PART_1' | translate }}</h4>
-          
+
           <!-- Part 1 Toggles -->
           <div class="toggles-row">
             <div class="form-group">
-              <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT' | translate }}</label>
+              <label >{{ 'SHIFTS_TABLE.OPEN_SHIFT' | translate }}</label>
               <input type="checkbox" formControlName="openShift1" class="form-checkbox">
             </div>
             <div class="form-group">
@@ -351,7 +364,8 @@
           <!-- Open Shift Minutes (conditional) -->
           <div class="form-group" *ngIf="createShiftForm.get('openShift1')?.value">
             <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT_MINUTES' | translate }}</label>
-            <input type="number" formControlName="openShiftMinutes1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+            <input type="number" formControlName="openShiftMinutes1" class="form-input" min="0"
+              [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
           </div>
 
           <!-- In Section -->
@@ -359,24 +373,32 @@
             <h5>{{ 'SHIFTS_TABLE.IN_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.IN_TIME' | translate }} *</label>
-                <input type="time" formControlName="in1" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.IN_TIME' | translate }}</label>
+                <input type="time" formControlName="in1" class="form-input"
+                [class.error]="isFieldInvalid('in1')">
+                <div *ngIf="isFieldInvalid('in1')" class="error-message">
+                  {{ getFieldError('in1') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_IN' | translate }}</label>
-                <input type="number" formControlName="earlyIn1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="earlyIn1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.IN_ALLOW' | translate }}</label>
-                <input type="number" formControlName="inAllowMin1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="inAllowMin1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.MAX_IN' | translate }}</label>
-                <input type="number" formControlName="maxIn1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="maxIn1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.OVERTIME_IN' | translate }}</label>
-                <input type="number" formControlName="makeupIn1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="makeupIn1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
             </div>
           </div>
@@ -386,24 +408,32 @@
             <h5>{{ 'SHIFTS_TABLE.OUT_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.OUT_TIME' | translate }} *</label>
-                <input type="time" formControlName="out1" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.OUT_TIME' | translate }} </label>
+                <input type="time" formControlName="out1" class="form-input"
+                [class.error]="isFieldInvalid('out1')">
+                <div *ngIf="isFieldInvalid('out1')" class="error-message">
+                  {{ getFieldError('out1') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_OUT' | translate }}</label>
-                <input type="number" formControlName="earlyOut1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="earlyOut1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.OUT_ALLOW' | translate }}</label>
-                <input type="number" formControlName="outAllowMin1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="outAllowMin1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.MAX_OUT' | translate }}</label>
-                <input type="number" formControlName="maxOut1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="maxOut1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.OVERTIME_OUT' | translate }}</label>
-                <input type="number" formControlName="makeupOut1" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="makeupOut1" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
             </div>
           </div>
@@ -412,7 +442,7 @@
         <!-- Part 2 (Conditional based on isTwoParts) -->
         <div class="form-section" *ngIf="createShiftForm.get('isTwoParts')?.value">
           <h4>{{ 'SHIFTS_TABLE.PART_2' | translate }}</h4>
-          
+
           <!-- Part 2 Toggles -->
           <div class="toggles-row">
             <div class="form-group">
@@ -428,7 +458,8 @@
           <!-- Open Shift Minutes (conditional) -->
           <div class="form-group" *ngIf="createShiftForm.get('openShift2')?.value">
             <label>{{ 'SHIFTS_TABLE.OPEN_SHIFT_MINUTES' | translate }}</label>
-            <input type="number" formControlName="openShiftMinutes2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+            <input type="number" formControlName="openShiftMinutes2" class="form-input" min="0"
+              [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
           </div>
 
           <!-- In Section -->
@@ -436,24 +467,32 @@
             <h5>{{ 'SHIFTS_TABLE.IN_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.IN_TIME' | translate }}</label>
-                <input type="time" formControlName="in2" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.IN_TIME' | translate }}</label>
+                <input type="time" formControlName="in2" class="form-input"
+                [class.error]="isFieldInvalid('in2')">
+                <div *ngIf="isFieldInvalid('in2')" class="error-message">
+                  {{ getFieldError('in2') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_IN' | translate }}</label>
-                <input type="number" formControlName="earlyIn2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="earlyIn2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.IN_ALLOW' | translate }}</label>
-                <input type="number" formControlName="inAllowMin2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="inAllowMin2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.MAX_IN' | translate }}</label>
-                <input type="number" formControlName="maxIn2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="maxIn2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.OVERTIME_IN' | translate }}</label>
-                <input type="number" formControlName="makeupIn2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="makeupIn2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
             </div>
           </div>
@@ -463,31 +502,39 @@
             <h5>{{ 'SHIFTS_TABLE.OUT_SECTION' | translate }}</h5>
             <div class="time-row">
               <div class="form-group time-input">
-                <label>{{ 'SHIFTS_TABLE.OUT_TIME' | translate }}</label>
-                <input type="time" formControlName="out2" class="form-input">
+                <label class="required">{{ 'SHIFTS_TABLE.OUT_TIME' | translate }}</label>
+                <input type="time" formControlName="out2" class="form-input"
+                [class.error]="isFieldInvalid('out2')">
+                <div *ngIf="isFieldInvalid('out2')" class="error-message">
+                  {{ getFieldError('out2') }}
+                </div>
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.EARLY_OUT' | translate }}</label>
-                <input type="number" formControlName="earlyOut2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="earlyOut2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.OUT_ALLOW' | translate }}</label>
-                <input type="number" formControlName="outAllowMin2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="outAllowMin2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.MAX_OUT' | translate }}</label>
-                <input type="number" formControlName="maxOut2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="maxOut2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
               <div class="form-group">
                 <label>{{ 'SHIFTS_TABLE.OVERTIME_OUT' | translate }}</label>
-                <input type="number" formControlName="makeupOut2" class="form-input" min="0" [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
+                <input type="number" formControlName="makeupOut2" class="form-input" min="0"
+                  [placeholder]="'SHIFTS_TABLE.MINUTES_PLACEHOLDER' | translate">
               </div>
             </div>
           </div>
         </div>
 
         <!-- Active Status -->
-        <div class="form-section">
+        <div class="form-section" *ngIf="isEditMode">
           <div class="form-group">
             <label>{{ 'SHIFTS_TABLE.IS_ACTIVE' | translate }}</label>
             <input type="checkbox" formControlName="isActive" class="form-checkbox">
@@ -496,18 +543,89 @@
 
       </form>
     </div>
-    
+
     <div class="modal-footer">
       <button class="cancel-btn" type="button" (click)="closeCreateShiftModal()">
         {{ 'SHIFTS_TABLE.CANCEL' | translate }}
       </button>
-      <button class="submit-btn" 
-              type="button"
-              (click)="onSubmitCreateShift()"
-              [disabled]="isSubmittingShift || !isCreateShiftFormValid">
-        <span *ngIf="!isSubmittingShift">{{ isEditMode ? ('SHIFTS_TABLE.UPDATE' | translate) : ('SHIFTS_TABLE.CREATE' | translate) }}</span>
-        <span *ngIf="isSubmittingShift">{{ isEditMode ? ('SHIFTS_TABLE.UPDATING' | translate) : ('SHIFTS_TABLE.CREATING' | translate) }}</span>
+      <button class="submit-btn" type="button" (click)="onSubmitCreateShift()"
+        [disabled]="isSubmittingShift || !isCreateShiftFormValid">
+        <span *ngIf="!isSubmittingShift">{{ isEditMode ? ('SHIFTS_TABLE.UPDATE' | translate) : ('SHIFTS_TABLE.CREATE' |
+          translate) }}</span>
+        <span *ngIf="isSubmittingShift">{{ isEditMode ? ('SHIFTS_TABLE.UPDATING' | translate) : ('SHIFTS_TABLE.CREATING'
+          | translate) }}</span>
       </button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Details Modal -->
+<div *ngIf="showDetailsModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.TITLE' | translate }}</h3>
+
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'"
+      [class.ltr]="langService.getCurrentLang() === 'en'">
+
+      <div *ngIf="loadingInfo" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>{{ 'MENU.GENERAL_DATA.EMPLOYEES_GENERAL.LOADING' | translate }}</p>
+      </div>
+
+      <!-- Fingerprints -->
+      <div *ngIf="!loadingInfo && shiftDetails.length > 0" class="table-wrapper p-3">
+        <table class="custom-table">
+          <thead>
+            <tr class="table-header">
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.DAY_NAME' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.SHIFT' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.PART' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.OPEN_SHIFT' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.EARLY_IN' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.IN' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.ALLOW_IN' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.MAX_IN' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.OVERTIME_IN' | translate }}</th>
+              <th>{{ 'SHIFTS_TABLE.SHIFT_DETAILS.OUT' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let shiftDetails of shiftDetails" class="table-row">
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.dayName
+                }}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.shiftName }}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.part }}
+              </td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.openShift}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.earlyIn}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.in}}
+              </td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.allowIn}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.maxIn}}
+              </td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{
+                shiftDetails.overtimeIn}}</td>
+              <td [ngStyle]="shiftDetails.style ? styleStringToObject(shiftDetails.style) : {}">{{ shiftDetails.out}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Fingerprints -->
+
+
     </div>
   </div>
 </div>

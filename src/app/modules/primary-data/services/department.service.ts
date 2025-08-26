@@ -14,12 +14,10 @@ private apiUrl = `${environment.apiUrl}/Departments`  ;
   constructor(private http:HttpClient) { }
   getDepartments(pagination:PaginationRequest): Observable<DepartmentResponse> {
      const headers  =  new HttpHeaders({
-      'lang': pagination.lang,
-      'pageNumber': pagination.pageNumber,
-      'pageSize': pagination.pageSize
+      'lang': pagination.lang
     });
 
-    return this.http.get<DepartmentResponse>(`${this.apiUrl}/GetDepartments`, { headers });
+    return this.http.post<DepartmentResponse>(`${this.apiUrl}/GetDepartments`, pagination,{ headers });
   }
   getDepartmentById(deptId: number, lang: number): Observable<Department> {
     const headers = new HttpHeaders({

@@ -15,9 +15,7 @@ private apiUrl = `${environment.apiUrl}/Jobs`  ;
   constructor(private http:HttpClient) { }
   getJobs(pagination: PaginationRequest, searchTerm?: string): Observable<JobResponse> {
     let headers = new HttpHeaders({
-      'lang': pagination.lang.toString(),
-      'pageNumber': pagination.pageNumber.toString(),
-      'pageSize': pagination.pageSize.toString()
+      'lang': pagination.lang.toString()
     });
 
     let url = `${this.apiUrl}/GetJobs`;
@@ -27,7 +25,7 @@ private apiUrl = `${environment.apiUrl}/Jobs`  ;
       url += `?search=${encodeURIComponent(searchTerm.trim())}`;
     }
 
-    return this.http.get<JobResponse>(url, { headers });
+    return this.http.post<JobResponse>(url,pagination, { headers });
   }
   getJobById(id: number, lang: number): Observable<Job> {
     const params = { lang: lang.toString() };

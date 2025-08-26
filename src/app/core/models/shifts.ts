@@ -3,9 +3,11 @@ export interface Shift {
   shiftId: number;
   shiftNameEn: string;
   shiftNameAr: string;
+  shiftName: string;
   startTime: string | null;
   endTime: string | null;
   isActive: number | string;
+  isActiveLabel:string;
   sun: string;
   mon: string;
   tue: string;
@@ -40,6 +42,38 @@ export interface ShiftsResponse {
   data: Shift[];
 }
 
+export interface ShiftDetailsResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: ShiftDetails[];
+}
+export interface ShiftDetails {
+  style: string;
+  ord: number;
+  dayName: string;
+  shiftId: number;
+  part: number;
+  openShift: string;
+  earlyIn: number;
+  in: string;
+  allowIn: number;
+  maxIn: number;
+  overtimeIn: number;
+  earlyOut: number;
+  out: string;
+  allowOut: number;
+  maxOut: number;
+  overtimeOut: number;
+  shiftName:string
+}
+
+export interface GetShiftByIdResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: CreatShift[];
+}
 export interface CreatShift {
   shiftId: number;
   ar: string;
@@ -49,12 +83,12 @@ export interface CreatShift {
   twoDays1: number;
   perActualWork1: number;
   earlyIn1: number;
-  in1: string; // ISO Date string
+  in1?: string; // ISO Date string
   inAllowMin1: number;
   maxIn1: number;
   makeupIn1: number;
   earlyOut1: number;
-  out1: string; // ISO Date string
+  out1?: string|null; // ISO Date string
   outAllowMin1: number;
   maxOut1: number;
   makeupOut1: number;
@@ -63,12 +97,12 @@ export interface CreatShift {
   twoDays2?: number;
   perActualWork2?: number;
   earlyIn2?: number;
-  in2?: string;
+  in2?: string|null;
   inAllowMin2?: number;
   maxIn2?: number;
   makeupIn2?: number;
   earlyOut2?: number;
-  out2?: string;
+  out2?: string|null;
   outAllowMin2?: number;
   maxOut2?: number;
   makeupOut2?: number;
@@ -82,4 +116,9 @@ export interface CreatShift {
   fri: number;
 
   isActive: boolean;
+}
+
+export interface DaysShifts {
+  label: string;
+  value: number;
 }

@@ -15,12 +15,10 @@ private apiUrl = `${environment.apiUrl}/Nationalities`  ;
   constructor(private http:HttpClient) { }
   getNationalities(pagination:PaginationRequest): Observable<NationalityResponse> {
      const headers  =  new HttpHeaders({
-      'lang': pagination.lang,
-      'pageNumber': pagination.pageNumber,
-      'pageSize': pagination.pageSize
+      'lang': pagination.lang
     });
 
-    return this.http.get<NationalityResponse>(`${this.apiUrl}/GetNationalities`, { headers });
+    return this.http.post<NationalityResponse>(`${this.apiUrl}/GetNationalities`, pagination,{ headers });
   }
   getNationalityById(id: number, lang: number): Observable<Nationality> {
     const params = { lang: lang.toString() };

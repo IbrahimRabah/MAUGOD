@@ -34,6 +34,8 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSize = 10;
   showCreateModal = false;
+  hijriDates: { [key: string]: string } = {};
+
   
   private langSubscription: Subscription = new Subscription();
   private searchSubscription: Subscription = new Subscription();
@@ -84,6 +86,8 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   selectedTargetItems: DropdownItem[] = [];
   selectedTargetIds: number[] = [];
   targetSelectAll = false;
+
+  
   
   constructor(
     private shiftsAssignService: ShiftsAssignService,
@@ -106,12 +110,14 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     this.langSubscription = this.langService.currentLang$.subscribe((lang: string) => {
       this.currentLang = lang === 'ar' ? 2 : 1;
       this.loadShiftsAssign();
+    this.preloadAllDropdownData()
     });
 
     // Setup search debouncing
     this.setupSearchDebouncing();
     
   }
+
 
   ngOnDestroy() {
     this.langSubscription.unsubscribe();
@@ -149,6 +155,60 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
         this.loadShiftsAssign();
       });
   }
+
+
+  onDateChange(event: Event, controlName: string) {
+  const input = event.target as HTMLInputElement;
+  const value = input.value;
+  if (value) {
+    this.hijriDates[controlName] = this.toObservedHijri(value);
+  } else {
+    this.hijriDates[controlName] = '';
+  }
+    this.loadShiftsAssign();
+}
+
+toObservedHijri(date: Date | string, adjustment: number = -1): string {
+  // Ensure date is a Date object
+  const d: Date = date instanceof Date ? new Date(date) : new Date(date);
+  if (isNaN(d.getTime())) return ''; // handle invalid date
+
+  // Apply adjustment in days
+  d.setDate(d.getDate() + adjustment);
+
+  const formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
+  const parts = formatter.formatToParts(d);
+
+  const year = parts.find(p => p.type === 'year')?.value ?? '0000';
+  const month = parts.find(p => p.type === 'month')?.value ?? '00';
+  const day = parts.find(p => p.type === 'day')?.value ?? '00';
+
+  return `${year}/${month}/${day}`;
+}
+
+styleStringToObject(style?: string): { [key: string]: string } {
+  if (!style) {
+    return {}; 
+  }
+
+  // remove leading 'style="' and trailing '"'
+  style = style.replace(/^style="/i, "").replace(/"$/, "");
+
+  return style.split(';').reduce((acc, rule) => {
+    if (rule.trim()) {
+      const [key, value] = rule.split(':');
+      if (key && value) {
+        acc[key.trim()] = value.trim();
+      }
+    }
+    return acc;
+  }, {} as { [key: string]: string });
+}
 
   // Pagination computed properties
   get totalPages(): number {

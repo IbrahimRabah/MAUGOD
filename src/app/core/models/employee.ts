@@ -5,6 +5,7 @@ export interface Employee {
   directMgrName: string;
   deptName: string;
   activeFlag: string;
+  activeFlagName:string,
   statusId: number;
   statusStr: string;
   deptId: number;
@@ -17,6 +18,7 @@ export interface Employee {
   maritalStatus: string;
   jobTypId: number ;
   lang: string;
+  languageName:string;
   note: string;
   reset: string;
   updatePk: string;
@@ -36,12 +38,12 @@ export interface EmployeeCreateUpdateRequest {
   empId?: number;
   ar?: string;
   en?: string;
-  activeFlag: number;
+  activeFlag?: number|null;
   statusId: number;
   fpid?: string;
   deptId: number;
   natId: number;
-  gender: number;
+  gender?: number|null;
   email?: string;
   smsPhone?: string;
   phone?: string;

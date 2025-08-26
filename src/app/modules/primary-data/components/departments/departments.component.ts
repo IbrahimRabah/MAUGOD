@@ -9,6 +9,8 @@ import { Manager } from '../../../../core/models/managers';
 import { Branch } from '../../../../core/models/branch';
 import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
 import { Location } from '../../../../core/models/location';
+import { TranslateService } from '@ngx-translate/core';
+import { CustomValidators } from '../../../../shared/validators/custom-validators';
 
 
 @Component({
@@ -33,7 +35,7 @@ export class DepartmentsComponent implements OnInit {
 
 
 
-  
+
   // Reactive Forms
   departmentForm!: FormGroup;
   changeNumberForm!: FormGroup;
@@ -42,24 +44,43 @@ export class DepartmentsComponent implements OnInit {
   managers: Manager[] = [];
   parentDepartments: ParentDepartment[] = [];
   branches: Branch[] = [];
-  deptLevels:DepartmentLevel[]=[];
-  locations: Location[]=[]
+  deptLevels: DepartmentLevel[] = [];
+  locations: Location[] = []
 
   // Smart loading state tracking
   private dropdownDataLoaded = {
     managers: false,
     locations: false,
     deptLevels: false,
-    branches:false,
-    parentDepartments:false
+    branches: false,
+    parentDepartments: false
   };
   private currentLanguage: string = '';
   private isInitialized = false; // Prevent double API calls on init
 
+
+
+  searchColumns = [
+    { column: '', label: 'All Columns' }, // all columns option
+    { column: 'DEPT_NAME', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.DEPARTMENT_NAME' },
+    { column: 'MGR_NAME', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.MANAGER' },
+    { column: 'LOC_NAME', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.LOCATION' },
+    { column: 'LOC_DESC', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.LOCATION_DESC' },
+    { column: 'PARENT_DEPT_NAME', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.PARENT_DEPARTMENT' },
+    { column: 'BRANCH_NAME', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.BRANCH' },
+    { column: 'DEPT_LEVEL_LABEL', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.LEVEL' },
+    { column: 'NOTE', label: 'MENU.GENERAL_DATA.DEPARTMENTS_TABLE.NOTES' }
+  ];
+
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
     pageSize: 10,
-    lang: 1 // Default to English, can be changed based on app's language settings
+    lang: 1,// Default to English, can be changed based on app's language settings
+    searchColumn: this.selectedColumn,
+    searchText: this.searchTerm
   };
 
   constructor(
@@ -68,24 +89,25 @@ export class DepartmentsComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder,
-    private dropdownService: DropdownlistsService
-    
+    private dropdownService: DropdownlistsService,
+    private translate: TranslateService
+
   ) {
     this.initializeForms();
-    
+
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
-      this.paginationRequest.lang = lang === 'ar' ? 2 : 1; 
+      this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
       // Only reload branches if component is already initialized (not first time)
       if (this.isInitialized) {
         this.loadDepartments(); // Reload branches when language changes
         this.resetDropdownState(); // Reset dropdown state when language changes
       }
-    }) 
+    })
   }
 
   ngOnInit() {
-     this.isInitialized = true;
+    this.isInitialized = true;
     this.loadDepartments();
   }
 
@@ -97,8 +119,8 @@ export class DepartmentsComponent implements OnInit {
       englishName: [''],
       managerId: [''],
       parentDepartmentId: [''],
-      branchId: ['', [Validators.required]],
-      deptLevel: ['', ],
+      branchId: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
+      deptLevel: ['',],
       locationId: [''],
       locationDescription: [''],
       notes: ['']
@@ -107,18 +129,24 @@ export class DepartmentsComponent implements OnInit {
     this.changeNumberForm = this.fb.group({
       newNumber: ['', [Validators.required]],
     });
-    
-  this.initialFormValues = this.departmentForm.value;
+
+    this.initialFormValues = this.departmentForm.value;
   }
 
+
   isRequired(fieldName: string): boolean {
-  const control = this.departmentForm.get(fieldName);
-  if (!control || !control.validator) {
-    return false;
+    const control = this.departmentForm.get(fieldName);
+    if (!control || !control.validator) {
+      return false;
+    }
+    const validator = control.validator({} as any);
+    return validator && validator['required'] ? true : false;
   }
-  const validator = control.validator({} as any);
-  return validator && validator['required'] ? true : false;
-}
+
+  selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
   // Custom pagination methods
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
@@ -133,7 +161,7 @@ export class DepartmentsComponent implements OnInit {
     return end > this.totalRecords ? this.totalRecords : end;
   }
 
-   goToPage(page: number) {
+  goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       this.paginationRequest.pageNumber = page;
@@ -162,6 +190,8 @@ export class DepartmentsComponent implements OnInit {
   onSearch() {
     this.currentPage = 1;
     this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn = this.selectedColumn;
+    this.paginationRequest.searchText = this.searchTerm;
     this.loadDepartments();
   }
 
@@ -185,36 +215,35 @@ export class DepartmentsComponent implements OnInit {
   }
 
   submitDepartment() {
-     if (this.departmentForm.valid && !this.isSubmitting) {
+    if (this.departmentForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       const formData = this.departmentForm.value;
-      
+
       // Validate numeric fields
       const mgrId = parseInt(formData.managerId);
       const parentDeptId = parseInt(formData.parentDepartmentId);
       const locId = parseInt(formData.locationId);
       const branchId = parseInt(formData.branchId);
       const deptLevel = parseInt(formData.deptLevel);
-      
-      if (isNaN(mgrId) || isNaN(parentDeptId) || isNaN(locId)
-      || isNaN(branchId) || isNaN(deptLevel)) {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'يرجى التأكد من صحة البيانات المدخلة' 
+
+      if (isNaN(branchId)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.translate.instant('VALIDATION.VALIDTION_INPUT')
         });
         this.isSubmitting = false;
         return;
       }
-      
+
       // Prepare department object based on the API requirements
       const deptData: DepartmentCreateUpdateRequest = {
         ar: formData.arabicName,
         en: formData.englishName,
         mgrId: mgrId,
         parentDeptId: parentDeptId,
-        branchId:branchId,
-        deptLevel:deptLevel,
+        branchId: branchId,
+        deptLevel: deptLevel,
         locId: locId,
         locDesc: formData.locationDescription,
         note: formData.notes || '' // Note is optional
@@ -225,21 +254,21 @@ export class DepartmentsComponent implements OnInit {
         const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
         this.departmentService.updateDepartment(this.selectedDepartment!.deptId, deptData, currentLang).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم تحديث القسم بنجاح' 
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translate.instant("SUCCESS"),
+              detail: response.message
             });
             this.closeModal();
             this.loadDepartments();
             this.isSubmitting = false;
           },
           error: (error) => {
-            console.error('Error updating department:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في تحديث القسم. يرجى المحاولة مرة أخرى.' 
+            // console.error('Error updating department:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary:this.translate.instant("ERROR"),
+              detail: this.translate.instant('VALIDATION.FAILED_UPDATE_DEPT')
             });
             this.isSubmitting = false;
           }
@@ -249,10 +278,10 @@ export class DepartmentsComponent implements OnInit {
         const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
         this.departmentService.addDepartment(deptData, currentLang).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم إضافة القسم بنجاح' 
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translate.instant("SUCCESS"),
+              detail: response.message
             });
             this.closeModal();
             this.loadDepartments();
@@ -260,10 +289,10 @@ export class DepartmentsComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error adding department:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في إضافة القسم. يرجى المحاولة مرة أخرى.' 
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.translate.instant('VALIDATION.FAILED_ADD_DEPT')
             });
             this.isSubmitting = false;
           }
@@ -283,19 +312,23 @@ export class DepartmentsComponent implements OnInit {
           this.departments = response.data?.departments || [];
           this.totalRecords = response.data.totalCount; // Update this when API provides total count
         } else {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'خطأ', 
-            detail: response.message || 'حدث خطأ في جلب البيانات' 
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant("ERROR"),
+            detail: this.langService.getCurrentLang() === 'ar'
+              ? 'حدث خطأ في جلب البيانات. يرجى الاتصال بالدعم.'
+              : 'An error occurred while fetching data. Please contact support.'
           });
         }
         this.loading = false;
       },
       error: (error) => {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'حدث خطأ في الاتصال بالخادم' 
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? 'حدث خطأ في الاتصال بالخادم. يرجى الاتصال بالدعم.'
+            : 'A server connection error occurred. Please contact support.'
         });
         this.loading = false;
       }
@@ -303,50 +336,50 @@ export class DepartmentsComponent implements OnInit {
   }
 
   async editDepartment(department: Department) {
-    
+
     this.isEditMode = true;
     this.selectedDepartment = department;
-    
+
     // Reset form first
     this.departmentForm.reset();
-    
+
     // Show modal first
     this.showAddModal = true;
-    
+
     // Load dropdown data only if needed
     await this.loadDropdownDataIfNeeded();
-    
+
     // Get complete branch details from API
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
     this.departmentService.getDepartmentById(department.deptId, currentLang).subscribe({
       next: (response: any) => {
 
         const deptDetails = response.data;
-        console.log('Department details from API:', deptDetails);
-        
+        // console.log('Department details from API:', deptDetails);
+
         // The API returns: {branchId, ar, en, mgrId, locDesc, parentBranchId, locId, note}
         // Convert to our component structure (handle mgrId = -1 as null)
         const convertedDept = {
           deptId: deptDetails.deptId,
-          deptName: currentLang==1 ? deptDetails.en :  deptDetails.ar, // Using Arabic name as primary
+          deptName: currentLang == 1 ? deptDetails.en : deptDetails.ar, // Using Arabic name as primary
           mgrId: deptDetails.mgrId === -1 ? null : deptDetails.mgrId,
           mgrName: '', // Will be filled by dropdown data
           parentDeptId: deptDetails.parentDeptId,
           parentDeptName: '', // Will be filled by dropdown data
           locId: deptDetails.locId,
           locName: '', // Will be filled by dropdown data
-          branchId:deptDetails.branchId,
-          branchName:'',
-          deptLevel:deptDetails.deptLevel,
+          branchId: deptDetails.branchId,
+          branchName: '',
+          deptLevel: deptDetails.deptLevel,
           locDesc: deptDetails.locDesc,
           note: deptDetails.note,
           updatePk: '', // Not needed for edit
           del: '' // Not needed for edit
         };
-        
+
         console.log('Converted dept data:', convertedDept);
         this.selectedDepartment = convertedDept as Department; // Update with complete data
-        
+
         // Set basic form values immediately (non-dropdown fields)
         this.departmentForm.patchValue({
           arabicName: deptDetails.ar || '',
@@ -354,20 +387,22 @@ export class DepartmentsComponent implements OnInit {
           locationDescription: deptDetails.locDesc || '',
           notes: deptDetails.note || ''
         });
-        
-        console.log('Form after basic patch with API data:', this.departmentForm.value);
-        
+
+        // console.log('Form after basic patch with API data:', this.departmentForm.value);
+
         // Since we already awaited dropdown loading, update form selections immediately
         this.updateFormDropdownSelections();
       },
       error: (error) => {
-        console.error('Error loading branch details:', error);
+        // console.error('Error loading branch details:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'خطأ',
-          detail: 'فشل في تحميل تفاصيل الفرع'
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? 'فشل في تحميل تفاصيل القسم. يرجى إعادة المحاولة لاحقًا أو التحقق من الاتصال.'
+            : 'Failed to load department details. Please try again later or check your connection.'
         });
-        
+
         // Fallback to using the branch data from the list
         this.departmentForm.patchValue({
           arabicName: department.branchName || '',
@@ -380,32 +415,36 @@ export class DepartmentsComponent implements OnInit {
   }
 
   deleteDepartment(department: Department) {
-     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
-     this.confirmationService.confirm({
-      message: `هل أنت متأكد من حذف القسم "${department.branchName}"؟\nلا يمكن التراجع عن هذا الإجراء.`,
-      header: 'تأكيد الحذف',
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    this.confirmationService.confirm({
+      message: this.translate.instant('VALIDATION.CONFIRM_DELETE'),
+      header: this.translate.instant('CONFIRM_DELE'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، احذف',
-      rejectLabel: 'إلغاء',
+      acceptLabel: this.translate.instant('OK'),
+      rejectLabel: this.translate.instant('CANCEL'),
       accept: () => {
         this.deletingDeptId = department.deptId;
         // Call API to delete the branch
-        this.departmentService.deleteDepartment(department.deptId,currentLang).subscribe({
+        this.departmentService.deleteDepartment(department.deptId, currentLang).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم حذف القسم بنجاح' 
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translate.instant("SUCCESS"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'تم حذف القسم بنجاح'
+                : 'The department has been deleted successfully'
             });
             this.loadDepartments();
             this.deletingDeptId = null;
           },
           error: (error) => {
-            console.error('Error deleting branch:', error.message);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في حذف القسم. يرجى المحاولة مرة أخرى.' 
+            // console.error('Error deleting branch:', error.message);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في حذف القسم. يرجى المحاولة مرة أخرى أو التواصل مع الدعم إذا استمرت المشكلة'
+                : 'Failed to delete the department. Please try again or contact support if the problem persists'
             });
             this.deletingDeptId = null;
           }
@@ -440,40 +479,56 @@ export class DepartmentsComponent implements OnInit {
   submitChangeNumber() {
     if (this.changeNumberForm.valid && this.selectedDepartment) {
       const newDeptId = parseInt(this.changeNumberForm.value.newNumber);
-      
+
       if (isNaN(newDeptId)) {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'يرجى إدخال رقم صحيح القسم الجديد' 
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? 'يرجى إدخال رقم صحيح للقسم الجديد'
+            : 'Please enter a valid number for the new department'
         });
         return;
       }
 
       const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
-      
+
       console.log('Change Number Request:', {
         oldDeptId: this.selectedDepartment.deptId,
         newDeptId: newDeptId,
         lang: currentLang
       });
-      
+
       this.departmentService.changeDepartmentId(this.selectedDepartment.deptId, newDeptId, currentLang).subscribe({
-        next: (response) => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: 'نجح', 
-            detail: 'تم تغيير رقم القسم بنجاح' 
-          });
-          this.closeChangeNumberModal();
-          this.loadDepartments(); // Reload the branches list
+        next: (response: any) => {
+          if (response.isSuccess) {
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translate.instant("SUCCESS"),
+              detail: response.message || this.langService.getCurrentLang() === 'ar'
+                ? 'تم تغيير رقم القسم بنجاح'
+                : 'Department number has been changed successfully'
+            });
+            this.closeChangeNumberModal();
+            this.loadDepartments(); // Reload the branches list
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في تغيير رقم القسم. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                : 'Failed to change the department number. Please try again or contact support.'
+            });
+          }
         },
         error: (error) => {
           console.error('Error changing branch ID:', error);
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'خطأ', 
-            detail: 'فشل في تغيير رقم القسم. يرجى المحاولة مرة أخرى.' 
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant("ERROR"),
+            detail: this.langService.getCurrentLang() === 'ar'
+              ? 'فشل في تغيير رقم القسم. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+              : 'Failed to change the department number. Please try again or contact support.'
           });
         }
       });
@@ -492,9 +547,8 @@ export class DepartmentsComponent implements OnInit {
   getFieldError(fieldName: string, formGroup: FormGroup = this.departmentForm): string {
     const field = formGroup.get(fieldName);
     if (field && field.errors && (field.dirty || field.touched)) {
-      if (field.errors['required']) {
-        return 'هذا الحقل مطلوب';
-      }
+      const isArabic = this.langService.getCurrentLang() === 'ar';
+      return CustomValidators.getErrorMessage(field.errors, fieldName, isArabic);
     }
     return '';
   }
@@ -508,7 +562,7 @@ export class DepartmentsComponent implements OnInit {
     return this.changeNumberForm.valid;
   }
 
-  
+
   /**
    * Legacy method for backward compatibility - now uses smart loading
    */
@@ -520,16 +574,16 @@ export class DepartmentsComponent implements OnInit {
    * Check if all dropdown data is loaded
    */
   private areAllDropdownsLoaded(): boolean {
-    return this.dropdownDataLoaded.managers && 
-           this.dropdownDataLoaded.locations && 
-           this.dropdownDataLoaded.deptLevels &&
-           this.dropdownDataLoaded.branches &&
-           this.dropdownDataLoaded.parentDepartments &&
-           this.managers.length > 0 &&
-           this.locations.length > 0 &&
-           this.deptLevels.length > 0 &&
-           this.branches.length > 0 &&
-           this.parentDepartments.length > 0 ;
+    return this.dropdownDataLoaded.managers &&
+      this.dropdownDataLoaded.locations &&
+      this.dropdownDataLoaded.deptLevels &&
+      this.dropdownDataLoaded.branches &&
+      this.dropdownDataLoaded.parentDepartments &&
+      this.managers.length > 0 &&
+      this.locations.length > 0 &&
+      this.deptLevels.length > 0 &&
+      this.branches.length > 0 &&
+      this.parentDepartments.length > 0;
   }
 
   /**
@@ -540,8 +594,8 @@ export class DepartmentsComponent implements OnInit {
       managers: false,
       locations: false,
       deptLevels: false,
-      branches:false,
-      parentDepartments:false
+      branches: false,
+      parentDepartments: false
     };
     this.managers = [];
     this.locations = [];
@@ -580,7 +634,7 @@ export class DepartmentsComponent implements OnInit {
               this.dropdownDataLoaded.managers = true;
               console.log('Managers loaded:', this.managers.length);
             } else {
-              const errorMsg = response?.message || 'Unknown error loading managers';
+              const errorMsg = response?.message //|| 'Unknown error loading managers';
               console.error('Failed to load managers:', errorMsg);
               throw new Error(errorMsg);
             }
@@ -598,7 +652,7 @@ export class DepartmentsComponent implements OnInit {
               this.dropdownDataLoaded.locations = true;
               console.log('Locations loaded:', this.locations.length);
             } else {
-              const errorMsg = response?.message || 'Unknown error loading locations';
+              const errorMsg = response?.message;
               console.error('Failed to load locations:', errorMsg);
               throw new Error(errorMsg);
             }
@@ -616,7 +670,7 @@ export class DepartmentsComponent implements OnInit {
               this.dropdownDataLoaded.parentDepartments = true;
               // console.log('Parent departments loaded:', this.parentDepartments.length);
             } else {
-              const errorMsg = response?.message || 'Unknown error loading parent departments';
+              const errorMsg = response?.message //|| 'Unknown error loading parent departments';
               console.error('Failed to load parent departments:', errorMsg);
               throw new Error(errorMsg);
             }
@@ -634,7 +688,7 @@ export class DepartmentsComponent implements OnInit {
               this.dropdownDataLoaded.branches = true;
               // console.log('Branches loaded:', this.branches.length);
             } else {
-              const errorMsg = response?.message || 'Unknown error loading branches';
+              const errorMsg = response?.message //|| 'Unknown error loading branches';
               console.error('Failed to load branches:', errorMsg);
               throw new Error(errorMsg);
             }
@@ -652,7 +706,7 @@ export class DepartmentsComponent implements OnInit {
               this.dropdownDataLoaded.deptLevels = true;
               // console.log('Branches loaded:', this.branches.length);
             } else {
-              const errorMsg = response?.message || 'Unknown error loading branches';
+              const errorMsg = response?.message //|| 'Unknown error loading branches';
               console.error('Failed to load branches:', errorMsg);
               throw new Error(errorMsg);
             }
@@ -666,7 +720,6 @@ export class DepartmentsComponent implements OnInit {
         this.loadingDropdowns = false;
         return;
       }
-
       // Wait for all needed API calls to complete
       await Promise.all(loadPromises);
       this.loadingDropdowns = false;
@@ -677,8 +730,8 @@ export class DepartmentsComponent implements OnInit {
       this.loadingDropdowns = false;
       this.messageService.add({
         severity: 'warn',
-        summary: 'تحذير',
-        detail: 'فشل في تحميل بعض البيانات'
+        summary: this.translate.instant("WARNING"),
+        detail: this.translate.instant('VALIDATION.FAILED_LOAD_DATA')
       });
     }
   }
@@ -698,16 +751,10 @@ export class DepartmentsComponent implements OnInit {
     }
 
     const department = this.selectedDepartment;
-    // console.log('=== Updating form selections for branch ===');
-    // console.log('Branch data:', branch);
-    // console.log('Available managers:', this.managers);
-    // console.log('Available locations:', this.locations);
-    // console.log('Available parent branches:', this.parentBranches);
-    // console.log('Current form value:', this.branchForm.value);
-    
+
     // Get current form values
     const currentFormValue = this.departmentForm.value;
-    
+
     // Create a new form value object with all current values
     const newFormValue = {
       arabicName: currentFormValue.arabicName || department.branchName || '',
@@ -717,68 +764,54 @@ export class DepartmentsComponent implements OnInit {
       managerId: '',
       parentDepartmentId: '',
       locationId: '',
-      deptLevel:'',
-      branchId:''
+      deptLevel: '',
+      branchId: ''
     };
-    
+
     // Update manager selection
-    // console.log('=== Manager Selection Debug ===');
-    // console.log('Processing manager ID:', branch.mgrId, 'Type:', typeof branch.mgrId);
-    // console.log('Available managers:', this.managers);
-    // console.log('Manager values:', this.managers.map(m => ({ value: m.value, type: typeof m.value, label: m.label })));
-    
+
     if (department.mgrId !== null && department.mgrId !== undefined && this.managers.length > 0) {
       const manager = this.managers.find(m => m.value === department.mgrId);
-      // console.log('Looking for manager with ID:', department.mgrId, 'Found:', manager);
       if (manager) {
         newFormValue.managerId = manager.value.toString();
-        // console.log('Setting mgrId to:', manager.value.toString());
       } else {
         console.warn('Manager not found in dropdown options');
         // Try to find by converting to string
         const managerStr = this.managers.find(m => m.value.toString() === department.mgrId!.toString());
-        // console.log('Trying string conversion for manager ID:', department.mgrId!.toString(), 'Found:', managerStr);
         if (managerStr) {
           newFormValue.managerId = managerStr.value.toString();
-          // console.log('Found manager by string conversion:', managerStr.value.toString());
         }
       }
     } else {
       console.log('Manager ID is null, undefined, or -1, leaving mgrId empty');
     }
-    
+
     // Update location selection
     if (department.locId !== null && department.locId !== undefined && this.locations.length > 0) {
       const location = this.locations.find(l => l.value === department.locId);
-      // console.log('Looking for location with ID:', department.locId, 'Found:', location);
       if (location) {
         newFormValue.locationId = location.value.toString();
-        // console.log('Setting locId to:', location.value.toString());
       } else {
         console.warn('Location not found in dropdown options');
         // Try to find by converting to string
         const locationStr = this.locations.find(l => l.value.toString() === department.locId!.toString());
         if (locationStr) {
           newFormValue.locationId = locationStr.value.toString();
-          // console.log('Found location by string conversion:', locationStr.value.toString());
         }
       }
     }
-    
+
     // Update parent department selection
     if (department.parentDeptId !== null && department.parentDeptId !== undefined && this.parentDepartments.length > 0) {
       const parentDept = this.parentDepartments.find(pb => pb.value === department.parentDeptId);
-      // console.log('Looking for parent branch with ID:', department.parentDeptId, 'Found:', parentBranch);
       if (parentDept) {
         newFormValue.parentDepartmentId = parentDept.value.toString();
-        // console.log('Setting parentBranchId to:', parentDept.value.toString());
       } else {
         console.warn('Parent department not found in dropdown options');
         // Try to find by converting to string
         const parentDeptStr = this.parentDepartments.find(pb => pb.value.toString() === department.parentDeptId!.toString());
         if (parentDeptStr) {
           newFormValue.parentDepartmentId = parentDeptStr.value.toString();
-          // console.log('Found parent branch by string conversion:', parentDeptStr.value.toString());
         }
       }
     }
@@ -786,17 +819,14 @@ export class DepartmentsComponent implements OnInit {
     // Update branch department selection
     if (department.branchId !== null && department.branchId !== undefined && this.branches.length > 0) {
       const branch = this.branches.find(pb => pb.value === department.branchId);
-      // console.log('Looking for parent branch with ID:', department.parentDeptId, 'Found:', parentBranch);
       if (branch) {
         newFormValue.branchId = branch.value.toString();
-        // console.log('Setting parentBranchId to:', parentDept.value.toString());
       } else {
         console.warn('Branch not found in dropdown options');
         // Try to find by converting to string
         const branchStr = this.branches.find(pb => pb.value.toString() === department.branchId!.toString());
         if (branchStr) {
           newFormValue.branchId = branchStr.value.toString();
-          // console.log('Found parent branch by string conversion:', parentDeptStr.value.toString());
         }
       }
     }
@@ -804,37 +834,27 @@ export class DepartmentsComponent implements OnInit {
     // Update deptLevel department selection
     if (department.deptLevel !== null && department.deptLevel !== undefined && this.deptLevels.length > 0) {
       const deptLevel = this.deptLevels.find(pb => pb.value === department.deptLevel);
-      // console.log('Looking for parent branch with ID:', department.parentDeptId, 'Found:', parentBranch);
       if (deptLevel) {
         newFormValue.deptLevel = deptLevel.value.toString();
-        // console.log('Setting parentBranchId to:', parentDept.value.toString());
       } else {
         console.warn('Department Level not found in dropdown options');
         // Try to find by converting to string
         const deptLevelStr = this.deptLevels.find(pb => pb.value.toString() === department.deptLevel!.toString());
         if (deptLevelStr) {
           newFormValue.deptLevel = deptLevelStr.value.toString();
-          // console.log('Found parent branch by string conversion:', parentDeptStr.value.toString());
         }
       }
     }
-    
+
     console.log('New form value to set:', newFormValue);
-    
+
     // Use setValue to force all values instead of patchValue
     this.departmentForm.setValue(newFormValue);
-    
+
     // Force change detection
     this.departmentForm.markAsDirty();
     this.departmentForm.updateValueAndValidity();
-    
-    // console.log('Form after setValue:', this.branchForm.value);
-    
-    // Log individual form control values
-  //   console.log('Individual form controls:');
-  //   console.log('mgrId control value:', this.branchForm.get('mgrId')?.value);
-  //   console.log('locId control value:', this.branchForm.get('locId')?.value);
-  //   console.log('parentBranchId control value:', this.branchForm.get('parentBranchId')?.value);
-   }
-  
+
+  }
+
 }

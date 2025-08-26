@@ -287,4 +287,16 @@ getGetRequestStatsDropdownList(lang: number): Observable<any> {
     );
   }
 
+  getDaysShiftsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    return this.http.get<any>(
+      `${this.apiUrl}/Attendance/GetShiftsDropdownList`,
+      { headers }
+    );
+  }
+
 }
+
