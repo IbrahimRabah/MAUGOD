@@ -29,10 +29,12 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSize = 10;
 
-  statuses: DropdownItem[] = [];
+  WebStatuses: DropdownItem[] = [];
+  AppStatuses: DropdownItem[] = [];
 
   private dataCache = {
-    statuses: false
+    WebStatuses: false,
+    AppStatuses: false
   };
 
   private langSubscription: Subscription = new Subscription();
@@ -191,20 +193,39 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
   }
 
 private loadStatuses() {
-    if (this.dataCache.statuses) return;
-    
-    this.dropdownlistsService.getGetRequestStatsDropdownList(this.currentLang).subscribe({
-      next: (response) => {
-        // Handle API response format { data: { statuses: [{ label, value }] } }
-        const statusData = response.data?.statuses || response.data?.dropdownListsForRoleModuleRights || [];
-        this.statuses = Array.isArray(statusData) ? statusData : [];
-        this.dataCache.statuses = true;
-      },
-      error: (error) => {
-        console.error('Error loading statuses:', error);
-        this.showErrorMessage('Failed to load statuses');
-      }
-    });
+
+    if (!this.dataCache.WebStatuses){
+      this.dropdownlistsService.getGetWebStatsDropdownList(this.langService.getLangValue()).subscribe({
+        next: (response) => {
+          // Handle API response format { data: { statuses: [{ label, value }] } }
+          const statusData = response.data;
+          this.WebStatuses = Array.isArray(statusData) ? statusData : [];
+          this.dataCache.WebStatuses = true;
+        },
+        error: (error) => {
+          console.error('Error loading statuses:', error);
+          this.showErrorMessage('Failed to load statuses');
+        }
+      });
+
+    }
+
+    if (!this.dataCache.AppStatuses){
+      this.dropdownlistsService.getGetAppStatsDropdownList(this.langService.getLangValue()).subscribe({
+        next: (response) => {
+          // Handle API response format { data: { statuses: [{ label, value }] } }
+          const statusData = response.data;
+          this.AppStatuses = Array.isArray(statusData) ? statusData : [];
+          this.dataCache.AppStatuses = true;
+        },
+        error: (error) => {
+          console.error('Error loading statuses:', error);
+          this.showErrorMessage('Failed to load statuses');
+        }
+      });
+    }
+
+
   }
 
   previousPage() {
@@ -261,6 +282,15 @@ private loadStatuses() {
     return value === 1 ? 'fas fa-check text-success' : 'fas fa-times text-danger';
   }
 
+getAppStatusLabel(value: number): string {
+  const status = this.AppStatuses.find(s => s.value === value);
+  return status ? status.label : value.toString(); // fallback if not found
+}
+
+getWebStatusLabel(value: number): string {
+  const status = this.WebStatuses.find(s => s.value === value);
+  return status ? status.label : value.toString();
+}
   // Get status name based on current language
   getStatusName(item: AttendanceStatusData): string {
     return this.currentLang === 2 ? item.ar : item.en;
@@ -301,6 +331,19 @@ private loadStatuses() {
     this.editingRecordId = undefined;
     this.resetCreateEditForm();
     this.showCreateEditModal = true;
+
+    this.createEditForm.patchValue({
+      countIn: '1',
+      insertDefaultIn: '0',
+      countOut: '1',
+      insertDefaultOut: '0',
+      isWorkingDay: 1,
+      appClassifyAs: 0,
+      webClassifyAs: 0,
+    });
+
+console.log("test" + this.createEditForm.value)
+
   }
 
   openEditModal(record: AttendanceStatusData) {
@@ -343,10 +386,10 @@ private loadStatuses() {
     this.createEditForm.patchValue({
       ar: record.ar,
       en: record.en,
-      countIn: record.count_in,
-      insertDefaultIn: record.insert_default_in,
-      countOut: record.count_out,
-      insertDefaultOut: record.insert_default_out,
+      countIn: record.count_in.toString(),
+      insertDefaultIn: record.insert_default_in.toString(),
+      countOut: record.count_out.toString(),
+      insertDefaultOut: record.insert_default_out.toString(),
       isVacationWhenCalcSalary: record.is_it_vaction_when_calc_salry,
       isPaidVacationWhenCalcSalary: record.is_it_paid_vaction_when_calc_salry,
       isAbsentWhenCalcSalary: record.is_it_absent_when_calc_salry,
