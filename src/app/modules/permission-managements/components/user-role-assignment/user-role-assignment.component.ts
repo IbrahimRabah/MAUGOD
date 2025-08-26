@@ -203,7 +203,7 @@ export class UserRoleAssignmentComponent implements OnInit {
           note: formData.notes || null
         };
 
-        this.roleAssignmentService.updateUserRoleAssignment(updatedRoleAssignment).subscribe({
+        this.roleAssignmentService.updateUserRoleAssignment(updatedRoleAssignment,this.langService.getLangValue()).subscribe({
           next: (response) => {
             this.messageService.add({ 
               severity: 'success', 
@@ -241,7 +241,7 @@ export class UserRoleAssignmentComponent implements OnInit {
           sel: ""
         };
 
-        this.roleAssignmentService.addUserRoleAssignment(newRoleAssignment).subscribe({
+        this.roleAssignmentService.addUserRoleAssignment(newRoleAssignment, this.langService.getLangValue()).subscribe({
           next: (response) => {
             this.messageService.add({ 
               severity: 'success', 
@@ -381,7 +381,6 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
               this.brancheManager = response.data.managers || [];
               this.dropdownDataLoaded.brancheManager = true;
               console.log('brancheManager loaded:', this.brancheManager.length);
-              console.log(response.data)
             } else {
               const errorMsg = response?.message || 'Unknown error loading brancheManager';
               console.error('Failed to load brancheManager:', errorMsg);

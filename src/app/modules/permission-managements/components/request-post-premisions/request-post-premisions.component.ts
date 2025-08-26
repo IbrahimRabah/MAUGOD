@@ -285,7 +285,7 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
 
     const itemCount = this.selectedItems.length;
     this.confirmationService.confirm({
-      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION', { count: this.selectedItems.length }),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -303,7 +303,7 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
     }
 
     this.confirmationService.confirm({
-      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION', { count: this.selectedItems.length }),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

@@ -102,8 +102,8 @@
             {{ getBooleanDisplayText(item.is_it_working_day) }}
           </td>
           <td class="text-center">{{ item.created_by }}</td>
-          <td class="text-center">{{ item.app_calssifay_as }}</td>
-          <td class="text-center">{{ item.web_calssifay_as }}</td>
+          <td class="text-center">{{ getAppStatusLabel(item.app_calssifay_as) }}</td>
+          <td class="text-center">{{ getWebStatusLabel(item.web_calssifay_as) }}</td>
           <td>{{ item.note || '-' }}</td>
           <td class="text-center">
             <button class="action-btn delete-btn" 
@@ -431,7 +431,7 @@
                       class="form-input"
                       [class.error]="createEditForm.get('appClassifyAs')?.invalid && createEditForm.get('appClassifyAs')?.touched">
                 <option value="">{{ 'ATTENDANCE_STATUSES.SELECT_CLASSIFICATION' | translate }}</option>
-                <option *ngFor="let option of statuses" [value]="option.value">
+                <option *ngFor="let option of AppStatuses" [value]="option.value">
                   {{ option.label }}
                 </option>
               </select>
@@ -446,7 +446,7 @@
                       class="form-input"
                       [class.error]="createEditForm.get('webClassifyAs')?.invalid && createEditForm.get('webClassifyAs')?.touched">
                 <option value="">{{ 'ATTENDANCE_STATUSES.SELECT_CLASSIFICATION' | translate }}</option>
-                <option *ngFor="let option of statuses" [value]="option.value">
+                <option *ngFor="let option of WebStatuses" [value]="option.value">
                   {{ option.label }}
                 </option>
               </select>

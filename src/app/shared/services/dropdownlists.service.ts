@@ -202,6 +202,30 @@ getGetRequestStatsDropdownList(lang: number): Observable<any> {
     );
   }
 
+  getGetWebStatsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling Request Stats API:', `${this.apiUrl}/AttendanceStatus/GetWebStatusMenu`);
+    console.log(headers);
+    return this.http.get<any>(
+      `${this.apiUrl}/AttendanceStatus/GetWebStatusMenu`,
+      { headers }
+    );
+  }
+
+  getGetAppStatsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling Request Stats API:', `${this.apiUrl}/AttendanceStatus/GetAppStatusMenu`);
+    return this.http.get<any>(
+      `${this.apiUrl}/AttendanceStatus/GetAppStatusMenu`,
+      { headers }
+    );
+  }
   getEmployeeRolesDropdownList(lang: number): Observable<any> {
     const headers = new HttpHeaders({
       'lang': lang.toString()
