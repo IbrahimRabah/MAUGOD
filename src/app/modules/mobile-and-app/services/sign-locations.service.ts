@@ -11,21 +11,32 @@ export class SignLocationsService {
   private apiUrl = `${environment.apiUrl}/MobileAndApp`;
   constructor(private http: HttpClient) { }
 
-  getMobileSignLocations(
-    pageNumber: number,
-    pageSize: number,
-    lang: number
-  ): Observable<MobileSignLocationsResponse> {
-    const headers = new HttpHeaders({
-      accept: '*/*',
-      lang: lang.toString(),
-      pageNumber: pageNumber.toString(),
-      pageSize: pageSize.toString(),
-    });
+getMobileSignLocations(
+  pageNumber: number,
+  pageSize: number,
+  lang: number,
+  searchColumn: string | null = null,
+  searchText: string | null = null
+): Observable<MobileSignLocationsResponse> {
 
-    const url = `${this.apiUrl}/GetMobileSignLocations`;
-    return this.http.get<MobileSignLocationsResponse>(url, { headers });
-  }
+  const headers = new HttpHeaders()
+    .set('accept', '*/*')
+    .set('lang', lang.toString());
+
+  const body = {
+    pageNumber: pageNumber,
+    pageSize: pageSize,
+    searchColumn: searchColumn,
+    searchText: searchText
+  };
+
+  return this.http.post<MobileSignLocationsResponse>(
+    `${this.apiUrl}/GetMobileSignLocations`,
+    body,
+    { headers }
+  );
+}
+
 
   deleteMobileSignLocation(lang: number, locId: number): Observable<any> {
     const headers = new HttpHeaders({

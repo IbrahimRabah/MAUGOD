@@ -29,6 +29,8 @@ export interface MobileSignTransactionRequest {
   eDate?: string;       // format: YYYY-MM-DD
   pageNumber?: number;
   pageSize?: number;
+  searchColumn?: string;
+  searchText?: string;
 }
 export interface RecalculateRequest {
   selectedRecIds: number[];

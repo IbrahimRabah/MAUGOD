@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MobileSignLocationAssignCreateRequest, MobileSignLocationsAssignResponse } from '../../../core/models/mobileSignLocationAssign';
 import { Observable } from 'rxjs';
 
@@ -11,17 +11,34 @@ export class MobileSignLocationAssignService {
   private apiUrl = `${environment.apiUrl}/MobileAndApp`;
   constructor(private http: HttpClient) { }
 
-  getMobileSignLocationAssign(lang: number, empId: number, pageNumber: number, pageSize: number):Observable<MobileSignLocationsAssignResponse > {
-    const headers: any = {
-      'accept': 'text/plain',
-      'lang': lang.toString(),
-      'pageSize': pageSize.toString(),
-      'pageIndex': pageNumber.toString(),
-      'empId': empId.toString()
-    };
-    
-    return this.http.get<MobileSignLocationsAssignResponse >(`${this.apiUrl}/GetMobileSignLocationsAssign`, { headers });
-  }
+  getMobileSignLocationAssign(
+  lang: number,
+  empId: number,
+  pageNumber: number,
+  pageSize: number,
+  searchColumn: string | null = null,
+  searchText: string | null = null
+): Observable<MobileSignLocationsAssignResponse> {
+
+  const headers = new HttpHeaders()
+    .set('accept', 'text/plain')
+    .set('lang', lang.toString())
+    .set('empId', empId.toString());
+
+  const body = {
+    pageNumber: pageNumber,
+    pageSize: pageSize,
+    searchColumn: searchColumn,
+    searchText: searchText
+  };
+
+  return this.http.post<MobileSignLocationsAssignResponse>(
+    `${this.apiUrl}/GetMobileSignLocationsAssign`,
+    body,
+    { headers }
+  );
+}
+
   getMobileSignLocationAssignById(lang: number, empId: number, recId: number): Observable<MobileSignLocationsAssignResponse> {
     const headers: any = {
       'accept': 'text/plain',

@@ -11,13 +11,27 @@ export class RoleModuleRightService {
   private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
-  getUserRoleModuleRights(lang: number, pageSize: number, pageIndex: number): Observable<ApiResponse<UserRoleModuleRightsData>> {
-    const headers = new HttpHeaders()
-      .set('lang', lang.toString())
-      .set('pageSize', pageSize.toString())
-      .set('pageIndex', pageIndex.toString());
-    return this.http.get<ApiResponse<UserRoleModuleRightsData>>(`${this.apiUrl}/SystemPermissions/GetUserRoleModuleRights`, { headers });
-  }
+  getUserRoleModuleRights(
+  lang: number,
+  pageSize: number,
+  pageIndex: number
+): Observable<ApiResponse<UserRoleModuleRightsData>> {
+  
+  const headers = new HttpHeaders().set('lang', lang.toString());
+
+  const body = {
+    pageNumber: pageIndex, 
+    pageSize: pageSize,
+    searchColumn: null,     
+    searchText: null
+  };
+
+  return this.http.post<ApiResponse<UserRoleModuleRightsData>>(
+    `${this.apiUrl}/SystemPermissions/GetUserRoleModuleRights`,
+    body,
+    { headers }
+  );
+}
   deleteOneUserRoleModuleRight(
     recId: number,
     lang: number
