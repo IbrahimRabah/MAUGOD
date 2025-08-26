@@ -14,14 +14,10 @@ private apiUrl = `${environment.apiUrl}/Employees`;  ;
   constructor(private http:HttpClient) { }
   getEmployees(pagination:PaginationRequest): Observable<EmployeeResponse> {
     const headers  =  new HttpHeaders({
-      'lang': pagination.lang,
-      'pageNumber': pagination.pageNumber,
-      'pageSize': pagination.pageSize,
-      'empId': pagination.empId ?? ''
-      
+      'lang': pagination.lang
     });
 
-    return this.http.get<EmployeeResponse>(`${this.apiUrl}/GetEmployees`, { headers });
+    return this.http.post<EmployeeResponse>(`${this.apiUrl}/GetEmployees`,pagination, { headers });
   }
   getEmployeeById(id: number, lang: number): Observable<Employee> {
      const headers = new HttpHeaders({

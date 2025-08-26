@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { Shift, ShiftsResponse, CreatShift } from '../../../../core/models/shifts';
+import { Shift, ShiftsResponse, CreatShift, DaysShifts, ShiftDetailsResponse, ShiftDetails } from '../../../../core/models/shifts';
 import { ShiftsService } from '../../services/shifts.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-shifts',
@@ -19,6 +21,15 @@ export class ShiftsComponent implements OnInit, OnDestroy {
   totalRecords = 0;
   currentPage = 1;
   pageSize = 10;
+  searchTerm: string = '';
+  daysShifts:DaysShifts[]=[]
+  loadingDropdowns: boolean = false;
+
+  showDetailsModal: boolean = false;
+    loadingInfo: boolean = false;
+    shiftDetails: ShiftDetails[] = [];
+
+
   
   private langSubscription: Subscription = new Subscription();
   private currentLang = 2; // Default to Arabic (2)
@@ -33,31 +44,46 @@ export class ShiftsComponent implements OnInit, OnDestroy {
   isEditMode = false;
   currentEditingShift: Shift | null = null;
   
-  // Weekday options getter for reactive language support
-  get weekdayOptions() {
-    return [
-      { label: this.langService.getCurrentLang() === 'ar' ? 'يوم عمل' : 'Working Day', value: 1 },
-      { label: this.langService.getCurrentLang() === 'ar' ? 'يوم إجازة' : 'Off Day', value: 0 },
-      { label: this.langService.getCurrentLang() === 'ar' ? 'عطلة رسمية' : 'Holiday', value: 2 }
-    ];
-  }
+  
+  
+
+  searchColumns = [
+  { column: '', label: 'All Columns' }, // Search in all columns
+  { column: 'ShiftName', label: 'SHIFTS_TABLE.NAME' },
+  { column: 'sun', label: 'SHIFTS_TABLE.SUNDAY' },
+  { column: 'mon', label: 'SHIFTS_TABLE.MONDAY' },
+  { column: 'tue', label: 'SHIFTS_TABLE.TUESDAY' },
+  { column: 'wed', label: 'SHIFTS_TABLE.WEDNESDAY' },
+  { column: 'thu', label: 'SHIFTS_TABLE.THURSDAY' },
+  { column: 'fri', label: 'SHIFTS_TABLE.FRIDAY' },
+  { column: 'sat', label: 'SHIFTS_TABLE.SATURDAY' },
+  { column: 'IsActiveLabel', label: 'SHIFTS_TABLE.IS_ACTIVE' }
+];
+selectedColumn: string = '';
+selectedColumnLabel: string = this.searchColumns[0].label;
 
   constructor(
     private shiftsService: ShiftsService,
     public langService: LanguageService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dropdownService: DropdownlistsService,
+    private translate: TranslateService
+        
+    
   ) {
     this.currentLang = this.langService.getLangValue();
     this.initializeForms();
     this.initCreateShiftForm();
+    
   }
 
   ngOnInit() {
     this.langSubscription = this.langService.currentLang$.subscribe(lang => {
-      this.currentLang = this.langService.getLangValue();
+      this.currentLang = lang === 'ar' ? 2 : 1
       this.loadShifts();
+      this.resetDropdownState()
     });
 
   }
@@ -68,11 +94,11 @@ export class ShiftsComponent implements OnInit, OnDestroy {
 
   private initializeForms() {
     this.searchForm = this.fb.group({
-      searchTerm: [''],
       pageSize: [10]
     });
   }
 
+  
   private initCreateShiftForm() {
     this.createShiftForm = this.fb.group({
       ar: [''],  // Optional with default "string"
@@ -117,6 +143,10 @@ export class ShiftsComponent implements OnInit, OnDestroy {
     });
   }
 
+    selectColumn(col: any) {
+  this.selectedColumn = col.column;
+  this.selectedColumnLabel = col.label;
+}
   // Pagination computed properties
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.pageSize);
@@ -140,10 +170,29 @@ export class ShiftsComponent implements OnInit, OnDestroy {
     return this.currentPage > 1;
   }
 
+styleStringToObject(style?: string): { [key: string]: string } {
+  if (!style) return {};
+
+  // Remove `style="` and trailing `"`
+  const clean = style.replace(/^style\s*=\s*"/, '').replace(/"$/, '');
+
+  return clean.split(';').reduce((acc, rule) => {
+    if (rule.trim()) {
+      const [key, value] = rule.split(':');
+      if (key && value) {
+        acc[key.trim()] = value.trim();
+      }
+    }
+    return acc;
+  }, {} as { [key: string]: string });
+}
+
+
+
   // Core business methods
   loadShifts() {
     this.loading = true;
-    this.shiftsService.GetShiftsToShow(this.currentLang, this.currentPage, this.pageSize).subscribe({
+    this.shiftsService.GetShiftsToShow(this.currentLang, this.currentPage, this.pageSize,this.selectedColumn,this.searchTerm).subscribe({
       next: (response: ShiftsResponse) => {
         if (response.isSuccess && response.data) {
           this.shifts = response.data;
@@ -170,6 +219,8 @@ export class ShiftsComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+
 
   // Pagination methods
   goToPage(page: number) {
@@ -206,10 +257,6 @@ export class ShiftsComponent implements OnInit, OnDestroy {
     this.loadShifts();
   }
 
-  // Helper method to get search term
-  get searchTerm(): string {
-    return this.searchForm.get('searchTerm')?.value || '';
-  }
 
   // Delete functionality
   deleteShift(shift: Shift) {
@@ -265,9 +312,13 @@ export class ShiftsComponent implements OnInit, OnDestroy {
     this.openEditShiftModal(shift);
   }
 
-  viewShiftDetails(shift: Shift) {
-    // Placeholder for details functionality
-    console.log('View shift details:', shift);
+  viewShiftDetails(shiftId: number) {
+    this.showDetailsModal = true;
+    this.loadShiftDaysInformation(shiftId);
+  }
+
+    closeModal() {
+    this.showDetailsModal = false;
   }
 
   // Create shift method
@@ -276,11 +327,12 @@ export class ShiftsComponent implements OnInit, OnDestroy {
   }
 
   // Create Shift Modal Methods
-  openCreateShiftModal() {
+    openCreateShiftModal() {
     this.isEditMode = false;
     this.currentEditingShift = null;
     this.showCreateShiftModal = true;
     this.resetCreateShiftForm();
+    this.loadDropdownDataIfNeeded();
   }
 
   openEditShiftModal(shift: Shift) {
@@ -421,12 +473,12 @@ export class ShiftsComponent implements OnInit, OnDestroy {
     };
 
     // Console log the payload before submission
-    console.log('📤 Submitting Shift Data:', {
-      mode: this.isEditMode ? 'UPDATE' : 'CREATE',
-      language: lang === 2 ? 'Arabic' : 'English',
-      payload: payload,
-      formValues: formValues
-    });
+    // console.log('📤 Submitting Shift Data:', {
+    //   mode: this.isEditMode ? 'UPDATE' : 'CREATE',
+    //   language: lang === 2 ? 'Arabic' : 'English',
+    //   payload: payload,
+    //   formValues: formValues
+    // });
 
     const serviceCall = this.isEditMode 
       ? this.shiftsService.updateShift(lang, payload)
@@ -468,4 +520,122 @@ export class ShiftsComponent implements OnInit, OnDestroy {
       return isActive === 1 || isActive === '1' || isActive === 'true' ? 'Active' : 'Inactive';
     }
   }
+
+   private dropdownDataLoaded = {
+    daysShifts: false
+  };
+   private areAllDropdownsLoaded(): boolean {
+    return this.dropdownDataLoaded.daysShifts &&
+      this.daysShifts.length > 0 
+
+  }
+  private currentLanguage: string = '';
+
+  private resetDropdownState(): void {
+    this.dropdownDataLoaded = {
+      daysShifts: false,
+    };
+    this.currentLanguage = '';
+  }
+  private async loadDropdownDataIfNeeded(): Promise<void> {
+    const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+    const langKey = this.langService.getCurrentLang();
+
+    // Check if we already have data for this language
+    if (this.currentLanguage === langKey && this.areAllDropdownsLoaded()) {
+      console.log('Dropdown data already loaded for current language, skipping API calls');
+      return Promise.resolve();
+    }
+
+    // Update current language
+    this.currentLanguage = langKey;
+    this.loadingDropdowns = true;
+
+
+    try {
+      const loadPromises: Promise<any>[] = [];
+
+      // Only load department if not already loaded for this language
+      if (!this.dropdownDataLoaded.daysShifts || this.daysShifts.length === 0) {
+        const locationPromise = this.dropdownService.getDaysShiftsDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.daysShifts = response.data.shifts || [];
+              this.dropdownDataLoaded.daysShifts = true;
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading departments';
+              console.error('Failed to load departments:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(locationPromise);
+      }
+
+      // If no API calls needed, resolve immediately
+      if (loadPromises.length === 0) {
+        this.loadingDropdowns = false;
+        return;
+      }
+
+      // Wait for all needed API calls to complete
+      await Promise.all(loadPromises);
+      this.loadingDropdowns = false;
+
+    } catch (error) {
+      console.error('Error in smart dropdown loading:', error);
+      this.loadingDropdowns = false;
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translate.instant("WARNING"),
+        detail: this.langService.getCurrentLang() === 'ar'
+          ? "فشل في تحميل بعض البيانات. يرجى المحاولة مرة أخرى أو التواصل مع الدعم"
+          : "Failed to load some data. Please try again or contact support"
+      });
+    }
+  }
+
+  loadShiftDaysInformation(shiftId: number) {
+      this.loadingInfo = true;
+      const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
+  
+      this.shiftsService.getShiftDtailsShow(currentLang, shiftId,1).subscribe({
+        next: (response: ShiftDetailsResponse) => {
+          if (response.isSuccess) {
+            this.shiftDetails = response.data;
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: currentLang === 2
+                ? 'حدث خطأ أثناء تحميل بيانات الورديات، يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
+                : 'An error occurred while loading shift data, Please try again or contact support'
+            });
+          }
+          this.loadingInfo = false;
+        },
+        error: (error) => {
+          let errorMsg = currentLang === 2
+            ? 'فشل تحميل بيانات الورديات، يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
+            : 'Failed to load shift data, Please try again or contact support';
+  
+          if (error.status === 404) {
+            errorMsg = currentLang === 2
+              ? 'لم يتم العثور على بيانات الورديات'
+              : 'No shift data found for this employee';
+          } else if (error.status === 500) {
+            errorMsg = currentLang === 2
+              ? 'خطأ في الخادم، يرجى الاتصال بالدعم الفني'
+              : 'Server error, please contact support';
+          }
+  
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant("ERROR"),
+            detail: errorMsg
+          });
+  
+          this.loadingInfo = false;
+        }
+      });
+    }
 }

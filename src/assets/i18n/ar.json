@@ -3,6 +3,10 @@
   "ERROR": "خطأ",
   "WARNING": "تحذير",
   "USER_NAME": "اسم المستخدم",
+  "SEARCH": "موافق",
+  "OK": "موافق",
+  "CANCEL": "إلغاء",
+  "CONFIRM_DELE": "تأكيد الحذف",
   "HOME": {
     "TITLE": "الرئيسية"
   },
@@ -368,7 +372,7 @@
           "MANAGER": "المدير",
           "PARENT_DEPARTMENT": "القسم الأب",
           "BRANCH": "الفرع",
-          "LEVEL": "المستوى",
+          "LEVEL": " المستوى الافتراضى",
           "LOCATION": "الموقع",
           "LOCATION_DESC": "وصف الموقع",
           "NOTES": "ملاحظات",
@@ -384,7 +388,7 @@
           "SELECT_BRANCH": "اختر الفرع",
           "SELECT_LEVEL": "اختر المستوى",
           "SELECT_LOCATION": "اختر الموقع",
-          "New_Dept_Id":"رقم القسم الجديد"
+          "New_Dept_Id": "رقم القسم الجديد"
         },
         "CHANGE_NUMBER_MODAL": {
           "TITLE": "تغيير رقم القسم",
@@ -428,12 +432,14 @@
         "NOTES": "ملاحظات",
         "DELETE": "حذف",
         "CHANGE_NUMBER": "تغيير الرقم"
-      },      "BRANCHES_ACTIONS": {
+      },
+      "BRANCHES_ACTIONS": {
         "ADD_BRANCH": "إضافة فرع",
         "SEARCH_PLACEHOLDER": "البحث في الفروع...",
         "SEARCH_TITLE": "البحث",
         "ADD_BRANCH_TITLE": "إضافة فرع جديد"
-      },      "BRANCHES_MODALS": {
+      },
+      "BRANCHES_MODALS": {
         "ADD_BRANCH_MODAL": {
           "TITLE": "إضافة فرع جديد",
           "EDIT_TITLE": "تعديل الفرع",
@@ -471,10 +477,11 @@
           "NOTES": "ملاحظات",
           "CANCEL": "إلغاء",
           "SAVE": "حفظ التغيير",
-           "ENTER_NEW_NUMBER": "ادخل الرقم الجديد",
+          "ENTER_NEW_NUMBER": "ادخل الرقم الجديد",
           "NOTES_PLACEHOLDER": "أدخل ملاحظات حول هذا التغيير"
         }
-      },      "BRANCHES_PAGINATION": {
+      },
+      "BRANCHES_PAGINATION": {
         "SHOWING": "عرض",
         "TO": "-",
         "OF": "من",
@@ -487,7 +494,8 @@
         "PREVIOUS_PAGE": "الصفحة السابقة",
         "NEXT_PAGE": "الصفحة التالية",
         "LAST_PAGE": "الصفحة الأخيرة"
-      },      "BRANCHES_GENERAL": {
+      },
+      "BRANCHES_GENERAL": {
         "LOADING": "جاري التحميل...",
         "EDIT_TOOLTIP": "تعديل",
         "DELETE_TOOLTIP": "حذف",
@@ -507,8 +515,8 @@
         "DELETE": "حذف",
         "CHANGE_NUMBER": "تغيير الرقم",
         "CHANGE_PASSWORD": "تغيير كلمة المرور"
-      },     
-       "EMPLOYEES_ACTIONS": {
+      },
+      "EMPLOYEES_ACTIONS": {
         "ADD_EMPLOYEE": "إضافة موظف",
         "SEARCH_PLACEHOLDER": "البحث في الموظفين...",
         "SEARCH_TITLE": "البحث",
@@ -516,10 +524,10 @@
         "EDIT_EMPLOYEE": "تعديل الموظف",
         "DELETE_EMPLOYEE": "حذف الموظف",
         "CHANGE_PASSWORD": "تغيير كلمة المرور",
-        "RESET_PASSWORD":"إعادة تعيين كلمة المرور"
+        "RESET_PASSWORD": "إعادة تعيين كلمة المرور"
       },
-      "EMPLOYEES_MODALS": {       
-         "ADD_EMPLOYEE_MODAL": {
+      "EMPLOYEES_MODALS": {
+        "ADD_EMPLOYEE_MODAL": {
           "TITLE": "إضافة موظف جديد",
           "EDIT_TITLE": "تعديل الموظف",
           "EMPLOYEE_NAME": "اسم الموظف",
@@ -544,7 +552,7 @@
           "EMAIL_PLACEHOLDER": "أدخل البريد الإلكتروني",
           "SMS_PHONE_PLACEHOLDER": "أدخل رقم الهاتف",
           "NATIONAL_ID_PLACEHOLDER": "أدخل الرقم الوطني",
-          "GOVERNMENT_ID_PLACEHOLDER": "أدخل الرقم الحكومي",         
+          "GOVERNMENT_ID_PLACEHOLDER": "أدخل الرقم الحكومي",
           "NOTES_PLACEHOLDER": "أدخل الملاحظات",
           "SELECT_MANAGER": "اختر المدير",
           "SELECT_DEPARTMENT": "اختر القسم",
@@ -813,9 +821,9 @@
     "ATTENDANCE_DATA_SECTIONS": {
       "PUNCH_TRANSACTION": "سجل البصمات",
       "ATTENDANCE": "مشاهدة الحضور",
-      "CHANGE_ATTENDANCE_TIME":"تعديل بيانات الحضور مباشرة"
+      "CHANGE_ATTENDANCE_TIME": "تعديل بيانات الحضور مباشرة"
     },
-     "SHIFTS_SECTIONS": {
+    "SHIFTS_SECTIONS": {
       "SHIFTS": "الورديات",
       "AUTOMATIC_SIGN": "التوقيع الآلي",
       "SHIFTS_ASSIGN": "إسناد الورديات",
@@ -850,14 +858,14 @@
       "MOBILE_SIGN_TRANSACTION": "حركات التوقيع باستخدام الجوال",
       "MOBILE_SIGN_LOCATIONS": "مواقع التبصيم باستخدام الجوال"
     },
-     "SALARIES_SECTIONS": {
+    "SALARIES_SECTIONS": {
       "SALARY_ADDONS_DEDUCTS_ASSIGN": "إسناد إضافات/خصومات الراتب",
       "SALARY_ADDONS_DEDUCTS": "إضافات/خصومات الراتب",
       "SALARIES_CALCULATION": "إحتساب الرواتب",
       "MY_SALARY": "راتبي",
       "SALARIES_DETAILS": "تفاصيل الرواتب"
     },
-     "MESSAGES_NOTIFICATIONS_SECTIONS": {
+    "MESSAGES_NOTIFICATIONS_SECTIONS": {
       "SYSTEM_MESSAGES": "رسائل النظام",
       "NOTIFICATIONS_TEXTS": "نصوص الإشعارات",
       "NEWS": "الأخبار",
@@ -881,7 +889,7 @@
       "USER_PROFILE": "الملف الشخصي",
       "SESSIONS_MANAGEMENT": "إدارة جلسات الإتصال"
     },
-    "CONSORSHIP":"الرقابة",
+    "CONSORSHIP": "الرقابة",
     "CONSORSHIP_SECTIONS": {
       "CENSORSHIP_TOUR": "الجولات الرقابية",
       "ALARMS": "الإنذارات"
@@ -1026,7 +1034,7 @@
     "SELECTED": "محدد",
     "CLEAR_ALL": "مسح الكل"
   },
-    "SALARY_ADD_ONS_DEDUCTS": {
+  "SALARY_ADD_ONS_DEDUCTS": {
     "LOADING": "جارٍ التحميل...",
     "ADD_ADDON": "إضافة بدل/استقطاع",
     "ADD_ADDON_TITLE": "إضافة بدل/استقطاع جديد",
@@ -1405,15 +1413,15 @@
       "PREVIOUS_PAGE": "الصفحة السابقة"
     }
   },
-  "Attendance":{
+  "Attendance": {
     "DATE_FILTER": {
-    "TITLE": "البحث بالتاريخ",
-    "START_DATE": "تاريخ البداية",
-    "END_DATE": "تاريخ النهاية",
-    "EMPLOYEE": "الموظف",
-    "DEPARTMENT": "القسم",
-    "ALL_DEPARTMENTS":"جميع الاقسام",
-    "ALL_EMPLOYEES":"جميع الموظفين"
+      "TITLE": "البحث بالتاريخ",
+      "START_DATE": "تاريخ البداية",
+      "END_DATE": "تاريخ النهاية",
+      "EMPLOYEE": "الموظف",
+      "DEPARTMENT": "القسم",
+      "ALL_DEPARTMENTS": "جميع الاقسام",
+      "ALL_EMPLOYEES": "جميع الموظفين"
     },
     "RESULTS_TABLE": {
       "EMPLOYEE_HEADER": "الموظف",
@@ -1431,10 +1439,9 @@
       "ROWS_PER_PAGE": "الصفوف",
       "ACTIONS": "الإجراءات",
       "DELETE_SELECTED": "حذف المحدد",
-      "RECORD_DATE":"تاريخ السجل",
-      "DATA_SOURCE":"مصدر البيانات"
+      "RECORD_DATE": "تاريخ السجل",
+      "DATA_SOURCE": "مصدر البيانات"
     }
-
   },
   "SHIFTS_TABLE": {
     "LOADING": "جارٍ التحميل...",
@@ -1471,6 +1478,7 @@
     "DETAILS_TOOLTIP": "التفاصيل",
     "DELETE_TOOLTIP": "حذف",
     "CREATE_SHIFT_TITLE": "إنشاء وردية جديدة",
+    "EDIT_SHIFT_TITLE": "تعديل الوردية",
     "TWO_PARTS": "وردية من جزئين",
     "BASIC_INFO": "المعلومات الأساسية",
     "ARABIC_NAME": "الاسم بالعربية",
@@ -1478,7 +1486,7 @@
     "ARABIC_NAME_PLACEHOLDER": "أدخل الاسم بالعربية",
     "ENGLISH_NAME_PLACEHOLDER": "أدخل الاسم بالإنجليزية",
     "WEEKDAYS": "تكوين أيام الأسبوع",
-    "SELECT_OPTION": "اختر خيار",
+    "SELECT_OPTION": "اختر",
     "PART_1": "الجزء الأول",
     "PART_2": "الجزء الثاني",
     "OPEN_SHIFT": "وردية مفتوحة",
@@ -1503,7 +1511,20 @@
     "UPDATE": "تحديث",
     "UPDATING": "جاري التحديث...",
     "SHIFT_CREATED_SUCCESSFULLY": "تم إنشاء الوردية بنجاح",
-    "SHIFT_UPDATED_SUCCESSFULLY": "تم تحديث الوردية بنجاح"
+    "SHIFT_UPDATED_SUCCESSFULLY": "تم تحديث الوردية بنجاح",
+    "SHIFT_DETAILS": {
+      "TITLE": "تفاصيل الوردية",
+      "DAY_NAME": "اليوم",
+      "SHIFT": "الوردية",
+      "PART": "الفترة",
+      "OPEN_SHIFT": "دوام مفتوح",
+      "EARLY_IN": "الدخول المبكر",
+      "IN": "الدخول",
+      "ALLOW_IN": "سماحية الدخول",
+      "MAX_IN": "اقصى وقت دخول",
+      "OVERTIME_IN": "وقت الدخول الإضافي",
+      "OUT": "الخروج"
+    }
   },
   "AUTOMATIC_SIGN": {
     "LOADING": "جارٍ التحميل...",
@@ -1571,7 +1592,7 @@
     "LOADING": "جارٍ التحميل...",
     "CREATE": "إنشاء إسناد جديد",
     "CREATE_TITLE": "إنشاء إسناد وردية جديد",
-    "CREATE_MODAL_TITLE": "إنشاء إسناد وردية",
+    "CREATE_MODAL_TITLE": "إسناد الورديات",
     "CREATE_NOT_IMPLEMENTED": "وظيفة الإنشاء غير مطبقة بعد",
     "DELETE_SELECTED": "حذف المحدد",
     "SEARCH_PLACEHOLDER": "البحث في إسناد الورديات...",
@@ -1605,13 +1626,13 @@
     "RESET_FILTER": "إعادة تعيين تصفية التاريخ",
     "CLOSE": "إغلاق",
     "CANCEL": "إلغاء",
-    "ASSIGNMENT_TYPE": "نوع الإسناد",
-    "SELECT_TARGETS": "اختيار الأهداف",
+    "ASSIGNMENT_TYPE": "نوع",
+    "SELECT_TARGETS": "اختر",
     "SELECT_SHIFT": "اختيار الوردية",
     "SELECT_SHIFT_PLACEHOLDER": "اختر وردية...",
-    "DATE_RANGE": "نطاق التاريخ",
+    "DATE_RANGE": "تاريخ الاسناد",
     "SELECT_DATE": "اختر التاريخ",
-    "TARGETS_REQUIRED": "يرجى اختيار هدف واحد على الأقل",
+    "TARGETS_REQUIRED": " يجب اختيار الموظف أو القسم أو الفرع أو الدور",
     "SHIFT_REQUIRED": "يرجى اختيار وردية",
     "START_DATE_REQUIRED": "تاريخ البداية مطلوب",
     "END_DATE_REQUIRED": "تاريخ النهاية مطلوب",
@@ -1698,7 +1719,7 @@
     "EMPLOYEE": "الموظف",
     "MANAGER_OF_DEPARTMENT": "مدير القسم",
     "DEPARTMENT": "القسم",
-    "MANAGER_OF_BRANCH": "مدير الفرع", 
+    "MANAGER_OF_BRANCH": "مدير الفرع",
     "BRANCH": "الفرع",
     "ROLE": "الدور",
     "EVERYONE": "الجميع",
@@ -1718,7 +1739,7 @@
     "START_DATE": "تاريخ البداية",
     "HIJRI_START": "البداية الهجرية",
     "END_DATE": "تاريخ النهاية",
-    "HIJRI_END": "النهاية الهجرية", 
+    "HIJRI_END": "النهاية الهجرية",
     "NOTE": "الملاحظة",
     "NOTE_PLACEHOLDER": "أدخل الملاحظات...",
     "CLEAR_ALL": "مسح الكل",
@@ -2038,5 +2059,16 @@
   "COMMON": {
     "YES": "نعم",
     "NO": "لا"
+  },
+  "VALIDATION": {
+    "VALIDTION_INPUT": "يرجى التأكد من صحة البيانات المدخلة",
+    "FAILED_UPDATE_DEPT": "فشل في تحديث القسم. يرجى المحاولة مرة أخرى.",
+    "FAILED_ADD_DEPT": "فشل في إضافة القسم. يرجى المحاولة مرة أخرى.",
+    "FAILED_LOAD_DATA": "فشل في تحميل بعض البيانات",
+    "REQUIRED_FIELD": "هذا الحقل مطلوب",
+    "CONFIRM_DELETE": "سيتم حذف العنصر .. هل تريد المتابعة؟",
+    "INVALID_NEW_BRANCH_NUMBER": "يرجى إدخال رقم صحيح للفرع الجديد",
+    "BRANCH_DETAILS_LOAD_FAILED": "فشل في تحميل تفاصيل الفرع.  يرجى المحاولة مرة أخرى أو يرجى الاتصال بالدعم.",
+    "BRANCHES_LOAD_FAILED": "فشل في تحميل الفروع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم."
   }
 }

@@ -2,6 +2,10 @@
   "SUCCESS": "Success",
   "ERROR": "Error",
   "WARNING": "Warning",
+  "SEARCH": "Go",
+  "OK": "Ok",
+  "CANCEL": "Cancel",
+  "CONFIRM_DELE": "Confirm Deletion",
   "HOME": {
     "TITLE": "Home"
   },
@@ -294,8 +298,8 @@
       "COMMITTEE_SUBJECT_CLASSES": "Minutes Subject Classification",
       "VOTING_TYPES": "Voting Types",
       "MEETING_AND_SUBJECTS": "Minutes & Subjects"
-    },   
-     "GENERAL_DATA": {
+    },
+    "GENERAL_DATA": {
       "BRANCHES": "Branches",
       "DEPARTMENTS": "Departments",
       "EMPLOYEES": "Employees",
@@ -332,7 +336,7 @@
           "MANAGER": "Manager",
           "PARENT_DEPARTMENT": "Parent Department",
           "BRANCH": "Branch",
-          "LEVEL": "Level",
+          "LEVEL": "Department Level",
           "LOCATION": "Location",
           "LOCATION_DESC": "Location Description",
           "NOTES": "Notes",
@@ -348,7 +352,7 @@
           "SELECT_BRANCH": "Select Branch",
           "SELECT_LEVEL": "Select Level",
           "SELECT_LOCATION": "Select Location",
-          "New_Dept_Id":"New Department ID"
+          "New_Dept_Id": "New Department ID"
         },
         "CHANGE_NUMBER_MODAL": {
           "TITLE": "Change Department ID",
@@ -392,12 +396,14 @@
         "NOTES": "Notes",
         "DELETE": "Delete",
         "CHANGE_NUMBER": "Change Number"
-      },      "BRANCHES_ACTIONS": {
+      },
+      "BRANCHES_ACTIONS": {
         "ADD_BRANCH": "Add Branch",
         "SEARCH_PLACEHOLDER": "Search in branches...",
         "SEARCH_TITLE": "Search",
         "ADD_BRANCH_TITLE": "Add New Branch"
-      },      "BRANCHES_MODALS": {
+      },
+      "BRANCHES_MODALS": {
         "ADD_BRANCH_MODAL": {
           "TITLE": "Add New Branch",
           "EDIT_TITLE": "Edit Branch",
@@ -438,7 +444,8 @@
           "ENTER_NEW_NUMBER": "Enter New Number",
           "NOTES_PLACEHOLDER": "Enter notes for this change"
         }
-      },      "BRANCHES_PAGINATION": {
+      },
+      "BRANCHES_PAGINATION": {
         "SHOWING": "Showing",
         "TO": "-",
         "OF": "of",
@@ -451,7 +458,8 @@
         "PREVIOUS_PAGE": "Previous Page",
         "NEXT_PAGE": "Next Page",
         "LAST_PAGE": "Last Page"
-      },      "BRANCHES_GENERAL": {
+      },
+      "BRANCHES_GENERAL": {
         "LOADING": "Loading...",
         "EDIT_TOOLTIP": "Edit",
         "DELETE_TOOLTIP": "Delete",
@@ -471,7 +479,7 @@
         "DELETE": "Delete",
         "CHANGE_NUMBER": "Change Number",
         "CHANGE_PASSWORD": "Change Password"
-      },      
+      },
       "EMPLOYEES_ACTIONS": {
         "ADD_EMPLOYEE": "Add Employee",
         "SEARCH_PLACEHOLDER": "Search in employees...",
@@ -480,9 +488,9 @@
         "EDIT_EMPLOYEE": "Edit Employee",
         "DELETE_EMPLOYEE": "Delete Employee",
         "CHANGE_PASSWORD": "Change Password",
-        "RESET_PASSWORD":"Reset Password"
+        "RESET_PASSWORD": "Reset Password"
       },
-      "EMPLOYEES_MODALS": {        
+      "EMPLOYEES_MODALS": {
         "ADD_EMPLOYEE_MODAL": {
           "TITLE": "Add New Employee",
           "EDIT_TITLE": "Edit Employee",
@@ -812,7 +820,7 @@
     "ATTENDANCE_DATA_SECTIONS": {
       "PUNCH_TRANSACTION": "Punch in transactions",
       "ATTENDANCE": "Attendance",
-      "CHANGE_ATTENDANCE_TIME":"Change attendance time direct"
+      "CHANGE_ATTENDANCE_TIME": "Change attendance time direct"
     },
     "SHIFTS_SECTIONS": {
       "SHIFTS": "Shifts",
@@ -880,7 +888,7 @@
       "USER_PROFILE": "User profile",
       "SESSIONS_MANAGEMENT": "Sessions management"
     },
-    "CONSORSHIP":"Consorship",
+    "CONSORSHIP": "Consorship",
     "CONSORSHIP_SECTIONS": {
       "CENSORSHIP_TOUR": "Censorship tour",
       "ALARMS": "Alarms"
@@ -1025,7 +1033,7 @@
     "SELECTED": "selected",
     "CLEAR_ALL": "Clear All"
   },
-    "SALARY_ADD_ONS_DEDUCTS": {
+  "SALARY_ADD_ONS_DEDUCTS": {
     "LOADING": "Loading...",
     "ADD_ADDON": "Add Add-on/Deduction",
     "ADD_ADDON_TITLE": "Add New Add-on/Deduction",
@@ -1404,16 +1412,15 @@
       "PREVIOUS_PAGE": "Previous Page"
     }
   },
-
-  "Attendance":{
+  "Attendance": {
     "DATE_FILTER": {
-    "TITLE": "Filter by date",
-    "START_DATE": "Start date",
-    "END_DATE": "End date",
-    "EMPLOYEE": "Employee",
-    "DEPARTMENT": "Department",
-    "ALL_DEPARTMENTS":"All Departments",
-    "ALL_EMPLOYEES":"All Employees"
+      "TITLE": "Filter by date",
+      "START_DATE": "Start date",
+      "END_DATE": "End date",
+      "EMPLOYEE": "Employee",
+      "DEPARTMENT": "Department",
+      "ALL_DEPARTMENTS": "All Departments",
+      "ALL_EMPLOYEES": "All Employees"
     },
     "RESULTS_TABLE": {
       "EMPLOYEE_HEADER": "Employee",
@@ -1431,10 +1438,9 @@
       "ROWS_PER_PAGE": "Rows",
       "ACTIONS": "Actions",
       "DELETE_SELECTED": "Delete selected",
-      "RECORD_DATE":"Record date",
-      "DATA_SOURCE":"Data source"
+      "RECORD_DATE": "Record date",
+      "DATA_SOURCE": "Data source"
     }
-
   },
   "SHIFTS_TABLE": {
     "LOADING": "Loading...",
@@ -1471,6 +1477,7 @@
     "DETAILS_TOOLTIP": "Details",
     "DELETE_TOOLTIP": "Delete",
     "CREATE_SHIFT_TITLE": "Create New Shift",
+    "EDIT_SHIFT_TITLE": "Edit Shift",
     "TWO_PARTS": "Two Parts Shift",
     "BASIC_INFO": "Basic Information",
     "ARABIC_NAME": "Arabic Name",
@@ -1478,7 +1485,7 @@
     "ARABIC_NAME_PLACEHOLDER": "Enter Arabic name",
     "ENGLISH_NAME_PLACEHOLDER": "Enter English name",
     "WEEKDAYS": "Weekdays Configuration",
-    "SELECT_OPTION": "Select option",
+    "SELECT_OPTION": "Select",
     "PART_1": "Part 1",
     "PART_2": "Part 2",
     "OPEN_SHIFT": "Open Shift",
@@ -1503,7 +1510,20 @@
     "UPDATE": "Update",
     "UPDATING": "Updating...",
     "SHIFT_CREATED_SUCCESSFULLY": "Shift created successfully",
-    "SHIFT_UPDATED_SUCCESSFULLY": "Shift updated successfully"
+    "SHIFT_UPDATED_SUCCESSFULLY": "Shift updated successfully",
+    "SHIFT_DETAILS": {
+      "TITLE": "Shift information",
+      "DAY_NAME": "Day name",
+      "SHIFT": "Shift",
+      "PART": "Part",
+      "OPEN_SHIFT": "Open shift",
+      "EARLY_IN": "Early in",
+      "IN": "In",
+      "ALLOW_IN": "Allow in",
+      "MAX_IN": "Max in",
+      "OVERTIME_IN": "Overtime in",
+      "OUT": "Out"
+    }
   },
   "AUTOMATIC_SIGN": {
     "LOADING": "Loading...",
@@ -1571,7 +1591,7 @@
     "LOADING": "Loading...",
     "CREATE": "Create New Assignment",
     "CREATE_TITLE": "Create New Shift Assignment",
-    "CREATE_MODAL_TITLE": "Create Shift Assignment",
+    "CREATE_MODAL_TITLE": "Shifts assign",
     "CREATE_NOT_IMPLEMENTED": "Create functionality is not yet implemented",
     "DELETE_SELECTED": "Delete Selected",
     "SEARCH_PLACEHOLDER": "Search shift assignments...",
@@ -1605,13 +1625,13 @@
     "RESET_FILTER": "Reset Date Filter",
     "CLOSE": "Close",
     "CANCEL": "Cancel",
-    "ASSIGNMENT_TYPE": "Assignment Type",
-    "SELECT_TARGETS": "Select Targets",
+    "ASSIGNMENT_TYPE": "Type",
+    "SELECT_TARGETS": "Select",
     "SELECT_SHIFT": "Select Shift",
     "SELECT_SHIFT_PLACEHOLDER": "Choose a shift...",
-    "DATE_RANGE": "Date Range",
+    "DATE_RANGE": "Assign Date",
     "SELECT_DATE": "Select date",
-    "TARGETS_REQUIRED": "Please select at least one target",
+    "TARGETS_REQUIRED": "You must select an employee, department, branch, or role",
     "SHIFT_REQUIRED": "Please select a shift",
     "START_DATE_REQUIRED": "Start date is required",
     "END_DATE_REQUIRED": "End date is required",
@@ -1697,7 +1717,7 @@
     "SELECT_ITEM": "Select Item",
     "EMPLOYEE": "Employee",
     "MANAGER_OF_DEPARTMENT": "Manager of Department",
-    "DEPARTMENT": "Department", 
+    "DEPARTMENT": "Department",
     "MANAGER_OF_BRANCH": "Manager of Branch",
     "BRANCH": "Branch",
     "ROLE": "Role",
@@ -1717,7 +1737,7 @@
     "STATUS": "Status",
     "START_DATE": "Start Date",
     "HIJRI_START": "Hijri Start",
-    "END_DATE": "End Date", 
+    "END_DATE": "End Date",
     "HIJRI_END": "Hijri End",
     "NOTE": "Note",
     "NOTE_PLACEHOLDER": "Enter notes...",
@@ -1922,7 +1942,7 @@
     "ASSIGN_TYPE_REQUIRED": "Assignment type is required",
     "GROUP_SELECTION_SECTION": "Group Selection",
     "SELECT_EMPLOYEES": "Select Employees",
-    "SELECT_DEPARTMENTS": "Select Departments", 
+    "SELECT_DEPARTMENTS": "Select Departments",
     "SELECT_BRANCHES": "Select Branches",
     "SELECT_ROLES": "Select Roles",
     "DEPARTMENT_MANAGERS": "Department Managers",
@@ -1965,7 +1985,7 @@
   "MOBILE_SIGN_TRANSACTION": {
     "LOADING": "Loading...",
     "EMPLOYEE": "Employee",
-    "SIGN_DATE": "Sign Date", 
+    "SIGN_DATE": "Sign Date",
     "STATUS": "Status",
     "PHONE": "Phone",
     "ACCEPTED_BY_LOCATION": "Accepted By Location",
@@ -2038,5 +2058,16 @@
   "COMMON": {
     "YES": "Yes",
     "NO": "No"
+  },
+  "VALIDATION": {
+    "VALIDTION_INPUT": "Please make sure the entered data is correct",
+    "FAILED_UPDATE_DEPT": "Failed to update the department. Please try again.",
+    "FAILED_ADD_DEPT": "Failed to add the department. Please try again.",
+    "FAILED_LOAD_DATA": "Failed to load some data.",
+    "REQUIRED_FIELD": "This field is required",
+    "CONFIRM_DELETE": "Item will be deleted .. Continue?",
+    "INVALID_NEW_BRANCH_NUMBER": "Please enter a valid number for the new branch",
+    "BRANCH_DETAILS_LOAD_FAILED": "Failed to load branch details.Please try again or contact support.",
+    "BRANCHES_LOAD_FAILED": "Failed to load branches. Please try again or contact support."
   }
 }

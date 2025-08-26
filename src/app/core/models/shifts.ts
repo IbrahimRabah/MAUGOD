@@ -3,9 +3,11 @@ export interface Shift {
   shiftId: number;
   shiftNameEn: string;
   shiftNameAr: string;
+  shiftName: string;
   startTime: string | null;
   endTime: string | null;
   isActive: number | string;
+  isActiveLabel:string;
   sun: string;
   mon: string;
   tue: string;
@@ -39,6 +41,33 @@ export interface ShiftsResponse {
   isSuccess: boolean;
   data: Shift[];
 }
+
+export interface ShiftDetailsResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: ShiftDetails[];
+}
+export interface ShiftDetails {
+  style: string;
+  ord: number;
+  dayName: string;
+  shiftId: number;
+  part: number;
+  openShift: string;
+  earlyIn: number;
+  in: string;
+  allowIn: number;
+  maxIn: number;
+  overtimeIn: number;
+  earlyOut: number;
+  out: string;
+  allowOut: number;
+  maxOut: number;
+  overtimeOut: number;
+  shiftName:string
+}
+
 
 export interface CreatShift {
   shiftId: number;
@@ -82,4 +111,9 @@ export interface CreatShift {
   fri: number;
 
   isActive: boolean;
+}
+
+export interface DaysShifts {
+  label: string;
+  value: number;
 }

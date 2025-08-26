@@ -10,6 +10,8 @@ import { Manager } from '../../../../core/models/managers';
 import { Location } from '../../../../core/models/location';
 import { ParentBranch } from '../../../../core/models/parentBranches';
 import { forkJoin } from 'rxjs';
+import { CustomValidators } from '../../../../shared/validators/custom-validators';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-branches',
@@ -30,7 +32,7 @@ export class BranchesComponent implements OnInit {
   isSubmitting: boolean = false;
   deletingBranchId: number | null = null;
   loadingDropdowns: boolean = false;
-  
+
   // Reactive Forms
   branchForm!: FormGroup;
   changeNumberForm!: FormGroup;
@@ -49,11 +51,24 @@ export class BranchesComponent implements OnInit {
   private currentLanguage: string = '';
   private isInitialized = false; // Prevent double API calls on init
 
-  
+  searchColumns = [
+    { column: '', label: 'All Columns' }, // all columns option
+    { column: 'branch_name', label: 'MENU.GENERAL_DATA.BRANCHES_TABLE.BRANCH_NAME' },
+    { column: 'manager_name', label: 'MENU.GENERAL_DATA.BRANCHES_TABLE.MANAGER' },
+    { column: 'parent_branch_name', label: 'MENU.GENERAL_DATA.BRANCHES_TABLE.PARENT_BRANCH' },
+    { column: 'location_name', label: 'MENU.GENERAL_DATA.BRANCHES_TABLE.LOCATION' },
+    { column: 'loc_desc', label: 'MENU.GENERAL_DATA.BRANCHES_TABLE.LOCATION_DESC' },
+    { column: 'note', label: 'MENU.GENERAL_DATA.BRANCHES_TABLE.NOTES' }
+  ];
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
     pageSize: 10,
-    lang: 1 // Default to English, can be changed based on app's language settings
+    lang: 1,// Default to English, can be changed based on app's language settings
+    searchColumn: this.selectedColumn,
+    searchText: this.searchTerm
   };
 
   constructor(
@@ -62,19 +77,20 @@ export class BranchesComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder,
-    private dropdownService: DropdownlistsService
+    private dropdownService: DropdownlistsService,
+    private translate: TranslateService
   ) {
     this.initializeForms();
-    
+
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
-      this.paginationRequest.lang = lang === 'ar' ? 2 : 1; 
+      this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
       // Only reload branches if component is already initialized (not first time)
       if (this.isInitialized) {
         this.loadBranches(); // Reload branches when language changes
         this.resetDropdownState(); // Reset dropdown state when language changes
       }
-    }) 
+    })
   }
   ngOnInit() {
     this.isInitialized = true;
@@ -85,21 +101,27 @@ export class BranchesComponent implements OnInit {
 
   initializeForms() {
     this.branchForm = this.fb.group({
-      ar: ['', [Validators.required]],
-      en: ['', [Validators.required]],
-      mgrId: ['', [Validators.required]],
-      parentBranchId: ['', [Validators.required]],
-      locId: ['', [Validators.required]],
-      locDesc: ['', [Validators.required]],
+      ar: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
+      en: [''],
+      mgrId: [''],
+      parentBranchId: [''],
+      locId: [''],
+      locDesc: [''],
       note: [''] // Note is not required as per requirement
     });
+
 
     this.changeNumberForm = this.fb.group({
       newNumber: ['', [Validators.required, Validators.pattern(/^\d+$/)]] // Only allow numbers
     });
 
-    
-  this.initialFormValues = this.branchForm.value;
+
+    this.initialFormValues = this.branchForm.value;
+  }
+
+  selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
   }
 
   // Custom pagination methods
@@ -203,15 +225,16 @@ export class BranchesComponent implements OnInit {
       // Wait for all needed API calls to complete
       await Promise.all(loadPromises);
       this.loadingDropdowns = false;
-      console.log('Smart dropdown loading completed');
 
     } catch (error) {
       console.error('Error in smart dropdown loading:', error);
       this.loadingDropdowns = false;
       this.messageService.add({
         severity: 'warn',
-        summary: 'تحذير',
-        detail: 'فشل في تحميل بعض البيانات'
+        summary: this.translate.instant("WARNING"),
+        detail: this.langService.getCurrentLang() === 'ar'
+          ? 'فشل في تحميل بعض البيانات. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+          : 'Failed to load some data. Please try again or contact support.'
       });
     }
   }
@@ -227,12 +250,12 @@ export class BranchesComponent implements OnInit {
    * Check if all dropdown data is loaded
    */
   private areAllDropdownsLoaded(): boolean {
-    return this.dropdownDataLoaded.managers && 
-           this.dropdownDataLoaded.locations && 
-           this.dropdownDataLoaded.parentBranches &&
-           this.managers.length > 0 &&
-           this.locations.length > 0 &&
-           this.parentBranches.length > 0;
+    return this.dropdownDataLoaded.managers &&
+      this.dropdownDataLoaded.locations &&
+      this.dropdownDataLoaded.parentBranches &&
+      this.managers.length > 0 &&
+      this.locations.length > 0 &&
+      this.parentBranches.length > 0;
   }
 
   /**
@@ -267,16 +290,10 @@ export class BranchesComponent implements OnInit {
     }
 
     const branch = this.selectedBranch;
-    // console.log('=== Updating form selections for branch ===');
-    // console.log('Branch data:', branch);
-    // console.log('Available managers:', this.managers);
-    // console.log('Available locations:', this.locations);
-    // console.log('Available parent branches:', this.parentBranches);
-    // console.log('Current form value:', this.branchForm.value);
-    
+
     // Get current form values
     const currentFormValue = this.branchForm.value;
-    
+
     // Create a new form value object with all current values
     const newFormValue = {
       ar: currentFormValue.ar || branch.branchName || '',
@@ -287,13 +304,9 @@ export class BranchesComponent implements OnInit {
       parentBranchId: '',
       locId: ''
     };
-    
+
     // Update manager selection
-    console.log('=== Manager Selection Debug ===');
-    console.log('Processing manager ID:', branch.mgrId, 'Type:', typeof branch.mgrId);
-    console.log('Available managers:', this.managers);
-    console.log('Manager values:', this.managers.map(m => ({ value: m.value, type: typeof m.value, label: m.label })));
-    
+
     if (branch.mgrId !== null && branch.mgrId !== undefined && this.managers.length > 0) {
       const manager = this.managers.find(m => m.value === branch.mgrId);
       console.log('Looking for manager with ID:', branch.mgrId, 'Found:', manager);
@@ -316,7 +329,7 @@ export class BranchesComponent implements OnInit {
     } else {
       console.log('Manager ID is null, undefined, or -1, leaving mgrId empty');
     }
-    
+
     // Update location selection
     if (branch.locId !== null && branch.locId !== undefined && this.locations.length > 0) {
       const location = this.locations.find(l => l.value === branch.locId);
@@ -334,7 +347,7 @@ export class BranchesComponent implements OnInit {
         }
       }
     }
-    
+
     // Update parent branch selection
     if (branch.parentBranchId !== null && branch.parentBranchId !== undefined && this.parentBranches.length > 0) {
       const parentBranch = this.parentBranches.find(pb => pb.value === branch.parentBranchId);
@@ -352,23 +365,19 @@ export class BranchesComponent implements OnInit {
         }
       }
     }
-    
+
     console.log('New form value to set:', newFormValue);
-    
+
     // Use setValue to force all values instead of patchValue
     this.branchForm.setValue(newFormValue);
-    
+
     // Force change detection
     this.branchForm.markAsDirty();
     this.branchForm.updateValueAndValidity();
-    
+
     console.log('Form after setValue:', this.branchForm.value);
-    
-    // Log individual form control values
-    // console.log('Individual form controls:');
-    // console.log('mgrId control value:', this.branchForm.get('mgrId')?.value);
-    // console.log('locId control value:', this.branchForm.get('locId')?.value);
-    // console.log('parentBranchId control value:', this.branchForm.get('parentBranchId')?.value);
+
+
   }
 
   goToPage(page: number) {
@@ -399,6 +408,8 @@ export class BranchesComponent implements OnInit {
   onSearch() {
     this.currentPage = 1;
     this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn = this.selectedColumn;
+    this.paginationRequest.searchText = this.searchTerm;
     this.loadBranches();
   }
   addBranch() {
@@ -418,31 +429,51 @@ export class BranchesComponent implements OnInit {
 
   resetForm() {
     this.branchForm.reset();
-      this.branchForm.reset(this.initialFormValues);
+    this.branchForm.reset(this.initialFormValues);
 
-    
+
   }
 
   submitBranch() {
     if (this.branchForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       const formData = this.branchForm.value;
-      
+
       // Validate numeric fields
       const mgrId = parseInt(formData.mgrId);
       const parentBranchId = parseInt(formData.parentBranchId);
       const locId = parseInt(formData.locId);
-      
+
       if (isNaN(mgrId) || isNaN(parentBranchId) || isNaN(locId)) {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'يرجى التأكد من صحة البيانات المدخلة' 
+        let errorMessage = "";
+
+        if (isNaN(mgrId)) {
+          errorMessage += this.langService.getCurrentLang() === 'ar'
+            ? "رقم المدير غير صحيح. "
+            : "Manager ID is invalid. ";
+        }
+
+        if (isNaN(parentBranchId)) {
+          errorMessage += this.langService.getCurrentLang() === 'ar'
+            ? "رقم الفرع غير صحيح. "
+            : "Branch ID is invalid. ";
+        }
+
+        if (isNaN(locId)) {
+          errorMessage += this.langService.getCurrentLang() === 'ar'
+            ? "رقم الموقع غير صحيح."
+            : "Location ID is invalid.";
+        }
+
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: errorMessage.trim()
         });
         this.isSubmitting = false;
         return;
       }
-      
+
       // Prepare branch object based on the API requirements
       const branchData: BranchCreateUpdateRequest = {
         ar: formData.ar,
@@ -459,21 +490,37 @@ export class BranchesComponent implements OnInit {
         const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
         this.branch.updateBranch(this.selectedBranch!.branchId, branchData, currentLang).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم تحديث الفرع بنجاح' 
-            });
-            this.closeModal();
-            this.loadBranches();
-            this.isSubmitting = false;
+            if (response.isSuccess) {
+              this.messageService.add({
+                severity: 'success',
+                summary: this.translate.instant("SUCCESS"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'تم تحديث الفرع بنجاح'
+                  : 'Branch updated successfully'
+              });
+              this.closeModal();
+              this.loadBranches();
+              this.isSubmitting = false;
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.translate.instant("ERROR"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'فشل في تحديث الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                  : 'Failed to update branch. Please try again or contact support.'
+              });
+              this.isSubmitting = false;
+            }
+
           },
           error: (error) => {
             console.error('Error updating branch:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في تحديث الفرع. يرجى المحاولة مرة أخرى.' 
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في تحديث الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                : 'Failed to update branch. Please try again or contact support.'
             });
             this.isSubmitting = false;
           }
@@ -483,21 +530,37 @@ export class BranchesComponent implements OnInit {
         const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
         this.branch.addBranch(branchData, currentLang).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم إضافة الفرع بنجاح' 
-            });
-            this.closeModal();
-            this.loadBranches();
-            this.isSubmitting = false;
+            if (response.isSuccess) {
+              this.messageService.add({
+                severity: 'success',
+                summary: this.translate.instant("SUCCESS"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'تم إضافة الفرع بنجاح'
+                  : 'Branch added successfully'
+              });
+              this.closeModal();
+              this.loadBranches();
+              this.isSubmitting = false;
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.translate.instant("ERROR"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'فشل في إضافة الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                  : 'Failed to add branch. Please try again or contact support.'
+              });
+              this.isSubmitting = false;
+            }
+
           },
           error: (error) => {
             console.error('Error adding branch:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في إضافة الفرع. يرجى المحاولة مرة أخرى.' 
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في إضافة الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                : 'Failed to add branch. Please try again or contact support.'
             });
             this.isSubmitting = false;
           }
@@ -517,20 +580,20 @@ export class BranchesComponent implements OnInit {
           this.branches = response.data.branches;
           this.totalRecords = response.data.totalCount;
         } else {
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'خطأ', 
-            detail: response.message || 'فشل في تحميل الفروع' 
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant("ERROR"),
+            detail: this.translate.instant("VALIDATION.BRANCHES_LOAD_FAILED")
           });
         }
         this.loading = false;
       },
       error: (error) => {
         console.error('Error loading branches:', error);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'فشل في تحميل الفروع. يرجى المحاولة مرة أخرى.' 
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.translate.instant("VALIDATION.BRANCHES_LOAD_FAILED")
         });
         this.loading = false;
       }
@@ -540,25 +603,24 @@ export class BranchesComponent implements OnInit {
   async editBranch(branch: Branch) {
     console.log('=== Edit Branch Called ===');
     console.log('Branch to edit:', branch);
-    
+
     this.isEditMode = true;
     this.selectedBranch = branch;
-    
+
     // Reset form first
     this.branchForm.reset();
-    
+
     // Show modal first
     this.showAddModal = true;
-    
+
     // Load dropdown data only if needed
     await this.loadDropdownDataIfNeeded();
-    
+
     // Get complete branch details from API
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
     this.branch.getBranchById(branch.branchId, currentLang).subscribe({
       next: (branchDetails: any) => {
-        console.log('Branch details from API:', branchDetails);
-        
+
         // The API returns: {branchId, ar, en, mgrId, locDesc, parentBranchId, locId, note}
         // Convert to our component structure (handle mgrId = -1 as null)
         const convertedBranch = {
@@ -575,10 +637,9 @@ export class BranchesComponent implements OnInit {
           updatePk: '', // Not needed for edit
           del: '' // Not needed for edit
         };
-        
-        console.log('Converted branch data:', convertedBranch);
+
         this.selectedBranch = convertedBranch as Branch; // Update with complete data
-        
+
         // Set basic form values immediately (non-dropdown fields)
         this.branchForm.patchValue({
           ar: branchDetails.ar || '',
@@ -586,20 +647,18 @@ export class BranchesComponent implements OnInit {
           locDesc: branchDetails.locDesc || '',
           note: branchDetails.note || ''
         });
-        
-        console.log('Form after basic patch with API data:', this.branchForm.value);
-        
+
+
         // Since we already awaited dropdown loading, update form selections immediately
         this.updateFormDropdownSelections();
       },
       error: (error) => {
-        console.error('Error loading branch details:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'خطأ',
-          detail: 'فشل في تحميل تفاصيل الفرع'
+          summary: this.translate.instant("ERROR"),
+          detail: this.translate.instant("VALIDATION.BRANCH_DETAILS_LOAD_FAILED")
         });
-        
+
         // Fallback to using the branch data from the list
         this.branchForm.patchValue({
           ar: branch.branchName || '',
@@ -610,34 +669,47 @@ export class BranchesComponent implements OnInit {
       }
     });
   }
-    deleteBranch(branch: Branch) {
+  deleteBranch(branch: Branch) {
     this.confirmationService.confirm({
-      message: `هل أنت متأكد من حذف الفرع "${branch.branchName}"؟\nلا يمكن التراجع عن هذا الإجراء.`,
-      header: 'تأكيد الحذف',
+      message: this.translate.instant('VALIDATION.CONFIRM_DELETE'),
+      header: this.translate.instant("CONFIRM_DELE"),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، احذف',
-      rejectLabel: 'إلغاء',
+      acceptLabel: this.translate.instant("OK"),
+      rejectLabel: this.translate.instant("CANCEL"),
       accept: () => {
         this.deletingBranchId = branch.branchId;
         // Call API to delete the branch
         this.branch.deleteBranch(branch.branchId).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم حذف الفرع بنجاح' 
-            });
-            this.loadBranches();
-            this.deletingBranchId = null;
+            if (response.isSuccess) {
+              this.messageService.add({
+                severity: 'success',
+                summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success',
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'تم حذف الفرع بنجاح'
+                  : 'Branch deleted successfully'
+              });
+              this.loadBranches(); // Reload branches after delete
+              this.deletingBranchId = null;
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error',
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'فشل في حذف الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                  : 'Failed to delete branch. Please try again or contact support.'
+              });
+            }
           },
           error: (error) => {
             console.error('Error deleting branch:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في حذف الفرع. يرجى المحاولة مرة أخرى.' 
+            this.messageService.add({
+              severity: 'error',
+              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error',
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'حدث خطأ أثناء حذف الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                : 'An error occurred while deleting the branch. Please try again or contact support.'
             });
-            this.deletingBranchId = null;
           }
         });
       },
@@ -671,43 +743,53 @@ export class BranchesComponent implements OnInit {
   submitChangeNumber() {
     if (this.changeNumberForm.valid && this.selectedBranch) {
       const newBranchId = parseInt(this.changeNumberForm.value.newNumber);
-      
+
       if (isNaN(newBranchId)) {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'يرجى إدخال رقم صحيح للفرع الجديد' 
+        this.messageService.add({
+          severity: 'error',
+          summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error',
+          detail: this.translate.instant('VALIDATION.INVALID_NEW_BRANCH_NUMBER')
         });
         return;
       }
 
       const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
-      
-      console.log('Change Number Request:', {
-        oldBranchId: this.selectedBranch.branchId,
-        newBranchId: newBranchId,
-        lang: currentLang
-      });
-      
+
       this.branch.changeBranchId(this.selectedBranch.branchId, newBranchId, currentLang).subscribe({
         next: (response) => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: 'نجح', 
-            detail: 'تم تغيير رقم الفرع بنجاح' 
-          });
-          this.closeChangeNumberModal();
-          this.loadBranches(); // Reload the branches list
+          if (response.isSuccess) {
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translate.instant("SUCCESS"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'تم تغيير رقم الفرع بنجاح'
+                : 'Branch number changed successfully'
+            });
+            this.closeChangeNumberModal();
+            this.loadBranches(); // Reload the branches list
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في تغيير رقم الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+                : 'Failed to change branch number. Please try again or contact support.'
+            });
+          }
         },
         error: (error) => {
           console.error('Error changing branch ID:', error);
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'خطأ', 
-            detail: 'فشل في تغيير رقم الفرع. يرجى المحاولة مرة أخرى.' 
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant("ERROR"),
+            detail: this.langService.getCurrentLang() === 'ar'
+              ? 'فشل في تغيير رقم الفرع. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'
+              : 'Failed to change branch number. Please try again or contact support.'
           });
         }
       });
+
+
     } else {
       // Mark all fields as touched to show validation errors
       this.changeNumberForm.markAllAsTouched();
@@ -723,12 +805,8 @@ export class BranchesComponent implements OnInit {
   getFieldError(fieldName: string, formGroup: FormGroup = this.branchForm): string {
     const field = formGroup.get(fieldName);
     if (field && field.errors && (field.dirty || field.touched)) {
-      if (field.errors['required']) {
-        return 'هذا الحقل مطلوب';
-      }
-      if (field.errors['pattern']) {
-        return 'يرجى إدخال رقم صحيح';
-      }
+      const isArabic = this.langService.getCurrentLang() === 'ar';
+      return CustomValidators.getErrorMessage(field.errors, fieldName, isArabic);
     }
     return '';
   }

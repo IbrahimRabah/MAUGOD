@@ -145,9 +145,9 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
             }
             
             // Show message if no data available
-            if (response.data.length === 0) {
-              this.showWarningMessage('TIMTRAN_LOCK.NO_DATA_AVAILABLE');
-            }
+            // if (response.data.length === 0) {
+            //   this.showWarningMessage('TIMTRAN_LOCK.NO_DATA_AVAILABLE');
+            // }
           } else {
             this.timtranLocks = [];
             this.totalRecords = 0;

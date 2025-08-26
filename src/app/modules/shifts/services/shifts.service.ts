@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CreatShift, ShiftsResponse } from '../../../core/models/shifts';
+import { CreatShift, ShiftDetailsResponse, ShiftsResponse } from '../../../core/models/shifts';
 import { Observable } from 'rxjs';
-import { SalaryResponse } from '../../../core/models/CalculateSalaryRequest';
+import { PaginationRequest } from '../../../core/models/pagination';
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,15 +15,21 @@ export class ShiftsService {
     constructor(private http: HttpClient) {}
 
     // Generic method to get paginated shifts
-    GetShiftsToShow(lang: number, pageNumber: number, pageSize: number): Observable<ShiftsResponse> {
+    GetShiftsToShow(lang: number, pageNumber: number, pageSize: number,selectedColumn:string,searchTerm:string): Observable<ShiftsResponse> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString(),
-        'pageSize': pageSize.toString(),
-        'pageIndex': pageNumber.toString()
-      };
 
-      return this.http.get<ShiftsResponse>(`${this.apiUrl}/GetShifts`, { headers });
+      };
+      const paginationRequest: PaginationRequest = {
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+          lang:lang,
+          searchColumn: selectedColumn, 
+          searchText:searchTerm,
+
+        };
+      return this.http.post<ShiftsResponse>(`${this.apiUrl}/GetShifts`, paginationRequest,{ headers });
     }
 
  deleteShift(lang: number, shiftID: number): Observable<any> {
@@ -54,4 +61,14 @@ export class ShiftsService {
     const url = `${this.apiUrl}/UpdateShift`;
     return this.http.put(url, shift, { headers });
   }
+  getShiftDtailsShow(lang: number, shiftId: number, withDetails: number): Observable<ShiftDetailsResponse> {
+  const headers = new HttpHeaders({
+    'accept': 'text/plain',
+    'lang': lang.toString(),
+    'shiftId':shiftId,
+    'withDetails':withDetails
+  });
+  return this.http.get<ShiftDetailsResponse>(`${this.apiUrl}/GetShiftDetails`, { headers});
+}
+
 }

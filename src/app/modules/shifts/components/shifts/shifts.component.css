@@ -888,10 +888,9 @@ input[type="checkbox"] {
   transform: scale(1.2);
 }
 
-/* Grid layouts */
 .weekdays-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* 2 items per row */
   gap: 1rem;
 }
 
@@ -1019,6 +1018,8 @@ input[type="checkbox"] {
   justify-content: flex-start;
 }
 
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .create-edit-modal {
@@ -1054,10 +1055,10 @@ input[type="checkbox"] {
   }
   
   /* Weekdays grid - stack vertically on mobile */
-  .weekdays-grid {
+  /* .weekdays-grid {
     grid-template-columns: 1fr;
     gap: 0.75rem;
-  }
+  } */
   
   /* Toggle controls - stack vertically */
   .toggles-row {
@@ -1159,6 +1160,8 @@ input[type="checkbox"] {
   }
 }
 
+
+
 /* Landscape orientation on mobile */
 @media (max-width: 768px) and (orientation: landscape) {
   .create-edit-modal {
@@ -1171,9 +1174,9 @@ input[type="checkbox"] {
   }
   
   /* Use 2 columns for better space usage in landscape */
-  .weekdays-grid {
+  /* .weekdays-grid {
     grid-template-columns: 1fr 1fr;
-  }
+  } */
   
   .toggles-row {
     grid-template-columns: 1fr 1fr;
@@ -1182,4 +1185,18 @@ input[type="checkbox"] {
   .time-row {
     grid-template-columns: 1fr 1fr;
   }
+
+
+}
+
+
+
+  ol, ul {
+    padding-left:0;
+}
+/* Override primeng dropdown item style */
+:host ::ng-deep .p-dropdown-item {
+
+  white-space: normal;   /* ✅ allow wrapping */
+
 }

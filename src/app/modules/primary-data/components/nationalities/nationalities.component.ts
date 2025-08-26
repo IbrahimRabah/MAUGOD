@@ -6,6 +6,7 @@ import { NationalityService } from '../../services/nationality.service';
 import { Nationality, NationalityResponse } from '../../../../core/models/nationality ';
 import { PaginationRequest } from '../../../../core/models/pagination';
 import { CustomValidators } from '../../../../shared/validators/custom-validators';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-nationalities',
@@ -25,11 +26,22 @@ export class NationalitiesComponent implements OnInit {
   
   // Reactive Forms
   nationalityForm!: FormGroup;
+  searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns option
+  { column: 'ar', label: 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.ARABIC_NAME' },
+  { column: 'en', label: 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.ENGLISH_NAME' },
+  { column: 'note', label: 'MENU.GENERAL_DATA.NATIONALITIES_TABLE.NOTES' }
+];
+
+selectedColumn: string = '';
+selectedColumnLabel: string = this.searchColumns[0].label;
   
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
     pageSize: 10,
-    lang: 1 // Default to English
+    lang: 1 ,// Default to English
+    searchColumn: this.selectedColumn, 
+    searchText:this.searchTerm 
   };
 
   constructor(
@@ -37,7 +49,8 @@ export class NationalitiesComponent implements OnInit {
     public langService: LanguageService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+      private translate: TranslateService
   ) {
     this.initializeForm();
     
@@ -62,6 +75,10 @@ export class NationalitiesComponent implements OnInit {
     this.loadNationalities();
   }
 
+    selectColumn(col: any) {
+  this.selectedColumn = col.column;
+  this.selectedColumnLabel = col.label;
+}
   // Custom pagination methods
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
@@ -109,6 +126,8 @@ export class NationalitiesComponent implements OnInit {
   onSearch() {
     this.currentPage = 1;
     this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn=this.selectedColumn;
+    this.paginationRequest.searchText=this.searchTerm;
     this.loadNationalities();
   }
 
@@ -226,9 +245,7 @@ export class NationalitiesComponent implements OnInit {
 
   deleteNationality(nationality: Nationality) {
     this.confirmationService.confirm({
-      message: this.langService.getCurrentLang() === 'ar' ? 
-        `هل أنت متأكد من حذف الجنسية "${nationality.ar_Name}"؟` : 
-        `Are you sure you want to delete the nationality "${nationality.en_Name}"?`,
+      message: this.translate.instant('VALIDATION.CONFIRM_DELETE') ,
       header: this.langService.getCurrentLang() === 'ar' ? 'تأكيد الحذف' : 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
