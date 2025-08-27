@@ -15,12 +15,10 @@ export class BranchService {
   constructor(private http:HttpClient) { }
   getBranches(pagination: PaginationRequest): Observable<BranchResponse> {
     const headers = new HttpHeaders({
-      'lang': pagination.lang.toString(),
-      'pageNumber': pagination.pageNumber.toString(),
-      'pageSize': pagination.pageSize.toString()
+      'lang': pagination.lang.toString()
     });
 
-    return this.http.get<BranchResponse>(`${this.apiUrl}/GetBranches`, { headers });
+    return this.http.post<BranchResponse>(`${this.apiUrl}/GetBranches`, pagination,{ headers });
   }
   getBranchById(branchId: number, lang: number): Observable<any> {
     const headers = new HttpHeaders({

@@ -27,6 +27,7 @@ export interface DeleteShiftsAssignRequest {
 }
 
 export interface CreateShiftsAssignRequest {
+
   empId: number | null;
   deptId: number | null;
   branchId: number | null;

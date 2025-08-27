@@ -413,12 +413,12 @@
   padding: 25px;
 }
 
-.form-grid {
+/* .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 25px 20px;
   align-items: start;
-}
+} */
 
 .form-grid-simple {
   display: grid;
@@ -429,7 +429,7 @@
   margin: 0 auto;
 }
 
-.form-group {
+/* .form-group {
   display: flex;
   flex-direction: column;
 }
@@ -443,7 +443,7 @@
   font-weight: 500;
   color: #333;
   margin-bottom: 8px;
-}
+} */
 
 .required {
   color: #dc3545;
@@ -694,4 +694,43 @@
 
 ::ng-deep .p-toast .p-toast-detail {
   margin: 0.5rem 0 0 0;
+}
+
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Arabic + English side by side */
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-input, .form-textarea, .form-dropdown {
+  width: 100%;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.85rem;
+}
+
+.modal-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
 }

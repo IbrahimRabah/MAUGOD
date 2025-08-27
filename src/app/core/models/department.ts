@@ -21,6 +21,7 @@ export interface Department {
   branchId: number;
   branchName: string;
   deptLevel: number;
+  deptLevelLable:string;
   note: string;
   updatePk: string;
   del: string;
