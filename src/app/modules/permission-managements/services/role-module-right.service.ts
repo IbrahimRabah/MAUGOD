@@ -14,7 +14,9 @@ export class RoleModuleRightService {
   getUserRoleModuleRights(
   lang: number,
   pageSize: number,
-  pageIndex: number
+  pageIndex: number,
+  searchColumn: string,
+  searchText: string
 ): Observable<ApiResponse<UserRoleModuleRightsData>> {
   
   const headers = new HttpHeaders().set('lang', lang.toString());
@@ -22,8 +24,8 @@ export class RoleModuleRightService {
   const body = {
     pageNumber: pageIndex, 
     pageSize: pageSize,
-    searchColumn: null,     
-    searchText: null
+    searchColumn: searchColumn,     
+    searchText: searchText
   };
 
   return this.http.post<ApiResponse<UserRoleModuleRightsData>>(

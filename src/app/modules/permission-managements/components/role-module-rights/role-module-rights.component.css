@@ -110,8 +110,8 @@
 
 .right-actions {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 10px;
 }
 
 /* Delete Selected Button */
@@ -219,12 +219,9 @@
 
 /* Search Container */
 .search-container {
+  position: relative;
   display: flex;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
-  overflow: hidden;
-  background: white;
-  transition: border-color 0.3s ease;
+  align-items: center;
 }
 
 .search-input {

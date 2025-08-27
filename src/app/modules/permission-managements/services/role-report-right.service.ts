@@ -20,11 +20,11 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
   getRoleReportRights(pagination:PaginationRequest): Observable<RoleReportRightResponse> {
      const headers  =  new HttpHeaders({
       'lang': pagination.lang,
-      'pageNumber': pagination.pageNumber,
-      'pageSize': pagination.pageSize
     });
 
-    return this.http.get<RoleReportRightResponse>(`${this.apiUrl}/GetUserRoleReportRights`, { headers });
+    const body = { pageNumber: pagination.pageNumber, pageSize: pagination.pageSize, searchColumn: pagination.searchColumn, searchText: pagination.searchText };
+
+    return this.http.post<RoleReportRightResponse>(`${this.apiUrl}/GetUserRoleReportRights`, body,{ headers });
   }
   getRolesDropdownListForRoleReportRight(lang: number): Observable<RoleDropdownListForRoleReportRightResponse> {
     const params = { lang: lang.toString() };
@@ -38,7 +38,7 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
 
     const body = { roleId: roleId };
 
-    return this.http.post<ReportDropdownListForRoleReportRightResponse>(`${this.apiUrl}/GetReportsDropdownListForRoleReportRights`, {body, headers});
+    return this.http.post<ReportDropdownListForRoleReportRightResponse>(`${this.apiUrl}/GetReportsDropdownListForRoleReportRights`, body, { headers });
   }
   addRoleReportRight(roleReportRightCreate: RoleReportRightCreate, lang: number): Observable<ApiResponse> {
     const headers  =  new HttpHeaders({
