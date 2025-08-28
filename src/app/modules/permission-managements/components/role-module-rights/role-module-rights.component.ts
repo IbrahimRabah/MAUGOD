@@ -36,6 +36,23 @@ export class RoleModuleRightsComponent implements OnInit, OnDestroy {
   selectedItems: UserRoleModuleRight[] = [];
   selectAll = false;
 
+ selectedColumn: string = '';
+  
+ searchColumns = [
+    { column: '', label: 'All Columns' }, // all columns option
+    { column: 'ROLE_NAME_TRANS', label: 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.ROLE' },
+    { column: 'MODULE_NAME_TRANS', label: 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.MODULE' },
+    { column: 'CAN_VIEW_TRANS', label: 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_VIEW' },
+    { column: 'CAN_CREATE_TRANS', label: 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_CREATE' },
+    { column: 'CAN_DELETE_TRANS', label: 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_EDIT' },
+    { column: 'CAN_EDIT_TRANS', label: 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_DELETE' },
+    { column: 'CAN_ADD_PUBLC_REP_TRANS', label: 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.CAN_ADD_PUBLIC_REPORT' },
+  ];
+  searchTerm: string = '';
+
+ selectedColumnLabel: string = this.searchColumns[0].label;
+
+
   // Copy existing modal properties
   showCopyModal = false;
   sourceRoles: DropdownItem[] = [];
@@ -74,8 +91,6 @@ export class RoleModuleRightsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initializeLanguage();
-    this.setupSearchSubscription();
-    this.loadUserRoleModuleRights();
   }
 
   ngOnDestroy() {
@@ -121,18 +136,6 @@ export class RoleModuleRightsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Setup search functionality
-  private setupSearchSubscription() {
-    this.searchSubscription = this.searchForm.get('searchTerm')!.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe(() => {
-        this.currentPage = 1;
-        this.loadUserRoleModuleRights();
-      });
-  }
 
   // Pagination computed properties
   get totalPages(): number {
@@ -156,16 +159,26 @@ export class RoleModuleRightsComponent implements OnInit, OnDestroy {
     return this.currentPage > 1;
   }
 
+
+selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
+
+
+
   // Core business methods
   loadUserRoleModuleRights() {
     this.loading = true;
     this.selectedItems = [];
     this.selectAll = false;
-
     this.roleModuleRightService.getUserRoleModuleRights(
       this.currentLang,
       this.pageSize,
-      this.currentPage - 1 // API expects 0-based page index
+      this.currentPage - 1, // API expects 0-based page index
+      this.selectedColumn,
+      this.searchTerm,
     ).subscribe({
       next: (response) => {
         if (response.isSuccess && response.data) {

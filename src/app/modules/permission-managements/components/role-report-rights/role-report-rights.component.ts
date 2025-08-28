@@ -63,6 +63,16 @@ export class RoleReportRightsComponent implements OnInit, OnDestroy {
   selectedRole: any = null;
   loadingRoles: boolean = false;
     
+
+ searchColumns = [
+    { column: '', label: 'All Columns' }, // all columns option
+    { column: 'RoleName', label: 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_TABLE.ROLE' },
+    { column: 'ReportName', label: 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_TABLE.REPORT' },
+    { column: 'DELEGATE_ID', label: 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_TABLE.DELEGATE' },
+  ];
+
+ selectedColumnLabel: string = this.searchColumns[0].label;
+
     private langSubscription: Subscription = new Subscription();
     private currentLang = 2; // Default to Arabic (2)
     
@@ -73,7 +83,9 @@ export class RoleReportRightsComponent implements OnInit, OnDestroy {
     paginationRequest: PaginationRequest = {
       pageNumber: 1,
       pageSize: 10,
-      lang: 1 // Default to English
+      lang: this.langService.getLangValue(), // Default to English
+      searchColumn: this.searchColumns[0].column,
+      searchText: ''
     };
   dropdownlistsService: any;
   
@@ -88,26 +100,19 @@ export class RoleReportRightsComponent implements OnInit, OnDestroy {
       this.initializeForm();
       this.initializeMultiSelectStates();
       
-      // Set the language for the pagination request based on the current language setting
-      this.langSubscription = this.langService.currentLang$.subscribe(lang => {
-        this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
-        this.loadRoleReportRights(); // Reload roleReportRights when language changes
-      });
     }
   
     ngOnInit() {
       // Subscribe to language changes
-    this.langSubscription = this.langService.currentLang$.subscribe(lang => {
-      this.currentLang = this.langService.getLangValue();
-      console.log('Language changed to:', this.currentLang);
-      this.loadRoleReportRights();
-      this.loadRoles();
-      if (!this.dataLoaded.reports) {
-      this.loadReports();
-    }
-    });
+      this.langSubscription = this.langService.currentLang$.subscribe(lang => {
+        this.currentLang = this.langService.getLangValue();
+        this.loadRoles();
+        if (!this.dataLoaded.reports) {
+          this.loadReports();
+        }
+        this.loadRoleReportRights();
+      });
 
-      this.loadRoleReportRights();
     }
 
     ngOnDestroy() {
@@ -157,7 +162,10 @@ export class RoleReportRightsComponent implements OnInit, OnDestroy {
         this.loadRoleReportRights();
       }
     }
-  
+  selectColumn(col: any) {
+    this.paginationRequest.searchColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
@@ -227,11 +235,11 @@ export class RoleReportRightsComponent implements OnInit, OnDestroy {
           // Add new roleReportRight
           this.loading = true;
           this.roleReportRightService.addRoleReportRight(roleReportRightCreate, this.currentLang).subscribe({
-            next: () => {
+            next: (response) => {
               this.messageService.add({ 
                 severity: 'success', 
                 summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-                detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة الصلاحية بنجاح' : 'RoleReportRight added successfully'
+                detail: response.message
               });
               this.closeModal();
               this.loadRoleReportRights();
@@ -316,7 +324,6 @@ export class RoleReportRightsComponent implements OnInit, OnDestroy {
     this.loadingRoles = true;
     this.roleReportRightService.getRolesDropdownListForRoleReportRight(this.currentLang).subscribe({
       next: (response) => {
-        console.log('Roles response:', response);
         this.roles = response.data?.dropdownListsForRoleReportRights || [];
         this.filteredRoles = [...this.roles];
         
