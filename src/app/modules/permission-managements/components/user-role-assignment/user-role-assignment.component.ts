@@ -45,9 +45,7 @@ export class UserRoleAssignmentComponent implements OnInit {
   // Dropdown options (dummy data - replace with actual service calls)
   employees :Employees []= [];
   departments:Departments[] = [];
-  deptManager: Manager[] = [];
   branches: Branch[] = [];
-  brancheManager: Manager[] = [];
   roles: Role[] = []
 
   paginationRequest: PaginationRequest = {
@@ -84,7 +82,7 @@ export class UserRoleAssignmentComponent implements OnInit {
 
   initializeForms() {
     this.userRoleAssignmentForm = this.fb.group({
-      employeeId: ['', [Validators.required]],
+      employeeId: [''],
       departmentId: [''],
       managerOfDepartmentId: [''],
       branchId: [''],
@@ -194,9 +192,9 @@ export class UserRoleAssignmentComponent implements OnInit {
           // Map form data to model properties
           fromEmployeeName: this.employees.find(e => e.value == formData.employeeId)?.label || '',
           fromDepartmentName: this.departments.find(d => d.value == formData.departmentId)?.label || null,
-          fromManagerOfDepartmentName: this.deptManager.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
+          fromManagerOfDepartmentName: this.departments.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
           fromBranchName: this.branches.find(b => b.value == formData.branchId)?.label || null,
-          fromManagerOfBranchName: this.brancheManager.find(m => m.value == formData.managerOfBranchId)?.label || null,
+          fromManagerOfBranchName: this.branches.find(m => m.value == formData.managerOfBranchId)?.label || null,
           fromRoleName: this.roles.find(r => r.value == formData.roleId)?.label || '',
           startDate: formData.startDate || null,
           endDate: formData.endDate || null,
@@ -227,9 +225,9 @@ export class UserRoleAssignmentComponent implements OnInit {
           recId: 0, // This will be set by the backend
           fromEmployeeName: this.employees.find(e => e.value == formData.employeeId)?.label || '',
           fromDepartmentName: this.departments.find(d => d.value == formData.departmentId)?.label || null,
-          fromManagerOfDepartmentName: this.deptManager.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
+          fromManagerOfDepartmentName: this.departments.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
           fromBranchName: this.branches.find(b => b.value == formData.branchId)?.label || null,
-          fromManagerOfBranchName: this.brancheManager.find(m => m.value == formData.managerOfBranchId)?.label || null,
+          fromManagerOfBranchName: this.branches.find(m => m.value == formData.managerOfBranchId)?.label || null,
           fromRoleName: this.roles.find(r => r.value == formData.roleId)?.label || '',
           startDate: formData.startDate || null,
           startHijriDate: null,
@@ -283,9 +281,7 @@ private areAllDropdownsLoaded(): boolean {
            this.dropdownDataLoaded.roles && 
            this.employees.length > 0 &&
            this.departments.length > 0 &&
-           this.deptManager.length > 0 &&
            this.branches.length > 0 &&
-           this.brancheManager.length > 0 &&
            this.roles.length > 0 ;
   }
 
@@ -339,23 +335,6 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
         loadPromises.push(departmentPromise);
       }
 
-      if (!this.dropdownDataLoaded.deptManager || this.deptManager.length === 0) {
-        console.log('Loading deptManager...');
-        const departmentPromise = this.dropdownService.getManagersDropdownList(currentLang).toPromise()
-          .then(response => {
-            if (response && response.isSuccess) {
-              this.deptManager = response.data.managers || [];
-              this.dropdownDataLoaded.deptManager = true;
-              console.log('deptManager loaded:', this.deptManager.length);
-            } else {
-              const errorMsg = response?.message || 'Unknown error loading deptManager';
-              console.error('Failed to load deptManager:', errorMsg);
-              throw new Error(errorMsg);
-            }
-          });
-        loadPromises.push(departmentPromise);
-      }
-
       if (!this.dropdownDataLoaded.branches || this.branches.length === 0) {
         console.log('Loading branches...');
         const departmentPromise = this.dropdownService.getBranchesDropdownList(currentLang).toPromise()
@@ -367,23 +346,6 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
             } else {
               const errorMsg = response?.message || 'Unknown error loading branches';
               console.error('Failed to load branches:', errorMsg);
-              throw new Error(errorMsg);
-            }
-          });
-        loadPromises.push(departmentPromise);
-      }
-
-      if (!this.dropdownDataLoaded.brancheManager || this.brancheManager.length === 0) {
-        console.log('Loading brancheManager...');
-        const departmentPromise = this.dropdownService.getBranchManagersDropdownList(currentLang).toPromise()
-          .then(response => {
-            if (response && response.isSuccess) {
-              this.brancheManager = response.data.managers || [];
-              this.dropdownDataLoaded.brancheManager = true;
-              console.log('brancheManager loaded:', this.brancheManager.length);
-            } else {
-              const errorMsg = response?.message || 'Unknown error loading brancheManager';
-              console.error('Failed to load brancheManager:', errorMsg);
               throw new Error(errorMsg);
             }
           });
@@ -465,9 +427,9 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
     // Find the IDs from the names (reverse lookup)
     const employeeId = this.employees.find(e => e.label === roleAssignment.fromEmployeeName)?.value || '';
     const departmentId = this.departments.find(d => d.label === roleAssignment.fromDepartmentName)?.value || '';
-    const managerOfDepartmentId = this.deptManager.find(m => m.label === roleAssignment.fromManagerOfDepartmentName)?.value || '';
+    const managerOfDepartmentId = this.departments.find(m => m.label === roleAssignment.fromManagerOfDepartmentName)?.value || '';
     const branchId = this.branches.find(b => b.label === roleAssignment.fromBranchName)?.value || '';
-    const managerOfBranchId = this.brancheManager.find(m => m.label === roleAssignment.fromManagerOfBranchName)?.value || '';
+    const managerOfBranchId = this.branches.find(m => m.label === roleAssignment.fromManagerOfBranchName)?.value || '';
     const roleId = this.roles.find(r => r.label === roleAssignment.fromRoleName)?.value || '';
     
     this.userRoleAssignmentForm.patchValue({

@@ -30,21 +30,21 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
 
     return this.http.get<UserRoleAssignmentsResponse>(`${this.apiUrl}/GetUserRoleAssignmentById`, { headers });
   }
-  addUserRoleAssignment(userRoleAssignment: UserRoleAssignment, lang:number): Observable<UserRoleAssignment> {
+  addUserRoleAssignment(userRoleAssignment: UserRoleAssignment, lang:number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'lang': lang.toString()
     });
 
-    return this.http.post<UserRoleAssignment>(`${this.apiUrl}/AddUserRoleAssignment`, userRoleAssignment, { headers });
+    return this.http.post<UserRoleAssignmentsResponse>(`${environment.apiUrl}/UserRoleAssignmentInputForm/AssignUserRoles`, userRoleAssignment, { headers });
   }
-  updateUserRoleAssignment(userRoleAssignment: UserRoleAssignment, lang:number): Observable<UserRoleAssignment> {
+  updateUserRoleAssignment(userRoleAssignment: UserRoleAssignment, lang:number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'lang': lang.toString()
     });
 
-    return this.http.put<UserRoleAssignment>(`${this.apiUrl}/UpdateUserRoleAssignment`, userRoleAssignment, { headers });
+    return this.http.put<UserRoleAssignmentsResponse>(`${this.apiUrl}/UpdateUserRoleAssignment`, userRoleAssignment, { headers });
   }
   deleteUserRoleAssignment(lang:number,id: number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({

@@ -118,7 +118,7 @@
         "MODULES_REQUIRED": "وحدة واحدة على الأقل مطلوبة",
         "SELECT_ROLE": "اختيار الدور",
         "SELECT_MODULES": "اختيار الوحدات",
-        "MODULES_LABEL": "الوحدات",
+        "MODULES_LABEL": "الشاشة",
         "PERMISSIONS_SECTION": "إعدادات الصلاحيات",
         "SAVE": "حفظ",
         "CREATE_SUCCESS": "تم إنشاء صلاحية الدور على الوحدة بنجاح",
@@ -163,10 +163,15 @@
           "CREATE": "إنشاء",
           "FORM": {
             "FROM_SECTION_TITLE": "من (يمكن اختيار أكثر من مصدر)",
-            "TO_TARGET_TYPE_TITLE": "نوع المستهدف",
-            "TO_TARGETS_TITLE": "المستهدفين",
+            "TO_TARGET_TYPE_TITLE": "الوصول الى",
+            "TO_TARGETS_TITLE": "النوع",
             "VALIDITY_PERIOD_TITLE": "فترة الصلاحية",
             "ADDITIONAL_INFO_TITLE": "معلومات إضافية",
+            "ADDITIONAL_INFO_Details":{
+              "CANNOT_VIEW":"غير مسموح الإطلاع",
+              "VIEW_ONLY":"مشاهدة فقط",
+              "CAN_EDIT":"مع إمكانية التغيير"
+            },
             "TARGET_TYPES": {
               "TO_EMPLOYEES": "إلى موظفين",
               "TO_MANAGERS_OF_DEPARTMENT": "إلى مدراء أقسام",
@@ -1531,7 +1536,7 @@
     "DELETE_TOOLTIP": "حذف",
     "CREATE_SHIFT_TITLE": "إنشاء وردية جديدة",
     "EDIT_SHIFT_TITLE": "تعديل الوردية",
-    "TWO_PARTS": "وردية من جزئين",
+    "TWO_PARTS": "فترتين",
     "BASIC_INFO": "المعلومات الأساسية",
     "ARABIC_NAME": "الاسم بالعربية",
     "ENGLISH_NAME": "الاسم بالإنجليزية",
@@ -1612,6 +1617,10 @@
     "DELETE": "حذف",
     "DELETE_TITLE": "حذف التوقيع الآلي",
     "TOGGLE_SETTINGS": "إعدادات التبديل",
+    "TOGGLE_SETTINGS_ENABLED":{
+      "MINUTES_BEFORE":"دقائق عشوائية قبل وقت الدخول",
+      "MINUTES_AFTER":"دقائق عشوائية بعد وقت الدخول"
+    },
     "WEEK_DAYS": "أيام الأسبوع",
     "NO_DATA_AVAILABLE": "لا توجد بيانات متاحة",
     "SHOWING": "عرض",
@@ -1656,6 +1665,7 @@
     "SELECT_ITEM": "تحديد العنصر",
     "EMPLOYEE": "الموظف",
     "SHIFT": "الوردية",
+    "DELETE_CONFIRMATION_MESSAGE": "هل أنت متأكد من أنك تريد حذف هذه الورديه؟",
     "START_DATE": "تاريخ البداية",
     "END_DATE": "تاريخ النهاية",
     "ACTIONS": "الإجراءات",
