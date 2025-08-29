@@ -47,11 +47,11 @@ export interface DepartmentLevel {
 export interface DepartmentCreateUpdateRequest {
   ar: string;
   en: string;
-  mgrId: number;
-  parentDeptId: number;
+  mgrId: number | null;
+  parentDeptId: number | null;
   branchId: number;
   deptLevel: number;
-  locId: number;
+  locId: number | null;
   locDesc: string;
   note: string;
 }

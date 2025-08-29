@@ -103,8 +103,9 @@ export class BranchesComponent implements OnInit {
     this.branchForm = this.fb.group({
       ar: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
       en: ['', [Validators.required]], // Made required
-      mgrId: ['', [Validators.required]], // Made required
-      parentBranchId: ['', [Validators.required]], // Made required
+  // Manager and parentBranchId are optional now to allow creation/edit without selecting them
+  mgrId: [''],
+  parentBranchId: [''], // Optional - parent branch may be null
       locId: [''], // Optional
       locDesc: [''], // Optional
       note: [''] // Optional - Note is not required as per requirement
@@ -419,22 +420,22 @@ export class BranchesComponent implements OnInit {
       this.isSubmitting = true;
       const formData = this.branchForm.value;
 
-      // Validate numeric fields - only required ones
-      const mgrId = parseInt(formData.mgrId);
-      const parentBranchId = parseInt(formData.parentBranchId);
+      // Parse numeric fields - mgrId/parentBranchId/locId may be null
+      const mgrId = formData.mgrId ? parseInt(formData.mgrId) : null;
+      const parentBranchId = formData.parentBranchId ? parseInt(formData.parentBranchId) : null;
       const locId = formData.locId ? parseInt(formData.locId) : null; // Make location optional
 
-      // Only validate required fields
-      if (isNaN(mgrId) || isNaN(parentBranchId)) {
+      // Validate only if values provided
+      if ((mgrId !== null && isNaN(mgrId)) || (parentBranchId !== null && isNaN(parentBranchId))) {
         let errorMessage = "";
 
-        if (isNaN(mgrId)) {
+        if (mgrId !== null && isNaN(mgrId)) {
           errorMessage += this.langService.getCurrentLang() === 'ar'
             ? "رقم المدير غير صحيح. "
             : "Manager ID is invalid. ";
         }
 
-        if (isNaN(parentBranchId)) {
+        if (parentBranchId !== null && isNaN(parentBranchId)) {
           errorMessage += this.langService.getCurrentLang() === 'ar'
             ? "رقم الفرع غير صحيح. "
             : "Branch ID is invalid. ";
@@ -468,7 +469,7 @@ export class BranchesComponent implements OnInit {
         en: formData.en,
         mgrId: mgrId,
         locDesc: formData.locDesc || '', // Make optional
-        parentBranchId: parentBranchId,
+  parentBranchId: parentBranchId !== null && !isNaN(parentBranchId) ? parentBranchId : null,
         // Send null when no location selected to avoid sending 0
         locId: formData.locId ? parseInt(formData.locId) : null,
         note: formData.note || '' // Note is optional
@@ -802,7 +803,13 @@ export class BranchesComponent implements OnInit {
 
   // Getter methods for form validation
   get isBranchFormValid(): boolean {
-    return this.branchForm.valid && !this.isSubmitting;
+    if (!this.branchForm) return false;
+    const requiredFields = ['ar', 'en'];
+    const allRequiredValid = requiredFields.every(f => {
+      const ctrl = this.branchForm.get(f);
+      return !!(ctrl && ctrl.valid);
+    });
+    return allRequiredValid && !this.isSubmitting;
   }
 
   get isChangeNumberFormValid(): boolean {

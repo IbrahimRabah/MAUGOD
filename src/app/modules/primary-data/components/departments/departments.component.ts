@@ -115,10 +115,10 @@ export class DepartmentsComponent implements OnInit {
 
   initializeForms() {
     this.departmentForm = this.fb.group({
-      arabicName: [''],
-      englishName: [''],
-      managerId: [''],
-      parentDepartmentId: [''],
+  arabicName: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
+  englishName: ['', [Validators.required]],
+  managerId: [''],
+  parentDepartmentId: [''],
       branchId: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
       deptLevel: ['',],
       locationId: [''],
@@ -219,14 +219,14 @@ export class DepartmentsComponent implements OnInit {
       this.isSubmitting = true;
       const formData = this.departmentForm.value;
 
-      // Validate numeric fields
-      const mgrId = parseInt(formData.managerId);
-      const parentDeptId = parseInt(formData.parentDepartmentId);
-      const locId = parseInt(formData.locationId);
-      const branchId = parseInt(formData.branchId);
-      const deptLevel = parseInt(formData.deptLevel);
+  // Validate numeric fields
+  const mgrId = formData.managerId ? parseInt(formData.managerId) : null;
+  const parentDeptId = formData.parentDepartmentId ? parseInt(formData.parentDepartmentId) : null;
+  const locId = formData.locationId ? parseInt(formData.locationId) : null; // optional
+  const branchId = parseInt(formData.branchId);
+  const deptLevel = formData.deptLevel ? parseInt(formData.deptLevel) : 0;
 
-      if (isNaN(branchId)) {
+  if (isNaN(branchId)) {
         this.messageService.add({
           severity: 'error',
           summary: this.translate.instant("ERROR"),
@@ -240,11 +240,11 @@ export class DepartmentsComponent implements OnInit {
       const deptData: DepartmentCreateUpdateRequest = {
         ar: formData.arabicName,
         en: formData.englishName,
-        mgrId: mgrId,
-        parentDeptId: parentDeptId,
+  mgrId: mgrId !== null && !isNaN(mgrId) ? mgrId : null,
+  parentDeptId: parentDeptId !== null && !isNaN(parentDeptId) ? parentDeptId : null,
         branchId: branchId,
         deptLevel: deptLevel,
-        locId: locId,
+        locId: locId !== null && !isNaN(locId) ? locId : null,
         locDesc: formData.locationDescription,
         note: formData.notes || '' // Note is optional
       };
@@ -555,7 +555,16 @@ export class DepartmentsComponent implements OnInit {
 
   // Getter methods for form validation
   get isDepartmentFormValid(): boolean {
-    return this.departmentForm.valid;
+    // Only consider the explicitly required fields for enabling the Save button.
+    // This prevents optional dropdowns (managerId, parentDepartmentId, locationId, etc.)
+    // from blocking the form submission if they remain empty or null.
+    if (!this.departmentForm) return false;
+    const requiredFields = ['arabicName', 'englishName', 'branchId'];
+    const allRequiredValid = requiredFields.every(f => {
+      const ctrl = this.departmentForm.get(f);
+      return !!(ctrl && ctrl.valid);
+    });
+    return allRequiredValid && !this.isSubmitting;
   }
 
   get isChangeNumberFormValid(): boolean {
@@ -756,31 +765,26 @@ export class DepartmentsComponent implements OnInit {
     const currentFormValue = this.departmentForm.value;
 
     // Create a new form value object with all current values
-    const newFormValue = {
+    const newFormValue: any = {
       arabicName: currentFormValue.arabicName || department.branchName || '',
       englishName: currentFormValue.englishName || department.branchName || '', // You might want to get the English name from another field
       locationDescription: currentFormValue.locationDescription || department.locDesc || '',
       notes: currentFormValue.notes || department.note || '',
-      managerId: '',
-      parentDepartmentId: '',
-      locationId: '',
-      deptLevel: '',
-      branchId: ''
+      managerId: null,
+      parentDepartmentId: null,
+      locationId: null,
+      deptLevel: null,
+      branchId: null
     };
 
     // Update manager selection
 
     if (department.mgrId !== null && department.mgrId !== undefined && this.managers.length > 0) {
-      const manager = this.managers.find(m => m.value === department.mgrId);
+      const manager = this.managers.find(m => Number(m.value) === Number(department.mgrId));
       if (manager) {
-        newFormValue.managerId = manager.value.toString();
+        newFormValue.managerId = manager.value; // numeric
       } else {
         console.warn('Manager not found in dropdown options');
-        // Try to find by converting to string
-        const managerStr = this.managers.find(m => m.value.toString() === department.mgrId!.toString());
-        if (managerStr) {
-          newFormValue.managerId = managerStr.value.toString();
-        }
       }
     } else {
       console.log('Manager ID is null, undefined, or -1, leaving mgrId empty');
@@ -788,68 +792,48 @@ export class DepartmentsComponent implements OnInit {
 
     // Update location selection
     if (department.locId !== null && department.locId !== undefined && this.locations.length > 0) {
-      const location = this.locations.find(l => l.value === department.locId);
+      const location = this.locations.find(l => Number(l.value) === Number(department.locId));
       if (location) {
-        newFormValue.locationId = location.value.toString();
+        newFormValue.locationId = location.value; // numeric
       } else {
         console.warn('Location not found in dropdown options');
-        // Try to find by converting to string
-        const locationStr = this.locations.find(l => l.value.toString() === department.locId!.toString());
-        if (locationStr) {
-          newFormValue.locationId = locationStr.value.toString();
-        }
       }
     }
 
     // Update parent department selection
     if (department.parentDeptId !== null && department.parentDeptId !== undefined && this.parentDepartments.length > 0) {
-      const parentDept = this.parentDepartments.find(pb => pb.value === department.parentDeptId);
+      const parentDept = this.parentDepartments.find(pb => Number(pb.value) === Number(department.parentDeptId));
       if (parentDept) {
-        newFormValue.parentDepartmentId = parentDept.value.toString();
+        newFormValue.parentDepartmentId = parentDept.value; // numeric
       } else {
         console.warn('Parent department not found in dropdown options');
-        // Try to find by converting to string
-        const parentDeptStr = this.parentDepartments.find(pb => pb.value.toString() === department.parentDeptId!.toString());
-        if (parentDeptStr) {
-          newFormValue.parentDepartmentId = parentDeptStr.value.toString();
-        }
       }
     }
 
     // Update branch department selection
     if (department.branchId !== null && department.branchId !== undefined && this.branches.length > 0) {
-      const branch = this.branches.find(pb => pb.value === department.branchId);
+      const branch = this.branches.find(pb => Number(pb.value) === Number(department.branchId));
       if (branch) {
-        newFormValue.branchId = branch.value.toString();
+        newFormValue.branchId = branch.value; // numeric
       } else {
         console.warn('Branch not found in dropdown options');
-        // Try to find by converting to string
-        const branchStr = this.branches.find(pb => pb.value.toString() === department.branchId!.toString());
-        if (branchStr) {
-          newFormValue.branchId = branchStr.value.toString();
-        }
       }
     }
 
     // Update deptLevel department selection
     if (department.deptLevel !== null && department.deptLevel !== undefined && this.deptLevels.length > 0) {
-      const deptLevel = this.deptLevels.find(pb => pb.value === department.deptLevel);
+      const deptLevel = this.deptLevels.find(pb => Number(pb.value) === Number(department.deptLevel));
       if (deptLevel) {
-        newFormValue.deptLevel = deptLevel.value.toString();
+        newFormValue.deptLevel = deptLevel.value; // numeric
       } else {
         console.warn('Department Level not found in dropdown options');
-        // Try to find by converting to string
-        const deptLevelStr = this.deptLevels.find(pb => pb.value.toString() === department.deptLevel!.toString());
-        if (deptLevelStr) {
-          newFormValue.deptLevel = deptLevelStr.value.toString();
-        }
       }
     }
 
     console.log('New form value to set:', newFormValue);
 
-    // Use setValue to force all values instead of patchValue
-    this.departmentForm.setValue(newFormValue);
+  // Use patchValue to avoid errors when some controls are intentionally left blank
+  this.departmentForm.patchValue(newFormValue);
 
     // Force change detection
     this.departmentForm.markAsDirty();
