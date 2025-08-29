@@ -102,12 +102,12 @@ export class BranchesComponent implements OnInit {
   initializeForms() {
     this.branchForm = this.fb.group({
       ar: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
-      en: [''],
-      mgrId: [''],
-      parentBranchId: [''],
-      locId: [''],
-      locDesc: [''],
-      note: [''] // Note is not required as per requirement
+      en: ['', [Validators.required]], // Made required
+      mgrId: ['', [Validators.required]], // Made required
+      parentBranchId: ['', [Validators.required]], // Made required
+      locId: [''], // Optional
+      locDesc: [''], // Optional
+      note: [''] // Optional - Note is not required as per requirement
     });
 
 
@@ -439,12 +439,13 @@ export class BranchesComponent implements OnInit {
       this.isSubmitting = true;
       const formData = this.branchForm.value;
 
-      // Validate numeric fields
+      // Validate numeric fields - only required ones
       const mgrId = parseInt(formData.mgrId);
       const parentBranchId = parseInt(formData.parentBranchId);
-      const locId = parseInt(formData.locId);
+      const locId = formData.locId ? parseInt(formData.locId) : null; // Make location optional
 
-      if (isNaN(mgrId) || isNaN(parentBranchId) || isNaN(locId)) {
+      // Only validate required fields
+      if (isNaN(mgrId) || isNaN(parentBranchId)) {
         let errorMessage = "";
 
         if (isNaN(mgrId)) {
@@ -459,16 +460,23 @@ export class BranchesComponent implements OnInit {
             : "Branch ID is invalid. ";
         }
 
-        if (isNaN(locId)) {
-          errorMessage += this.langService.getCurrentLang() === 'ar'
-            ? "رقم الموقع غير صحيح."
-            : "Location ID is invalid.";
-        }
-
         this.messageService.add({
           severity: 'error',
           summary: this.translate.instant("ERROR"),
           detail: errorMessage.trim()
+        });
+        this.isSubmitting = false;
+        return;
+      }
+
+      // Validate optional location field only if provided
+      if (formData.locId && isNaN(locId!)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? "رقم الموقع غير صحيح."
+            : "Location ID is invalid."
         });
         this.isSubmitting = false;
         return;
@@ -479,9 +487,10 @@ export class BranchesComponent implements OnInit {
         ar: formData.ar,
         en: formData.en,
         mgrId: mgrId,
-        locDesc: formData.locDesc,
+        locDesc: formData.locDesc || '', // Make optional
         parentBranchId: parentBranchId,
-        locId: locId,
+        // Send null when no location selected to avoid sending 0
+        locId: formData.locId ? parseInt(formData.locId) : null,
         note: formData.note || '' // Note is optional
       };
 

@@ -20,7 +20,7 @@ export interface BranchCreateUpdateRequest {
   mgrId: number;
   locDesc: string;
   parentBranchId: number;
-  locId: number;
+  locId: number | null;
   note: string;
 }
 
