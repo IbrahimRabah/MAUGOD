@@ -361,7 +361,7 @@ styleStringToObject(style?: string): { [key: string]: string } {
 
   deleteShiftAssign(item: ShiftAssign) {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete the shift assignment for ${item.emp_Name}?`,
+      message: this.translate.instant('SHIFTS_ASSIGN.DELETE_CONFIRMATION_MESSAGE'),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -373,7 +373,7 @@ styleStringToObject(style?: string): { [key: string]: string } {
   private performDelete(ids: number[]) {
     this.shiftsAssignService.deleteShiftsAssignSelected(ids, this.currentLang).subscribe({
       next: (response) => {
-        this.showSuccessMessage('Items deleted successfully');
+        this.showSuccessMessage(response.message);
         this.loadShiftsAssign();
       },
       error: (error) => {
@@ -770,7 +770,7 @@ styleStringToObject(style?: string): { [key: string]: string } {
 
       this.shiftsAssignService.createShiftsAssign(payload, this.currentLang).subscribe({
         next: (response) => {
-          this.showSuccessMessage(`Shift assignment created successfully for ${target.name}`);
+          this.showSuccessMessage(response.message);
         },
         error: (error) => {
           console.error('Error creating shift assignment:', error);

@@ -239,7 +239,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       fromRoleId: [0],
       
       // Additional fields
-      changeDataEmp: [0],
+      changeDataEmp: [1],
       sDate: [''],
       eDate: [''],
       note: ['']
@@ -612,9 +612,9 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
 
   // Modal Methods
   openCreateModal() {
-    this.showCreateModal = true;
     this.resetCreateForm();
     this.clearAllToSelections();
+    this.showCreateModal = true;
     // Only load basic dropdown data, target-specific data will be loaded on demand
   }
 
@@ -634,7 +634,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       fromMgrOfBranchId: 0,
       fromBranchId: 0,
       fromRoleId: 0,
-      changeDataEmp: 0,
+      changeDataEmp: 1,
       note: ''
     });
   }
