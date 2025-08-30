@@ -7,6 +7,7 @@ import { SignTransactionsService } from '../../services/sign-transactions.servic
 import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
+import { PaginationRequest } from '../../../../core/models/pagination';
 
 interface SelectableItem {
   label: string;
@@ -22,11 +23,47 @@ interface SelectableItem {
 export class MobileSignTransactionComponent implements OnInit, OnDestroy {
   // Core component state
   mobileSignTransactions: MobileSignTransaction[] = [];
+  searchTerm: string = '';
   loading = false;
   totalRecords = 0;
   currentPage = 1;
   pageSize = 10;
   selectedItems: MobileSignTransaction[] = [];
+
+  private isInitialized = false; // Prevent double API calls on init
+
+    searchColumns = [
+      { column: '', label: 'All Columns' }, // all columns option
+      { column: 'EMP_NAME', label: 'MOBILE_SIGN_TRANSACTION.EMPLOYEE' },
+      { column: 'sign_date', label: 'MOBILE_SIGN_TRANSACTION.SIGN_DATE' },
+      { column: 'STATUS_NAME', label: 'MOBILE_SIGN_TRANSACTION.STATUS' },
+      { column: 'phone_id', label: 'MOBILE_SIGN_TRANSACTION.PHONE' },
+      { column: 'accepted_by', label: 'MOBILE_SIGN_TRANSACTION.ACCEPTED_BY_LOCATION' },
+    ];
+    selectedColumn: string = '';
+    selectedColumnLabel: string = this.searchColumns[0].label;
+  
+    selectColumn(col: any) {
+      this.paginationRequest.searchColumn = col.column;
+      this.selectedColumnLabel = col.label;
+    }
+  
+    paginationRequest: PaginationRequest = {
+        pageNumber: 1,
+        pageSize: 10,
+        lang: 1,// Default to English, can be changed based on app's language settings
+        searchColumn: this.selectedColumn,
+        searchText: this.searchTerm
+      };
+    
+    onSearch() {
+      this.currentPage = 1;
+      this.paginationRequest.pageNumber = 1;
+      this.paginationRequest.searchColumn = this.selectedColumn;
+      this.paginationRequest.searchText = this.searchTerm;
+      this.loadMobileSignTransactions();
+    }
+  
   
   // Form
   filterForm!: FormGroup;
@@ -50,6 +87,16 @@ export class MobileSignTransactionComponent implements OnInit, OnDestroy {
     private fb: FormBuilder
   ) {
     this.initializeForm();
+
+    // Set the language for the pagination request based on the current language setting
+    this.langService.currentLang$.subscribe(lang => {
+      this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+
+      // Only reload mobileSignTransactions if component is already initialized (not first time)
+      if (this.isInitialized) {
+        this.loadMobileSignTransactions(); // Reload mobileSignTransactions when language changes
+      }
+    })
   }
 
   ngOnInit() {
@@ -118,8 +165,10 @@ export class MobileSignTransactionComponent implements OnInit, OnDestroy {
     const formValue = this.filterForm.value;
     
     const request: MobileSignTransactionRequest = {
-      pageNumber: this.currentPage,
-      pageSize: this.pageSize
+      pageNumber: this.paginationRequest.pageNumber,
+      pageSize: this.paginationRequest.pageSize,
+      searchColumn: this.paginationRequest.searchColumn,
+      searchText: this.paginationRequest.searchText
     };
 
     // Add filters if they exist
@@ -203,15 +252,15 @@ export class MobileSignTransactionComponent implements OnInit, OnDestroy {
 
   // Pagination computed properties
   get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
+    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
   }
 
   get currentPageStart(): number {
-    return (this.currentPage - 1) * this.pageSize + 1;
+    return (this.currentPage - 1) * this.paginationRequest.pageSize + 1;
   }
 
   get currentPageEnd(): number {
-    return Math.min(this.currentPage * this.pageSize, this.totalRecords);
+    return Math.min(this.currentPage * this.paginationRequest.pageSize, this.totalRecords);
   }
 
   // Selection state getters
@@ -229,6 +278,7 @@ export class MobileSignTransactionComponent implements OnInit, OnDestroy {
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.paginationRequest.pageNumber = page;
       this.loadMobileSignTransactions();
     }
   }
@@ -236,6 +286,7 @@ export class MobileSignTransactionComponent implements OnInit, OnDestroy {
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadMobileSignTransactions();
     }
   }
@@ -243,12 +294,14 @@ export class MobileSignTransactionComponent implements OnInit, OnDestroy {
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadMobileSignTransactions();
     }
   }
 
   onPageSizeChange() {
     this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
     this.loadMobileSignTransactions();
   }
 

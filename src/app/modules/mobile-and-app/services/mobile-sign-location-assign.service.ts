@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MobileSignLocationAssignCreateRequest, MobileSignLocationsAssignResponse } from '../../../core/models/mobileSignLocationAssign';
 import { Observable } from 'rxjs';
+import { PaginationRequest } from '../../../core/models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -12,24 +13,20 @@ export class MobileSignLocationAssignService {
   constructor(private http: HttpClient) { }
 
   getMobileSignLocationAssign(
-  lang: number,
+  paginationRequest: PaginationRequest,
   empId: number,
-  pageNumber: number,
-  pageSize: number,
-  searchColumn: string | null = null,
-  searchText: string | null = null
 ): Observable<MobileSignLocationsAssignResponse> {
 
   const headers = new HttpHeaders()
     .set('accept', 'text/plain')
-    .set('lang', lang.toString())
+    .set('lang', paginationRequest.lang.toString())
     .set('empId', empId.toString());
 
   const body = {
-    pageNumber: pageNumber,
-    pageSize: pageSize,
-    searchColumn: searchColumn,
-    searchText: searchText
+    pageNumber: paginationRequest.pageNumber,
+    pageSize: paginationRequest.pageSize,
+    searchColumn: paginationRequest.searchColumn,
+    searchText: paginationRequest.searchText
   };
 
   return this.http.post<MobileSignLocationsAssignResponse>(
