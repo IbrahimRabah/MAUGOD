@@ -28,18 +28,41 @@
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input 
-            type="text" 
-            class="search-input" 
-            formControlName="searchTerm"
-            [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_PLACEHOLDER' | translate"
-            (keyup.enter)="onSearch()"
-            [title]="'MOBILE_SIGN_LOCATION_ASSIGN.SEARCH_TITLE' | translate">
-          <i class="fas fa-search search-icon" (click)="onSearch()"></i>
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
   </div>
 
@@ -198,15 +221,13 @@
 
     <div class="page-size-selector">
       <label>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ITEMS_PER_PAGE' | translate }}</label>
-      <form [formGroup]="searchForm">
-        <select formControlName="pageSize" (change)="onPageSizeChange()">
+        <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="20">20</option>
           <option value="50">50</option>
           <option value="100">100</option>
         </select>
-      </form>
     </div>
   </div>
 </div>
@@ -227,7 +248,7 @@
         
         <!-- Step 1: Assignment Type Selection -->
         <div class="form-section">
-          <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ASSIGN_TYPE_SECTION' | translate }}</h4>
+          <h4 class="section-title" class="required">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.ASSIGN_TYPE_SECTION' | translate }}</h4>
           <div class="radio-group">
             <label class="radio-option">
               <input type="radio" formControlName="assignType" value="everyone" (change)="onAssignTypeChange()">
@@ -502,7 +523,7 @@
           <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.DATE_RANGE_SECTION' | translate }}</h4>
           <div class="form-grid">
             <div class="form-group">
-              <label class="required">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.START_DATE' | translate }}</label>
+              <label>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.START_DATE' | translate }}</label>
               <input type="date" 
                      formControlName="startDate" 
                      class="form-input"
@@ -512,7 +533,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="required">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.END_DATE' | translate }}</label>
+              <label>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.END_DATE' | translate }}</label>
               <input type="date" 
                      formControlName="endDate" 
                      class="form-input"

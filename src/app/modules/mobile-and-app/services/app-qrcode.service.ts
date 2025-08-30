@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AppEmployeesResponse } from '../../../core/models/appQR';
+import { PaginationRequest } from '../../../core/models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -13,29 +14,21 @@ export class AppQRCodeService {
 
 
   getEmployeesForSendAppQRCode(
-  lang: number,
+  pagination:PaginationRequest,
   empId: number,
-  pageNumber: number,
-  pageSize: number,
-  searchTerm?: string
 ): Observable<AppEmployeesResponse> {
 
   const headers = new HttpHeaders()
     .set('accept', 'text/plain')
-    .set('lang', lang.toString())
+    .set('lang', pagination.lang.toString())
     .set('empId', empId.toString());
 
   const body = {
-    pageNumber: pageNumber,
-    pageSize: pageSize,
-    searchColumn: null,        
-    searchText: null
+    pageNumber: pagination.pageNumber,
+    pageSize: pagination.pageSize,
+    searchColumn: pagination.searchColumn,        
+    searchText: pagination.searchText
   };
-
-  // Add search term if provided
-  /*  if (searchTerm && searchTerm.trim()) {
-      headers['searchTerm'] = searchTerm.trim();
-    }*/
 
   return this.http.post<AppEmployeesResponse>(
     `${this.apiUrl}/GetEmployeesForSendAppQRCode`,

@@ -7,6 +7,7 @@ import { AuthenticationService } from '../../../authentication/services/authenti
 import { LanguageService } from '../../../../core/services/language.service';
 import { AppEmployee } from '../../../../core/models/appQR';
 import { Subscription } from 'rxjs';
+import { PaginationRequest } from '../../../../core/models/pagination';
 
 @Component({
   selector: 'app-send-app-qr-code',
@@ -18,13 +19,53 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
   // Core component state
   employees: AppEmployee[] = [];
   loading = false;
+  searchTerm: string = '';
   totalRecords = 0;
   currentPage = 1;
   pageSize = 10;
   public currentLang = 2; // Default to Arabic (2) - made public for template access
 
-  // Reactive Forms
-  searchForm!: FormGroup;
+  private isInitialized = false; // Prevent double API calls on init
+
+  searchColumns = [
+    { column: '', label: 'All Columns' }, // all columns option
+    { column: 'EMP_NAME', label: 'SEND_APP_QR_CODE.EMPLOYEE' },
+    { column: 'DEPT_NAME', label: 'SEND_APP_QR_CODE.DEPARTMENT' },
+    { column: 'BRANCH_NAME', label: 'SEND_APP_QR_CODE.BRANCH' },
+    { column: 'DIRECT_MGR_NAME', label: 'SEND_APP_QR_CODE.DIRECT_MANAGER' },
+    { column: 'NATIONALITY_NAME', label: 'SEND_APP_QR_CODE.NATIONALITY' },
+    { column: 'GENDER_NAME', label: 'SEND_APP_QR_CODE.GENDER' },
+    { column: 'email', label: 'SEND_APP_QR_CODE.EMAIL' },
+    { column: 'JOBTYPE_NAME', label: 'SEND_APP_QR_CODE.JOB' }
+  ];
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+
+  selectColumn(col: any) {
+    this.paginationRequest.searchColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
+  paginationRequest: PaginationRequest = {
+      pageNumber: 1,
+      pageSize: 10,
+      lang: 1,// Default to English, can be changed based on app's language settings
+      searchColumn: this.selectedColumn,
+      searchText: this.searchTerm
+    };
+  
+  onSearch() {
+    this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn = this.selectedColumn;
+    this.paginationRequest.searchText = this.searchTerm;
+    this.loadEmployees();
+  }
+
+  /**
+   * Reset dropdown loaded state when language changes
+   */
+
 
   // Selected items for bulk operations
   selectedItems: AppEmployee[] = [];
@@ -43,7 +84,16 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private translate: TranslateService
   ) {
-    this.initializeForms();
+
+    // Set the language for the pagination request based on the current language setting
+    this.langService.currentLang$.subscribe(lang => {
+      this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+
+      // Only reload employees if component is already initialized (not first time)
+      if (this.isInitialized) {
+        this.loadEmployees(); // Reload employees when language changes
+      }
+    })
   }
 
   ngOnInit() {
@@ -63,31 +113,17 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
     }
   }
 
-  private initializeForms() {
-    this.searchForm = this.fb.group({
-      searchTerm: [''],
-      pageSize: [this.pageSize]
-    });
-
-    // Subscribe to page size changes
-    this.searchForm.get('pageSize')?.valueChanges.subscribe((newPageSize) => {
-      this.pageSize = newPageSize;
-      this.currentPage = 1;
-      this.loadEmployees();
-    });
-  }
-
   // Pagination computed properties
   get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
+    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
   }
 
   get currentPageStart(): number {
-    return (this.currentPage - 1) * this.pageSize + 1;
+    return (this.currentPage - 1) * this.paginationRequest.pageSize + 1;
   }
 
   get currentPageEnd(): number {
-    const end = this.currentPage * this.pageSize;
+    const end = this.currentPage * this.paginationRequest.pageSize;
     return end > this.totalRecords ? this.totalRecords : end;
   }
 
@@ -116,14 +152,9 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
     this.selectedItems = [];
     this.selectAll = false;
 
-    const searchTerm = this.searchForm.get('searchTerm')?.value || '';
-
     this.appQRCodeService.getEmployeesForSendAppQRCode(
-      this.currentLang,
+      this.paginationRequest,
       this.empId,
-      this.currentPage,
-      this.pageSize,
-      searchTerm
     ).subscribe({
       next: (response) => {
         this.loading = false;
@@ -165,6 +196,7 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.paginationRequest.pageNumber = page;
       this.loadEmployees();
     }
   }
@@ -172,6 +204,7 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
   nextPage() {
     if (this.canGoNext) {
       this.currentPage++;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadEmployees();
     }
   }
@@ -179,17 +212,14 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
   previousPage() {
     if (this.canGoPrevious) {
       this.currentPage--;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadEmployees();
     }
   }
 
   onPageSizeChange() {
     this.currentPage = 1;
-    this.loadEmployees();
-  }
-
-  onSearch() {
-    this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
     this.loadEmployees();
   }
 
