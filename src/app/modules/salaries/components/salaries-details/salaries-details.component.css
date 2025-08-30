@@ -85,54 +85,25 @@
 }
 
 .search-input {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background-color: white;
-  color: #333;
+  border: none;
+  padding: 10px 15px;
   font-size: 14px;
-  width: 250px;
-  transition: all 0.3s ease;
-}
-
-.search-container.rtl .search-input {
-  padding: 10px 40px 10px 15px;
-}
-
-.search-container.ltr .search-input {
-  padding: 10px 15px 10px 40px;
-}
-
-.search-container:not(.rtl):not(.ltr) .search-input {
-  padding: 10px 40px 10px 15px;
-}
-
-.search-input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  flex: 1;
+  min-width: 250px;
 }
 
-.search-input::placeholder {
-  color: #666;
+.search-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.search-icon {
-  position: absolute;
-  color: #666;
-  font-size: 14px;
-  pointer-events: none;
-}
-
-.search-container.rtl .search-icon {
-  right: 12px;
-}
-
-.search-container.ltr .search-icon {
-  left: 12px;
-}
-
-.search-container:not(.rtl):not(.ltr) .search-icon {
-  left: 12px;
+.search-btn:hover {
+  background-color: #0056b3;
 }
 
 /* Table Wrapper */
