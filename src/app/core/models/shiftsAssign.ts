@@ -18,7 +18,10 @@ export interface GetShiftsAssignResponse {
   statusCode: number;
   message: string;
   isSuccess: boolean;
-  data: ShiftAssign[];
+  data: {
+      records: ShiftAssign[];
+      totalCount: number;
+    };
 }
 
 export interface DeleteShiftsAssignRequest {

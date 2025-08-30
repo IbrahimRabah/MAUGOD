@@ -35,7 +35,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   pageSize = 10;
   showCreateModal = false;
   hijriDates: { [key: string]: string } = {};
-
+loadingTargets = true;
   
   private langSubscription: Subscription = new Subscription();
   private searchSubscription: Subscription = new Subscription();
@@ -87,6 +87,17 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   selectedTargetIds: number[] = [];
   targetSelectAll = false;
 
+   searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns
+  { column: 'EMP_NAME', label: 'SHIFTS_ASSIGN.EMPLOYEE' },
+  { column: 'SHIFT_LABEL', label: 'SHIFTS_ASSIGN.SHIFT' },
+  { column: 'SDATE', label: 'SHIFTS_ASSIGN.START_DATE' },
+  { column: 'EDATE', label: 'SHIFTS_ASSIGN.END_DATE' }
+];
+
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchTerm: string = '';
   
   
   constructor(
@@ -210,6 +221,10 @@ styleStringToObject(style?: string): { [key: string]: string } {
   }, {} as { [key: string]: string });
 }
 
+  selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
   // Pagination computed properties
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.pageSize);
@@ -231,6 +246,7 @@ styleStringToObject(style?: string): { [key: string]: string } {
   get canGoPrevious(): boolean {
     return this.currentPage > 1;
   }
+  
 
   // Core business methods
   loadShiftsAssign() {
@@ -245,13 +261,14 @@ styleStringToObject(style?: string): { [key: string]: string } {
       this.empId,
       this.currentLang,
       startDate ? this.formatDateForApi(startDate) : undefined,
-      endDate ? this.formatDateForApi(endDate) : undefined
+      endDate ? this.formatDateForApi(endDate) : undefined,
+      this.selectedColumn,this.searchTerm
     ).subscribe({
       next: (response: GetShiftsAssignResponse) => {
         if (response.isSuccess) {
-          this.shiftsAssign = response.data || [];
+          this.shiftsAssign = response.data.records || [];
           // Since the API doesn't return total count, we'll estimate it
-          this.totalRecords = this.shiftsAssign.length;
+          this.totalRecords =response.data.totalCount;
           this.resetSelection();
         } else {
           this.showErrorMessage(response.message);

@@ -29,3 +29,20 @@ export interface PaginationPunchTransactionsRequest {
   searchText?: string; 
 }
 
+export interface PaginationShiftsAssignRequest {
+  pageNumber: number;
+  pageSize: number;
+  empId?: number | null;
+  sDate?: string | null;
+  eDate?: string | null;
+  searchColumn?: string;  // optional
+  searchText?: string; 
+}
+
+export interface PaginationCommonRequest {
+  pageNumber: number;
+  pageSize: number;
+  searchColumn?: string;  // optional
+  searchText?: string; 
+}
+

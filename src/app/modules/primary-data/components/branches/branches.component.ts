@@ -425,44 +425,6 @@ export class BranchesComponent implements OnInit {
       const parentBranchId = formData.parentBranchId ? parseInt(formData.parentBranchId) : null;
       const locId = formData.locId ? parseInt(formData.locId) : null; // Make location optional
 
-      // Validate only if values provided
-      if ((mgrId !== null && isNaN(mgrId)) || (parentBranchId !== null && isNaN(parentBranchId))) {
-        let errorMessage = "";
-
-        if (mgrId !== null && isNaN(mgrId)) {
-          errorMessage += this.langService.getCurrentLang() === 'ar'
-            ? "رقم المدير غير صحيح. "
-            : "Manager ID is invalid. ";
-        }
-
-        if (parentBranchId !== null && isNaN(parentBranchId)) {
-          errorMessage += this.langService.getCurrentLang() === 'ar'
-            ? "رقم الفرع غير صحيح. "
-            : "Branch ID is invalid. ";
-        }
-
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant("ERROR"),
-          detail: errorMessage.trim()
-        });
-        this.isSubmitting = false;
-        return;
-      }
-
-      // Validate optional location field only if provided
-      if (formData.locId && isNaN(locId!)) {
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant("ERROR"),
-          detail: this.langService.getCurrentLang() === 'ar'
-            ? "رقم الموقع غير صحيح."
-            : "Location ID is invalid."
-        });
-        this.isSubmitting = false;
-        return;
-      }
-
       // Prepare branch object based on the API requirements
       const branchData: BranchCreateUpdateRequest = {
         ar: formData.ar,

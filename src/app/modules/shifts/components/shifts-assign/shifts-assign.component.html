@@ -15,26 +15,29 @@
   <!-- Filter Section -->
   <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'"
     [class.ltr]="langService.getCurrentLang() === 'en'">
+
     <form [formGroup]="filterForm" class="filter-form">
+
+      <!-- Wrap both pickers in one row -->
       <div class="filter-row">
+
+        <!-- Start Date -->
         <div class="filter-group">
           <label for="startDate">{{ 'SHIFTS_ASSIGN.START_DATE' | translate }}</label>
           <input type="date" id="startDate" formControlName="startDate" class="form-input"
             [title]="'SHIFTS_ASSIGN.START_DATE' | translate" (change)="onDateChange($event, 'startDate')">
-
           <div>
             <label *ngIf="hijriDates['startDate']" class="hijri-date">
               {{ hijriDates['startDate'] }}
             </label>
-
           </div>
         </div>
 
+        <!-- End Date -->
         <div class="filter-group">
           <label for="endDate">{{ 'SHIFTS_ASSIGN.END_DATE' | translate }}</label>
           <input type="date" id="endDate" formControlName="endDate" class="form-input"
             [title]="'SHIFTS_ASSIGN.END_DATE' | translate" (change)="onDateChange($event, 'endDate')">
-
           <div>
             <label *ngIf="hijriDates['endDate']" class="hijri-date">
               {{ hijriDates['endDate'] }}
@@ -42,21 +45,11 @@
           </div>
         </div>
 
-        <div class="filter-actions">
-          <button type="button" class="filter-btn apply-btn" (click)="onFilter()"
-            [title]="'SHIFTS_ASSIGN.APPLY_FILTER' | translate">
-            <i class="fas fa-search"></i>
-            {{ 'SHIFTS_ASSIGN.FILTER' | translate }}
-          </button>
-          <button type="button" class="filter-btn reset-btn" (click)="onResetFilter()"
-            [title]="'SHIFTS_ASSIGN.RESET_FILTER' | translate">
-            <i class="fas fa-times"></i>
-            {{ 'SHIFTS_ASSIGN.RESET' | translate }}
-          </button>
-        </div>
       </div>
+
     </form>
   </div>
+
 
   <!-- Table Header Actions -->
   <div *ngIf="!loading" class="table-header-actions">
@@ -75,17 +68,41 @@
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'"
-          [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input type="text" formControlName="searchTerm" class="search-input"
-            [placeholder]="'SHIFTS_ASSIGN.SEARCH_PLACEHOLDER' | translate"
-            [title]="'SHIFTS_ASSIGN.SEARCH_TITLE' | translate" (keyup.enter)="onSearch()">
-          <button type="button" class="search-btn" (click)="onSearch()" [title]="'SHIFTS_ASSIGN.SEARCH' | translate">
-            <i class="fas fa-search search-icon"></i>
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
           </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
   </div>
 
@@ -112,13 +129,17 @@
               [title]="'SHIFTS_ASSIGN.SELECT_ITEM' | translate">
           </td>
           <td [title]="shiftAssign.emp_Name"
-          [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{ shiftAssign.emp_Name }}</td>
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            shiftAssign.emp_Name }}</td>
           <td [title]="shiftAssign.shift_Label"
-          [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{ shiftAssign.shift_Label }}</td>
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            shiftAssign.shift_Label }}</td>
           <td [title]="formatDate(shiftAssign.sdate)"
-          [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{ formatDate(shiftAssign.sdate) }}</td>
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            formatDate(shiftAssign.sdate) }}</td>
           <td [title]="formatDate(shiftAssign.edate)"
-          [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{ formatDate(shiftAssign.edate) }}</td>
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            formatDate(shiftAssign.edate) }}</td>
           <td class="actions-column">
             <button class="action-btn delete-btn" (click)="deleteShiftAssign(shiftAssign)"
               [title]="'SHIFTS_ASSIGN.DELETE_TOOLTIP' | translate">
@@ -243,9 +264,9 @@
           <div class="form-group">
             <p-multiSelect #targetDropdown formControlName="selectedTargets" [options]="currentTargetOptions"
               optionLabel="name" optionValue="id" [placeholder]="'SHIFTS_ASSIGN.SELECT_TARGETS' | translate"
-              [filter]="true" [filterBy]="'name'" [showToggleAll]="true" 
-              (onShow)="onDropdownShow('target')" (onChange)="onTargetSelectionChange($event.value)"
-              [class.error]="isFieldInvalid('selectedTargets')" class="w-100" [maxSelectedLabels]="3">
+              [filter]="true" [filterBy]="'name'" [showToggleAll]="true" (onShow)="onDropdownShow('target')"
+              (onChange)="onTargetSelectionChange($event.value)" [class.error]="isFieldInvalid('selectedTargets')"
+              class="w-100" [maxSelectedLabels]="3">
 
               <ng-template let-option pTemplate="item">
                 <div class="multiselect-item">

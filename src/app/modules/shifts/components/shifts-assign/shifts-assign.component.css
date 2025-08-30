@@ -185,12 +185,11 @@
 /* Search Container */
 .search-container {
   display: flex;
-  background: white;
-  border: 2px solid #e9ecef;
   border-radius: 25px;
-  overflow: hidden;
+  overflow: visible;
   transition: border-color 0.2s ease;
   width: 300px;
+  padding: 5px;
 }
 
 .search-input {
@@ -739,9 +738,9 @@
     min-width: 700px;
   }
   
-  .search-container {
+  /* .search-container {
     width: 250px;
-  }
+  } */
 }
 
 @media (max-width: 768px) {
@@ -762,7 +761,6 @@
   .search-container {
     width: 100%;
     max-width: 300px;
-    margin: 0 auto;
   }
   
   .pagination-wrapper {
@@ -1241,3 +1239,12 @@
   left: 10px;
 }
 
+.filter-row {
+  display: flex;
+  gap: 20px; /* space between pickers */
+  align-items: flex-end; /* align inputs nicely */
+}
+
+.filter-group {
+  flex: 1; /* make them take equal width */
+}

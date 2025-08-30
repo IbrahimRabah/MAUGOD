@@ -35,6 +35,26 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
   // Selected items for bulk operations
   selectedItems: TimtranLock[] = [];
   selectAll = false;
+searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns
+  { column: 'SDATE', label: 'TIMTRAN_LOCK.SDATE' },
+  { column: 'EDATE', label: 'TIMTRAN_LOCK.EDATE' },
+  { column: 'TOTAL_LOCK_DESC', label: 'TIMTRAN_LOCK.TOTAL_LOCK' },
+  { column: 'HANDLE_APPROVAL_REQ_LOCK_DESC', label: 'TIMTRAN_LOCK.HANDLE_APPROVAL_REQ_LOCK' },
+  { column: 'HANDLE_APPROVAL_REQ_TRAN_LOCK_DESC', label: 'TIMTRAN_LOCK.HANDLE_APPROVAL_REQ_TRAN_LOCK' },
+  { column: 'TIMTRAN_APPROVAL_REQ_LOCK_DESC', label: 'TIMTRAN_LOCK.TIMTRAN_APPROVAL_REQ_LOCK' },
+  { column: 'TIMTRAN_APPROVAL_REQ_TRAN_LOCK_DESC', label: 'TIMTRAN_LOCK.TIMTRAN_APPROVAL_REQ_TRAN_LOCK' },
+  { column: 'DAYS_HANDLE_DIRECT_DESC', label: 'TIMTRAN_LOCK.DAYS_HANDLE_DIRECT' },
+  { column: 'DAYS_HANDLE_SYNC_DESC', label: 'TIMTRAN_LOCK.DAYS_HANDLE_SYNC' },
+  { column: 'TIMTRAN_MANUAL_CHANGE_DESC', label: 'TIMTRAN_LOCK.TIMTRAN_MANUAL_CHANGE' },
+  { column: 'NOTE', label: 'TIMTRAN_LOCK.NOTE' }
+];
+
+
+
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchTerm: string = '';
 
   constructor(
     private timtranService: TimtranService,
@@ -68,7 +88,6 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
 
   private initializeForms() {
     this.searchForm = this.fb.group({
-      searchTerm: [''],
       pageSize: [10]
     });
 
@@ -104,6 +123,10 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
       });
   }
 
+      selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
   // Pagination computed properties
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.pageSize);
@@ -128,25 +151,19 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
   // Core business methods
   loadTimtranLocks() {
     this.loading = true;
-    this.timtranService.getTimtranLock(this.currentPage, this.pageSize, this.currentLang)
+    this.timtranService.getTimtranLock(this.currentPage, this.pageSize, this.currentLang,this.selectedColumn,this.searchTerm)
       .subscribe({
         next: (response) => {
           this.loading = false;
           if (response.isSuccess && response.data) {
-            this.timtranLocks = response.data;
-            // Handle pagination information
-            this.totalRecords = response.totalCount || response.data.length;
+            this.timtranLocks = response.data.items;
+            this.totalRecords = response.data.totalCount;
             
-            // If no data and not on first page, go back to first page
-            if (response.data.length === 0 && this.currentPage > 1) {
-              this.currentPage = 1;
-              this.loadTimtranLocks();
-              return;
-            }
-            
-            // Show message if no data available
-            // if (response.data.length === 0) {
-            //   this.showWarningMessage('TIMTRAN_LOCK.NO_DATA_AVAILABLE');
+            // // If no data and not on first page, go back to first page
+            // if (response.data.totalCount === 0 && this.currentPage > 1) {
+            //   this.currentPage = 1;
+            //   this.loadTimtranLocks();
+            //   return;
             // }
           } else {
             this.timtranLocks = [];
@@ -474,8 +491,4 @@ export class TimtranLockComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  // Helper method to convert number to boolean for display
-  getBooleanValue(value: number): boolean {
-    return value === 1;
-  }
 }

@@ -60,6 +60,7 @@ export interface AutoSignsResponse {
   isSuccess: boolean;
   data: {
     autoSigns: AutoSign[];
+    totalCount:number;
   };
 }
 

@@ -1,23 +1,51 @@
+
+export type YesNoFlag = 0 | 1;
+
 export interface TimtranLock {
   recId: number;
   sDate: string;
   eDate: string;
-  totalLock: boolean;
-  handleApprovalReqLock: boolean;
-  handleApprovalReqTranLock: boolean;
-  timtranApprovalReqLock: boolean;
-  timtranApprovalReqTranLock: boolean;
-  daysHandleDirect: number;
-  daysHandleSync: number;
-  timtranManualChange: boolean;
-  note: string;
+
+  totalLock: YesNoFlag;
+  totalLockDesc?: string;
+
+  handleApprovalReqLock: YesNoFlag;
+  handleApprovalReqLockDesc?: string;
+
+  handleApprovalReqTranLock: YesNoFlag;
+  handleApprovalReqTranLockDesc?: string;
+
+  timtranApprovalReqLock: YesNoFlag;
+  timtranApprovalReqLockDesc?: string;
+
+  timtranApprovalReqTranLock: YesNoFlag;
+  timtranApprovalReqTranLockDesc?: string;
+
+  daysHandleDirect: YesNoFlag;
+  daysHandleDirectDesc?: string;
+
+  daysHandleSync: YesNoFlag;
+  daysHandleSyncDesc?: string;
+
+  timtranManualChange: YesNoFlag;
+  timtranManualChangeDesc?: string;
+
+  rDate: string;
+  note?: string;
+
+  del?: string;
+  sel: boolean;
 }
+
 
 export interface GetTimtranLockResponse {
   statusCode: number;
   message: string;
   isSuccess: boolean;
-  data: TimtranLock[];
+  data: {
+      items: TimtranLock[];
+      totalCount: number;
+    };
   totalCount?: number; // Add this for proper pagination
   currentPage?: number;
   totalPages?: number;
