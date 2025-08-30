@@ -102,12 +102,13 @@ export class BranchesComponent implements OnInit {
   initializeForms() {
     this.branchForm = this.fb.group({
       ar: ['', [Validators.required, CustomValidators.noEnglishInArabicValidator]],
-      en: [''],
-      mgrId: [''],
-      parentBranchId: [''],
-      locId: [''],
-      locDesc: [''],
-      note: [''] // Note is not required as per requirement
+      en: ['', [Validators.required]], // Made required
+  // Manager and parentBranchId are optional now to allow creation/edit without selecting them
+  mgrId: [''],
+  parentBranchId: [''], // Optional - parent branch may be null
+      locId: [''], // Optional
+      locDesc: [''], // Optional
+      note: [''] // Optional - Note is not required as per requirement
     });
 
 
@@ -295,7 +296,8 @@ export class BranchesComponent implements OnInit {
     const currentFormValue = this.branchForm.value;
 
     // Create a new form value object with all current values
-    const newFormValue = {
+    // use a flexible any-typed object to allow assigning both string and number values
+    const newFormValue: any = {
       ar: currentFormValue.ar || branch.branchName || '',
       en: currentFormValue.en || branch.branchName || '', // You might want to get the English name from another field
       locDesc: currentFormValue.locDesc || branch.locDesc || '',
@@ -308,23 +310,14 @@ export class BranchesComponent implements OnInit {
     // Update manager selection
 
     if (branch.mgrId !== null && branch.mgrId !== undefined && this.managers.length > 0) {
-      const manager = this.managers.find(m => m.value === branch.mgrId);
+      // Ensure we match numeric values and set numeric form control value
+      const manager = this.managers.find(m => Number(m.value) === Number(branch.mgrId));
       console.log('Looking for manager with ID:', branch.mgrId, 'Found:', manager);
       if (manager) {
-        newFormValue.mgrId = manager.value.toString();
-        console.log('Setting mgrId to:', manager.value.toString());
+        newFormValue.mgrId = manager.value; // keep numeric
+        console.log('Setting mgrId to:', manager.value);
       } else {
-        console.warn('Manager not found in dropdown options');
-        // Try to find by converting to string
-        const managerStr = this.managers.find(m => m.value.toString() === branch.mgrId!.toString());
-        console.log('Trying string conversion for manager ID:', branch.mgrId!.toString(), 'Found:', managerStr);
-        if (managerStr) {
-          newFormValue.mgrId = managerStr.value.toString();
-          console.log('Found manager by string conversion:', managerStr.value.toString());
-        } else {
-          console.error('Manager still not found even with string conversion!');
-          console.log('Available manager values as strings:', this.managers.map(m => m.value.toString()));
-        }
+        console.warn('Manager not found in dropdown options, leaving empty');
       }
     } else {
       console.log('Manager ID is null, undefined, or -1, leaving mgrId empty');
@@ -332,44 +325,32 @@ export class BranchesComponent implements OnInit {
 
     // Update location selection
     if (branch.locId !== null && branch.locId !== undefined && this.locations.length > 0) {
-      const location = this.locations.find(l => l.value === branch.locId);
+      const location = this.locations.find(l => Number(l.value) === Number(branch.locId));
       console.log('Looking for location with ID:', branch.locId, 'Found:', location);
       if (location) {
-        newFormValue.locId = location.value.toString();
-        console.log('Setting locId to:', location.value.toString());
+        newFormValue.locId = location.value; // keep numeric
+        console.log('Setting locId to:', location.value);
       } else {
         console.warn('Location not found in dropdown options');
-        // Try to find by converting to string
-        const locationStr = this.locations.find(l => l.value.toString() === branch.locId!.toString());
-        if (locationStr) {
-          newFormValue.locId = locationStr.value.toString();
-          console.log('Found location by string conversion:', locationStr.value.toString());
-        }
       }
     }
 
     // Update parent branch selection
     if (branch.parentBranchId !== null && branch.parentBranchId !== undefined && this.parentBranches.length > 0) {
-      const parentBranch = this.parentBranches.find(pb => pb.value === branch.parentBranchId);
+      const parentBranch = this.parentBranches.find(pb => Number(pb.value) === Number(branch.parentBranchId));
       console.log('Looking for parent branch with ID:', branch.parentBranchId, 'Found:', parentBranch);
       if (parentBranch) {
-        newFormValue.parentBranchId = parentBranch.value.toString();
-        console.log('Setting parentBranchId to:', parentBranch.value.toString());
+        newFormValue.parentBranchId = parentBranch.value; // keep numeric
+        console.log('Setting parentBranchId to:', parentBranch.value);
       } else {
         console.warn('Parent branch not found in dropdown options');
-        // Try to find by converting to string
-        const parentBranchStr = this.parentBranches.find(pb => pb.value.toString() === branch.parentBranchId!.toString());
-        if (parentBranchStr) {
-          newFormValue.parentBranchId = parentBranchStr.value.toString();
-          console.log('Found parent branch by string conversion:', parentBranchStr.value.toString());
-        }
       }
     }
 
     console.log('New form value to set:', newFormValue);
 
-    // Use setValue to force all values instead of patchValue
-    this.branchForm.setValue(newFormValue);
+  // Use patchValue to avoid errors when some controls are intentionally left blank
+  this.branchForm.patchValue(newFormValue);
 
     // Force change detection
     this.branchForm.markAsDirty();
@@ -439,20 +420,20 @@ export class BranchesComponent implements OnInit {
       this.isSubmitting = true;
       const formData = this.branchForm.value;
 
-      // Validate numeric fields
-      const mgrId = parseInt(formData.mgrId);
-      const parentBranchId = parseInt(formData.parentBranchId);
-      const locId = parseInt(formData.locId);
+      // Parse numeric fields - mgrId/parentBranchId/locId may be null
+      const mgrId = formData.mgrId ? parseInt(formData.mgrId) : null;
+      const parentBranchId = formData.parentBranchId ? parseInt(formData.parentBranchId) : null;
+      const locId = formData.locId ? parseInt(formData.locId) : null; // Make location optional
 
-      
       // Prepare branch object based on the API requirements
       const branchData: BranchCreateUpdateRequest = {
         ar: formData.ar,
         en: formData.en,
         mgrId: mgrId,
-        locDesc: formData.locDesc,
-        parentBranchId: parentBranchId,
-        locId: locId,
+        locDesc: formData.locDesc || '', // Make optional
+  parentBranchId: parentBranchId !== null && !isNaN(parentBranchId) ? parentBranchId : null,
+        // Send null when no location selected to avoid sending 0
+        locId: formData.locId ? parseInt(formData.locId) : null,
         note: formData.note || '' // Note is optional
       };
 
@@ -784,7 +765,13 @@ export class BranchesComponent implements OnInit {
 
   // Getter methods for form validation
   get isBranchFormValid(): boolean {
-    return this.branchForm.valid && !this.isSubmitting;
+    if (!this.branchForm) return false;
+    const requiredFields = ['ar', 'en'];
+    const allRequiredValid = requiredFields.every(f => {
+      const ctrl = this.branchForm.get(f);
+      return !!(ctrl && ctrl.valid);
+    });
+    return allRequiredValid && !this.isSubmitting;
   }
 
   get isChangeNumberFormValid(): boolean {

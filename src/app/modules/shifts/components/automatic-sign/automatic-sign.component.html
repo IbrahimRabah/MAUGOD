@@ -413,14 +413,14 @@
           <!-- Start Date -->
           <div class="form-group">
             <label class="required">{{ 'AUTOMATIC_SIGN.START_DATE' | translate }}</label>
-            <p-calendar 
+            <input
+              type="date" 
               formControlName="sDate"
               [placeholder]="'AUTOMATIC_SIGN.SELECT_START_DATE' | translate"
-              [showIcon]="true"
               inputId="sDate"
               dateFormat="yy-mm-dd"
-              [class.error]="isFieldInvalid('sDate') || createForm.errors?.['dateRange']">
-            </p-calendar>
+              class="form-input"
+              [class.error]="isFieldInvalid('sDate') || createForm.errors?.['dateRange']"/>
             <small *ngIf="isFieldInvalid('sDate')" class="error-message">
               {{ getFieldError('sDate') }}
             </small>
@@ -429,14 +429,14 @@
           <!-- End Date -->
           <div class="form-group">
             <label class="required">{{ 'AUTOMATIC_SIGN.END_DATE' | translate }}</label>
-            <p-calendar 
+            <input
+              type="date" 
               formControlName="eDate"
               [placeholder]="'AUTOMATIC_SIGN.SELECT_END_DATE' | translate"
-              [showIcon]="true"
               inputId="eDate"
+              class="form-input"
               dateFormat="yy-mm-dd"
-              [class.error]="isFieldInvalid('eDate')">
-            </p-calendar>
+              [class.error]="isFieldInvalid('eDate')"/>
             <small *ngIf="isFieldInvalid('eDate')" 
                    class="error-message" 
                    [class.date-range-error]="createForm.errors?.['dateRange']">
@@ -472,10 +472,45 @@
                 <p-inputSwitch formControlName="autoIn" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
               </div>
               
+              <div *ngIf="createForm.get('autoIn')?.value === 1">
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_BEFORE' | translate }}</label>
+                  <input type="number"
+                    formControlName="inRandomBfor"
+                  >
+                </div>
+
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_AFTER' | translate }}</label>
+                  <input type="number"
+                    formControlName="inRandomAftr"
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="auto-toggle-grid">
+
               <div class="toggle-item">
                 <label>{{ 'AUTOMATIC_SIGN.AUTO_OUT' | translate }}</label>
                 <p-inputSwitch formControlName="autoOut" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
               </div>
+
+              <div *ngIf="createForm.get('autoOut')?.value === 1">
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_BEFORE' | translate }}</label>
+                  <input type="number"
+                    formControlName="outRandomBfor"
+                  >
+                </div>
+
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_AFTER' | translate }}</label>
+                  <input type="number"
+                    formControlName="outRandomAftr"
+                  >
+                </div>
+              </div>
+
             </div>
             
             <!-- Auto In/Out Validation Error -->

@@ -343,7 +343,8 @@ export class EmployeesComponent implements OnInit {
           empArName: employeeDetails.ar_Name || '',
           empEnName: employeeDetails.en_Name || '',
           deptId: employeeDetails.deptId || '',
-          activeFlag: employeeDetails.activeFlag ?? false,
+          // Normalize API numeric flag (1/0) to boolean for the form control
+          activeFlag: employeeDetails.activeFlag === 1,
           statusId: employeeDetails.statusId || 1,
           fingerPrint: employeeDetails.fpid || '',
           natId: employeeDetails.natId || 0,
@@ -398,7 +399,8 @@ export class EmployeesComponent implements OnInit {
           empNumber: employee.empId || null,
           empArName: employee.empName || null,
           empEnName: employee.empName || null,
-          activeFlag: employee.activeFlag || null,
+          // Map employee list value (could be 1/0 or string) to boolean for the form
+          activeFlag: employee.activeFlag == null ? false : Number(employee.activeFlag) === 1,
           statusId: employee.statusId || null,
           deptId: employee.deptId || null,
           natId: employee.natId || null,
@@ -474,7 +476,8 @@ export class EmployeesComponent implements OnInit {
         empId: formData.empNumber || 0,
         ar: formData.empArName || null,
         en: formData.empEnName || null,
-        activeFlag: formData.activeFlag ? Number(formData.activeFlag) : null,
+  // API expects 1 or 0 (not null). Convert boolean/form value accordingly.
+  activeFlag: formData.activeFlag ? 1 : 0,
         statusId: Number(formData.statusId) || 0,
         fpid: formData.fingerPrint || null,
         deptId: Number(formData.deptId) || 0,
@@ -1035,7 +1038,8 @@ export class EmployeesComponent implements OnInit {
       empNumber: currentFormValue.empNumber || employee.empId || '',
       empArName: currentFormValue.empArName || employee.empName || '',
       empEnName: currentFormValue.empEnName || employee.empName || '',
-      activeFlag: currentFormValue.activeFlag || employee.activeFlag,
+  // Preserve explicit false values; prefer current form boolean, otherwise derive from employee value
+  activeFlag: (typeof currentFormValue.activeFlag === 'boolean') ? currentFormValue.activeFlag : (Number(employee.activeFlag) === 1),
       deptId: '',
       statusId: '',
       fingerPrint: currentFormValue.fingerPrint || '', // no mapping in Employee
