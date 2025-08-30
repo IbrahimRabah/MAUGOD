@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment.prod';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiResponse, DeleteTranLocksRequest, GetTimtranLockResponse, InsertTimtranLockInputFormRequest } from '../../../core/models/TimtranLock';
 import { Observable } from 'rxjs';
+import { PaginationCommonRequest } from '../../../core/models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +11,20 @@ import { Observable } from 'rxjs';
 export class TimtranService {
   private apiUrl = `${environment.apiUrl}/Attendance`;
   constructor(private http: HttpClient) { }
-  getTimtranLock(pageNumber: number, pageSize: number, lang: number): Observable<GetTimtranLockResponse> {
+  getTimtranLock(pageNumber: number, pageSize: number, lang: number,selectedColumn?:string,
+    searchTerm?:string): Observable<GetTimtranLockResponse> {
     const headers = new HttpHeaders()
       .set('accept', '*/*')
-      .set('pageNumber', pageNumber.toString())
-      .set('pageSize', pageSize.toString())
       .set('lang', lang.toString());
 
-    return this.http.get<GetTimtranLockResponse>(
-      `${this.apiUrl}/GetTimtranLock`,
+      const paginationRequest: PaginationCommonRequest = {
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+              searchColumn: selectedColumn,
+              searchText: searchTerm
+            };
+    return this.http.post<GetTimtranLockResponse>(
+      `${this.apiUrl}/GetTimtranLock`,paginationRequest,
       { headers }
     );
   }

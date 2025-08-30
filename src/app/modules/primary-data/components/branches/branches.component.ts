@@ -444,36 +444,7 @@ export class BranchesComponent implements OnInit {
       const parentBranchId = parseInt(formData.parentBranchId);
       const locId = parseInt(formData.locId);
 
-      if (isNaN(mgrId) || isNaN(parentBranchId) || isNaN(locId)) {
-        let errorMessage = "";
-
-        if (isNaN(mgrId)) {
-          errorMessage += this.langService.getCurrentLang() === 'ar'
-            ? "رقم المدير غير صحيح. "
-            : "Manager ID is invalid. ";
-        }
-
-        if (isNaN(parentBranchId)) {
-          errorMessage += this.langService.getCurrentLang() === 'ar'
-            ? "رقم الفرع غير صحيح. "
-            : "Branch ID is invalid. ";
-        }
-
-        if (isNaN(locId)) {
-          errorMessage += this.langService.getCurrentLang() === 'ar'
-            ? "رقم الموقع غير صحيح."
-            : "Location ID is invalid.";
-        }
-
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant("ERROR"),
-          detail: errorMessage.trim()
-        });
-        this.isSubmitting = false;
-        return;
-      }
-
+      
       // Prepare branch object based on the API requirements
       const branchData: BranchCreateUpdateRequest = {
         ar: formData.ar,
