@@ -177,20 +177,18 @@
 
 /* Search Container */
 .search-container {
+  position: relative;
   display: flex;
-  background: white;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 300px;
+  align-items: center;
 }
 
 .search-input {
-  flex: 1;
+  border: none;
   padding: 10px 15px;
-  border: 1px solid #ced4da;
   font-size: 14px;
   outline: none;
+  flex: 1;
+  min-width: 250px;
 }
 
 .search-btn {
@@ -199,7 +197,7 @@
   border: none;
   padding: 10px 15px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .search-btn:hover {
