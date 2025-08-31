@@ -86,6 +86,10 @@ loadingTargets = true;
   selectedTargetItems: DropdownItem[] = [];
   selectedTargetIds: number[] = [];
   targetSelectAll = false;
+  
+  // Cache for target options to avoid recalculation
+  private _cachedTargetOptions: DropdownItem[] = [];
+  private _lastAssignmentType: number | null = null;
 
    searchColumns = [
   { column: '', label: 'All Columns' }, // all columns
@@ -121,12 +125,15 @@ loadingTargets = true;
     this.langSubscription = this.langService.currentLang$.subscribe((lang: string) => {
       this.currentLang = lang === 'ar' ? 2 : 1;
       this.loadShiftsAssign();
-    this.preloadAllDropdownData()
+      this.preloadAllDropdownData();
     });
 
     // Setup search debouncing
     this.setupSearchDebouncing();
     
+    // Initial load
+    this.loadShiftsAssign();
+    this.preloadAllDropdownData();
   }
 
 
@@ -462,16 +469,15 @@ styleStringToObject(style?: string): { [key: string]: string } {
     this.resetCreateForm();
     this.showCreateModal = true;
     this.loadShifts();
-    // Preload all dropdown data for better performance
-    this.preloadAllDropdownData();
+    // Since Employee (ID 1) is the default selection, load employees immediately
+    this.loadEmployees();
   }
 
-  // Preload all dropdown data for better performance
+  // Preload essential dropdown data for better performance
   private preloadAllDropdownData() {
-    this.loadEmployees();
-    this.loadDepartments();
-    this.loadBranches();
-    this.loadRoles();
+    // Only preload shifts as they are always needed
+    this.loadShifts();
+    // Other data will be loaded on demand when assignment type changes
   }
 
   closeCreateModal() {
@@ -490,6 +496,10 @@ styleStringToObject(style?: string): { [key: string]: string } {
     this.selectedTargetItems = [];
     this.selectedTargetIds = [];
     this.targetSelectAll = false;
+    
+    // Clear cache to ensure fresh calculation for Employee options
+    this.clearTargetOptionsCache();
+    
     // Don't reset data cache as we want to keep loaded data for performance
   }
 
@@ -509,6 +519,11 @@ styleStringToObject(style?: string): { [key: string]: string } {
     this.selectedTargetIds = [];
     this.targetSelectAll = false;
     this.createForm.patchValue({ selectedTargets: [] });
+    
+    // Clear cache to force recalculation
+    this._cachedTargetOptions = [];
+    this._lastAssignmentType = null;
+    
     // Don't load data again if already cached
     this.loadTargetDataIfNeeded();
   }
@@ -603,17 +618,37 @@ styleStringToObject(style?: string): { [key: string]: string } {
     }
   }
 
-  // Get current target options based on assignment type
+  // Get current target options based on assignment type (with caching)
   get currentTargetOptions(): DropdownItem[] {
     const assignmentType = this.createForm.get('assignmentType')?.value;
     
-    switch (assignmentType) {
-      case 1: return this.employees;
-      case 2: return this.departments;
-      case 3: return this.branches;
-      case 4: return this.roles;
-      default: return [];
+    // Return cached options if assignment type hasn't changed
+    if (this._lastAssignmentType === assignmentType && this._cachedTargetOptions.length > 0) {
+      return this._cachedTargetOptions;
     }
+    
+    // Update cache
+    this._lastAssignmentType = assignmentType;
+    
+    switch (assignmentType) {
+      case 1: 
+        this._cachedTargetOptions = this.employees;
+        break;
+      case 2: 
+        this._cachedTargetOptions = this.departments;
+        break;
+      case 3: 
+        this._cachedTargetOptions = this.branches;
+        break;
+      case 4: 
+        this._cachedTargetOptions = this.roles;
+        break;
+      default: 
+        this._cachedTargetOptions = [];
+        break;
+    }
+    
+    return this._cachedTargetOptions;
   }
 
   // Dropdown loading methods
@@ -653,6 +688,8 @@ styleStringToObject(style?: string): { [key: string]: string } {
             name: item.label
           }));
           this.dataCache.employees = true;
+          // Clear cache to ensure fresh data is reflected
+          this.clearTargetOptionsCache();
         }
         this.loadingEmployees = false;
       },
@@ -676,6 +713,7 @@ styleStringToObject(style?: string): { [key: string]: string } {
             name: item.label
           }));
           this.dataCache.departments = true;
+          this.clearTargetOptionsCache();
         }
         this.loadingDepartments = false;
       },
@@ -699,6 +737,7 @@ styleStringToObject(style?: string): { [key: string]: string } {
             name: item.label
           }));
           this.dataCache.branches = true;
+          this.clearTargetOptionsCache();
         }
         this.loadingBranches = false;
       },
@@ -722,6 +761,7 @@ styleStringToObject(style?: string): { [key: string]: string } {
             name: item.label
           }));
           this.dataCache.roles = true;
+          this.clearTargetOptionsCache();
         }
         this.loadingRoles = false;
       },
@@ -742,6 +782,50 @@ styleStringToObject(style?: string): { [key: string]: string } {
     if (currentDropdownId !== 'target' && this.targetDropdown) {
       this.targetDropdown.hide();
     }
+
+    // Ensure target data is available when target dropdown is shown
+    if (currentDropdownId === 'target') {
+      this.ensureTargetDataLoaded();
+    }
+  }
+
+  // Ensure target data is loaded based on current assignment type
+  private ensureTargetDataLoaded() {
+    const assignmentType = this.createForm.get('assignmentType')?.value;
+    
+    switch (assignmentType) {
+      case 1: // Employee
+        if (!this.dataCache.employees) {
+          this.loadEmployees();
+        }
+        break;
+      case 2: // Department
+        if (!this.dataCache.departments) {
+          this.loadDepartments();
+        }
+        break;
+      case 3: // Branch
+        if (!this.dataCache.branches) {
+          this.loadBranches();
+        }
+        break;
+      case 4: // Role
+        if (!this.dataCache.roles) {
+          this.loadRoles();
+        }
+        break;
+    }
+  }
+
+  // Clear target options cache
+  private clearTargetOptionsCache() {
+    this._cachedTargetOptions = [];
+    this._lastAssignmentType = null;
+  }
+
+  // TrackBy function for better performance in dropdowns
+  trackByFn(index: number, item: DropdownItem): any {
+    return item.id;
   }
 
   // Submit create form

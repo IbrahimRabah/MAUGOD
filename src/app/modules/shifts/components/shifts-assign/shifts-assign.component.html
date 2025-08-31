@@ -266,7 +266,7 @@
               optionLabel="name" optionValue="id" [placeholder]="'SHIFTS_ASSIGN.SELECT_TARGETS' | translate"
               [filter]="true" [filterBy]="'name'" [showToggleAll]="true" (onShow)="onDropdownShow('target')"
               (onChange)="onTargetSelectionChange($event.value)" [class.error]="isFieldInvalid('selectedTargets')"
-              class="w-100" [maxSelectedLabels]="3">
+              class="w-100" [maxSelectedLabels]="3" [virtualScroll]="true" [itemSize]="38" scrollHeight="200px">
 
               <ng-template let-option pTemplate="item">
                 <div class="multiselect-item">
