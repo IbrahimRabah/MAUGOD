@@ -57,6 +57,28 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
   changeIdForm!: FormGroup;
   currentChangeItem?: AttendanceStatusData;
 
+searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns
+  { column: 'sts_name', label: 'ATTENDANCE_STATUSES.STATUS_NAME' },
+  { column: 'count_in_desc', label: 'ATTENDANCE_STATUSES.COUNT_IN' },
+  { column: 'insert_default_in_desc', label: 'ATTENDANCE_STATUSES.INSERT_DEFAULT_IN' },
+  { column: 'count_out_desc', label: 'ATTENDANCE_STATUSES.COUNT_OUT' },
+  { column: 'insert_default_out_desc', label: 'ATTENDANCE_STATUSES.INSERT_DEFAULT_OUT' },
+  { column: 'is_it_vaction_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_VACATION' },
+  { column: 'is_it_paid_vaction_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_PAID_VACATION' },
+  { column: 'is_it_absent_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_ABSENT' },
+  { column: 'is_it_working_day_desc', label: 'ATTENDANCE_STATUSES.WORKING_DAY' },
+  { column: 'created_by_desc', label: 'ATTENDANCE_STATUSES.CREATED_BY' },
+  { column: 'app_calssifay_as_desc', label: 'ATTENDANCE_STATUSES.APPLICATION_CLASSIFY_AS' },
+  { column: 'web_calssifay_as_desc', label: 'ATTENDANCE_STATUSES.WEB_CLASSIFY_AS' },
+  { column: 'note', label: 'ATTENDANCE_STATUSES.NOTE' }
+];
+
+
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchTerm: string = '';
+
   constructor(
     private attendanceStatusService: AttendanceStatusService,
     public langService: LanguageService,
@@ -137,6 +159,11 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
       }) ?? new Subscription();
   }
 
+  selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
   // Pagination computed properties
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.pageSize);
@@ -162,7 +189,7 @@ export class AttendanceStatusesComponent implements OnInit, OnDestroy {
   loadAttendanceStatuses() {
     this.loading = true;
     
-    this.attendanceStatusService.getAttendanceStatus(this.currentLang, this.pageSize, this.currentPage)
+    this.attendanceStatusService.getAttendanceStatus(this.currentLang, this.pageSize, this.currentPage,this.selectedColumn,this.searchTerm)
       .subscribe({
         next: (response: AttendanceStatusResponse) => {
           this.attendanceStatuses = response.data || [];
@@ -273,10 +300,7 @@ private loadStatuses() {
     return true;
   }
 
-  // Helper methods for displaying boolean values
-  getBooleanDisplayText(value: number): string {
-    return value === 1 ? this.translateService.instant('ATTENDANCE_STATUSES.YES') : this.translateService.instant('ATTENDANCE_STATUSES.NO');
-  }
+  
 
   getBooleanIcon(value: number): string {
     return value === 1 ? 'fas fa-check text-success' : 'fas fa-times text-danger';
@@ -292,9 +316,7 @@ getWebStatusLabel(value: number): string {
   return status ? status.label : value.toString();
 }
   // Get status name based on current language
-  getStatusName(item: AttendanceStatusData): string {
-    return this.currentLang === 2 ? item.ar : item.en;
-  }
+
 
   // Message helper methods
   private showSuccessMessage(message: string) {

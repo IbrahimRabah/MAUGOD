@@ -34,21 +34,42 @@
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input type="text" 
-                 formControlName="searchTerm"
-                 class="search-input" 
-                 [placeholder]="'ATTENDANCE_STATUSES.SEARCH_PLACEHOLDER' | translate"
-                 [title]="'ATTENDANCE_STATUSES.SEARCH_TITLE' | translate">
-          <button type="submit" 
-                  class="search-btn" 
-                  (click)="onSearch()"
-                  [title]="'ATTENDANCE_STATUSES.SEARCH_TITLE' | translate">
-            <i class="fas fa-search search-icon"></i>
+      <div class="input-group" style="padding-left: 5px; padding-right: 5px;">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
           </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control"
+          [placeholder]="'Search: '+(selectedColumnLabel | translate)" [(ngModel)]="searchTerm"
+              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
   </div>
 
@@ -84,26 +105,26 @@
               <i class="text-primary fs-4 fas fa-edit"></i>
             </button>
           </td>
-          <td>{{ getStatusName(item) }}</td>
-          <td class="text-center">{{ item.count_in }}</td>
-          <td class="text-center">{{ item.insert_default_in }}</td>
-          <td class="text-center">{{ item.count_out }}</td>
-          <td class="text-center">{{ item.insert_default_out }}</td>
+          <td>{{ item.sts_name }}</td>
+          <td class="text-center">{{ item.count_in_desc }}</td>
+          <td class="text-center">{{ item.insert_default_in_desc }}</td>
+          <td class="text-center">{{ item.count_out_desc }}</td>
+          <td class="text-center">{{ item.insert_default_out_desc }}</td>
           <td class="text-center">
-            {{ getBooleanDisplayText(item.is_it_vaction_when_calc_salry) }}
+            {{ item.is_it_vaction_when_calc_salry_desc }}
           </td>
           <td class="text-center">
-            {{ getBooleanDisplayText(item.is_it_paid_vaction_when_calc_salry) }}
+            {{item.is_it_paid_vaction_when_calc_salry_desc }}
           </td>
           <td class="text-center">
-            {{ getBooleanDisplayText(item.is_it_absent_when_calc_salry) }}
+            {{ item.is_it_absent_when_calc_salry_desc }}
           </td>
           <td class="text-center">
-            {{ getBooleanDisplayText(item.is_it_working_day) }}
+            {{ item.is_it_working_day_desc }}
           </td>
-          <td class="text-center">{{ item.created_by }}</td>
-          <td class="text-center">{{ getAppStatusLabel(item.app_calssifay_as) }}</td>
-          <td class="text-center">{{ getWebStatusLabel(item.web_calssifay_as) }}</td>
+          <td class="text-center">{{ item.created_by_desc }}</td>
+          <td class="text-center">{{ item.app_calssifay_as_desc }}</td>
+          <td class="text-center">{{ item.web_calssifay_as_desc }}</td>
           <td>{{ item.note || '-' }}</td>
           <td class="text-center">
             <button class="action-btn delete-btn" 
