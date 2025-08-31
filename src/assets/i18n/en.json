@@ -1282,6 +1282,7 @@
     "END_DATE": "End Date",
     "SALARY": "Salary",
     "ADDONS_TOTAL": "Add-ons Total",
+    "MINUS_TOTAL": "Minus total",
     "OVERTIME_TOTAL": "Overtime Total",
     "LATE_DEDUCT": "Late Deduction",
     "ABSENT_DEDUCT": "Absent Deduction",

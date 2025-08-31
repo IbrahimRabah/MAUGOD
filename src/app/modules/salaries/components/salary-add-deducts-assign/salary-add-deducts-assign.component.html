@@ -20,20 +20,46 @@
       </button>
     </div>
 
+    
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input 
-            type="text"
-            class="search-input"
-            formControlName="searchTerm"
-            (input)="onSearch()"
-            [placeholder]="'SALARY_ADD_DEDUCTS_ASSIGN.SEARCH_PLACEHOLDER' | translate"
-            [title]="'SALARY_ADD_DEDUCTS_ASSIGN.SEARCH_TITLE' | translate">
-          <i class="fas fa-search search-icon"></i>
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchText" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
+
+
   </div>
 
   <!-- Custom Table -->

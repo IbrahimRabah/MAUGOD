@@ -60,8 +60,6 @@ export class MySalaryComponent implements OnInit, OnDestroy {
       this.loadData();
     });
     
-    // Load initial data
-    this.loadData();
   }
 
   ngOnDestroy() {
@@ -72,7 +70,7 @@ export class MySalaryComponent implements OnInit, OnDestroy {
 
   // Helper Methods
   getStoredEmpId(): number | undefined {
-    const storedEmpId = localStorage.getItem('empId');
+    const storedEmpId = localStorage.getItem('empId') || 0;
     return storedEmpId ? parseInt(storedEmpId, 10) : undefined;
   }
 
@@ -91,10 +89,6 @@ export class MySalaryComponent implements OnInit, OnDestroy {
 
   // Data Loading Methods
   loadData() {
-    if (!this.empId) {
-      console.error('Employee ID not found in localStorage');
-      return;
-    }
 
     switch (this.selectedTable) {
       case 'salaryDetails':

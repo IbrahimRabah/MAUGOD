@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EmployeeContractDetails, SalariesDetailsResponse } from '../../../core/models/salariesDetails';
 
@@ -12,16 +12,19 @@ export class SalariesDetailsService {
 
   constructor(private http: HttpClient) { }
   
-  getAllSalaryDetails(lang: number, mgrId: number, pageIndex: number, pageSize: number): Observable<SalariesDetailsResponse> {
-    const headers = new HttpHeaders({
-      'accept': 'text/plain',
-      'lang': lang.toString()
-    });
+  getAllSalaryDetails(lang: number, mgrId: number, pageIndex: number, pageSize: number, colunmSearchName: string | null, colunmSearchValue: string | null): Observable<SalariesDetailsResponse> {
+      let params = new HttpParams()
+                  .set('pageSize', pageSize.toString())
+                  .set('pageIndex', pageIndex.toString());
+      
+      if(colunmSearchName && colunmSearchValue){
+        params = params.set(colunmSearchName, colunmSearchValue);
+      }
 
-    // Log the full URL being called for debugging
-    const url = `${this.apiUrl}/index?mgrId=${mgrId}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
+    const headers = new HttpHeaders().set('lang', lang.toString());
 
-    return this.http.get<SalariesDetailsResponse>(url, { headers });
+    return this.http.get<SalariesDetailsResponse>(`${this.apiUrl}/index`, { headers, params });
+
   }
   addSalaryDetail(detail: EmployeeContractDetails, lang: number): Observable<any> {
     const headers = new HttpHeaders({

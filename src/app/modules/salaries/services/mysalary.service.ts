@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MySalaryResponse } from '../../../core/models/mySalary';
 import { AddOnsApiResponse } from '../../../core/models/addon';
@@ -42,7 +42,7 @@ export class MysalaryService {
       'lang': lang.toString()
     });
 
-    return this.http.get<AddOnsApiResponse>(`${this.apiUrl}/addons/${empId}`, { headers });
+    return this.http.get<AddOnsApiResponse>(`${this.apiUrl}/addons`, { headers });
   }
 
   /**
@@ -57,7 +57,7 @@ export class MysalaryService {
       'lang': lang.toString()
     });
 
-    return this.http.get<SalaryResponse>(`${this.apiUrl}/calculation/${empId}`, { headers });
+    return this.http.get<SalaryResponse>(`${this.apiUrl}/calculation`, { headers });
   }
 
   /**
@@ -72,6 +72,6 @@ export class MysalaryService {
       'lang': lang.toString()
     });
 
-    return this.http.get<SalariesDetailsResponse>(`${this.apiUrl}/details/${empId}`, { headers });
+    return this.http.get<SalariesDetailsResponse>(`${this.apiUrl}/details`, { headers });
   }
 }

@@ -44,6 +44,42 @@ export class SalariesDetailsComponent implements OnInit, OnDestroy {
   salaryDetailForm!: FormGroup;
   searchForm!: FormGroup;
 
+
+  searchColumns = [
+    { column: 'AllFields', label: 'All Columns' }, // all columns option
+    { column: 'empName', label: 'SALARIES_DETAILS.EMPLOYEE_NAME' },
+    { column: 'contractStart', label: 'SALARIES_DETAILS.CONTRACT_DATE' },
+    { column: 'salType', label: 'SALARIES_DETAILS.SALARY_TYPE' },
+    { column: 'salary', label: 'SALARIES_DETAILS.SALARY' },
+    { column: 'freeLate', label: 'SALARIES_DETAILS.FREE_LATE' },
+    { column: 'includeFreeLateAfterExceedLimit', label: 'SALARIES_DETAILS.INCLUDE_FREE_LATE_AFTER_EXCEED' },
+    { column: 'minutes2Days', label: 'SALARIES_DETAILS.MINUTES_TO_DEDUCT_1_DAY' },
+    { column: 'countParialLate', label: 'SALARIES_DETAILS.COUNT_PARTIAL_LATE' },
+    { column: 'separateOvertime', label: 'SALARIES_DETAILS.SEPARATE_OVERTIME' },
+    { column: 'overtimeHrCost', label: 'SALARIES_DETAILS.OVERTIME_HR_COST' },
+    { column: 'maxOvertime', label: 'SALARIES_DETAILS.MAX_OVERTIME' },
+    { column: 'absentPerMY', label: 'SALARIES_DETAILS.ABSENT_PER_MONTH_YEAR' },
+    { column: 'noSignoutPerMY', label: 'SALARIES_DETAILS.NO_SIGNOUT_PER_MONTH_YEAR' },
+    { column: 'bankName', label: 'SALARIES_DETAILS.BANK' },
+    { column: 'note', label: 'SALARIES_DETAILS.NOTE' },
+  ];
+  searchText: string = '';
+  
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  selectedColumn: string = this.searchColumns[0].column;
+
+
+
+selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
+
+
+
+
+
   constructor(
     private salariesDetailsService: SalariesDetailsService,
     public langService: LanguageService,
@@ -68,7 +104,6 @@ export class SalariesDetailsComponent implements OnInit, OnDestroy {
 
     // Load initial data
     this.loadDropdownData();
-    this.loadSalariesDetails();
   }
 
   ngOnDestroy() {
@@ -408,7 +443,9 @@ export class SalariesDetailsComponent implements OnInit, OnDestroy {
       this.currentLang,
        this.empId,
        this.currentPage,
-       this.pageSize
+       this.pageSize,
+       this.selectedColumn,
+       this.searchText
     ).subscribe({
       next: (response) => {
         if (response.isSuccess) {

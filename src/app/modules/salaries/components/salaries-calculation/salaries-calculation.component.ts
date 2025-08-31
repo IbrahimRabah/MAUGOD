@@ -67,7 +67,38 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
   loadingDepartments = false;
   loadingBranches = false;
   loadingRoles = false;
+
+ searchColumns = [
+    { column: 'AllFields', label: 'All Columns' }, // all columns option
+    { column: 'empName', label: 'SALARY_CALCULATION.EMPLOYEE' },
+    { column: 'startDate', label: 'SALARY_CALCULATION.START_DATE' },
+    { column: 'endDate', label: 'SALARY_CALCULATION.END_DATE' },
+    { column: 'sal', label: 'SALARY_CALCULATION.SALARY' },
+    { column: 'addonTot', label: 'SALARY_CALCULATION.ADDONS_TOTAL' },
+    { column: 'minusTot', label: 'SALARY_CALCULATION.MINUS_TOTAL' },
+    { column: 'overtimeTot', label: 'SALARY_CALCULATION.OVERTIME_TOTAL' },
+    { column: 'lateDed', label: 'SALARY_CALCULATION.LATE_DEDUCT' },
+    { column: 'absentDed', label: 'SALARY_CALCULATION.ABSENT_DEDUCT' },
+    { column: 'noSignoutDed', label: 'SALARY_CALCULATION.NO_SIGNOUT_DEDUCT' },
+    { column: 'totalAmount', label: 'SALARY_CALCULATION.TOTAL_AMOUNT' },
+    { column: 'paidAmount', label: 'SALARY_CALCULATION.PAID_AMOUNT' },
+    { column: 'calcTime', label: 'SALARY_CALCULATION.CALC_DATE' },
+    { column: 'calcByEmpName', label: 'SALARY_CALCULATION.CALCULATED_BY' },
+    { column: 'outReference', label: 'SALARY_CALCULATION.OUT_REFERENCE' },
+    { column: 'note', label: 'SALARY_CALCULATION.NOTE' },
+  ];
+  searchText: string = '';
   
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  selectedColumn: string = this.searchColumns[0].column;
+
+
+
+selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
   // Data loaded flags to avoid unnecessary reloads
   private dataLoaded = {
     employees: false,
@@ -476,7 +507,7 @@ export class SalariesCalculationComponent implements OnInit, OnDestroy {
   // Core business methods
   loadSalaryCalculations() {
     this.loading = true;
-    this.salariesService.getSalariesCalculations(this.currentLang.toString(), this.currentPage, this.pageSize).subscribe({
+    this.salariesService.getSalariesCalculations(this.currentLang.toString(), this.currentPage, this.pageSize, this.selectedColumn, this.searchText).subscribe({
       next: (response: SalaryResponse) => {
         if (response.isSuccess) {
           this.salaryCalculations = response.data;
