@@ -82,6 +82,27 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
     pageSize: 10,
     lang: 2 // Default to Arabic
   };
+  searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns
+  { column: 'sts_name', label: 'ATTENDANCE_STATUSES.STATUS_NAME' },
+  { column: 'count_in_desc', label: 'ATTENDANCE_STATUSES.COUNT_IN' },
+  { column: 'insert_default_in_desc', label: 'ATTENDANCE_STATUSES.INSERT_DEFAULT_IN' },
+  { column: 'count_out_desc', label: 'ATTENDANCE_STATUSES.COUNT_OUT' },
+  { column: 'insert_default_out_desc', label: 'ATTENDANCE_STATUSES.INSERT_DEFAULT_OUT' },
+  { column: 'is_it_vaction_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_VACATION' },
+  { column: 'is_it_paid_vaction_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_PAID_VACATION' },
+  { column: 'is_it_absent_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_ABSENT' },
+  { column: 'is_it_working_day_desc', label: 'ATTENDANCE_STATUSES.WORKING_DAY' },
+  { column: 'created_by_desc', label: 'ATTENDANCE_STATUSES.CREATED_BY' },
+  { column: 'app_calssifay_as_desc', label: 'ATTENDANCE_STATUSES.APPLICATION_CLASSIFY_AS' },
+  { column: 'web_calssifay_as_desc', label: 'ATTENDANCE_STATUSES.WEB_CLASSIFY_AS' },
+  { column: 'note', label: 'ATTENDANCE_STATUSES.NOTE' }
+];
+
+
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchTerm: string = '';
 
   constructor(
     private employeeBalanceService: EmployeeHandlesBalanceService,
@@ -322,7 +343,6 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
 
     // Search form
     this.searchForm = this.fb.group({
-      searchTerm: [''],
       pageSize: [10]
     });
   }
@@ -337,6 +357,10 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
     });
   }
 
+    selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
   // Pagination computed properties
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
@@ -376,9 +400,6 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
     return hasEmployees || hasDepartments || hasBranches || hasRoles;
   }
 
-  get searchTerm(): string {
-    return this.searchForm.get('searchTerm')?.value || '';
-  }
 
   // Selection state getters
   get isAllSelected(): boolean {
