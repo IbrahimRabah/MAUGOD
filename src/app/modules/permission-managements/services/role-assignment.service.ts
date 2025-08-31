@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginationRequest } from '../../../core/models/pagination';
 import { Observable } from 'rxjs';
-import { UserRoleAssignment, UserRoleAssignmentsResponse } from '../../../core/models/roleAssignment';
+import { AssignUserRolesRequest, UserRoleAssignment, UserRoleAssignmentsResponse } from '../../../core/models/roleAssignment';
 
 @Injectable({
   providedIn: 'root'
@@ -55,5 +55,13 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
     return this.http.delete<UserRoleAssignmentsResponse>(`${this.apiUrl}/DeleteRoleByID`, { headers });
   }
 
-  
+  assignUserRoles( lang: number, payload: AssignUserRolesRequest): Observable<string> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'lang': lang.toString()
+    });
+    // Endpoint base here is NOT /SystemPermissions; it’s the input form controller
+    const url = `${environment.apiUrl}/UserRoleAssignmentInputForm/AssignUserRoles`;
+    return this.http.post<string>(url, payload, {headers});
+  }  
 }

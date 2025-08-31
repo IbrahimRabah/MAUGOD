@@ -16,6 +16,22 @@ export interface UserRoleAssignment {
   sel: string; // this is HTML string for a checkbox
 }
 
+// src/app/core/models/role-assignment.request.ts
+export interface AssignUserRolesRequest {
+  assignedRoles: number[];
+  empIds: number[];
+  mgrOfDeptIds: number[];
+  deptIds: number[];
+  mgrOfBranchIds: number[];
+  branchIds: number[];
+  roleIds: number[];
+  fromDate: string;   // ISO string: new Date().toISOString()
+  toDate: string;     // ISO string
+  notes: string;
+  currentEmpId: number;
+}
+
+
 export interface UserRoleAssignmentsData {
   userRoleAssignments: UserRoleAssignment[];
   totalCount: number;

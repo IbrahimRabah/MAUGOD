@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { RoleAssignmentService } from '../../services/role-assignment.service';
-import { UserRoleAssignment } from '../../../../core/models/roleAssignment';
+import { UserRoleAssignment, AssignUserRolesRequest } from '../../../../core/models/roleAssignment';
 import { PaginationRequest } from '../../../../core/models/pagination';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
@@ -13,13 +13,24 @@ import { Manager } from '../../../../core/models/managers';
 import { Branch } from '../../../../core/models/branch';
 import { Role } from '../../../../core/models/Role';
 
+interface SelectableItem {
+  id: number | string;
+  name: string;
+}
+
+interface MultiSelectState {
+  available: SelectableItem[];
+  selected: SelectableItem[];
+  searchTerm: string;
+}
+
 @Component({
   selector: 'app-user-role-assignment',
   templateUrl: './user-role-assignment.component.html',
   styleUrl: './user-role-assignment.component.css',
   providers: [MessageService, ConfirmationService]
 })
-export class UserRoleAssignmentComponent implements OnInit {
+export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
   userRoleAssignments: UserRoleAssignment[] = [];
   loading: boolean = false;
   totalRecords: number = 0;
@@ -31,22 +42,61 @@ export class UserRoleAssignmentComponent implements OnInit {
   private dropdownDataLoaded = {
     employees: false,
     departments: false,
-    deptManager:false,
-    branches:false,
-    brancheManager:false,
-    roles:false,
+    departmentManagers: false,
+    branches: false,
+    branchManagers: false,
+    roles: false,
   };
+  
   // Selection management
   selectedItems: Set<number> = new Set();
   
   // Reactive Forms
   userRoleAssignmentForm!: FormGroup;
 
-  // Dropdown options (dummy data - replace with actual service calls)
-  employees :Employees []= [];
-  departments:Departments[] = [];
+  // Multi-select state management
+  multiSelectStates: { [key: string]: MultiSelectState } = {
+    employees: { available: [], selected: [], searchTerm: '' },
+    departments: { available: [], selected: [], searchTerm: '' },
+    branches: { available: [], selected: [], searchTerm: '' },
+    roles: { available: [], selected: [], searchTerm: '' },
+    departmentManagers: { available: [], selected: [], searchTerm: '' },
+    branchManagers: { available: [], selected: [], searchTerm: '' }
+  };
+
+  // Section visibility checkboxes
+  sectionVisibility: { [key: string]: boolean } = {
+    employees: false,
+    departments: false,
+    branches: false,
+    roles: false,
+    departmentManagers: false,
+    branchManagers: false
+  };
+
+  // Dynamic data from services
+  employees: Employees[] = [];
+  departments: Departments[] = [];
   branches: Branch[] = [];
-  roles: Role[] = []
+  roles: Role[] = [];
+  departmentManagers: Manager[] = [];
+  branchManagers: Manager[] = [];
+  
+  // Loading states for each data type
+  loadingEmployees = false;
+  loadingDepartments = false;
+  loadingBranches = false;
+  loadingRoles = false;
+  loadingDepartmentManagers = false;
+  loadingBranchManagers = false;
+
+  // Selected IDs for form submission
+  selectedEmployeeIds: number[] = [];
+  selectedDepartmentIds: number[] = [];
+  selectedBranchIds: number[] = [];
+  selectedRoleIds: number[] = [];
+  selectedDepartmentManagerIds: number[] = [];
+  selectedBranchManagerIds: number[] = [];
 
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
@@ -80,18 +130,33 @@ export class UserRoleAssignmentComponent implements OnInit {
     this.loadDropdownData();
   }
 
+  ngOnDestroy() {
+    // Cleanup if needed
+  }
+
   initializeForms() {
     this.userRoleAssignmentForm = this.fb.group({
-      employeeId: [''],
-      departmentId: [''],
-      managerOfDepartmentId: [''],
-      branchId: [''],
-      managerOfBranchId: [''],
-      roleId: ['', [Validators.required]],
-      startDate: [''],
-      endDate: [''],
+      startDate: ['', [Validators.required]],
+      endDate: ['', [Validators.required]],
       notes: ['']
-    });
+    }, { validators: this.dateRangeValidator });
+  }
+
+  // Custom validator to ensure start date is not after end date
+  dateRangeValidator(form: AbstractControl): ValidationErrors | null {
+    const startDate = form.get('startDate')?.value;
+    const endDate = form.get('endDate')?.value;
+    
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      
+      if (start > end) {
+        return { dateRangeInvalid: true };
+      }
+    }
+    
+    return null;
   }
 
   // Custom pagination methods
@@ -169,6 +234,10 @@ export class UserRoleAssignmentComponent implements OnInit {
   addUserRoleAssignment() {
     this.isEditMode = false;
     this.showAddModal = true;
+    this.resetForm(); // Reset form and multi-select states
+    
+    // Pre-load all dropdown data in background so it's available when sections are checked
+    this.loadDropdownDataIfNeeded();
   }
 
   closeModal() {
@@ -179,85 +248,185 @@ export class UserRoleAssignmentComponent implements OnInit {
   resetForm() {
     this.userRoleAssignmentForm.reset();
     this.selectedRoleAssignment = null;
+    // Reset multi-select states
+    Object.keys(this.multiSelectStates).forEach(key => {
+      this.multiSelectStates[key].selected = [];
+      this.multiSelectStates[key].searchTerm = '';
+    });
+    // Reset selected IDs
+    this.selectedEmployeeIds = [];
+    this.selectedDepartmentIds = [];
+    this.selectedBranchIds = [];
+    this.selectedRoleIds = [];
+    this.selectedDepartmentManagerIds = [];
+    this.selectedBranchManagerIds = [];
+    // Reset section visibility checkboxes
+    Object.keys(this.sectionVisibility).forEach(key => {
+      this.sectionVisibility[key] = false;
+    });
+  }
+
+  // Toggle section visibility
+  toggleSectionVisibility(section: string) {
+    this.sectionVisibility[section] = !this.sectionVisibility[section];
+    
+    // If section is being enabled, populate its data immediately
+    if (this.sectionVisibility[section]) {
+      console.log(`Enabling section: ${section}`);
+      // Populate from existing data immediately
+      this.populateMultiSelectState(section);
+      
+      // Ensure data is loaded (this will run in background if needed)
+      this.loadDropdownDataIfNeeded().then(() => {
+        // Populate again in case new data was loaded
+        this.populateMultiSelectState(section);
+      });
+    }
+    
+    // If section is being hidden, clear its selections
+    if (!this.sectionVisibility[section]) {
+      console.log(`Disabling section: ${section}`);
+      this.multiSelectStates[section].selected = [];
+      this.multiSelectStates[section].searchTerm = '';
+      
+      // Clear corresponding selected IDs
+      switch (section) {
+        case 'employees':
+          this.selectedEmployeeIds = [];
+          break;
+        case 'departments':
+          this.selectedDepartmentIds = [];
+          break;
+        case 'branches':
+          this.selectedBranchIds = [];
+          break;
+        case 'roles':
+          this.selectedRoleIds = [];
+          break;
+        case 'departmentManagers':
+          this.selectedDepartmentManagerIds = [];
+          break;
+        case 'branchManagers':
+          this.selectedBranchManagerIds = [];
+          break;
+      }
+    }
+  }
+
+  // Helper method to populate multiSelectState for specific section
+  private populateMultiSelectState(section: string) {
+    switch (section) {
+      case 'employees':
+        if (this.employees.length > 0) {
+          this.multiSelectStates['employees'].available = this.employees.map(emp => ({
+            id: emp.value,
+            name: emp.label
+          }));
+          console.log('Populated employees multiSelectState:', this.multiSelectStates['employees'].available.length);
+        }
+        break;
+      case 'departments':
+        if (this.departments.length > 0) {
+          this.multiSelectStates['departments'].available = this.departments.map(dept => ({
+            id: dept.value,
+            name: dept.label
+          }));
+          console.log('Populated departments multiSelectState:', this.multiSelectStates['departments'].available.length);
+        }
+        break;
+      case 'branches':
+        if (this.branches.length > 0) {
+          this.multiSelectStates['branches'].available = this.branches.map(branch => ({
+            id: branch.value,
+            name: branch.label
+          }));
+          console.log('Populated branches multiSelectState:', this.multiSelectStates['branches'].available.length);
+        }
+        break;
+      case 'roles':
+        if (this.roles.length > 0) {
+          this.multiSelectStates['roles'].available = this.roles.map(role => ({
+            id: role.value,
+            name: role.label
+          }));
+          console.log('Populated roles multiSelectState:', this.multiSelectStates['roles'].available.length);
+        }
+        break;
+      case 'departmentManagers':
+        if (this.departmentManagers.length > 0) {
+          this.multiSelectStates['departmentManagers'].available = this.departmentManagers.map(mgr => ({
+            id: mgr.value,
+            name: mgr.label
+          }));
+          console.log('Populated departmentManagers multiSelectState:', this.multiSelectStates['departmentManagers'].available.length);
+        }
+        break;
+      case 'branchManagers':
+        if (this.branchManagers.length > 0) {
+          this.multiSelectStates['branchManagers'].available = this.branchManagers.map(mgr => ({
+            id: mgr.value,
+            name: mgr.label
+          }));
+          console.log('Populated branchManagers multiSelectState:', this.multiSelectStates['branchManagers'].available.length);
+        }
+        break;
+    }
   }
 
   submitUserRoleAssignment() {
     if (this.userRoleAssignmentForm.valid) {
       const formData = this.userRoleAssignmentForm.value;
       
-      if (this.isEditMode && this.selectedRoleAssignment) {
-        // Update existing role assignment
-        const updatedRoleAssignment: UserRoleAssignment = {
-          ...this.selectedRoleAssignment,
-          // Map form data to model properties
-          fromEmployeeName: this.employees.find(e => e.value == formData.employeeId)?.label || '',
-          fromDepartmentName: this.departments.find(d => d.value == formData.departmentId)?.label || null,
-          fromManagerOfDepartmentName: this.departments.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
-          fromBranchName: this.branches.find(b => b.value == formData.branchId)?.label || null,
-          fromManagerOfBranchName: this.branches.find(m => m.value == formData.managerOfBranchId)?.label || null,
-          fromRoleName: this.roles.find(r => r.value == formData.roleId)?.label || '',
-          startDate: formData.startDate || null,
-          endDate: formData.endDate || null,
-          note: formData.notes || null
-        };
+      // Prepare the payload according to AssignUserRolesRequest interface
+      const payload: AssignUserRolesRequest = {
+        assignedRoles: this.selectedRoleIds,
+        empIds: this.selectedEmployeeIds,
+        mgrOfDeptIds: this.selectedDepartmentManagerIds,
+        deptIds: this.selectedDepartmentIds,
+        mgrOfBranchIds: this.selectedBranchManagerIds,
+        branchIds: this.selectedBranchIds,
+        roleIds: this.selectedRoleIds,
+        fromDate: formData.startDate ? new Date(formData.startDate).toISOString() : '',
+        toDate: formData.endDate ? new Date(formData.endDate).toISOString() : '',
+        notes: formData.notes || '',
+        currentEmpId: this.authService.getEmpIdAsNumber() || 0
+      };
 
-        this.roleAssignmentService.updateUserRoleAssignment(updatedRoleAssignment,this.langService.getLangValue()).subscribe({
-          next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-              detail: this.langService.getCurrentLang() === 'ar' ? 'تم تحديث تخصيص الدور بنجاح' : 'User role assignment updated successfully' 
-            });
-            this.closeModal();
-            this.loadUserRoleAssignments();
-          },
-          error: (error) => {
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-              detail: this.langService.getCurrentLang() === 'ar' ? 'حدث خطأ أثناء تحديث تخصيص الدور' : 'An error occurred while updating the user role assignment' 
-            });
-          }
-        });
-      } else {
-        // Add new role assignment
-        const newRoleAssignment: UserRoleAssignment = {
-          recId: 0, // This will be set by the backend
-          fromEmployeeName: this.employees.find(e => e.value == formData.employeeId)?.label || '',
-          fromDepartmentName: this.departments.find(d => d.value == formData.departmentId)?.label || null,
-          fromManagerOfDepartmentName: this.departments.find(m => m.value == formData.managerOfDepartmentId)?.label || null,
-          fromBranchName: this.branches.find(b => b.value == formData.branchId)?.label || null,
-          fromManagerOfBranchName: this.branches.find(m => m.value == formData.managerOfBranchId)?.label || null,
-          fromRoleName: this.roles.find(r => r.value == formData.roleId)?.label || '',
-          startDate: formData.startDate || null,
-          startHijriDate: null,
-          endDate: formData.endDate || null,
-          endHijriDate: null,
-          delegateId: null,
-          note: formData.notes || null,
-          del: "Del",
-          sel: ""
-        };
+      // Console.log values before submission
+      console.log('=== USER ROLE ASSIGNMENT SUBMISSION ===');
+      console.log('Selected Employees:', this.selectedEmployeeIds);
+      console.log('Selected Departments:', this.selectedDepartmentIds);
+      console.log('Selected Department Managers:', this.selectedDepartmentManagerIds);
+      console.log('Selected Branches:', this.selectedBranchIds);
+      console.log('Selected Branch Managers:', this.selectedBranchManagerIds);
+      console.log('Selected Roles:', this.selectedRoleIds);
+      console.log('Start Date:', formData.startDate);
+      console.log('End Date:', formData.endDate);
+      console.log('Current Employee ID:', this.authService.getEmpIdAsNumber());
+      console.log('Complete Payload:', payload);
+      console.log('=======================================');
 
-        this.roleAssignmentService.addUserRoleAssignment(newRoleAssignment, this.langService.getLangValue()).subscribe({
-          next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
-              detail: this.langService.getCurrentLang() === 'ar' ? 'تم إضافة تخصيص الدور بنجاح' : 'User role assignment added successfully' 
-            });
-            this.closeModal();
-            this.loadUserRoleAssignments();
-          },
-          error: (error) => {
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
-              detail: this.langService.getCurrentLang() === 'ar' ? 'حدث خطأ أثناء إضافة تخصيص الدور' : 'An error occurred while adding the user role assignment' 
-            });
-          }
-        });
-      }
+      // Call the assignUserRoles endpoint
+      this.roleAssignmentService.assignUserRoles(this.langService.getLangValue(), payload).subscribe({
+        next: (response) => {
+          console.log('Assignment Response:', response);
+          this.messageService.add({ 
+            severity: 'success', 
+            summary: this.langService.getCurrentLang() === 'ar' ? 'نجح' : 'Success', 
+            detail: this.langService.getCurrentLang() === 'ar' ? 'تم تخصيص الأدوار بنجاح' : 'User roles assigned successfully' 
+          });
+          this.closeModal();
+          this.loadUserRoleAssignments();
+        },
+        error: (error) => {
+          console.error('Assignment Error:', error);
+          this.messageService.add({ 
+            severity: 'error', 
+            summary: this.langService.getCurrentLang() === 'ar' ? 'خطأ' : 'Error', 
+            detail: this.langService.getCurrentLang() === 'ar' ? 'حدث خطأ أثناء تخصيص الأدوار' : 'An error occurred while assigning user roles' 
+          });
+        }
+      });
     } else {
       this.markFormGroupTouched(this.userRoleAssignmentForm);
     }
@@ -275,9 +444,9 @@ export class UserRoleAssignmentComponent implements OnInit {
 private areAllDropdownsLoaded(): boolean {
     return this.dropdownDataLoaded.employees && 
            this.dropdownDataLoaded.departments && 
-           this.dropdownDataLoaded.deptManager && 
+           this.dropdownDataLoaded.departmentManagers && 
            this.dropdownDataLoaded.branches && 
-           this.dropdownDataLoaded.brancheManager && 
+           this.dropdownDataLoaded.branchManagers && 
            this.dropdownDataLoaded.roles && 
            this.employees.length > 0 &&
            this.departments.length > 0 &&
@@ -300,13 +469,18 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
 
     try {
       const loadPromises: Promise<any>[] = [];
-      // Only load Employee if not already loaded for this language
+      
+      // Load Employees
       if (!this.dropdownDataLoaded.employees || this.employees.length === 0) {
         console.log('Loading employees...');
-        const employeePromise = this.dropdownService.getEmpsDropdownList(currentLang,empId).toPromise()
+        const employeePromise = this.dropdownService.getEmpsDropdownList(currentLang, empId).toPromise()
           .then(response => {
             if (response && response.isSuccess) {
               this.employees = response.data.employees || [];
+              this.multiSelectStates['employees'].available = this.employees.map(emp => ({
+                id: emp.value,
+                name: emp.label
+              }));
               this.dropdownDataLoaded.employees = true;
               console.log('Employees loaded:', this.employees.length);
             } else {
@@ -318,12 +492,17 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
         loadPromises.push(employeePromise);
       }
 
+      // Load Departments
       if (!this.dropdownDataLoaded.departments || this.departments.length === 0) {
         console.log('Loading departments...');
         const departmentPromise = this.dropdownService.getDepartmentsDropdownList(currentLang).toPromise()
           .then(response => {
             if (response && response.isSuccess) {
               this.departments = response.data.departments || [];
+              this.multiSelectStates['departments'].available = this.departments.map(dept => ({
+                id: dept.value,
+                name: dept.label
+              }));
               this.dropdownDataLoaded.departments = true;
               console.log('Departments loaded:', this.departments.length);
             } else {
@@ -335,38 +514,92 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
         loadPromises.push(departmentPromise);
       }
 
+      // Load Department Managers (use same departments endpoint)
+      if (!this.dropdownDataLoaded.departmentManagers || this.departmentManagers.length === 0) {
+        console.log('Loading department managers...');
+        const deptManagerPromise = this.dropdownService.getDepartmentsDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.departmentManagers = response.data.departments || [];
+              this.multiSelectStates['departmentManagers'].available = this.departmentManagers.map(mgr => ({
+                id: mgr.value,
+                name: mgr.label
+              }));
+              this.dropdownDataLoaded.departmentManagers = true;
+              console.log('Department managers loaded:', this.departmentManagers.length);
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading department managers';
+              console.error('Failed to load department managers:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(deptManagerPromise);
+      }
+
+      // Load Branches
       if (!this.dropdownDataLoaded.branches || this.branches.length === 0) {
         console.log('Loading branches...');
-        const departmentPromise = this.dropdownService.getBranchesDropdownList(currentLang).toPromise()
+        const branchPromise = this.dropdownService.getBranchesDropdownList(currentLang).toPromise()
           .then(response => {
             if (response && response.isSuccess) {
               this.branches = response.data.parentBranches || [];
+              this.multiSelectStates['branches'].available = this.branches.map(branch => ({
+                id: branch.value,
+                name: branch.label
+              }));
               this.dropdownDataLoaded.branches = true;
-              console.log('branches loaded:', this.branches.length);
+              console.log('Branches loaded:', this.branches.length);
             } else {
               const errorMsg = response?.message || 'Unknown error loading branches';
               console.error('Failed to load branches:', errorMsg);
               throw new Error(errorMsg);
             }
           });
-        loadPromises.push(departmentPromise);
+        loadPromises.push(branchPromise);
       }
 
+      // Load Branch Managers (use same branches endpoint)
+      if (!this.dropdownDataLoaded.branchManagers || this.branchManagers.length === 0) {
+        console.log('Loading branch managers...');
+        const branchManagerPromise = this.dropdownService.getBranchesDropdownList(currentLang).toPromise()
+          .then(response => {
+            if (response && response.isSuccess) {
+              this.branchManagers = response.data.parentBranches || [];
+              this.multiSelectStates['branchManagers'].available = this.branchManagers.map(mgr => ({
+                id: mgr.value,
+                name: mgr.label
+              }));
+              this.dropdownDataLoaded.branchManagers = true;
+              console.log('Branch managers loaded:', this.branchManagers.length);
+            } else {
+              const errorMsg = response?.message || 'Unknown error loading branch managers';
+              console.error('Failed to load branch managers:', errorMsg);
+              throw new Error(errorMsg);
+            }
+          });
+        loadPromises.push(branchManagerPromise);
+      }
+
+      // Load Roles
       if (!this.dropdownDataLoaded.roles || this.roles.length === 0) {
         console.log('Loading roles...');
-        const departmentPromise = this.dropdownService.getEmployeeRolesDropdownList(currentLang).toPromise()
+        const rolePromise = this.dropdownService.getEmployeeRolesDropdownList(currentLang).toPromise()
           .then(response => {
             if (response && response.isSuccess) {
               this.roles = response.data.dropdownListsForRoleModuleRights || [];
+              this.multiSelectStates['roles'].available = this.roles.map(role => ({
+                id: role.value,
+                name: role.label
+              }));
               this.dropdownDataLoaded.roles = true;
-              console.log('roles loaded:', this.roles.length);
+              console.log('Roles loaded:', this.roles.length);
             } else {
               const errorMsg = response?.message || 'Unknown error loading roles';
               console.error('Failed to load roles:', errorMsg);
               throw new Error(errorMsg);
             }
           });
-        loadPromises.push(departmentPromise);
+        loadPromises.push(rolePromise);
       }
 
       // If no API calls needed, resolve immediately
@@ -421,30 +654,13 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
   }
 
   editUserRoleAssignment(roleAssignment: UserRoleAssignment) {
-    this.isEditMode = true;
-    this.selectedRoleAssignment = roleAssignment;
-    
-    // Find the IDs from the names (reverse lookup)
-    const employeeId = this.employees.find(e => e.label === roleAssignment.fromEmployeeName)?.value || '';
-    const departmentId = this.departments.find(d => d.label === roleAssignment.fromDepartmentName)?.value || '';
-    const managerOfDepartmentId = this.departments.find(m => m.label === roleAssignment.fromManagerOfDepartmentName)?.value || '';
-    const branchId = this.branches.find(b => b.label === roleAssignment.fromBranchName)?.value || '';
-    const managerOfBranchId = this.branches.find(m => m.label === roleAssignment.fromManagerOfBranchName)?.value || '';
-    const roleId = this.roles.find(r => r.label === roleAssignment.fromRoleName)?.value || '';
-    
-    this.userRoleAssignmentForm.patchValue({
-      employeeId: employeeId,
-      departmentId: departmentId,
-      managerOfDepartmentId: managerOfDepartmentId,
-      branchId: branchId,
-      managerOfBranchId: managerOfBranchId,
-      roleId: roleId,
-      startDate: roleAssignment.startDate,
-      endDate: roleAssignment.endDate,
-      notes: roleAssignment.note
+    // Edit functionality is not implemented in the new modal structure
+    // The new modal is designed for creating assignments only
+    this.messageService.add({
+      severity: 'info',
+      summary: this.langService.getCurrentLang() === 'ar' ? 'معلومات' : 'Info',
+      detail: this.langService.getCurrentLang() === 'ar' ? 'وظيفة التعديل غير متاحة في النسخة الجديدة' : 'Edit functionality is not available in the new version'
     });
-    
-    this.showAddModal = true;
   }
 
   deleteUserRoleAssignment(roleAssignment: UserRoleAssignment) {
@@ -570,9 +786,26 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
       if (field.errors['required']) {
         return this.langService.getCurrentLang() === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
       }
-      // Add more validation error messages as needed
     }
+    
+    // Check for form-level date range validation error
+    if (formGroup.errors && formGroup.errors['dateRangeInvalid']) {
+      if (fieldName === 'startDate' || fieldName === 'endDate') {
+        return this.langService.getCurrentLang() === 'ar' ? 
+          'تاريخ البداية يجب أن يكون قبل أو يساوي تاريخ النهاية' : 
+          'Start date must be before or equal to end date';
+      }
+    }
+    
     return '';
+  }
+
+  // Check if form has date range error
+  get hasDateRangeError(): boolean {
+    return !!(this.userRoleAssignmentForm.errors && 
+              this.userRoleAssignmentForm.errors['dateRangeInvalid'] && 
+              (this.userRoleAssignmentForm.get('startDate')?.touched || 
+               this.userRoleAssignmentForm.get('endDate')?.touched));
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
@@ -585,5 +818,85 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
   // Getter methods for form validation
   get isUserRoleAssignmentFormValid(): boolean {
     return this.userRoleAssignmentForm.valid;
+  }
+
+  // Multi-select management methods
+  filterAvailableItems(type: string, searchTerm: string) {
+    const state = this.multiSelectStates[type];
+    if (!searchTerm) {
+      // Show all available items that are not already selected
+      return state.available.filter(item => 
+        !state.selected.some(selected => selected.id === item.id)
+      );
+    }
+    return state.available.filter(item => 
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !state.selected.some(selected => selected.id === item.id)
+    );
+  }
+
+  addToSelected(type: string, item: SelectableItem) {
+    const state = this.multiSelectStates[type];
+    if (!state.selected.some(selected => selected.id === item.id)) {
+      state.selected.push(item);
+      this.updateSelectedIds(type);
+    }
+  }
+
+  removeFromSelected(type: string, item: SelectableItem) {
+    const state = this.multiSelectStates[type];
+    state.selected = state.selected.filter(selected => selected.id !== item.id);
+    this.updateSelectedIds(type);
+  }
+
+  addAllToSelected(type: string) {
+    const state = this.multiSelectStates[type];
+    const filteredItems = this.filterAvailableItems(type, state.searchTerm);
+    filteredItems.forEach(item => {
+      if (!state.selected.some(selected => selected.id === item.id)) {
+        state.selected.push(item);
+      }
+    });
+    this.updateSelectedIds(type);
+  }
+
+  removeAllFromSelected(type: string) {
+    const state = this.multiSelectStates[type];
+    state.selected = [];
+    this.updateSelectedIds(type);
+  }
+
+  private updateSelectedIds(type: string) {
+    const state = this.multiSelectStates[type];
+    const selectedIds = state.selected.map(item => Number(item.id));
+    
+    switch (type) {
+      case 'employees':
+        this.selectedEmployeeIds = selectedIds;
+        break;
+      case 'departments':
+        this.selectedDepartmentIds = selectedIds;
+        break;
+      case 'branches':
+        this.selectedBranchIds = selectedIds;
+        break;
+      case 'roles':
+        this.selectedRoleIds = selectedIds;
+        break;
+      case 'departmentManagers':
+        this.selectedDepartmentManagerIds = selectedIds;
+        break;
+      case 'branchManagers':
+        this.selectedBranchManagerIds = selectedIds;
+        break;
+    }
+  }
+
+  getSelectedCount(type: string): number {
+    return this.multiSelectStates[type].selected.length;
+  }
+
+  getAvailableCount(type: string): number {
+    return this.filterAvailableItems(type, this.multiSelectStates[type].searchTerm).length;
   }
 }
