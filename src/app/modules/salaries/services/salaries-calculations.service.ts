@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CalculateSalaryRequest, SalaryResponse } from '../../../core/models/CalculateSalaryRequest';
 import { ApiResponse } from '../../../core/models/apiResponse';
@@ -16,16 +16,19 @@ export class SalariesCalculationsService {
   constructor(private http: HttpClient) {}
 
   // Generic method to get paginated salaries calculations
-  getSalariesCalculations(lang: string, pageNumber: number, pageSize: number): Observable<SalaryResponse> {
+  getSalariesCalculations(lang: string, pageNumber: number, pageSize: number, colunmSearchName: string | null, colunmSearchValue: string | null): Observable<SalaryResponse> {
     const headers = {
       'accept': 'text/plain',
       'lang': lang
     };
 
-    const params = {
-      pageSize: pageSize,
-      pageIndex: pageNumber
-    };
+    let params = new HttpParams()
+                  .set('pageSize', pageSize.toString())
+                  .set('pageIndex', pageNumber.toString());
+
+    if(colunmSearchName && colunmSearchValue){
+        params = params.set(colunmSearchName, colunmSearchValue);
+      }
     
     return this.http.get<SalaryResponse>(`${this.apiUrl}`, { headers, params });
   }

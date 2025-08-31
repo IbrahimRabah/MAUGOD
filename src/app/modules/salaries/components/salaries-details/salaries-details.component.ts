@@ -104,7 +104,6 @@ selectColumn(col: any) {
 
     // Load initial data
     this.loadDropdownData();
-    this.loadSalariesDetails();
   }
 
   ngOnDestroy() {
