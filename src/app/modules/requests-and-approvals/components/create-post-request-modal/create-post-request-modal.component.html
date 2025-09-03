@@ -1,0 +1,176 @@
+<div class="modal-backdrop" *ngIf="showModal" (click)="onClose()">
+  <!-- Toast Messages -->
+  <p-toast position="top-right"></p-toast>
+  
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h4>{{ 'CREATE_POST_REQUEST.TITLE' | translate }}</h4>
+      <button class="close-btn" (click)="onClose()">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+        <div class="form-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          
+          <!-- Employee Dropdown -->
+          <div class="form-group">
+            <label class="required-label">{{ 'CREATE_POST_REQUEST.EMPLOYEE' | translate }}</label>
+            <p-dropdown 
+              formControlName="employee"
+              [options]="employees"
+              optionLabel="label"
+              optionValue="value"
+              [placeholder]="'CREATE_POST_REQUEST.SELECT_EMPLOYEE' | translate"
+              [loading]="loadingEmployees"
+              [filter]="true"
+              [showClear]="true"
+              class="form-input w-100"
+              [class.is-invalid]="isFieldRequired('employee')">
+            </p-dropdown>
+            <small *ngIf="isFieldRequired('employee')" class="error-message">
+              {{ 'CREATE_POST_REQUEST.EMPLOYEE_REQUIRED' | translate }}
+            </small>
+          </div>
+
+          <!-- Status Dropdown -->
+          <div class="form-group">
+            <label class="required-label">{{ 'CREATE_POST_REQUEST.STATUS' | translate }}</label>
+            <p-dropdown 
+              formControlName="status"
+              [options]="statuses"
+              optionLabel="label"
+              optionValue="value"
+              [placeholder]="'CREATE_POST_REQUEST.SELECT_STATUS' | translate"
+              [loading]="loadingStatuses"
+              [filter]="true"
+              [showClear]="true"
+              class="form-input w-100"
+              [class.is-invalid]="isFieldRequired('status')">
+            </p-dropdown>
+            <small *ngIf="isFieldRequired('status')" class="error-message">
+              {{ 'CREATE_POST_REQUEST.STATUS_REQUIRED' | translate }}
+            </small>
+          </div>
+
+          <!-- Part Dropdown -->
+          <div class="form-group">
+            <label>{{ 'CREATE_POST_REQUEST.PART' | translate }}</label>
+            <p-dropdown 
+              formControlName="part"
+              [options]="parts"
+              optionLabel="label"
+              optionValue="value"
+              [placeholder]="'CREATE_POST_REQUEST.SELECT_PART' | translate"
+              [loading]="loadingParts"
+              [filter]="true"
+              [showClear]="true"
+              class="form-input w-100">
+            </p-dropdown>
+          </div>
+
+          <!-- Date Fields Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="required-label">{{ 'CREATE_POST_REQUEST.START_DATE' | translate }}</label>
+              <input 
+                type="date"
+                formControlName="startDate"
+                [max]="maxDate | date:'yyyy-MM-dd'"
+                class="form-input"
+                [class.is-invalid]="isFieldRequired('startDate')">
+              <small *ngIf="isFieldRequired('startDate')" class="error-message">
+                {{ 'CREATE_POST_REQUEST.START_DATE_REQUIRED' | translate }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label class="required-label">{{ 'CREATE_POST_REQUEST.END_DATE' | translate }}</label>
+              <input 
+                type="date"
+                formControlName="endDate"
+                [max]="maxDate | date:'yyyy-MM-dd'"
+                class="form-input"
+                [class.is-invalid]="isFieldRequired('endDate')">
+              <small *ngIf="isFieldRequired('endDate')" class="error-message">
+                {{ 'CREATE_POST_REQUEST.END_DATE_REQUIRED' | translate }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div class="form-group">
+            <label class="required-label">{{ 'CREATE_POST_REQUEST.NOTE' | translate }}</label>
+            <textarea 
+              formControlName="note"
+              rows="4"
+              [placeholder]="'CREATE_POST_REQUEST.NOTE_PLACEHOLDER' | translate"
+              class="form-input"
+              [class.is-invalid]="isFieldRequired('note')">
+            </textarea>
+            <small *ngIf="isFieldRequired('note')" class="error-message">
+              {{ 'CREATE_POST_REQUEST.NOTE_REQUIRED' | translate }}
+            </small>
+          </div>
+
+          <!-- File Upload -->
+          <div class="form-group">
+            <label>{{ 'CREATE_POST_REQUEST.ATTACHMENT' | translate }}</label>
+            <div class="file-upload-container">
+              <input 
+                type="file" 
+                id="fileInput"
+                (change)="onFileSelected($event)"
+                class="file-input"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+              <button type="button" class="file-upload-btn" (click)="triggerFileInput()">
+                <i class="fa fa-upload"></i>
+                {{ 'CREATE_POST_REQUEST.CHOOSE_FILE' | translate }}
+              </button>
+              
+              <div *ngIf="selectedFile" class="selected-file">
+                <i class="fa fa-file"></i>
+                <span>{{ selectedFile.name }}</span>
+                <button type="button" class="remove-file-btn" (click)="removeFile()">
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Attachment Note -->
+          <div class="form-group">
+            <label>{{ 'CREATE_POST_REQUEST.ATTACHMENT_NOTE' | translate }}</label>
+            <textarea 
+              formControlName="attachmentNote"
+              rows="2"
+              [placeholder]="'CREATE_POST_REQUEST.ATTACHMENT_NOTE_PLACEHOLDER' | translate"
+              class="form-input">
+            </textarea>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="onClose()"
+        [disabled]="submitting">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        (click)="onSubmit()"
+        [disabled]="submitting || createForm.invalid">
+        <i *ngIf="submitting" class="fa fa-spinner fa-spin"></i>
+        {{ submitting ? ('CREATE_POST_REQUEST.SUBMITTING' | translate) : ('CREATE_POST_REQUEST.SUBMIT' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,339 @@
-<p>post-request works!</p>
+<div class="post-request-container">
+  <!-- Toast Messages with enhanced configuration -->
+  <p-toast position="top-right" [baseZIndex]="10001" [preventOpenDuplicates]="true" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'POST_REQUEST.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>{{ 'POST_REQUEST.START_DATE' | translate }}</label>
+          <input 
+            type="date"
+            formControlName="startDate"
+            [placeholder]="'POST_REQUEST.START_DATE' | translate"
+            [max]="maxDate | date:'yyyy-MM-dd'"
+            class="form-input">
+        </div>
+
+        <div class="filter-group">
+          <label>{{ 'POST_REQUEST.END_DATE' | translate }}</label>
+          <input 
+            type="date"
+            formControlName="endDate"
+            [placeholder]="'POST_REQUEST.END_DATE' | translate"
+            [max]="maxDate | date:'yyyy-MM-dd'"
+            class="form-input">
+        </div>
+
+        <div class="filter-actions">
+          <button 
+            type="button" 
+            class="filter-btn apply-btn" 
+            (click)="applyFilter()">
+            <i class="fa fa-search"></i>
+            {{ 'POST_REQUEST.APPLY_FILTER' | translate }}
+          </button>
+          
+          <button 
+            type="button" 
+            class="filter-btn reset-btn" 
+            (click)="resetFilter()">
+            <i class="fa fa-refresh"></i>
+            {{ 'POST_REQUEST.RESET_FILTER' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="create-btn" 
+              (click)="createRequest()">
+        <i class="fa fa-plus"></i>
+        {{ 'POST_REQUEST.CREATE_REQUEST' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            class="search-input" 
+            [placeholder]="'POST_REQUEST.SEARCH_PLACEHOLDER' | translate"
+            formControlName="searchTerm">
+          <button 
+            type="button" 
+            class="search-btn" 
+            (click)="onSearch()"
+            [title]="'POST_REQUEST.SEARCH' | translate">
+            <i class="fa fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'POST_REQUEST.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'POST_REQUEST.REQUEST_ID' | translate }}</th>
+          <th>{{ 'POST_REQUEST.EMPLOYEE' | translate }}</th>
+          <th>{{ 'POST_REQUEST.REQUEST_BY_EMPLOYEE' | translate }}</th>
+          <th>{{ 'POST_REQUEST.STATUS' | translate }}</th>
+          <th>{{ 'POST_REQUEST.PART' | translate }}</th>
+          <th>{{ 'POST_REQUEST.REQUEST_STATUS' | translate }}</th>
+          <th>{{ 'POST_REQUEST.START_DATE_HEADER' | translate }}</th>
+          <th>{{ 'POST_REQUEST.END_DATE_HEADER' | translate }}</th>
+          <th>{{ 'POST_REQUEST.NOTE' | translate }}</th>
+          <th class="action-column">{{ 'POST_REQUEST.DETAILS' | translate }}</th>
+          <th class="action-column">{{ 'POST_REQUEST.GRAPH' | translate }}</th>
+          <th class="action-column">{{ 'POST_REQUEST.ATTACHMENTS' | translate }}</th>
+          <th class="action-column">{{ 'POST_REQUEST.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let request of filteredPostRequests; trackBy: trackByRequestId" class="table-row">
+          <!-- Request ID -->
+          <td>{{ request.reqId }}</td>
+          
+          <!-- Employee -->
+          <td>{{ request.empName }}</td>
+          
+          <!-- Request By Employee -->
+          <td>{{ request.requestByEmpName }}</td>
+          
+          <!-- Status -->
+          <td>
+            <i [class]="getStatusIcon(parseInt(request.stsId))"></i>
+            {{ request.stsName }}
+          </td>
+          
+          <!-- Part -->
+          <td>{{ request.partName }}</td>
+          
+          <!-- Request Status -->
+          <td>
+            <span [class]="'status-badge status-' + request.reqStsId">
+              {{ request.reqStsName }}
+            </span>
+          </td>
+          
+          <!-- Start Date -->
+          <td>{{ request.sDate | date:'dd/MM/yyyy' }}</td>
+          
+          <!-- End Date -->
+          <td>{{ request.eDate | date:'dd/MM/yyyy' }}</td>
+          
+          <!-- Note -->
+          <td [title]="request.note">
+            {{ request.note.length > 30 ? (request.note | slice:0:30) + '...' : request.note }}
+          </td>
+          
+          <!-- Details -->
+          <td class="text-center action-column">
+            <button 
+              class="action-btn details-btn" 
+              (click)="viewDetails(request)"
+              [title]="'POST_REQUEST.DETAILS' | translate">
+              <i class="fa fa-eye"></i>
+            </button>
+          </td>
+          
+          <!-- Graph -->
+          <td class="text-center action-column">
+            <button 
+              class="action-btn graph-btn" 
+              (click)="viewGraph(request)"
+              [title]="'POST_REQUEST.GRAPH' | translate">
+              <i class="fa fa-chart-line"></i>
+            </button>
+          </td>
+          
+          <!-- Attachments -->
+          <td class="text-center action-column">
+            <button 
+              class="action-btn attachments-btn" 
+              (click)="viewAttachments(request)"
+              [title]="'POST_REQUEST.ATTACHMENTS' | translate">
+              <i class="fa fa-paperclip"></i>
+            </button>
+          </td>
+          
+          <!-- Delete -->
+          <td class="text-center action-column">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deletePostRequest(request)"
+              [disabled]="!canDeleteOrSelect(request)"
+              [title]="'POST_REQUEST.DELETE' | translate">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Empty state row -->
+        <tr *ngIf="filteredPostRequests.length === 0" class="empty-row">
+          <td colspan="13" class="empty-message text-center">
+            <i class="fa fa-inbox"></i>
+            <span>{{ 'POST_REQUEST.NO_DATA_FOUND' | translate }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && filteredPostRequests.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'POST_REQUEST.SHOWING' | translate }} {{ currentPageStart }} {{ 'POST_REQUEST.TO' | translate }} {{ currentPageEnd }} {{ 'POST_REQUEST.OF' | translate }} {{ totalRecords }} {{ 'POST_REQUEST.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- Enhanced Pagination with First/Last -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <!-- Arabic RTL Layout - Arrows flipped to match RTL reading direction -->
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoNext"
+                (click)="goToLastPage()"
+                title="{{ 'POST_REQUEST.LAST_PAGE' | translate }}">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+        
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext"
+                (click)="nextPage()"
+                title="{{ 'POST_REQUEST.NEXT' | translate }}">
+          <i class="fa fa-chevron-right"></i>
+        </button>
+        
+        <span class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">{{ 'POST_REQUEST.OF' | translate }}</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </span>
+        
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious"
+                (click)="previousPage()"
+                title="{{ 'POST_REQUEST.PREVIOUS' | translate }}">
+          <i class="fa fa-chevron-left"></i>
+        </button>
+        
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoPrevious"
+                (click)="goToFirstPage()"
+                title="{{ 'POST_REQUEST.FIRST_PAGE' | translate }}">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- English LTR Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoPrevious"
+                (click)="goToFirstPage()"
+                title="{{ 'POST_REQUEST.FIRST_PAGE' | translate }}">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+        
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious"
+                (click)="previousPage()"
+                title="{{ 'POST_REQUEST.PREVIOUS' | translate }}">
+          <i class="fa fa-chevron-left"></i>
+        </button>
+        
+        <span class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">{{ 'POST_REQUEST.OF' | translate }}</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </span>
+        
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext"
+                (click)="nextPage()"
+                title="{{ 'POST_REQUEST.NEXT' | translate }}">
+          <i class="fa fa-chevron-right"></i>
+        </button>
+        
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoNext"
+                (click)="goToLastPage()"
+                title="{{ 'POST_REQUEST.LAST_PAGE' | translate }}">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'POST_REQUEST.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" class="form-input">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Request Details Modal -->
+  <app-request-details-modal
+    [showModal]="showRequestDetailsModal"
+    [requestId]="selectedRequestId"
+    (closeModal)="onCloseModal()">
+  </app-request-details-modal>
+  
+  <!-- Attachments Modal -->
+  <app-post-request-attachments-modal
+    [showModal]="showAttachmentsModal"
+    [requestId]="selectedAttachmentRequestId"
+    [attachments]="postRequestAttachments"
+    [totalCount]="attachmentsTotalCount"
+    [loading]="loadingAttachments"
+    (closeModal)="onCloseAttachmentsModal()"
+    (attachmentUploaded)="onAttachmentUploaded()"
+    (attachmentDeleted)="onAttachmentDeleted()">
+  </app-post-request-attachments-modal>
+
+  <!-- Road Map Modal -->
+  <div class="modal-backdrop" *ngIf="showRoadMapModal" (click)="onCloseRoadMapModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h4>{{ 'POST_REQUEST.ROAD_MAP_TITLE' | translate }}</h4>
+        <button class="close-btn" (click)="onCloseRoadMapModal()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="road-map-info">
+          <p>{{ 'POST_REQUEST.ROAD_MAP_INFO' | translate }}</p>
+          <p><strong>{{ 'POST_REQUEST.REQUEST_ID' | translate }}:</strong> {{ selectedRoadMapRequestId }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Post Request Modal -->
+  <app-create-post-request-modal
+    [showModal]="showCreateModal"
+    (closeModal)="onCreateModalClose()"
+    (requestCreated)="onRequestCreated()">
+  </app-create-post-request-modal>
+</div>

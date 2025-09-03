@@ -1,0 +1,489 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.upload-overlay {
+  z-index: 10000;
+}
+
+/* Modal Content */
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.attachments-modal {
+  width: 90%;
+  max-width: 1000px;
+  max-height: 80vh;
+}
+
+.upload-modal {
+  width: 90%;
+  max-width: 500px;
+  max-height: 70vh;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-header h3,
+.modal-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Modal Body */
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  justify-content: flex-end;
+}
+
+.upload-btn {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Table Container */
+.table-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+/* Loading State */
+.table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #6c757d;
+  font-size: 14px;
+  gap: 8px;
+}
+
+/* Styled Table */
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: white;
+}
+
+.styled-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.styled-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.styled-table th:last-child {
+  border-right: none;
+}
+
+.styled-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f3f4;
+  border-right: 1px solid #f1f3f4;
+  color: #495057;
+  vertical-align: middle;
+}
+
+.styled-table td:last-child {
+  border-right: none;
+}
+
+.styled-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #f8f9ff;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background-color: #fafbfc;
+}
+
+.styled-table tbody tr:nth-child(even):hover {
+  background-color: #f8f9ff;
+}
+
+/* Attachment Info */
+.attachment-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attachment-icon {
+  color: #007bff;
+  font-size: 16px;
+}
+
+.file-name {
+  font-weight: 500;
+}
+
+.download-link {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.download-link:hover {
+  color: #0056b3;
+}
+
+/* Action Column */
+.action-column {
+  width: 80px;
+  text-align: center;
+}
+
+.action-btn {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-btn {
+  color: #28a745;
+  border-color: #28a745;
+}
+
+.download-btn:hover {
+  background: #28a745;
+  color: white;
+}
+
+.delete-btn {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.delete-btn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+/* No Data Row */
+.no-data td {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 40px;
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.pagination-btn:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Upload Form Styles */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+}
+
+/* File Input */
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-input-display {
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+}
+
+.file-input-display:hover {
+  border-color: #007bff;
+  background: #f8f9ff;
+}
+
+.file-input-display i {
+  font-size: 24px;
+  color: #6c757d;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.file-input-display span {
+  color: #495057;
+  font-size: 14px;
+}
+
+/* Note Input */
+.note-input {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.note-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Upload Actions */
+.upload-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
+}
+
+.upload-submit-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.upload-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.upload-submit-btn:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+/* RTL Support */
+[dir="rtl"] .styled-table th,
+[dir="rtl"] .styled-table td {
+  text-align: right;
+}
+
+[dir="rtl"] .attachment-info {
+  flex-direction: row-reverse;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .attachments-modal,
+  .upload-modal {
+    width: 98%;
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 16px;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+  
+  .styled-table {
+    font-size: 12px;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    padding: 10px 12px;
+  }
+  
+  .pagination-container {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .attachments-modal,
+  .upload-modal {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  
+  .upload-actions {
+    flex-direction: column;
+  }
+}

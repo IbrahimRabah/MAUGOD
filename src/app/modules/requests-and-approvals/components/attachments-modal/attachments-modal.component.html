@@ -1,0 +1,173 @@
+<div class="modal-overlay" *ngIf="showModal" (click)="onClose()">
+  <div class="modal-content attachments-modal" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h3>{{ 'ATTACHMENTS.TITLE' | translate }}</h3>
+      <button type="button" class="close-btn" (click)="onClose()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button 
+          type="button" 
+          class="upload-btn"
+          (click)="showUploadDialog()">
+          <i class="fas fa-upload"></i>
+          {{ 'ATTACHMENTS.UPLOAD' | translate }}
+        </button>
+      </div>
+
+      <!-- Attachments Table -->
+      <div class="table-container">
+        <div class="table-loading" *ngIf="loadingAttachments">
+          <i class="fas fa-spinner fa-spin"></i>
+          {{ 'COMMON.LOADING' | translate }}
+        </div>
+        
+        <table class="styled-table" *ngIf="!loadingAttachments">
+          <thead>
+            <tr>
+              <th>{{ 'ATTACHMENTS.REQUEST' | translate }}</th>
+              <th>{{ 'ATTACHMENTS.SEQUENCE' | translate }}</th>
+              <th>{{ 'ATTACHMENTS.ATTACHMENT' | translate }}</th>
+              <th>{{ 'ATTACHMENTS.NOTE' | translate }}</th>
+              <th class="action-column">{{ 'ATTACHMENTS.DOWNLOAD' | translate }}</th>
+              <th class="action-column">{{ 'ATTACHMENTS.DELETE' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let attachment of attachments; trackBy: trackByAttachmentId; let i = index">
+              <td>{{ attachment.reqId }}</td>
+              <td>{{ i + 1 + (currentPage - 1) * pageSize }}</td>
+              <td>
+                <div class="attachment-info">
+                  <i class="fas fa-file-alt attachment-icon"></i>
+                  <span class="file-name">{{ attachment.fileName }}</span>
+                </div>
+              </td>
+              <td>{{ attachment.note || '-' }}</td>
+              <td class="action-column">
+                <button 
+                  type="button" 
+                  class="action-btn download-btn"
+                  (click)="downloadAttachment(attachment)"
+                  [title]="'ATTACHMENTS.DOWNLOAD' | translate">
+                  <i class="fas fa-download"></i>
+                </button>
+              </td>
+              <td class="action-column">
+                <button 
+                  type="button" 
+                  class="action-btn delete-btn"
+                  (click)="deleteAttachment(attachment)"
+                  [title]="'ATTACHMENTS.DELETE' | translate">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="attachments.length === 0" class="no-data">
+              <td colspan="6" class="text-center">
+                {{ 'ATTACHMENTS.NO_ATTACHMENTS' | translate }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination-container" *ngIf="!loadingAttachments && attachments.length > 0">
+          <div class="pagination-info">
+            {{ 'PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'PAGINATION.OF' | translate }} {{ totalPages }}
+            ({{ 'PAGINATION.TOTAL' | translate }}: {{ totalRecords }})
+          </div>
+          <div class="pagination-controls">
+            <button 
+              type="button" 
+              class="pagination-btn" 
+              [disabled]="!canGoPrevious"
+              (click)="previousPage()">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button 
+              type="button" 
+              class="pagination-btn" 
+              [disabled]="!canGoNext"
+              (click)="nextPage()">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Dialog -->
+<div class="modal-overlay upload-overlay" *ngIf="showUploadForm" (click)="hideUploadDialog()">
+  <div class="modal-content upload-modal" (click)="$event.stopPropagation()">
+    <!-- Upload Header -->
+    <div class="modal-header">
+      <h4>{{ 'ATTACHMENTS.UPLOAD_TITLE' | translate }}</h4>
+      <button type="button" class="close-btn" (click)="hideUploadDialog()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Upload Body -->
+    <div class="modal-body">
+      <form [formGroup]="uploadForm" class="upload-form">
+        <!-- File Input -->
+        <div class="form-group">
+          <label for="fileInput">{{ 'ATTACHMENTS.ATTACHMENT' | translate }} *</label>
+          <div class="file-input-wrapper">
+            <input 
+              type="file" 
+              id="fileInput"
+              (change)="onFileSelect($event)"
+              class="file-input"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx">
+            <div class="file-input-display">
+              <i class="fas fa-paperclip"></i>
+              <span *ngIf="!selectedFile">{{ 'ATTACHMENTS.SELECT_FILE' | translate }}</span>
+              <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note Input -->
+        <div class="form-group">
+          <label for="noteInput">{{ 'ATTACHMENTS.NOTE' | translate }}</label>
+          <textarea 
+            id="noteInput"
+            formControlName="note"
+            class="form-input note-input"
+            rows="3"
+            [placeholder]="'ATTACHMENTS.NOTE_PLACEHOLDER' | translate">
+          </textarea>
+        </div>
+
+        <!-- Upload Actions -->
+        <div class="upload-actions">
+          <button 
+            type="button" 
+            class="cancel-btn"
+            (click)="hideUploadDialog()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button 
+            type="button" 
+            class="upload-submit-btn"
+            [disabled]="uploadForm.invalid || !selectedFile || uploadingFile"
+            (click)="uploadAttachment()">
+            <i class="fas fa-spinner fa-spin" *ngIf="uploadingFile"></i>
+            <i class="fas fa-upload" *ngIf="!uploadingFile"></i>
+            {{ uploadingFile ? ('ATTACHMENTS.UPLOADING' | translate) : ('ATTACHMENTS.UPLOAD' | translate) }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

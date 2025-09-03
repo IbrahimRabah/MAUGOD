@@ -1,0 +1,165 @@
+<div class="modal-overlay" *ngIf="showModal" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h3>{{ 'REQUEST_DETAILS.TITLE' | translate }}</h3>
+      <button type="button" class="close-btn" (click)="onClose()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Request Transactions Table -->
+      <div class="table-section">
+        <h4>{{ 'REQUEST_DETAILS.TRANSACTIONS_TITLE' | translate }}</h4>
+        
+        <div class="table-container">
+          <div class="table-loading" *ngIf="loadingTransactions">
+            <i class="fas fa-spinner fa-spin"></i>
+            {{ 'COMMON.LOADING' | translate }}
+          </div>
+          
+          <table class="styled-table" *ngIf="!loadingTransactions">
+            <thead>
+              <tr>
+                <th>{{ 'REQUEST_DETAILS.CURRENT_LEVEL' | translate }}</th>
+                <th>{{ 'REQUEST_DETAILS.STATUS' | translate }}</th>
+                <th>{{ 'REQUEST_DETAILS.UPDATED_BY' | translate }}</th>
+                <th>{{ 'REQUEST_DETAILS.REPLY_DATE' | translate }}</th>
+                <th>{{ 'REQUEST_DETAILS.NOTES' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let transaction of requestTransactions; trackBy: trackByTransactionId">
+                <td>{{ transaction.curlLevel }}</td>
+                <td class="status-cell">
+                  <i [class]="getStatusIcon(transaction.flag)"></i>
+                  {{ getStatusText(transaction.flag, transaction.flagName) }}
+                </td>
+                <td>{{ transaction.updatedByEmpName }}</td>
+                <td>{{ transaction.replyDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ transaction.note || '-' }}</td>
+              </tr>
+              <tr *ngIf="requestTransactions.length === 0" class="no-data">
+                <td colspan="5" class="text-center">
+                  {{ 'COMMON.NO_DATA_FOUND' | translate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Transactions Pagination -->
+          <div class="pagination-container" *ngIf="!loadingTransactions && requestTransactions.length > 0">
+            <div class="pagination-info">
+              {{ 'PAGINATION.PAGE' | translate }} {{ transactionPage }} {{ 'PAGINATION.OF' | translate }} {{ transactionTotalPages }}
+              ({{ 'PAGINATION.TOTAL' | translate }}: {{ transactionTotalRecords }})
+            </div>
+            <div class="pagination-controls">
+              <button 
+                type="button" 
+                class="pagination-btn" 
+                [disabled]="!canGoPreviousTransaction"
+                (click)="previousTransactionPage()">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button 
+                type="button" 
+                class="pagination-btn" 
+                [disabled]="!canGoNextTransaction"
+                (click)="nextTransactionPage()">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Request Road Map Table -->
+      <div class="table-section">
+        <div class="section-header">
+          <h4>{{ 'REQUEST_DETAILS.ROADMAP_TITLE' | translate }}</h4>
+          
+          <!-- Enhanced Search Form -->
+          <form [formGroup]="roadMapSearchForm" class="search-form">
+            <div class="search-container">
+              <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                  type="text" 
+                  formControlName="searchTerm"
+                  [placeholder]="'REQUEST_DETAILS.SEARCH_ROADMAP' | translate"
+                  class="search-input">
+                <button 
+                  type="button" 
+                  class="clear-search-btn"
+                  *ngIf="roadMapSearchForm.get('searchTerm')?.value"
+                  (click)="clearSearch()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="table-container">
+          <div class="table-loading" *ngIf="loadingRoadMap">
+            <i class="fas fa-spinner fa-spin"></i>
+            {{ 'COMMON.LOADING' | translate }}
+          </div>
+          
+          <table class="styled-table" *ngIf="!loadingRoadMap">
+            <thead>
+              <tr>
+                <th>{{ 'REQUEST_DETAILS.LEVEL' | translate }}</th>
+                <th>{{ 'REQUEST_DETAILS.LEVEL_NAME' | translate }}</th>
+                <th>{{ 'REQUEST_DETAILS.MANAGER' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let roadMap of filteredRoadMap; trackBy: trackByRoadMapId">
+                <td>{{ roadMap.curl_Level }}</td>
+                <td>{{ roadMap.curLevelName }}</td>
+                <td>{{ roadMap.mgrName }}</td>
+              </tr>
+              <tr *ngIf="filteredRoadMap.length === 0" class="no-data">
+                <td colspan="3" class="text-center">
+                  <span *ngIf="roadMapSearchForm.get('searchTerm')?.value">
+                    {{ 'COMMON.NO_SEARCH_RESULTS' | translate }}
+                  </span>
+                  <span *ngIf="!roadMapSearchForm.get('searchTerm')?.value">
+                    {{ 'COMMON.NO_DATA_FOUND' | translate }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Road Map Pagination -->
+          <div class="pagination-container" *ngIf="!loadingRoadMap && requestRoadMap.length > 0">
+            <div class="pagination-info">
+              {{ 'PAGINATION.PAGE' | translate }} {{ roadMapPage }} {{ 'PAGINATION.OF' | translate }} {{ roadMapTotalPages }}
+              ({{ 'PAGINATION.TOTAL' | translate }}: {{ roadMapTotalRecords }})
+            </div>
+            <div class="pagination-controls">
+              <button 
+                type="button" 
+                class="pagination-btn" 
+                [disabled]="!canGoPreviousRoadMap"
+                (click)="previousRoadMapPage()">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button 
+                type="button" 
+                class="pagination-btn" 
+                [disabled]="!canGoNextRoadMap"
+                (click)="nextRoadMapPage()">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

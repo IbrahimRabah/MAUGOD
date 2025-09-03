@@ -1,0 +1,325 @@
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../../../core/services/language.service';
+import { AttendanceTimeService } from '../../services/attendance-time.service';
+import { TimeTransactionApprovalRequestAttachment } from '../../../../core/models/TimeTransactionApprovalData';
+import { environment } from '../../../../environments/environment';
+
+@Component({
+  selector: 'app-attachments-modal',
+  templateUrl: './attachments-modal.component.html',
+  styleUrl: './attachments-modal.component.css'
+})
+export class AttachmentsModalComponent implements OnInit, OnDestroy {
+  @Input() showModal = false;
+  @Input() requestId: number = 0;
+  @Output() closeModal = new EventEmitter<void>();
+
+  // Data arrays
+  attachments: TimeTransactionApprovalRequestAttachment[] = [];
+  
+  // Loading states
+  loadingAttachments = false;
+  uploadingFile = false;
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 10;
+  totalRecords = 0;
+
+  // Forms
+  uploadForm!: FormGroup;
+  showUploadForm = false;
+  selectedFile: File | null = null;
+
+  public currentLang = 2;
+
+  constructor(
+    private attendanceTimeService: AttendanceTimeService,
+    public langService: LanguageService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private translateService: TranslateService,
+    private fb: FormBuilder
+  ) {}
+
+  ngOnInit() {
+    this.initializeForms();
+    this.currentLang = this.langService.getLangValue();
+    
+    if (this.showModal && this.requestId) {
+      this.loadAttachments();
+    }
+  }
+
+  ngOnDestroy() {
+    // Clean up subscriptions if any
+  }
+
+  ngOnChanges() {
+    console.log('ngOnChanges - showModal:', this.showModal, 'requestId:', this.requestId);
+    if (this.showModal && this.requestId) {
+      this.loadAttachments();
+    }
+  }
+
+  private initializeForms() {
+    this.uploadForm = this.fb.group({
+      file: ['', Validators.required],
+      note: ['']
+    });
+  }
+
+  private loadAttachments() {
+    console.log('Loading attachments for requestId:', this.requestId);
+    this.loadingAttachments = true;
+    
+    this.attendanceTimeService.GetTimeTransactionApprovalRequestAttachmentsByReqID(
+      this.currentLang,
+      this.requestId,
+      this.currentPage,
+      this.pageSize
+    ).subscribe({
+      next: (response) => {
+        console.log('Attachments response:', response);
+        if (response.isSuccess) {
+          this.attachments = response.data.timeTransactionApprovalRequestAttachments;
+          this.totalRecords = response.data.totalCount;
+          console.log('Loaded attachments:', this.attachments);
+          console.log('First attachment sample:', this.attachments[0]);
+          if (this.attachments && this.attachments.length > 0) {
+            console.log('First attachment keys:', Object.keys(this.attachments[0]));
+            console.log('First attachment ID:', this.attachments[0].id);
+          }
+        } else {
+          this.showErrorMessage(response.message);
+        }
+        this.loadingAttachments = false;
+      },
+      error: (error) => {
+        console.error('Error loading attachments:', error);
+        this.showErrorMessage('ATTACHMENTS.LOAD_ERROR');
+        this.loadingAttachments = false;
+      }
+    });
+  }
+
+  // Pagination methods
+  get totalPages(): number {
+    return Math.ceil(this.totalRecords / this.pageSize);
+  }
+
+  get canGoNext(): boolean {
+    return this.currentPage < this.totalPages;
+  }
+
+  get canGoPrevious(): boolean {
+    return this.currentPage > 1;
+  }
+
+  nextPage() {
+    if (this.canGoNext) {
+      this.currentPage++;
+      this.loadAttachments();
+    }
+  }
+
+  previousPage() {
+    if (this.canGoPrevious) {
+      this.currentPage--;
+      this.loadAttachments();
+    }
+  }
+
+  // File handling methods
+  onFileSelect(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.uploadForm.patchValue({ file: file.name });
+    }
+  }
+
+  showUploadDialog() {
+    this.showUploadForm = true;
+    this.uploadForm.reset();
+    this.selectedFile = null;
+  }
+
+  hideUploadDialog() {
+    this.showUploadForm = false;
+    this.uploadForm.reset();
+    this.selectedFile = null;
+  }
+
+  uploadAttachment() {
+    if (!this.selectedFile || this.uploadForm.invalid) {
+      this.showWarningMessage('ATTACHMENTS.INVALID_FORM');
+      return;
+    }
+
+    this.uploadingFile = true;
+
+    // Convert file to base64
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      // Remove the data URL prefix (data:application/pdf;base64,)
+      const base64Data = base64String.split(',')[1];
+      
+      const note = this.uploadForm.get('note')?.value || null;
+
+      this.attendanceTimeService.UploadTimeTransactionApprovalRequestAttachment(
+        this.currentLang,
+        this.requestId,
+        base64Data,
+        this.selectedFile!.name,
+        this.selectedFile!.type,
+        note
+      ).subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.showSuccessMessage('ATTACHMENTS.UPLOAD_SUCCESS');
+            this.hideUploadDialog();
+            this.loadAttachments(); // Refresh the list
+          } else {
+            this.showErrorMessage(response.message);
+          }
+          this.uploadingFile = false;
+        },
+        error: (error) => {
+          console.error('Error uploading attachment:', error);
+          this.showErrorMessage('ATTACHMENTS.UPLOAD_ERROR');
+          this.uploadingFile = false;
+        }
+      });
+    };
+
+    reader.readAsDataURL(this.selectedFile);
+  }
+
+  downloadAttachment(attachment: TimeTransactionApprovalRequestAttachment) {
+    console.log('Download attachment clicked:', attachment);
+    
+    // Check if filePath is a valid URL or just a filename
+    if (attachment.filePath && attachment.filePath.startsWith('http')) {
+      // If it's a full URL, use it directly
+      const link = document.createElement('a');
+      link.href = attachment.filePath;
+      link.download = attachment.fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // If it's not a URL, construct a proper download URL
+      // You might need to adjust this based on your backend file serving setup
+      const downloadUrl = `${environment.apiUrl}/Files/Download/${attachment.filePath}`;
+      console.log('Download URL:', downloadUrl);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = attachment.fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    this.showInfoMessage('ATTACHMENTS.DOWNLOAD_STARTED');
+  }
+
+  deleteAttachment(attachment: TimeTransactionApprovalRequestAttachment) {
+    console.log('Delete attachment clicked:', attachment);
+    console.log('Attachment properties:', Object.keys(attachment));
+    console.log('Attachment ID:', attachment.id);
+    console.log('Attachment type of ID:', typeof attachment.id);
+    
+    // Check if attachment has a valid ID
+    if (!attachment.id || attachment.id === undefined || attachment.id === null) {
+      console.error('Cannot delete attachment: Invalid ID', attachment);
+      this.showErrorMessage('ATTACHMENTS.INVALID_ATTACHMENT_ID');
+      return;
+    }
+    
+    this.confirmationService.confirm({
+      message: this.translateService.instant('ATTACHMENTS.DELETE_CONFIRMATION', { fileName: attachment.fileName }),
+      header: this.translateService.instant('ATTACHMENTS.DELETE_HEADER'),
+      icon: 'fas fa-exclamation-triangle',
+      acceptLabel: this.translateService.instant('COMMON.YES'),
+      rejectLabel: this.translateService.instant('COMMON.NO'),
+      accept: () => {
+        console.log('Delete confirmed for attachment ID:', attachment.id);
+        console.log('Calling delete service with lang:', this.currentLang, 'and ID:', attachment.id);
+        
+        try {
+          this.attendanceTimeService.DeleteTimeTransactionApprovalRequestAttachment(
+            this.currentLang,
+            attachment.id // Using attachment.id as the attchId parameter
+          ).subscribe({
+            next: (response) => {
+              console.log('Delete response:', response);
+              if (response.isSuccess) {
+                this.showSuccessMessage('ATTACHMENTS.DELETE_SUCCESS');
+                this.loadAttachments(); // Refresh the list
+              } else {
+                this.showErrorMessage(response.message);
+              }
+            },
+            error: (error) => {
+              console.error('Error deleting attachment:', error);
+              this.showErrorMessage('ATTACHMENTS.DELETE_ERROR');
+            }
+          });
+        } catch (error) {
+          console.error('Exception in delete service call:', error);
+          this.showErrorMessage('ATTACHMENTS.DELETE_ERROR');
+        }
+      }
+    });
+  }
+
+  onClose() {
+    this.closeModal.emit();
+  }
+
+  // Track by function for better performance
+  trackByAttachmentId(index: number, item: TimeTransactionApprovalRequestAttachment): number {
+    return item.id;
+  }
+
+  // Message helper methods
+  private showSuccessMessage(message: string) {
+    this.messageService.add({
+      severity: 'success',
+      summary: this.translateService.instant('SUCCESS'),
+      detail: this.translateService.instant(message)
+    });
+  }
+
+  private showErrorMessage(message: string) {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.translateService.instant('ERROR'),
+      detail: this.translateService.instant(message)
+    });
+  }
+
+  private showWarningMessage(message: string) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: this.translateService.instant('WARNING'),
+      detail: this.translateService.instant(message)
+    });
+  }
+
+  private showInfoMessage(message: string) {
+    this.messageService.add({
+      severity: 'info',
+      summary: this.translateService.instant('INFO'),
+      detail: this.translateService.instant(message)
+    });
+  }
+}

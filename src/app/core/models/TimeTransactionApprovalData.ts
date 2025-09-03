@@ -1,0 +1,118 @@
+// Generic API envelope
+export interface ApiResponse<T> {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: T;
+}
+
+// Data wrapper with pagination
+export interface TimeTransactionApprovalData {
+  timeTransactionApprovalRequests: TimeTransactionApprovalRequest[];
+  totalRecords?: number;
+  currentPage?: number;
+  pageSize?: number;
+  totalPages?: number;
+}
+
+// Item shape
+export interface TimeTransactionApprovalRequest {
+  reqId: number;
+  empId: number;
+  empName: string;
+  requestByEmpId: number;
+  requestByEmpName: string;
+  signDate: string;   // e.g. "2021-06-01"
+  hsDate: string;     // e.g. "1442-10-20"
+  in: string;         // e.g. "09:00:00"  (access as obj.in or obj["in"])
+  out: string;        // e.g. "14:00:00"
+  reqSts: number;     // e.g. 1
+  reqStsName: string; // e.g. "Accept"
+  note: string;
+  routeId: number | null;
+  det: string;        // "Det"
+  graph: string;      // "GRAPH"
+  attch: string;      // "Attch"
+  del: string;        // "Del"
+}
+
+export interface TimeTransactionApprovalRequestBody {
+  empId: number;
+  sDate?: string;
+  eDate?: string;
+  pageNumber: number;
+  pageSize: number;
+}
+// Response wrapper
+export interface RequestTransactionsForAttendanceTimeChangeRequestDetailsData {
+  requestTransactionsForAttendanceTimeChangeRequestDetails: RequestTransactionForAttendanceTimeChangeRequestDetail[];
+  totalCount: number;
+}
+
+// Item shape
+export interface RequestTransactionForAttendanceTimeChangeRequestDetail {
+  rec_ID: number;
+  req_ID: number;
+  empCode: string;
+  empName: string;
+  previous_In_Time: string;
+  previous_Out_Time: string;
+  requested_In_Time: string;
+  requested_Out_Time: string;
+  reason: string;
+  curlLevel: number;
+  flag: number;
+  flagName: string;
+  updatedByEmpId: number;
+  updatedByEmpName: string;
+  replyDate: string; // ISO date string, e.g. "2021-12-07"
+  note: string;
+}
+// RoadMap response wrapper
+export interface RequestRoadMapForAttendanceTimeChangeRequestDetailsData {
+  requestRoadMapForAttendanceTimeChangeRequestDetails: RequestRoadMapForAttendanceTimeChangeRequestDetail[];
+  totalCount: number;
+}
+
+// RoadMap item
+export interface RequestRoadMapForAttendanceTimeChangeRequestDetail {
+  recId: number;
+  curl_Level: number;   // keeping API casing as-is
+  curLevelName: string;
+  mgrId: number;
+  mgrName: string;
+  approvalFlag: number;
+  approvalFlagName: string;
+  approvalDate: string;
+  notes: string;
+}
+
+// Attachments response wrapper
+export interface TimeTransactionApprovalRequestAttachmentsData {
+  timeTransactionApprovalRequestAttachments: TimeTransactionApprovalRequestAttachment[];
+  totalCount: number;
+}
+
+// Single attachment
+export interface TimeTransactionApprovalRequestAttachment {
+  id: number;
+  reqId: number;
+  fileName: string;
+  filePath: string;
+  uploadedByEmpId: number;
+  uploadedByEmpName: string;
+  uploadedDate: string; // e.g. "2021-12-07"
+  note: string; // Note field for the attachment
+}
+export interface UploadTimeTransactionApprovalRequestAttachmentDto {
+  ReqType: number;        // always 2
+  ReqId: number;          // the recordId
+  File: string;           // base64 string (no data: prefix)
+  FileType: string;       // e.g. "application/pdf"
+  FilePath: string;       // e.g. "test.pdf"
+  Note: string | null;
+}
+
+export interface UploadTimeTransactionApprovalRequestAttachmentBody {
+  UploadTimeTransactionApprovalRequestAttachmentDto: UploadTimeTransactionApprovalRequestAttachmentDto;
+}
