@@ -1,1 +1,329 @@
-<p>role-report-rights works!</p>
+<div class="roleReportRights-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_GENERAL.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="addRoleReportRight()" [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_ACTIONS.ADD_ADD_ROLEREPORTRIGHT_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_ACTIONS.ADD_ROLEREPORTRIGHT' | translate }}
+      </button>
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_ACTIONS.DELETE_SELECTED_TITLE' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_ACTIONS.DELETE_SELECTED' | translate }} ({{ selectedItems.length }})
+      </button>
+    </div>
+
+<div class="right-actions">
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="dropdown input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="paginationRequest.searchText" [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+            <th>
+                <input type="checkbox" 
+                   [checked]="isAllSelected" 
+                   [indeterminate]="isPartiallySelected"
+                   (change)="toggleSelectAll()"
+                   [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_GENERAL.SELECT_ALL' | translate">
+          </th>
+          <th>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_TABLE.ROLE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_TABLE.REPORT' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_TABLE.DELEGATE' | translate }}</th>
+          <th>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_TABLE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let roleReportRight of roleReportRights" class="table-row">
+          <td>
+            <input type="checkbox" 
+                   [checked]="isSelected(roleReportRight)" 
+                   (change)="toggleSelection(roleReportRight)"
+                   [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_GENERAL.SELECT_ITEM' | translate">
+          </td>
+          <td>{{ roleReportRight.roleName }}</td>
+          <td>{{ roleReportRight.reportName }}</td>
+          <td>{{ roleReportRight.delegateId }}</td>
+          <td>
+            <button class="action-btn delete-btn" (click)="deleteRoleReportRight(roleReportRight)" [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_GENERAL.DELETE_TOOLTIP' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="roleReportRights?.length === 0" class="empty-row">
+          <td colspan="5" class="empty-message">
+            {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.NO_DATA' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+    <div class="pagination-info">
+      <span>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.ITEMS' | translate }}</span>
+    </div>
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(1)"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(totalPages)"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(1)"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="previousPage()"
+          [disabled]="currentPage === 1"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.NATIONALITIES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn"
+          (click)="nextPage()"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn"
+          (click)="goToPage(totalPages)"
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+    <div class="page-size-selector">
+      <label>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Add RoleReportRight Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="roleReportRightForm" (ngSubmit)="submitRoleReportRight()">
+        <div class="form-grid">
+          <!-- Role Information Section -->
+        <div class="form-section">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.ROLE_ID' | translate }}</label>
+              <p-autoComplete
+                formControlName="roleAutoComplete"
+                [suggestions]="filteredRoles"
+                (completeMethod)="searchRole($event)"
+                optionLabel="label"
+                dataKey="value"
+                [dropdown]="true"
+                [showClear]="true"
+                [forceSelection]="false"
+                [placeholder]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.SEARCH_ROLE_PLACEHOLDER' | translate"
+                styleClass="w-full"
+                [class]="isFieldInvalid('roleId') ? 'ng-invalid ng-dirty' : ''"
+                [inputStyle]="{'width': '100%'}"
+                [panelStyle]="{'max-height': '200px'}"
+                [minLength]="0"
+                appendTo="body">
+                
+                <ng-template pTemplate="item" let-role>
+                  <div class="role-option">
+                    <span class="role-name">{{ role.label }}</span>
+                  </div>
+                </ng-template>
+                
+                <ng-template pTemplate="empty">
+                  <div class="empty-option">
+                    <i class="fas fa-user-times"></i>
+                    <span>{{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_GENERAL.NO_ROLES_FOUND' | translate }}</span>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+              
+              <span *ngIf="isFieldInvalid('roleId')" class="error-message">
+                {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.ROLE_REQUIRED' | translate }}
+              </span>
+            </div>
+
+            <!-- Report Information Section -->
+            <div class="multiselect-header">
+              <i class="fas fa-users"></i>
+              <span class="required">
+                {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.SELECT_REPORTS' | translate }}
+              </span>
+              <div class="header-actions" *ngIf="hasSelectableItems('reports') && !loadingReports">
+                <button type="button" 
+                        class="select-all-btn" 
+                        (click)="selectAllItems('reports')"
+                        [disabled]="areAllItemsSelected('reports')"
+                        [title]="'SALARY_CALCULATION.SELECT_ALL' | translate">
+                  <i class="fas fa-check-square"></i>
+                  {{ 'SALARY_CALCULATION.SELECT_ALL' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-all-btn" 
+                        (click)="clearSelection('reports')" 
+                        [disabled]="getSelectedCount('reports') === 0"
+                        [title]="'SALARY_CALCULATION.CLEAR_ALL' | translate">
+                  <i class="fas fa-times"></i>
+                  {{ 'SALARY_CALCULATION.CLEAR_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input"
+                [value]="multiSelectStates['reports'].searchTerm"
+                (input)="updateSearchTerm('reports', $any($event.target).value)"
+                [placeholder]="'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.SEARCH_REPORTS' | translate">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="items-list-container" [class.loading]="loadingReports">
+              <div *ngIf="loadingReports" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_GENERAL.LOADING_REPORTS' | translate }}
+              </div>
+              <div *ngIf="!loadingReports && getFilteredItems('reports').length === 0" class="empty-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ 'SALARY_CALCULATION.NO_REPORTS_FOUND' | translate }}
+              </div>
+              <div *ngIf="!loadingReports" class="items-list">
+                <label *ngFor="let report of getFilteredItems('reports')" class="checkbox-option">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isItemSelected('reports', report)"
+                    (change)="toggleItemSelection('reports', report)">
+                  <span class="checkbox-custom"></span>
+                  <span class="item-text">{{ report.name }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="selected-count" *ngIf="getSelectedCount('reports') > 0">
+              <i class="fas fa-check-circle"></i>
+              {{ 'SALARY_CALCULATION.SELECTED' | translate }}: {{ getSelectedCount('reports') }}
+            </div>
+           
+          </div>
+        </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
+            {{ 'MENU.GENERAL_DATA.ROLEREPORTRIGHTS_MODALS.ADD_ROLEREPORTRIGHTS_MODAL.SAVE' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

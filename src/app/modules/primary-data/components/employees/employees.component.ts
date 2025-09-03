@@ -14,6 +14,8 @@ import { Genders } from '../../../../core/models/gender';
 import { MaritalStatuses } from '../../../../core/models/maritalStatus';
 import { Jobs } from '../../../../core/models/jobs';
 import { Languages } from '../../../../core/models/language';
+import { TranslateService } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-employees',
@@ -26,7 +28,6 @@ export class EmployeesComponent implements OnInit {
   loading: boolean = false;
   totalRecords: number = 0;
   currentPage: number = 1;
-  searchTerm: string = '';
   showAddModal: boolean = false;
   showChangeNumberModal: boolean = false;
   // showChangePasswordModal: boolean = false;
@@ -35,66 +36,67 @@ export class EmployeesComponent implements OnInit {
   isSubmitting: boolean = false;
   deletingEmployeeId: number | null = null;
   loadingDropdowns: boolean = false;
-  
+  hijriDates: { [key: string]: string } = {};
+
   // Reactive Forms
   employeeForm!: FormGroup;
   changeNumberForm!: FormGroup;
   // changePasswordForm!: FormGroup;
 
 
-  maritalStatuses:MaritalStatuses[] = [];
+  maritalStatuses: MaritalStatuses[] = [];
 
-  departments:Departments[] = [];
-  
-  statuses :Statuses []= [];
-  nationalities :Nationalities []= [];
-  genders:Genders[] =[];
-  jobs:Jobs[] =[];
-  languages:Languages[]= [];
+  departments: Departments[] = [];
 
-  paginationRequest: PaginationRequest = {
-    pageNumber: 1,
-    pageSize: 10,
-    lang: 1, // Default to English, can be changed based on app's language settings
-    empId: this.getStoredEmpId()
-  };
+  statuses: Statuses[] = [];
+  nationalities: Nationalities[] = [];
+  genders: Genders[] = [];
+  jobs: Jobs[] = [];
+  languages: Languages[] = [];
+
 
 
   // Smart loading state tracking
   private dropdownDataLoaded = {
     statuses: false,
     departments: false,
-    nationalities:false,
-    genders:false,
-    maritalStatuses:false,
-    jobs:false,
-    languages:false
+    nationalities: false,
+    genders: false,
+    maritalStatuses: false,
+    jobs: false,
+    languages: false
   };
 
   private currentLanguage: string = '';
   private isInitialized = false;
 
-    // Available numbers for dropdown (dummy data)
-  availableNumbers = [
-    { value: '100', label: '100' },
-    { value: '101', label: '101' },
-    { value: '102', label: '102' },
-    { value: '103', label: '103' },
-    { value: '104', label: '104' },
-    { value: '105', label: '105' },
-    { value: '200', label: '200' },
-    { value: '201', label: '201' },
-    { value: '202', label: '202' },
-    { value: '203', label: '203' },
-    { value: '300', label: '300' },
-    { value: '301', label: '301' },
-    { value: '302', label: '302' },
-    { value: '400', label: '400' },
-    { value: '401', label: '401' },
-    { value: '500', label: '500' }
+  searchColumns = [
+    { column: '', label: 'All Columns' }, // all columns
+    { column: 'EMP_NAME', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.EMPLOYEE_NAME' },
+    { column: 'DEPT_NAME', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.DEPARTMENT_NAME' },
+    { column: 'DIRECT_MGR_NAME', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.DIRECT_MANAGER' },
+    { column: 'ACTIVE_FLAG_NAME', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.ACTIVE_FLAG' },
+    { column: 'STATUS_NAME', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.STATUS' },
+    { column: 'EMAIL', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.EMAIL' },
+    { column: 'SMSPHONE', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.SMS_PHONE' },
+    { column: 'LANGUAGE_NAME', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.LANGUAGE' },
+    { column: 'NOTE', label: 'MENU.GENERAL_DATA.EMPLOYEES_TABLE.NOTE' }
   ];
 
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchTerm: string = '';
 
+
+
+  paginationRequest: PaginationRequest = {
+    pageNumber: 1,
+    pageSize: 10,
+    lang: 1, // Default to English, can be changed based on app's language settings
+    empId: this.getStoredEmpId(),
+    searchColumn: this.selectedColumn,
+    searchText: this.searchTerm
+  };
 
   constructor(
     private employeeService: EmployeeService,
@@ -102,20 +104,22 @@ export class EmployeesComponent implements OnInit {
     private messageService: MessageService,
     // private confirmationService: ConfirmationService,
     private fb: FormBuilder,
-    private dropdownService: DropdownlistsService
+    private dropdownService: DropdownlistsService,
+    private translate: TranslateService
+
   ) {
     this.initializeForms();
-    
+
     // Set the language for the pagination request based on the current language setting
     this.langService.currentLang$.subscribe(lang => {
-      this.paginationRequest.lang = lang === 'ar' ? 2 : 1; 
+      this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
 
       // Only reload branches if component is already initialized (not first time)
       if (this.isInitialized) {
         this.loadEmployees(); // Reload employees when language changes
-         this.resetDropdownState();
+        this.resetDropdownState();
       }
-      
+
     });
   }
 
@@ -127,23 +131,23 @@ export class EmployeesComponent implements OnInit {
   initialFormValues: any;
 
   initializeForms() {
-   this.employeeForm = this.fb.group({
-      rowId:[''],
+    this.employeeForm = this.fb.group({
+      rowId: [''],
       empNumber: [''],
       empArName: [''],
       empEnName: [''],
       deptId: ['', Validators.required],
       activeFlag: [false],
-      statusId: ['', Validators.required],
+      statusId: [1, Validators.required],
       fingerPrint: [''],
-      natId: [''],
-      gender: [''],
+      natId: [3],
+      gender: [1],
       email: ['', Validators.email],
       phoneNum: [''],
       homeLandLine: [''],
       PhysicalAddr: [''],
       birthDate: [null],
-      maritalstatus: [''],
+      maritalstatus: [0],
       hireStartDate: [null],
       hireEndDate: [null],
       EmpvatInformation: [''],
@@ -161,23 +165,56 @@ export class EmployeesComponent implements OnInit {
       healthCardExpiration: [null],
       passportNumber: [''],
       passportExpiration: [null],
-      username: [''],
-      password: [''],
-      lang: ['', Validators.required],
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      lang: [2, Validators.required],
       note: ['']
     });
 
 
-  this.initialFormValues = this.employeeForm.value;
+    this.initialFormValues = this.employeeForm.value;
 
     this.changeNumberForm = this.fb.group({
       newNumber: ['', [Validators.required]],
     });
+  }
 
-    // this.changePasswordForm = this.fb.group({
-    //   newPassword: ['', [Validators.required, Validators.minLength(6)]],
-    //   confirmPassword: ['', [Validators.required]]
-    // });
+  selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
+  onDateChange(event: Event, controlName: string) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    if (value) {
+      this.hijriDates[controlName] = this.toObservedHijri(value);
+    } else {
+      this.hijriDates[controlName] = '';
+    }
+  }
+
+  toObservedHijri(date: Date | string, adjustment: number = -1): string {
+    // Ensure date is a Date object
+    const d: Date = date instanceof Date ? new Date(date) : new Date(date);
+    if (isNaN(d.getTime())) return ''; // handle invalid date
+
+    // Apply adjustment in days
+    d.setDate(d.getDate() + adjustment);
+
+    const formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+
+    const parts = formatter.formatToParts(d);
+
+    const year = parts.find(p => p.type === 'year')?.value ?? '0000';
+    const month = parts.find(p => p.type === 'month')?.value ?? '00';
+    const day = parts.find(p => p.type === 'day')?.value ?? '00';
+
+    return `${year}/${month}/${day}`;
   }
 
 
@@ -186,14 +223,14 @@ export class EmployeesComponent implements OnInit {
     return empId ? parseInt(empId, 10) : undefined;
   }
 
-    isRequired(fieldName: string): boolean {
-  const control = this.employeeForm.get(fieldName);
-  if (!control || !control.validator) {
-    return false;
+  isRequired(fieldName: string): boolean {
+    const control = this.employeeForm.get(fieldName);
+    if (!control || !control.validator) {
+      return false;
+    }
+    const validator = control.validator({} as any);
+    return validator && validator['required'] ? true : false;
   }
-  const validator = control.validator({} as any);
-  return validator && validator['required'] ? true : false;
-}
   // Custom pagination methods
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
@@ -237,6 +274,8 @@ export class EmployeesComponent implements OnInit {
   onSearch() {
     this.currentPage = 1;
     this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn = this.selectedColumn;
+    this.paginationRequest.searchText = this.searchTerm;
     this.loadEmployees();
   }
   addEmployee() {
@@ -250,12 +289,12 @@ export class EmployeesComponent implements OnInit {
 
     // console.log('=== Edit Employee Called ===');
     // console.log('Employee to edit:', employee);
-    
+
     this.isEditMode = true;
-    this.selectedEmployee = employee;    
+    this.selectedEmployee = employee;
     // Reset form first
     this.employeeForm.reset();
-    
+
     // Show modal first
     this.showAddModal = true;
 
@@ -265,128 +304,134 @@ export class EmployeesComponent implements OnInit {
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
 
     this.employeeService.getEmployeeById(employee.empId, currentLang).subscribe({
-          next: (responce: any) => {
-            var employeeDetails=responce.data
-            console.log('Employee details from API:', employeeDetails);
-            
-            const convertedEmployee = {
-                rowId: employeeDetails.rowID,
-                empId: employeeDetails.empId === -1 ? null : employeeDetails.empId,
-                empName: currentLang === 1 ? employeeDetails.en_Name : employeeDetails.ar_Name,// Or combine ar_Name & en_Name if needed
-                directMgrName: '', // Will be filled from dropdown or API
-                deptName: '',      // Will be filled from dropdown or API
-                activeFlag: employeeDetails.activeFlag,
-                statusId: employeeDetails.statusId,
-                statusStr: '',     // Will be filled from status lookup
-                deptId: employeeDetails.deptId,
-                directMgr: null,   // Will be filled from dropdown or API
-                natId: employeeDetails.natId,
-                govId: employeeDetails.govId || '',
-                gender: employeeDetails.gender,
-                email: employeeDetails.email || '',
-                smsPhone: employeeDetails.smsPhone || '',
-                maritalStatus: employeeDetails.maritalStatus,
-                jobTypId: employeeDetails.jobTypId,
-                lang: employeeDetails.lang,
-                note: employeeDetails.note || '',
-                reset: '',         // Not needed now, may be handled later
-                updatePk: ''       // Not needed now, may be handled later
-            };
+      next: (responce: any) => {
+        var employeeDetails = responce.data
+        console.log('Employee details from API:', employeeDetails);
 
-            
-            console.log('Converted employee data:', convertedEmployee);
-            this.selectedEmployee = convertedEmployee as Employee; // Update with complete data
-            
-            // Set basic form values immediately (non-dropdown fields)
-            this.employeeForm.patchValue({
-              rowId:employeeDetails.rowID,
-              empNumber: employeeDetails.empId || '',
-              empArName: employeeDetails.ar_Name || '',
-              empEnName: employeeDetails.en_Name || '',
-              deptId: employeeDetails.deptId || '',
-              activeFlag: employeeDetails.activeFlag,
-              statusId: employeeDetails.statusId || '',
-              fingerPrint: employeeDetails.fpid || '',
-              natId: employeeDetails.natId || '',
-              gender: employeeDetails.gender || 0,
-              email: employeeDetails.email || '',
-              phoneNum: employeeDetails.smsPhone || '',
-              homeLandLine: employeeDetails.phone || '',
-              PhysicalAddr: employeeDetails.physicalAddress || '',
-              birthDate: employeeDetails.birthDate ? this.formatDateForInput(employeeDetails.birthDate) : null,
-              maritalstatus: employeeDetails.maritalStatus || 0,
-              hireStartDate: employeeDetails.hireSDate ? this.formatDateForInput(employeeDetails.hireSDate) : null,
-              hireEndDate: employeeDetails.hireEDate ? this.formatDateForInput(employeeDetails.hireEDate) : null,
-              EmpvatInformation: employeeDetails.empVatInfo || '',
-              jobTypeId: employeeDetails.jobTypId || '',
-              jobdescription: employeeDetails.jobId || '',
-              nationalNumber: employeeDetails.govId || '',
-              nationalNumberExpiration: employeeDetails.govIdExpiration ? this.formatDateForInput(employeeDetails.govIdExpiration) : null,
-              driverLicenseNumber: employeeDetails.driverLicenceNo || '',
-              driverLicenseExpiration: employeeDetails.driverLicenceExpiration ? this.formatDateForInput(employeeDetails.driverLicenceExpiration) : null,
-              insuranceCardInformation: employeeDetails.insuranceCardInfo || '',
-              insuranceCardExpiration: employeeDetails.insuranceCardExpiration ? this.formatDateForInput(employeeDetails.insuranceCardExpiration) : null,
-              employeeCardNumber: employeeDetails.employeeCardNo || '',
-              employeeCardExpiration: employeeDetails.employeeCardExpiration ? this.formatDateForInput(employeeDetails.employeeCardExpiration) : null,
-              healthCardNumber: employeeDetails.healthCardNo || '',
-              healthCardExpiration: employeeDetails.healthCardExpiration ? this.formatDateForInput(employeeDetails.healthCardExpiration) : null,
-              passportNumber: employeeDetails.passportNo || '',
-              passportExpiration: employeeDetails.passportExpiration ? this.formatDateForInput(employeeDetails.passportExpiration) : null,
-              username: employeeDetails.userName === '-1' ? '' : employeeDetails.userName || '',
-              password: employeeDetails.passwd || '',
-              lang: employeeDetails.lang || 2,
-              note: employeeDetails.note || ''
-            });
-            console.log('Form after basic patch with API data:', this.employeeForm.value);
-            
-            // Since we already awaited dropdown loading, update form selections immediately
-            this.updateFormDropdownSelections();
-          },
-          error: (error) => {
-            console.error('Error loading Employee details:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'خطأ',
-              detail: 'فشل في تحميل تفاصيل الفرع'
-            });
-            
-            // Fallback to using the employee data from the list
-            this.employeeForm.patchValue({
-                rowId:employee.rowId,
-                empNumber: employee.empId || '',
-                empArName:employee.empName||'',
-                empEnName:employee.empName||'',
-                activeFlag: employee.activeFlag || '',
-                statusId: employee.statusId || '1',
-                deptId: employee.deptId || '',
-                natId: employee.natId || '',
-                govId: employee.govId || '',
-                gender: employee.gender || '0',
-                email: employee.email || '',
-                smsPhone: employee.smsPhone || '',
-                maritalStatus: employee.maritalStatus || '0',
-                jobTypId: employee.jobTypId || '',
-                lang: employee.lang || '2',
-                note: employee.note || ''
-            });
-          }
+        const convertedEmployee = {
+          rowId: employeeDetails.rowID,
+          empId: employeeDetails.empId === -1 ? null : employeeDetails.empId,
+          empName: currentLang === 1 ? employeeDetails.en_Name : employeeDetails.ar_Name,// Or combine ar_Name & en_Name if needed
+          directMgrName: '', // Will be filled from dropdown or API
+          deptName: '',      // Will be filled from dropdown or API
+          activeFlag: employeeDetails.activeFlag,
+          statusId: employeeDetails.statusId,
+          statusStr: '',     // Will be filled from status lookup
+          deptId: employeeDetails.deptId,
+          directMgr: null,   // Will be filled from dropdown or API
+          natId: employeeDetails.natId,
+          govId: employeeDetails.govId || '',
+          gender: employeeDetails.gender,
+          email: employeeDetails.email || '',
+          smsPhone: employeeDetails.smsPhone || '',
+          maritalStatus: employeeDetails.maritalStatus,
+          jobTypId: employeeDetails.jobTypId,
+          lang: employeeDetails.lang,
+          note: employeeDetails.note || '',
+          reset: '',         // Not needed now, may be handled later
+          updatePk: ''       // Not needed now, may be handled later
+        };
+
+
+        console.log('Converted employee data:', convertedEmployee);
+        this.selectedEmployee = convertedEmployee as Employee; // Update with complete data
+
+        // Set basic form values immediately (non-dropdown fields)
+        this.employeeForm.patchValue({
+          rowId: employeeDetails.rowID || '',
+          empNumber: employeeDetails.empId || '',
+          empArName: employeeDetails.ar_Name || '',
+          empEnName: employeeDetails.en_Name || '',
+          deptId: employeeDetails.deptId || '',
+          // Normalize API numeric flag (1/0) to boolean for the form control
+          activeFlag: employeeDetails.activeFlag === 1,
+          statusId: employeeDetails.statusId || 1,
+          fingerPrint: employeeDetails.fpid || '',
+          natId: employeeDetails.natId || 0,
+          gender: employeeDetails.gender || 0,
+          email: employeeDetails.email || '',
+          phoneNum: employeeDetails.smsPhone || '',
+          homeLandLine: employeeDetails.phone || '',
+          PhysicalAddr: employeeDetails.physicalAddress || '',
+          birthDate: employeeDetails.birthDate ? this.formatDateForInput(employeeDetails.birthDate) : null,
+          maritalstatus: employeeDetails.maritalStatus || 0,
+          hireStartDate: employeeDetails.hireSDate ? this.formatDateForInput(employeeDetails.hireSDate) : null,
+          hireEndDate: employeeDetails.hireEDate ? this.formatDateForInput(employeeDetails.hireEDate) : null,
+          EmpvatInformation: employeeDetails.empVatInfo || '',
+          jobTypeId: employeeDetails.jobTypId || '',
+          jobdescription: employeeDetails.jobId || '',
+          nationalNumber: employeeDetails.govId || '',
+          nationalNumberExpiration: employeeDetails.govIdExpiration ? this.formatDateForInput(employeeDetails.govIdExpiration) : null,
+          driverLicenseNumber: employeeDetails.driverLicenceNo || '',
+          driverLicenseExpiration: employeeDetails.driverLicenceExpiration ? this.formatDateForInput(employeeDetails.driverLicenceExpiration) : null,
+          insuranceCardInformation: employeeDetails.insuranceCardInfo || '',
+          insuranceCardExpiration: employeeDetails.insuranceCardExpiration ? this.formatDateForInput(employeeDetails.insuranceCardExpiration) : null,
+          employeeCardNumber: employeeDetails.employeeCardNo || '',
+          employeeCardExpiration: employeeDetails.employeeCardExpiration ? this.formatDateForInput(employeeDetails.employeeCardExpiration) : null,
+          healthCardNumber: employeeDetails.healthCardNo || '',
+          healthCardExpiration: employeeDetails.healthCardExpiration ? this.formatDateForInput(employeeDetails.healthCardExpiration) : null,
+          passportNumber: employeeDetails.passportNo || '',
+          passportExpiration: employeeDetails.passportExpiration ? this.formatDateForInput(employeeDetails.passportExpiration) : null,
+          username: employeeDetails.userName || '',
+          password: employeeDetails.passwd || '',
+          lang: employeeDetails.lang || 2,
+          note: employeeDetails.note || ''
         });
+
+        console.log('Form after basic patch with API data:', this.employeeForm.value);
+
+        // Since we already awaited dropdown loading, update form selections immediately
+        this.updateFormDropdownSelections();
+      },
+      error: (error) => {
+        console.error('Error loading Employee details:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? 'فشل في تحميل تفاصيل الموظف. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.'
+            : 'Failed to load employee details. Please try again or contact support.'
+        });
+
+        // Fallback to using the employee data from the list
+        this.employeeForm.patchValue({
+          rowId: employee.rowId,
+          empNumber: employee.empId || null,
+          empArName: employee.empName || null,
+          empEnName: employee.empName || null,
+          // Map employee list value (could be 1/0 or string) to boolean for the form
+          activeFlag: employee.activeFlag == null ? false : Number(employee.activeFlag) === 1,
+          statusId: employee.statusId || null,
+          deptId: employee.deptId || null,
+          natId: employee.natId || null,
+          govId: employee.govId || null,
+          gender: employee.gender || null,
+          email: employee.email || null,
+          smsPhone: employee.smsPhone || null,
+          maritalStatus: employee.maritalStatus || null,
+          jobTypId: employee.jobTypId || null,
+
+          lang: employee.lang || 1,
+          note: employee.note || null
+        });
+      }
+    });
     this.showAddModal = true;
   }
 
   private formatDateForInput(dateString: string | Date | null): string | null {
-  if (!dateString) return null;
-  
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return null;
+    if (!dateString) return null;
 
-  // Convert to YYYY-MM-DD format (required by HTML date input)
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  
-  return `${year}-${month}-${day}`;
-}
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return null;
+
+    // Convert to YYYY-MM-DD format (required by HTML date input)
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
 
   closeModal() {
     this.showAddModal = false;
@@ -398,7 +443,7 @@ export class EmployeesComponent implements OnInit {
 
   resetForm() {
     this.employeeForm.reset();
-     this.employeeForm.reset(this.initialFormValues);
+    this.employeeForm.reset(this.initialFormValues);
 
   }
 
@@ -406,85 +451,102 @@ export class EmployeesComponent implements OnInit {
     if (this.employeeForm.valid && !this.isSubmitting) {
 
       this.isSubmitting = true;
-            const formData = this.employeeForm.value;
-            
-            // Validate numeric fields
-            const deptId = parseInt(formData.deptId);
-            const statusId = parseInt(formData.statusId);
-            const lang = parseInt(formData.lang);
-            
-            if (isNaN(deptId) || isNaN(statusId) ||isNaN(lang)) {
-              this.messageService.add({ 
-                severity: 'error', 
-                summary: 'خطأ', 
-                detail: 'يرجى التأكد من صحة البيانات المدخلة' 
-              });
-              this.isSubmitting = false;
-              return;
-            }
-            
-            // Prepare employee object based on the API requirements
-            const employeeData: EmployeeCreateUpdateRequest = {
-              rowId: formData.rowId ||0,
-              empId: formData.empNumber || 0,
-              ar: formData.empArName || '',
-              en: formData.empEnName || '',
-              activeFlag: formData.activeFlag ? Number(formData.activeFlag) : 0,
-              statusId: Number(formData.statusId)||0,
-              fpid: formData.fingerPrint||'',
-              deptId: Number(formData.deptId)||0,
-              natId: Number(formData.natId)||0,
-              gender: Number(formData.gender)||0,
-              email: formData.email ||'',
-              smsPhone: formData.phoneNum||'',
-              phone: formData.homeLandLine||'',
-              physicalAddress: formData.PhysicalAddr ||'',
-              maritalStatus:formData.maritalStatus||0,
-              birthDate: formData.birthDate || null,
-              hireSDate: formData.hireStartDate || null,
-              hireEDate: formData.hireEndDate || null,
-              jobId:formData.jobdescription ||'',
-              jobTypId: formData.jobTypeId ||1,
-              jobdesc:formData.jobdescription||'',
-              empVatInfo: formData.EmpvatInformation||'',
-              govId:formData.nationalNumber||'',
-              govIdExpiration:formData.nationalNumberExpiration ||null,
-              employeeCardNo: formData.employeeCardNo||'',
-              employeeCardExpiration: formData.employeeCardExpiration || null,
-              driverLicenceNo: formData.driverLicenceNo||'',
-              driverLicenceExpiration: formData.driverLicenceExpiration || null,
-              healthCardNo: formData.healthCardNo||'',
-              healthCardExpiration: formData.healthCardExpiration || null,
-              insuranceCardInfo: formData.insuranceCardInfo|| '',
-              insuranceCardExpiration: formData.insuranceCardExpiration || null,
-              passportNo: formData.passportNo||'',
-              passportExpiration: formData.passportExpiration || null,
-              userName: formData.userName||'',
-              passwd: formData.passwd||'',
-              lang:formData.lang||2,
-              note: formData.note || ''
-            };
+      const formData = this.employeeForm.value;
+
+      // Validate numeric fields
+      const deptId = parseInt(formData.deptId);
+      const statusId = parseInt(formData.statusId);
+      const lang = parseInt(formData.lang);
+
+      if (isNaN(deptId) || isNaN(statusId) || isNaN(lang)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? 'يرجى التأكد من أن معرف القسم، الحالة، واللغة أرقام صحيحة.'
+            : 'Please make sure that Department , Status, and Language are valid numbers.'
+        });
+        this.isSubmitting = false;
+        return;
+      }
+
+      // Prepare employee object based on the API requirements
+      const employeeData: EmployeeCreateUpdateRequest = {
+        rowId: formData.rowId || 0,
+        empId: formData.empNumber || 0,
+        ar: formData.empArName || null,
+        en: formData.empEnName || null,
+  // API expects 1 or 0 (not null). Convert boolean/form value accordingly.
+  activeFlag: formData.activeFlag ? 1 : 0,
+        statusId: Number(formData.statusId) || 0,
+        fpid: formData.fingerPrint || null,
+        deptId: Number(formData.deptId) || 0,
+        natId: Number(formData.natId) || 0,
+        gender: Number(formData.gender) || null,
+        email: formData.email || null,
+        smsPhone: formData.phoneNum || null,
+        phone: formData.homeLandLine || null,
+        physicalAddress: formData.PhysicalAddr || null,
+        maritalStatus: formData.maritalStatus || null,
+        birthDate: formData.birthDate || null,
+        hireSDate: formData.hireStartDate || null,
+        hireEDate: formData.hireEndDate || null,
+        jobId: formData.jobdescription || null,
+        jobTypId: formData.jobTypeId || null,
+        jobdesc: formData.jobdescription || null,
+        empVatInfo: formData.EmpvatInformation || null,
+        govId: formData.nationalNumber || null,
+        govIdExpiration: formData.nationalNumberExpiration || null,
+        employeeCardNo: formData.employeeCardNumber || null,
+        employeeCardExpiration: formData.employeeCardExpiration || null,
+        driverLicenceNo: formData.driverLicenseNumber || null,
+        driverLicenceExpiration: formData.driverLicenseExpiration || null,
+        healthCardNo: formData.healthCardNumber || null,
+        healthCardExpiration: formData.healthCardExpiration || null,
+        insuranceCardInfo: formData.insuranceCardInformation || null,
+        insuranceCardExpiration: formData.insuranceCardExpiration || null,
+        passportNo: formData.passportNumber || null,
+        passportExpiration: formData.passportExpiration || null,
+        userName: formData.username || null,
+        passwd: formData.password || null,
+        lang: formData.lang || 1,
+        note: formData.note || null
+      };
 
       if (this.isEditMode) {
         console.log('Edit Employee Data:', this.employeeForm.value, 'Employee ID:', this.selectedEmployee?.empId);
         const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
         this.employeeService.updateEmployee(this.selectedEmployee!.empId, employeeData, currentLang).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم تحديث الموظف بنجاح' 
-            });
-            this.closeModal();
-            this.loadEmployees();
+            if (response.isSuccess) {
+              this.messageService.add({
+                severity: 'success',
+                summary: this.translate.instant("SUCCESS"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'تم تحديث بيانات الموظف بنجاح'
+                  : 'Employee updated successfully'
+              });
+              this.closeModal();
+              this.loadEmployees();
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.translate.instant("ERROR"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? `فشل في تحديث بيانات الموظف. ${'يرجى المحاولة مرة أخرى أو الاتصال بالدعم.'}`
+                  : `Failed to update employee. ${'Please try again or contact support.'}`
+              });
+            }
             this.isSubmitting = false;
           },
           error: (error) => {
             console.error('Error updating branch:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في تحديث الموظف. يرجى المحاولة مرة أخرى.' 
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في تحديث بيانات الموظف. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.'
+                : 'Failed to update employee. Please try again or contact support.'
             });
             this.isSubmitting = false;
           }
@@ -494,21 +556,35 @@ export class EmployeesComponent implements OnInit {
         const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
         this.employeeService.addEmployee(employeeData, currentLang).subscribe({
           next: (response) => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم إضافة الموظف بنجاح' 
-            });
-            this.closeModal();
-            this.loadEmployees();
+            if (response.isSuccess) {
+              this.messageService.add({
+                severity: 'success',
+                summary: this.translate.instant("SUCCESS"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? 'تم إضافة الموظف بنجاح'
+                  : 'Employee added successfully'
+              });
+              this.closeModal();
+              this.loadEmployees();
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.translate.instant("ERROR"),
+                detail: this.langService.getCurrentLang() === 'ar'
+                  ? `فشل في إضافة الموظف. ${response.message || 'يرجى المحاولة مرة أخرى أو الاتصال بالدعم.'}`
+                  : `Failed to add employee. ${response.message || 'Please try again or contact support.'}`
+              });
+            }
             this.isSubmitting = false;
           },
           error: (error) => {
-            console.error('Error adding branch:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في إضافة الموظف. يرجى المحاولة مرة أخرى.' 
+            console.error('Error adding branch:', error.message);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'خطأ',
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في إضافة الموظف. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.'
+                : 'Failed to add employee. Please try again or contact support.'
             });
             this.isSubmitting = false;
           }
@@ -531,53 +607,29 @@ export class EmployeesComponent implements OnInit {
           this.employees = response.data.employees;
           this.totalRecords = response.data.totalCount;
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: response.message });
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant("ERROR"),
+            detail: this.langService.getCurrentLang() === 'ar'
+              ? 'فشل تحميل الموظفين، يرجى الاتصال بالدعم إذا استمرت المشكلة.'
+              : 'Failed to load employees. Please call support if the issue persists.'
+          });
         }
         this.loading = false;
       },
       error: (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load employees' });
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? 'فشل تحميل الموظفين، يرجى الاتصال بالدعم إذا استمرت المشكلة.'
+            : 'Failed to load employees. Please call support if the issue persists.'
+        });
         this.loading = false;
       }
     });
   }
 
-  // deleteEmployee(employee: Employee) {
-  //   this.confirmationService.confirm({
-  //     message: `هل أنت متأكد من حذف الموظف "${employee.empName}"؟\nلا يمكن التراجع عن هذا الإجراء.`,
-  //     header: 'تأكيد الحذف',
-  //     icon: 'pi pi-exclamation-triangle',
-  //     acceptLabel: 'نعم، احذف',
-  //     rejectLabel: 'إلغاء',
-  //     accept: () => {
-  //       this.deletingEmployeeId = employee.empId;
-  //       // Call API to delete the branch
-  //       this.employeeService.deleteEmployee(employee.empId).subscribe({
-  //         next: (response) => {
-  //           this.messageService.add({ 
-  //             severity: 'success', 
-  //             summary: 'نجح', 
-  //             detail: 'تم حذف الفرع بنجاح' 
-  //           });
-  //           this.loadEmployees();
-  //           this.deletingEmployeeId = null;
-  //         },
-  //         error: (error) => {
-  //           console.error('Error deleting branch:', error);
-  //           this.messageService.add({ 
-  //             severity: 'error', 
-  //             summary: 'خطأ', 
-  //             detail: 'فشل في حذف الفرع. يرجى المحاولة مرة أخرى.' 
-  //           });
-  //           this.deletingEmployeeId = null;
-  //         }
-  //       });
-  //     },
-  //     reject: () => {
-  //       // User cancelled - no action needed
-  //     }
-  //   });
-  // }
 
   changeEmployeeNumber(employee: Employee) {
     this.selectedEmployee = employee;
@@ -605,44 +657,54 @@ export class EmployeesComponent implements OnInit {
       const newEmployeeId = parseInt(this.changeNumberForm.value.newNumber);
 
       if (isNaN(newEmployeeId)) {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'يرجى إدخال رقم صحيح للموظف الجديد' 
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: this.langService.getCurrentLang() === 'ar'
+            ? 'يرجى إدخال رقم صحيح للموظف الجديد'
+            : 'Please enter a valid employee number'
         });
         return;
       }
-
-      console.log('Change Number Form Data:', {
-        empId: this.selectedEmployee?.empId,
-        empName: this.selectedEmployee?.empName,
-        oldNumber: this.getOldEmployeeNumber(this.selectedEmployee),
-        newNumber:newEmployeeId,
-        notes: this.changeNumberForm.value.notes
-      });
 
       const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
 
       this.employeeService.changeEmployeeId(this.selectedEmployee.empId, newEmployeeId, currentLang).subscribe({
         next: (response) => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: 'نجح', 
-            detail: 'تم تغيير رقم الموظف بنجاح' 
-          });
-          this.closeChangeNumberModal();
-          this.loadEmployees(); // Reload the employees list
+          if (response.isSuccess) {
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translate.instant("SUCCESS"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'تم تغيير رقم الموظف بنجاح'
+                : 'Employee number changed successfully'
+            });
+            this.closeChangeNumberModal();
+            this.loadEmployees(); // Reload the employees list
+          } else {
+            console.error('Error changing branch ID:', response.message);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'فشل في تغيير رقم الموظف. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.'
+                : 'Failed to change employee number. Please try again or contact support.'
+            });
+          }
+
         },
         error: (error) => {
           console.error('Error changing branch ID:', error);
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'خطأ', 
-            detail: 'فشل في تغيير رقم الموظف. يرجى المحاولة مرة أخرى.' 
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant("ERROR"),
+            detail: this.langService.getCurrentLang() === 'ar'
+              ? 'فشل في تغيير رقم الموظف. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.'
+              : 'Failed to change employee number. Please try again or contact support.'
           });
         }
       });
-      
+
       this.closeChangeNumberModal();
       // Reload the employees list
       this.loadEmployees();
@@ -655,81 +717,46 @@ export class EmployeesComponent implements OnInit {
   changePassword(employee: Employee) {
     this.selectedEmployee = employee;
 
-
     const empId = employee.empId;
 
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
-     if (isNaN(empId)) {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'خطأ', 
-          detail: 'رقم الموظف غير صحيح' 
-        });
-        return;
-      }
-    if (confirm('سيتم تعيين كلمة المرور بنفس رقم الموظف .. هل تريد المتابعة؟')) {
+    if (isNaN(empId)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant("ERROR"),
+        detail: currentLang === 2 ? 'رقم الموظف الذى ادخلته غير صحيح' : 'Invalid employee number'
+      });
+      return;
+    }
+    if (confirm(currentLang === 2
+      ? 'سيتم تعيين كلمة المرور بنفس رقم الموظف .. هل تريد المتابعة؟'
+      : 'The password will be reset to the employee number. Do you want to continue?')) {
+
       this.employeeService.resetEmpPassword(empId, currentLang).subscribe({
         next: () => {
-          alert('تم تغيير كلمة المرور بنجاح');
+          alert(currentLang === 2
+            ? 'تم تغيير كلمة المرور بنجاح'
+            : 'Password changed successfully');
         },
         error: (err) => {
           console.error(err);
-          alert('حدث خطأ أثناء تغيير كلمة المرور');
+          alert(currentLang === 2
+            ? 'حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
+            : 'An error occurred while changing the password. Please try again or contact support');
         }
       });
     }
 
   }
 
-  // closeChangePasswordModal() {
-  //   this.showChangePasswordModal = false;
-  //   this.selectedEmployee = null;
-  //   this.resetChangePasswordForm();
+
+  // getActiveFlagDisplay(activeFlag: string): string {
+  //   return activeFlag === '1' ? 'نشط' : 'غير نشط';
   // }
 
-  // resetChangePasswordForm() {
-  //   this.changePasswordForm.reset();
+  // getLanguageDisplay(lang: string): string {
+  //   return lang === '1' ? 'English' : 'العربية';
   // }
-
-  // submitChangePassword() {
-  //   if (this.changePasswordForm.valid) {
-  //     const formValue = this.changePasswordForm.value;
-      
-  //     if (formValue.newPassword !== formValue.confirmPassword) {
-  //       this.messageService.add({ 
-  //         severity: 'error', 
-  //         summary: 'خطأ', 
-  //         detail: 'كلمة المرور وتأكيد كلمة المرور غير متطابقين' 
-  //       });
-  //       return;
-  //     }
-
-  //     console.log('Change Password Form Data:', {
-  //       empId: this.selectedEmployee?.empId,
-  //       empName: this.selectedEmployee?.empName,
-  //       newPassword: formValue.newPassword
-  //     });
-      
-  //     // TODO: Call API to change the employee password
-  //     this.messageService.add({ 
-  //       severity: 'success', 
-  //       summary: 'نجح', 
-  //       detail: 'تم تغيير كلمة مرور الموظف بنجاح' 
-  //     });
-  //     this.closeChangePasswordModal();
-  //   } else {
-  //     // Mark all fields as touched to show validation errors
-  //     this.changePasswordForm.markAllAsTouched();
-  //   }
-  // }
-
-  getActiveFlagDisplay(activeFlag: string): string {
-    return activeFlag === '1' ? 'نشط' : 'غير نشط';
-  }
-
-  getLanguageDisplay(lang: string): string {
-    return lang === '1' ? 'English' : 'العربية';
-  }
 
   // Helper methods for form validation
   isFieldInvalid(fieldName: string, formGroup: FormGroup = this.employeeForm): boolean {
@@ -739,19 +766,29 @@ export class EmployeesComponent implements OnInit {
 
   getFieldError(fieldName: string, formGroup: FormGroup = this.employeeForm): string {
     const field = formGroup.get(fieldName);
+    const isArabic = this.langService.getCurrentLang() === 'ar';
+
     if (field && field.errors && (field.dirty || field.touched)) {
       if (field.errors['required']) {
-        return 'هذا الحقل مطلوب';
+        return isArabic
+          ? 'هذا الحقل مطلوب'
+          : 'This field is required';
       }
       if (field.errors['email']) {
-        return 'يرجى إدخال بريد إلكتروني صحيح';
+        return isArabic
+          ? 'يرجى إدخال بريد إلكتروني صحيح'
+          : 'Please enter a valid email address';
       }
       if (field.errors['minlength']) {
-        return `يجب أن تحتوي كلمة المرور على ${field.errors['minlength'].requiredLength} أحرف على الأقل`;
+        return isArabic
+          ? `يجب أن تحتوي كلمة المرور على ${field.errors['minlength'].requiredLength} أحرف على الأقل`
+          : `Password must be at least ${field.errors['minlength'].requiredLength} characters long`;
       }
     }
+
     return '';
   }
+
 
   // Getter methods for form validation
   get isEmployeeFormValid(): boolean {
@@ -761,18 +798,6 @@ export class EmployeesComponent implements OnInit {
   get isChangeNumberFormValid(): boolean {
     return this.changeNumberForm.valid;
   }
-
-  // get isChangePasswordFormValid(): boolean {
-  //   if (!this.changePasswordForm.valid) return false;
-  //   const formValue = this.changePasswordForm.value;
-  //   return formValue.newPassword === formValue.confirmPassword;
-  // }
-
-  // get passwordsMatch(): boolean {
-  //   const formValue = this.changePasswordForm.value;
-  //   return formValue.newPassword === formValue.confirmPassword;
-  // }
-
 
   private async loadDropdownDataIfNeeded(): Promise<void> {
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
@@ -903,7 +928,6 @@ export class EmployeesComponent implements OnInit {
 
       // Only load Languages if not already loaded for this language
       if (!this.dropdownDataLoaded.languages || this.languages.length === 0) {
-        console.log('Loading languages...');
         const locationPromise = this.dropdownService.getLanguagesDropdownList(currentLang).toPromise()
           .then(response => {
             if (response && response.isSuccess) {
@@ -921,7 +945,6 @@ export class EmployeesComponent implements OnInit {
 
       // If no API calls needed, resolve immediately
       if (loadPromises.length === 0) {
-        console.log('All dropdown data already available');
         this.loadingDropdowns = false;
         return;
       }
@@ -929,53 +952,54 @@ export class EmployeesComponent implements OnInit {
       // Wait for all needed API calls to complete
       await Promise.all(loadPromises);
       this.loadingDropdowns = false;
-      console.log('Smart dropdown loading completed');
 
     } catch (error) {
       console.error('Error in smart dropdown loading:', error);
       this.loadingDropdowns = false;
       this.messageService.add({
         severity: 'warn',
-        summary: 'تحذير',
-        detail: 'فشل في تحميل بعض البيانات'
+        summary: this.translate.instant("WARNING"),
+        detail: this.langService.getCurrentLang() === 'ar'
+          ? "فشل في تحميل بعض البيانات. يرجى المحاولة مرة أخرى أو التواصل مع الدعم"
+          : "Failed to load some data. Please try again or contact support"
       });
     }
   }
 
   private areAllDropdownsLoaded(): boolean {
-    return this.dropdownDataLoaded.statuses && 
-           this.dropdownDataLoaded.departments && 
-           this.dropdownDataLoaded.nationalities &&
-           this.dropdownDataLoaded.genders &&
-           this.dropdownDataLoaded.maritalStatuses &&
-           this.dropdownDataLoaded.jobs &&
-           this.dropdownDataLoaded.languages &&
-           this.statuses.length > 0 &&
-           this.departments.length > 0 &&
-           this.nationalities.length > 0 &&
-           this.genders.length > 0 &&
-           this.maritalStatuses.length > 0&&
-           this.jobs.length > 0 &&
-           this.languages.length > 0 ;
+    return this.dropdownDataLoaded.statuses &&
+      this.dropdownDataLoaded.departments &&
+      this.dropdownDataLoaded.nationalities &&
+      this.dropdownDataLoaded.genders &&
+      this.dropdownDataLoaded.maritalStatuses &&
+      this.dropdownDataLoaded.jobs &&
+      this.dropdownDataLoaded.languages &&
+      this.statuses.length > 0 &&
+      this.departments.length > 0 &&
+      this.nationalities.length > 0 &&
+      this.genders.length > 0 &&
+      this.maritalStatuses.length > 0 &&
+      this.jobs.length > 0 &&
+      this.languages.length > 0;
   }
 
-   private resetDropdownState(): void {
+  private resetDropdownState(): void {
     this.dropdownDataLoaded = {
       statuses: false,
       departments: false,
-      nationalities:false,
-      genders:false,
-      maritalStatuses:false,
-      jobs:false,
-      languages:false
+      nationalities: false,
+      genders: false,
+      maritalStatuses: false,
+      jobs: false,
+      languages: false
     };
     this.statuses = [];
     this.departments = [];
     this.nationalities = [];
-    this.genders=[];
-    this.maritalStatuses=[];
-    this.jobs=[];
-    this.languages=[];
+    this.genders = [];
+    this.maritalStatuses = [];
+    this.jobs = [];
+    this.languages = [];
     this.currentLanguage = '';
   }
 
@@ -983,7 +1007,7 @@ export class EmployeesComponent implements OnInit {
     return this.loadDropdownDataIfNeeded();
   }
 
-    // Getter methods for form validation
+  // Getter methods for form validation
   get isBranchFormValid(): boolean {
     return this.employeeForm.valid && !this.isSubmitting;
   }
@@ -1003,31 +1027,23 @@ export class EmployeesComponent implements OnInit {
     }
 
     const employee = this.selectedEmployee;
-    // console.log('=== Updating form selections for employee ===');
-    // console.log('Employee data:', employee);
-    // console.log('Available maritalStatuses:', this.maritalStatuses);
-    // console.log('Available departments:', this.departments);
-    // console.log('Available statuses:', this.statuses);
-    // console.log('Available statuses:', this.nationalities);
-    // console.log('Available statuses:', this.genders);
-    // console.log('Available statuses:', this.jobs);
-    // console.log('Available statuses:', this.languages);
 
     console.log('Current form value:', this.employeeForm.value);
-    
+
     // Get current form values
     const currentFormValue = this.employeeForm.value;
-    
+
     // Create a new form value object with all current values
     const newFormValue = {
       empNumber: currentFormValue.empNumber || employee.empId || '',
       empArName: currentFormValue.empArName || employee.empName || '',
-      empEnName: currentFormValue.empEnName ||  employee.empName || '',
-      activeFlag:currentFormValue.activeFlag || employee.activeFlag,
+      empEnName: currentFormValue.empEnName || employee.empName || '',
+  // Preserve explicit false values; prefer current form boolean, otherwise derive from employee value
+  activeFlag: (typeof currentFormValue.activeFlag === 'boolean') ? currentFormValue.activeFlag : (Number(employee.activeFlag) === 1),
       deptId: '',
-      statusId:'',
+      statusId: '',
       fingerPrint: currentFormValue.fingerPrint || '', // no mapping in Employee
-      natId:  '',
+      natId: '',
       gender: 0,
       email: currentFormValue.email || employee.email || '',
       phoneNum: currentFormValue.phoneNum || employee.smsPhone || '',
@@ -1057,19 +1073,14 @@ export class EmployeesComponent implements OnInit {
       lang: '',
       note: currentFormValue.note || employee.note || ''
     };
-    
-    // Update department selection
-    // console.log('=== department Selection Debug ===');
-    // console.log('Processing manager ID:', branch.mgrId, 'Type:', typeof branch.mgrId);
-    // console.log('Available managers:', this.managers);
-    // console.log('Manager values:', this.managers.map(m => ({ value: m.value, type: typeof m.value, label: m.label })));
+
     if (employee.deptId !== null && employee.deptId !== undefined && this.departments.length > 0) {
       const department = this.departments.find(m => m.value === employee.deptId);
       // console.log('Looking for department with ID:',employee.deptId, 'Found:', department);
       if (department) {
         newFormValue.deptId = department.value.toString();
         console.log('Setting mgrId to:', department.value.toString());
-      } 
+      }
       else {
         console.warn('department not found in dropdown options');
         // Try to find by converting to string
@@ -1086,7 +1097,7 @@ export class EmployeesComponent implements OnInit {
     } else {
       console.log('department ID is null, undefined, or -1, leaving deptId empty');
     }
-    
+
     // Update status selection
     if (employee.statusId !== null && employee.statusId !== undefined && this.statuses.length > 0) {
       const status = this.statuses.find(l => l.value === employee.statusId);
@@ -1103,10 +1114,10 @@ export class EmployeesComponent implements OnInit {
           console.log('Found status by string conversion:', statusStr.value.toString());
         }
       }
-    }else {
+    } else {
       console.log('status ID is null, undefined, or -1, leaving statusId empty');
     }
-    
+
     // Update nationalitiy selection
     if (employee.natId !== null && employee.natId !== undefined && this.nationalities.length > 0) {
       const nationalitiy = this.nationalities.find(pb => pb.value.toString() === employee.natId);
@@ -1123,7 +1134,7 @@ export class EmployeesComponent implements OnInit {
           console.log('Found nationalitiy by string conversion:', nationalitiyStr.value.toString());
         }
       }
-    }else {
+    } else {
       console.log('nationalitiy ID is null, undefined, or -1, leaving nationalitiyId empty');
     }
 
@@ -1143,14 +1154,13 @@ export class EmployeesComponent implements OnInit {
           console.log('Found gender by string conversion:', genderStr.value.toString());
         }
       }
-    }else {
+    } else {
       console.log('gender ID is null, undefined, or -1, leaving genderId empty');
     }
-    
+
     // Update jobType selection
     if (employee.jobTypId !== null && employee.jobTypId !== undefined && this.jobs.length > 0) {
       const job = this.jobs.find(pb => pb.value === employee.jobTypId);
-      console.log('Looking for job with ID:', employee.jobTypId, 'Found:', job);
       if (job) {
         newFormValue.jobTypeId = job.value.toString();
         console.log('Setting jobTypId to:', job.value.toString());
@@ -1160,10 +1170,9 @@ export class EmployeesComponent implements OnInit {
         const jobStr = this.jobs.find(pb => pb.value.toString() === employee.jobTypId!.toString());
         if (jobStr) {
           newFormValue.jobTypeId = jobStr.value.toString();
-          console.log('Found jobType by string conversion:', jobStr.value.toString());
         }
       }
-    }else {
+    } else {
       console.log('jobType ID is null, undefined, or -1, leaving jobTypId empty');
     }
 
@@ -1183,46 +1192,38 @@ export class EmployeesComponent implements OnInit {
           console.log('Found language by string conversion:', languageStr.value.toString());
         }
       }
-    }else {
+    } else {
       console.log('language ID is null, undefined, or -1, leaving langId empty');
     }
 
     // Update maritalstatus selection
     if (employee.maritalStatus !== null && employee.maritalStatus !== undefined && this.maritalStatuses.length > 0) {
       const maritalstatus = this.maritalStatuses.find(pb => pb.value.toString() === employee.maritalStatus);
-      // console.log('Looking for language with ID:', employee.maritalStatus, 'Found:', language);
       if (maritalstatus) {
         newFormValue.maritalstatus = maritalstatus.value;
-        // console.log('Setting langId to:', maritalstatus.value);
       } else {
         console.warn('language not found in dropdown options');
         // Try to find by converting to string
         const maritalstatusStr = this.maritalStatuses.find(pb => pb.value.toString() === employee.maritalStatus!.toString());
         if (maritalstatusStr) {
           newFormValue.maritalstatus = maritalstatusStr.value;
-          // console.log('Found language by string conversion:', languageStr.value.toString());
         }
       }
-    }else {
+    } else {
       console.log('language ID is null, undefined, or -1, leaving langId empty');
     }
-    
+
     console.log('New form value to set:', newFormValue);
-    
+
     // Use setValue to force all values instead of patchValue
     this.employeeForm.setValue(newFormValue);
-    
+
     // Force change detection
     this.employeeForm.markAsDirty();
     this.employeeForm.updateValueAndValidity();
-    
+
     console.log('Form after setValue:', this.employeeForm.value);
-    
-    // Log individual form control values
-    // console.log('Individual form controls:');
-    // console.log('mgrId control value:', this.employeeForm.get('mgrId')?.value);
-    // console.log('locId control value:', this.employeeForm.get('locId')?.value);
-    // console.log('parentBranchId control value:', this.employeeForm.get('parentBranchId')?.value);
+
   }
 
   selectedEmployeeIds: number[] = [];
@@ -1237,23 +1238,39 @@ export class EmployeesComponent implements OnInit {
 
   resetPasswordsForSelected() {
     if (this.selectedEmployeeIds.length === 0) {
-      alert('الرجاء اختيار موظف واحد على الأقل');
+      alert(this.langService.getCurrentLang() === 'ar'
+        ? 'الرجاء اختيار موظف واحد على الأقل'
+        : 'Please select at least one employee');
       return;
     }
 
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
 
-    if (confirm('سيتم تعيين كلمة المرور لكل موظف قيد التحديد بنفس رقم الموظف .. هل تريد المتابعة؟')) {
+    const confirmMessage = this.langService.getCurrentLang() === 'ar'
+      ? 'سيتم تعيين كلمة المرور لكل موظف قيد التحديد بنفس رقم الموظف .. هل تريد المتابعة؟'
+      : 'The password for each selected employee will be set to their employee number. Do you want to continue?';
+
+    if (confirm(confirmMessage)) {
       this.employeeService.resetEmpsPassword(this.selectedEmployeeIds, currentLang).subscribe({
         next: () => {
-          alert('تم تغيير كلمات المرور للموظفين المحددين بنجاح');
+          alert(this.langService.getCurrentLang() === 'ar'
+            ? 'تم تغيير كلمات المرور للموظفين المحددين بنجاح'
+            : 'Passwords for the selected employees have been successfully changed');
         },
         error: (err) => {
           console.error(err);
-          alert('حدث خطأ أثناء تغيير كلمات المرور');
+          const errorMsg = this.langService.getCurrentLang() === 'ar'
+            ? "حدث خطأ أثناء تغيير كلمات المرور. يرجى المحاولة مرة أخرى أو التواصل مع الدعم"
+            : "An error occurred while changing passwords. Please try again or contact support";
+          alert(errorMsg);
+
         }
       });
     }
   }
-  
+
 }
+function moment(date: string | Date) {
+  throw new Error('Function not implemented.');
+}
+

@@ -11,6 +11,7 @@ import { AuthenticationService } from '../../../authentication/services/authenti
 
 // Models
 import { MobileSignLocation, CreateMobileSignLocationRequest, UpdateMobileSignLocationRequest } from '../../../../core/models/signLocation';
+import { PaginationRequest } from '../../../../core/models/pagination';
 
 @Component({
   selector: 'app-mobile-sign-locations',
@@ -21,6 +22,7 @@ import { MobileSignLocation, CreateMobileSignLocationRequest, UpdateMobileSignLo
 export class MobileSignLocationsComponent implements OnInit, OnDestroy {
   // Core component state
   mobileSignLocations: MobileSignLocation[] = [];
+  searchTerm: string = '';
   loading = false;
   totalRecords = 0;
   currentPage = 1;
@@ -30,9 +32,42 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
   showAddModal = false;
   isEditMode = false;
   selectedLocation: MobileSignLocation | null = null;
+
+   private isInitialized = false; // Prevent double API calls on init
+  
+      searchColumns = [
+        { column: '', label: 'All Columns' }, // all columns option
+        { column: 'AR', label: 'MOBILE_SIGN_LOCATIONS.ARABIC_NAME' },
+        { column: 'EN', label: 'MOBILE_SIGN_LOCATIONS.ENGLISH_NAME' },
+        { column: 'STATUS_NAME', label: 'MOBILE_SIGN_LOCATIONS.STATUS' },
+        { column: 'NOTE', label: 'MOBILE_SIGN_LOCATIONS.NOTE' },
+      ];
+      selectedColumn: string = '';
+      selectedColumnLabel: string = this.searchColumns[0].label;
+    
+      selectColumn(col: any) {
+        this.paginationRequest.searchColumn = col.column;
+        this.selectedColumnLabel = col.label;
+      }
+    
+      paginationRequest: PaginationRequest = {
+          pageNumber: 1,
+          pageSize: 10,
+          lang: 1,// Default to English, can be changed based on app's language settings
+          searchColumn: this.selectedColumn,
+          searchText: this.searchTerm
+        };
+      
+      onSearch() {
+        this.currentPage = 1;
+        this.paginationRequest.pageNumber = 1;
+        this.paginationRequest.searchColumn = this.selectedColumn;
+        this.paginationRequest.searchText = this.searchTerm;
+        this.loadMobileSignLocations();
+      }
+    
   
   // Forms
-  searchForm!: FormGroup;
   locationForm!: FormGroup;
 
   // Subscriptions
@@ -48,6 +83,16 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder
   ) {
     this.initializeForm();
+
+    // Set the language for the pagination request based on the current language setting
+    this.langService.currentLang$.subscribe(lang => {
+      this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+
+      // Only reload mobileSignTransactions if component is already initialized (not first time)
+      if (this.isInitialized) {
+        this.loadMobileSignLocations(); // Reload mobileSignTransactions when language changes
+      }
+    })
   }
 
   ngOnInit() {
@@ -66,13 +111,10 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
   }
 
   initializeForm() {
-    this.searchForm = this.fb.group({
-      searchTerm: ['']
-    });
 
     this.locationForm = this.fb.group({
       ar: ['', Validators.required],
-      en: ['', Validators.required],
+      en: [''],
       note: ['']
     });
   }
@@ -82,7 +124,7 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
     this.loading = true;
     const lang = this.langService.getLangValue();
     
-    this.signLocationsService.getMobileSignLocations(this.currentPage, this.pageSize, lang).subscribe({
+    this.signLocationsService.getMobileSignLocations(this.paginationRequest, lang).subscribe({
       next: (response) => {
         if (response.isSuccess) {
           this.mobileSignLocations = response.data.mobileSignLocations || [];
@@ -112,33 +154,24 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Search functionality
-  onSearch() {
-    this.currentPage = 1;
-    this.loadMobileSignLocations();
-  }
-
   // Pagination computed properties
   get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
+    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
   }
 
   get currentPageStart(): number {
-    return (this.currentPage - 1) * this.pageSize + 1;
+    return (this.currentPage - 1) * this.paginationRequest.pageSize + 1;
   }
 
   get currentPageEnd(): number {
-    return Math.min(this.currentPage * this.pageSize, this.totalRecords);
-  }
-
-  get searchTerm(): string {
-    return this.searchForm.get('searchTerm')?.value || '';
+    return Math.min(this.currentPage * this.paginationRequest.pageSize, this.totalRecords);
   }
 
   // Pagination methods
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.paginationRequest.pageNumber = page;
       this.loadMobileSignLocations();
     }
   }
@@ -146,6 +179,7 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadMobileSignLocations();
     }
   }
@@ -153,12 +187,14 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadMobileSignLocations();
     }
   }
 
   onPageSizeChange() {
     this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
     this.loadMobileSignLocations();
   }
 

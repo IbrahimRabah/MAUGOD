@@ -6,6 +6,7 @@ import { ConfirmationService } from 'primeng/api';
 import { AttendanceService } from '../../services/attendance.service';
 import { PaginationPunchTransactionsRequest } from '../../../../core/models/pagination';
 import {  PunchTransaction, PunchTransactionsResponse } from '../../../../core/models/attendance';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -22,6 +23,7 @@ export class PunchInTransactionsComponent implements OnInit {
   currentPage: number = 1;
   searchTerm: string = '';
   deletingPunchTransactionId: number | null = null;
+  hijriDates: { [key: string]: string } = {};
 
 
   startDate: string | null=null;
@@ -31,13 +33,25 @@ export class PunchInTransactionsComponent implements OnInit {
   //   if (!date) return '';
   //   return moment(date).format('iYYYY-iMM-iDD');
   // }
+searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns option
+  { column: 'emp_name', label: 'Attendance.RESULTS_TABLE.EMPLOYEE_HEADER' },
+  { column: 'sign_date', label: 'Attendance.RESULTS_TABLE.DATE_SIGN' },
+  { column: 'rec_date', label: 'Attendance.RESULTS_TABLE.RECORD_DATE' },
+  { column: 'data_source_label', label: 'Attendance.RESULTS_TABLE.DATA_SOURCE' }
+];
+
+selectedColumn: string = '';
+selectedColumnLabel: string = this.searchColumns[0].label;
 
   paginationRequest: PaginationPunchTransactionsRequest = {
     pageNumber: 1,
     pageSize: 10,
     empId: this.getStoredEmpId(),
     startDate:this.startDate,
-    endDate:this.endDate
+    endDate:this.endDate,
+     searchColumn: this.selectedColumn, 
+    searchText:this.searchTerm 
   };
 
 
@@ -52,7 +66,7 @@ export class PunchInTransactionsComponent implements OnInit {
     public langService: LanguageService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-
+    private translate: TranslateService
   ) {
     
     const today = new Date();
@@ -60,6 +74,9 @@ export class PunchInTransactionsComponent implements OnInit {
 
     this.startDate = formattedDate;
     this.endDate = formattedDate;
+
+    this.hijriDates['startDate'] = this.toObservedHijri(this.startDate);
+    this.hijriDates['endDate'] = this.toObservedHijri(this.endDate);
 
     // Initialize paginationRequest here
     this.paginationRequest = {
@@ -88,12 +105,53 @@ export class PunchInTransactionsComponent implements OnInit {
     this.loadPunchTransactions();
   }
 
+      selectColumn(col: any) {
+  this.selectedColumn = col.column;
+  this.selectedColumnLabel = col.label;
+}
+ onDateChange(event: Event, controlName: string) {
+  const input = event.target as HTMLInputElement;
+  const value = input.value;
+  if (value) {
+    this.hijriDates[controlName] = this.toObservedHijri(value);
+  } else {
+    this.hijriDates[controlName] = '';
+  }
+ this.paginationRequest.startDate = this.startDate;
+    this.paginationRequest.endDate = this.endDate;
+    this.loadPunchTransactions();
+}
+
+toObservedHijri(date: Date | string, adjustment: number = -1): string {
+  // Ensure date is a Date object
+  const d: Date = date instanceof Date ? new Date(date) : new Date(date);
+  if (isNaN(d.getTime())) return ''; // handle invalid date
+
+  // Apply adjustment in days
+  d.setDate(d.getDate() + adjustment);
+
+  const formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
+  const parts = formatter.formatToParts(d);
+
+  const year = parts.find(p => p.type === 'year')?.value ?? '0000';
+  const month = parts.find(p => p.type === 'month')?.value ?? '00';
+  const day = parts.find(p => p.type === 'day')?.value ?? '00';
+
+  return `${year}/${month}/${day}`;
+}
  
   onFilterChange() {
     this.paginationRequest.startDate = this.startDate;
     this.paginationRequest.endDate = this.endDate;
     this.loadPunchTransactions();
   }
+
+
 
   getStoredEmpId(): number  {
     const empId = localStorage.getItem('empId');
@@ -144,6 +202,8 @@ export class PunchInTransactionsComponent implements OnInit {
   onSearch() {
     this.currentPage = 1;
     this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn=this.selectedColumn;
+    this.paginationRequest.searchText=this.searchTerm;
     this.loadPunchTransactions();
   }
 
@@ -164,16 +224,40 @@ export class PunchInTransactionsComponent implements OnInit {
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
     this.attendanceService.getPunchInTransactions(currentLang,this.paginationRequest).subscribe({
       next: (response: PunchTransactionsResponse) => {
-        if (response.isSuccess) {
-          this.punchTransactions = response.data.tenter;
-          this.totalRecords = response.data.totalCount;
-        } else {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: response.message });
-        }
+         if (response.isSuccess) {
+        this.punchTransactions = response.data.tenter;
+        this.totalRecords = response.data.totalCount;
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant("ERROR"),
+          detail: currentLang === 2
+            ? 'حدث خطأ أثناء تحميل البيانات، يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
+            : 'An error occurred while loading data, please try again or contact support'
+        });
+      }
         this.loading = false;
       },
       error: (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load attendances' });
+        let errorMsg = currentLang === 2
+        ? 'فشل تحميل البيانات، يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
+        : 'Failed to load data, please try again or contact support';
+
+      if (error.status === 404) {
+        errorMsg = currentLang === 2
+          ? 'لم يتم العثور على معاملات البصمة'
+          : 'No punch transactions found';
+      } else if (error.status === 500) {
+        errorMsg = currentLang === 2
+          ? 'خطأ في الخادم، يرجى الاتصال بالدعم الفني'
+          : 'Server error, please contact support';
+      }
+
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translate.instant("ERROR"),
+        detail: errorMsg
+      });
         this.loading = false;
       }
     });
@@ -182,32 +266,46 @@ export class PunchInTransactionsComponent implements OnInit {
   deletePunchTransaction(PunchTransaction: PunchTransaction) {
     this.selectedPunchTransactionIds.push(PunchTransaction.recId);
     this.confirmationService.confirm({
-      message: `سيتم حذف العنصر .. هل تريد المتابعة؟`,
-      header: 'تأكيد الحذف',
+      message: this.translate.instant('VALIDATION.CONFIRM_DELETE'),
+      header: this.translate.instant('CONFIRM_DELE'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، احذف',
-      rejectLabel: 'إلغاء',
+      acceptLabel: this.translate.instant('OK'),
+      rejectLabel:  this.translate.instant('CANCEL'),
       accept: () => {
-        // this.deletingAttendanceId = attendance.timId;
-        // Call API to delete the branch
         const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
 
         this.attendanceService.deletePunchInTransactionsSelected(this.selectedPunchTransactionIds, currentLang).subscribe({
           next: (response) => {
             this.messageService.add({ 
               severity: 'success', 
-              summary: 'نجح', 
-              detail: 'تم حذف العنصر بنجاح' 
+              summary: this.translate.instant("SUCCESS"),
+              detail: this.langService.getCurrentLang() === 'ar'
+                ? 'تم حذف العنصر بنجاح'
+                : 'Item deleted successfully'
             });
             this.loadPunchTransactions();
             this.deletingPunchTransactionId = null;
           },
           error: (error) => {
             console.error('Error deleting item:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'خطأ', 
-              detail: 'فشل في حذف الفرع. يرجى المحاولة مرة أخرى.' 
+            let errorMsg = this.langService.getCurrentLang() === 'ar'
+              ? 'فشل في حذف العنصر، يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
+              : 'Failed to delete the item, Please try again or contact support';
+
+            if (error.status === 404) {
+              errorMsg = this.langService.getCurrentLang() === 'ar'
+                ? 'العنصر غير موجود'
+                : 'Item not found';
+            } else if (error.status === 500) {
+              errorMsg = this.langService.getCurrentLang() === 'ar'
+                ? 'خطأ في الخادم، يرجى الاتصال بالدعم الفني'
+                : 'Server error, please contact support';
+            }
+
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translate.instant("ERROR"),
+              detail: errorMsg
             });
             this.deletingPunchTransactionId = null;
           }
@@ -219,10 +317,6 @@ export class PunchInTransactionsComponent implements OnInit {
     });
   }
 
-
-  getLanguageDisplay(lang: string): string {
-    return lang === '1' ? 'English' : 'العربية';
-  }
 
   selectedPunchTransactionIds: number[] = [];
 
@@ -236,22 +330,30 @@ export class PunchInTransactionsComponent implements OnInit {
 
   deleteForSelected() {
     if (this.selectedPunchTransactionIds.length === 0) {
-      alert('الرجاء اختيار عنصر واحد على الأقل');
+      alert(this.langService.getCurrentLang() === 'ar'
+        ? 'الرجاء اختيار عنصر واحد على الأقل'
+        : 'Please select at least one item');
       return;
     }
 
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
 
-    if (confirm('سيتم حذف العناصر قيد التحديد .. هل تريد المتابعة؟')) {
+    if (confirm(this.langService.getCurrentLang() === 'ar'
+      ? 'سيتم حذف العناصر قيد التحديد .. هل تريد المتابعة؟'
+      : 'The selected items will be deleted. Do you want to continue?')) {
       this.attendanceService.deletePunchInTransactionsSelected(this.selectedPunchTransactionIds, currentLang).subscribe({
         next: () => {
-          alert('تم حذف العناصرالمحددين بنجاح');
+          alert(this.langService.getCurrentLang() === 'ar'
+            ? 'تم حذف العناصر المحددة بنجاح'
+            : 'Selected items deleted successfully');
           this.loadPunchTransactions();
 
         },
         error: (err) => {
           console.error(err);
-          alert('حدث خطأ أثناء حذف العناصر');
+          alert(this.langService.getCurrentLang() === 'ar'
+            ? 'حدث خطأ أثناء حذف العناصر، يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
+            : 'An error occurred while deleting items, Please try again or contact support');
         }
       });
     }

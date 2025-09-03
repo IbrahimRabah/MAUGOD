@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AttendanceStatusCreate, AttendanceStatusResponse, AttendanceStatusUpdate } from '../../../core/models/attendanceStatus';
 import { Observable } from 'rxjs';
+import { PaginationCommonRequest } from '../../../core/models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,20 @@ export class AttendanceStatusService {
   private apiUrl = `${environment.apiUrl}/AttendanceStatus`;
   constructor(private http: HttpClient) { }
 
-   getAttendanceStatus(lang:number,pageSize: number, pageIndex: number): Observable<AttendanceStatusResponse> {
-    const url = `${this.apiUrl}/Index?pageSize=${pageSize}&pageIndex=${pageIndex}`;
+   getAttendanceStatus(lang:number,pageSize: number, pageIndex: number,selectedColumn?:string,
+    searchTerm?:string): Observable<AttendanceStatusResponse> {
+    const url = `${this.apiUrl}/Index`;
     const headers = new HttpHeaders()
       .set('accept', 'text/plain')
       .set('lang', lang.toString());
+      const paginationRequest: PaginationCommonRequest = {
+                    pageNumber: pageIndex,
+                    pageSize: pageSize,
+                    searchColumn: selectedColumn,
+                    searchText: searchTerm
+                  };
 
-    return this.http.get<AttendanceStatusResponse>(url, { headers });
+    return this.http.post<AttendanceStatusResponse>(url,paginationRequest ,{ headers });
   }
     createAttendanceStatus(lang: number, data: AttendanceStatusCreate): Observable<any> {
           const url = `${this.apiUrl}/Create`;

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MobileSignLocationAssignCreateRequest, MobileSignLocationsAssignResponse } from '../../../core/models/mobileSignLocationAssign';
 import { Observable } from 'rxjs';
+import { PaginationRequest } from '../../../core/models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +12,30 @@ export class MobileSignLocationAssignService {
   private apiUrl = `${environment.apiUrl}/MobileAndApp`;
   constructor(private http: HttpClient) { }
 
-  getMobileSignLocationAssign(lang: number, empId: number, pageNumber: number, pageSize: number):Observable<MobileSignLocationsAssignResponse > {
-    const headers: any = {
-      'accept': 'text/plain',
-      'lang': lang.toString(),
-      'pageSize': pageSize.toString(),
-      'pageIndex': pageNumber.toString(),
-      'empId': empId.toString()
-    };
-    
-    return this.http.get<MobileSignLocationsAssignResponse >(`${this.apiUrl}/GetMobileSignLocationsAssign`, { headers });
-  }
+  getMobileSignLocationAssign(
+  paginationRequest: PaginationRequest,
+  empId: number,
+): Observable<MobileSignLocationsAssignResponse> {
+
+  const headers = new HttpHeaders()
+    .set('accept', 'text/plain')
+    .set('lang', paginationRequest.lang.toString())
+    .set('empId', empId.toString());
+
+  const body = {
+    pageNumber: paginationRequest.pageNumber,
+    pageSize: paginationRequest.pageSize,
+    searchColumn: paginationRequest.searchColumn,
+    searchText: paginationRequest.searchText
+  };
+
+  return this.http.post<MobileSignLocationsAssignResponse>(
+    `${this.apiUrl}/GetMobileSignLocationsAssign`,
+    body,
+    { headers }
+  );
+}
+
   getMobileSignLocationAssignById(lang: number, empId: number, recId: number): Observable<MobileSignLocationsAssignResponse> {
     const headers: any = {
       'accept': 'text/plain',

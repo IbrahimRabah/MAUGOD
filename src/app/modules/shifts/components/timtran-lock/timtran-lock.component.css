@@ -860,3 +860,31 @@
     min-width: 220px;
   }
 }
+
+
+/* Boolean Badges */
+.boolean-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  min-width: 60px;
+}
+
+.boolean-badge.yes {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.boolean-badge.no {
+  background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+  color: white;
+}
+
+.input-group{
+  padding-left:6px;
+  padding-right:6px;
+}

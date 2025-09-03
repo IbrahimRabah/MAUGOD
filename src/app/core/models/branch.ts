@@ -17,10 +17,10 @@ export interface Branch {
 export interface BranchCreateUpdateRequest {
   ar: string;
   en: string;
-  mgrId: number;
+  mgrId: number | null;
   locDesc: string;
-  parentBranchId: number;
-  locId: number;
+  parentBranchId: number | null;
+  locId: number | null;
   note: string;
 }
 
@@ -42,10 +42,10 @@ export interface BranchEditResponse {
     branchId: number;
     ar: string;
     en: string;
-    mgrId: number;
+  mgrId: number | null;
     locDesc: string;
-    parentBranchId: number;
-    locId: number;
+  parentBranchId: number | null;
+    locId: number | null;
     note: string;
   };
 }

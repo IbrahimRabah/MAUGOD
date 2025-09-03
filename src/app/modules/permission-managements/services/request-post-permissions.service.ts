@@ -16,10 +16,15 @@ export class RequestPostPermissionsService {
 
   constructor(private http: HttpClient) { }
 
-  getRequestPostPermissions(lang: number, pageSize: number, pageIndex: number): Observable<RequestPostPermissionResponse> {
-    const params = new HttpParams()
-      .set('pageSize', pageSize.toString())
-      .set('pageIndex', pageIndex.toString());
+  getRequestPostPermissions(lang: number, pageSize: number, pageIndex: number, colunmSearchName : string | null, colunmSearchValue : string|null ): Observable<RequestPostPermissionResponse> {
+    let params = new HttpParams()
+                  .set('pageSize', pageSize.toString())
+                  .set('pageIndex', pageIndex.toString());
+      
+      if(colunmSearchName && colunmSearchValue){
+        params = params.set(colunmSearchName, colunmSearchValue);
+      }
+
     const headers = new HttpHeaders().set('lang', lang.toString());
 
     return this.http.get<RequestPostPermissionResponse>(`${this.apiUrl}/RequestPostPermissions`, { headers, params });

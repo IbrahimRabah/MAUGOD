@@ -185,8 +185,7 @@
 <div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3 *ngIf="!isEditMode">{{ 'USER_ROLE_ASSIGNMENT.ADD_USER_ROLE_ASSIGNMENT' | translate }}</h3>
-      <h3 *ngIf="isEditMode">{{ 'USER_ROLE_ASSIGNMENT.EDIT_USER_ROLE_ASSIGNMENT' | translate }}</h3>
+      <h3>{{ 'USER_ROLE_ASSIGNMENT.ADD_USER_ROLE_ASSIGNMENT' | translate }}</h3>
       <button class="close-btn" (click)="closeModal()">
         <i class="fas fa-times"></i>
       </button>
@@ -194,115 +193,388 @@
     
     <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
       <form [formGroup]="userRoleAssignmentForm" (ngSubmit)="submitUserRoleAssignment()">
-        <div class="form-grid">
-          <!-- Employee -->
-          <div class="form-group">
-            <label for="employeeId">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }} <span class="required">*</span></label>
-            <select 
-              id="employeeId"
-              class="form-select"
-              [class.error]="isFieldInvalid('employeeId')"
-              formControlName="employeeId">
-              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_EMPLOYEE' | translate }}</option>
-              <option *ngFor="let employee of employees" [value]="employee.value">{{ employee.label }}</option>
-            </select>
-            <div class="error-message" *ngIf="isFieldInvalid('employeeId')">
-              {{ getFieldError('employeeId') }}
+        
+        <!-- Section Selector -->
+        <div class="section-selector">
+          <h4 class="selector-title">{{ 'USER_ROLE_ASSIGNMENT.SELECT_SECTIONS' | translate }}</h4>
+          <div class="checkbox-row">
+            <div class="checkbox-item">
+              <input type="checkbox" 
+                     class="section-checkbox"
+                     [checked]="sectionVisibility['employees']" 
+                     (change)="toggleSectionVisibility('employees')"
+                     id="employees-checkbox">
+              <label for="employees-checkbox">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEES' | translate }}</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" 
+                     class="section-checkbox"
+                     [checked]="sectionVisibility['departments']" 
+                     (change)="toggleSectionVisibility('departments')"
+                     id="departments-checkbox">
+              <label for="departments-checkbox">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENTS' | translate }}</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" 
+                     class="section-checkbox"
+                     [checked]="sectionVisibility['branches']" 
+                     (change)="toggleSectionVisibility('branches')"
+                     id="branches-checkbox">
+              <label for="branches-checkbox">{{ 'USER_ROLE_ASSIGNMENT.BRANCHES' | translate }}</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" 
+                     class="section-checkbox"
+                     [checked]="sectionVisibility['roles']" 
+                     (change)="toggleSectionVisibility('roles')"
+                     id="roles-checkbox">
+              <label for="roles-checkbox">{{ 'USER_ROLE_ASSIGNMENT.ROLES' | translate }}</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" 
+                     class="section-checkbox"
+                     [checked]="sectionVisibility['departmentManagers']" 
+                     (change)="toggleSectionVisibility('departmentManagers')"
+                     id="departmentManagers-checkbox">
+              <label for="departmentManagers-checkbox">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT_MANAGERS' | translate }}</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" 
+                     class="section-checkbox"
+                     [checked]="sectionVisibility['branchManagers']" 
+                     (change)="toggleSectionVisibility('branchManagers')"
+                     id="branchManagers-checkbox">
+              <label for="branchManagers-checkbox">{{ 'USER_ROLE_ASSIGNMENT.BRANCH_MANAGERS' | translate }}</label>
             </div>
           </div>
-
-          <!-- Department -->
-          <div class="form-group">
-            <label for="departmentId">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
-            <select 
-              id="departmentId"
-              class="form-select"
-              formControlName="departmentId">
-              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_DEPARTMENT' | translate }}</option>
-              <option *ngFor="let department of departments" [value]="department.value">{{ department.label }}</option>
-            </select>
-          </div>
-
-          <!-- Manager of Department -->
-          <div class="form-group">
-            <label for="managerOfDepartmentId">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
-            <select 
-              id="managerOfDepartmentId"
-              class="form-select"
-              formControlName="managerOfDepartmentId">
-              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_MANAGER' | translate }}</option>
-              <option *ngFor="let manager of deptManager" [value]="manager.value">{{ manager.label }}</option>
-            </select>
-          </div>
-
-          <!-- Branch -->
-          <div class="form-group">
-            <label for="branchId">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
-            <select 
-              id="branchId"
-              class="form-select"
-              formControlName="branchId">
-              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_BRANCH' | translate }}</option>
-              <option *ngFor="let branch of branches" [value]="branch.value">{{ branch.label }}</option>
-            </select>
-          </div>
-
-          <!-- Manager of Branch -->
-          <div class="form-group">
-            <label for="managerOfBranchId">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
-            <select 
-              id="managerOfBranchId"
-              class="form-select"
-              formControlName="managerOfBranchId">
-              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_MANAGER' | translate }}</option>
-              <option *ngFor="let manager of brancheManager" [value]="manager.value">{{ manager.label }}</option>
-            </select>
-          </div>
-
-          <!-- Role -->
-          <div class="form-group">
-            <label for="roleId">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }} <span class="required">*</span></label>
-            <select 
-              id="roleId"
-              class="form-select"
-              [class.error]="isFieldInvalid('roleId')"
-              formControlName="roleId">
-              <option value="">{{ 'USER_ROLE_ASSIGNMENT.SELECT_ROLE' | translate }}</option>
-              <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
-            </select>
-            <div class="error-message" *ngIf="isFieldInvalid('roleId')">
-              {{ getFieldError('roleId') }}
+        </div>
+        
+        <!-- Employees Section -->
+        <div class="form-section" *ngIf="sectionVisibility['employees']">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEES' | translate }}</h4>
+          <div class="picklist-container">
+            <div class="picklist-section">
+              <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_EMPLOYEES' | translate }}</div>
+              <div class="picklist-search">
+                <input type="text" 
+                       [(ngModel)]="multiSelectStates['employees'].searchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_EMPLOYEES' | translate">
+                <button type="button" (click)="addAllToSelected('employees')" [disabled]="getAvailableCount('employees') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.ADD_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of filterAvailableItems('employees', multiSelectStates['employees'].searchTerm)" 
+                     class="picklist-item" 
+                     (click)="addToSelected('employees', item)">
+                  <input type="checkbox" [checked]="false" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="picklist-section">
+              <div class="picklist-label">
+                {{ 'USER_ROLE_ASSIGNMENT.SELECTED_EMPLOYEES' | translate }} 
+                <span class="selected-count">({{ getSelectedCount('employees') }})</span>
+              </div>
+              <div class="picklist-search">
+                <button type="button" (click)="removeAllFromSelected('employees')" [disabled]="getSelectedCount('employees') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.REMOVE_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of multiSelectStates['employees'].selected" 
+                     class="picklist-item" 
+                     (click)="removeFromSelected('employees', item)">
+                  <input type="checkbox" [checked]="true" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          <!-- Start Date -->
-          <div class="form-group">
-            <label for="startDate">{{ 'USER_ROLE_ASSIGNMENT.START_DATE' | translate }}</label>
-            <input 
-              type="date" 
-              id="startDate"
-              class="form-input"
-              formControlName="startDate">
+        <!-- Departments Section -->
+        <div class="form-section" *ngIf="sectionVisibility['departments']">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENTS' | translate }}</h4>
+          <div class="picklist-container">
+            <div class="picklist-section">
+              <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_DEPARTMENTS' | translate }}</div>
+              <div class="picklist-search">
+                <input type="text" 
+                       [(ngModel)]="multiSelectStates['departments'].searchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_DEPARTMENTS' | translate">
+                <button type="button" (click)="addAllToSelected('departments')" [disabled]="getAvailableCount('departments') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.ADD_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of filterAvailableItems('departments', multiSelectStates['departments'].searchTerm)" 
+                     class="picklist-item" 
+                     (click)="addToSelected('departments', item)">
+                  <input type="checkbox" [checked]="false" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="picklist-section">
+              <div class="picklist-label">
+                {{ 'USER_ROLE_ASSIGNMENT.SELECTED_DEPARTMENTS' | translate }} 
+                <span class="selected-count">({{ getSelectedCount('departments') }})</span>
+              </div>
+              <div class="picklist-search">
+                <button type="button" (click)="removeAllFromSelected('departments')" [disabled]="getSelectedCount('departments') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.REMOVE_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of multiSelectStates['departments'].selected" 
+                     class="picklist-item" 
+                     (click)="removeFromSelected('departments', item)">
+                  <input type="checkbox" [checked]="true" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <!-- End Date -->
-          <div class="form-group">
-            <label for="endDate">{{ 'USER_ROLE_ASSIGNMENT.END_DATE' | translate }}</label>
-            <input 
-              type="date" 
-              id="endDate"
-              class="form-input"
-              formControlName="endDate">
+        <!-- Department Managers Section -->
+        <div class="form-section" *ngIf="sectionVisibility['departmentManagers']">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT_MANAGERS' | translate }}</h4>
+          <div class="picklist-container">
+            <div class="picklist-section">
+              <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_DEPT_MANAGERS' | translate }}</div>
+              <div class="picklist-search">
+                <input type="text" 
+                       [(ngModel)]="multiSelectStates['departmentManagers'].searchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_DEPT_MANAGERS' | translate">
+                <button type="button" (click)="addAllToSelected('departmentManagers')" [disabled]="getAvailableCount('departmentManagers') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.ADD_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of filterAvailableItems('departmentManagers', multiSelectStates['departmentManagers'].searchTerm)" 
+                     class="picklist-item" 
+                     (click)="addToSelected('departmentManagers', item)">
+                  <input type="checkbox" [checked]="false" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="picklist-section">
+              <div class="picklist-label">
+                {{ 'USER_ROLE_ASSIGNMENT.SELECTED_DEPT_MANAGERS' | translate }} 
+                <span class="selected-count">({{ getSelectedCount('departmentManagers') }})</span>
+              </div>
+              <div class="picklist-search">
+                <button type="button" (click)="removeAllFromSelected('departmentManagers')" [disabled]="getSelectedCount('departmentManagers') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.REMOVE_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of multiSelectStates['departmentManagers'].selected" 
+                     class="picklist-item" 
+                     (click)="removeFromSelected('departmentManagers', item)">
+                  <input type="checkbox" [checked]="true" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <!-- Notes -->
-          <div class="form-group full-width">
-            <label for="notes">{{ 'USER_ROLE_ASSIGNMENT.NOTE' | translate }}</label>
+        <!-- Branches Section -->
+        <div class="form-section" *ngIf="sectionVisibility['branches']">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.BRANCHES' | translate }}</h4>
+          <div class="picklist-container">
+            <div class="picklist-section">
+              <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_BRANCHES' | translate }}</div>
+              <div class="picklist-search">
+                <input type="text" 
+                       [(ngModel)]="multiSelectStates['branches'].searchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_BRANCHES' | translate">
+                <button type="button" (click)="addAllToSelected('branches')" [disabled]="getAvailableCount('branches') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.ADD_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of filterAvailableItems('branches', multiSelectStates['branches'].searchTerm)" 
+                     class="picklist-item" 
+                     (click)="addToSelected('branches', item)">
+                  <input type="checkbox" [checked]="false" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="picklist-section">
+              <div class="picklist-label">
+                {{ 'USER_ROLE_ASSIGNMENT.SELECTED_BRANCHES' | translate }} 
+                <span class="selected-count">({{ getSelectedCount('branches') }})</span>
+              </div>
+              <div class="picklist-search">
+                <button type="button" (click)="removeAllFromSelected('branches')" [disabled]="getSelectedCount('branches') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.REMOVE_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of multiSelectStates['branches'].selected" 
+                     class="picklist-item" 
+                     (click)="removeFromSelected('branches', item)">
+                  <input type="checkbox" [checked]="true" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Branch Managers Section -->
+        <div class="form-section" *ngIf="sectionVisibility['branchManagers']">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.BRANCH_MANAGERS' | translate }}</h4>
+          <div class="picklist-container">
+            <div class="picklist-section">
+              <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_BRANCH_MANAGERS' | translate }}</div>
+              <div class="picklist-search">
+                <input type="text" 
+                       [(ngModel)]="multiSelectStates['branchManagers'].searchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_BRANCH_MANAGERS' | translate">
+                <button type="button" (click)="addAllToSelected('branchManagers')" [disabled]="getAvailableCount('branchManagers') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.ADD_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of filterAvailableItems('branchManagers', multiSelectStates['branchManagers'].searchTerm)" 
+                     class="picklist-item" 
+                     (click)="addToSelected('branchManagers', item)">
+                  <input type="checkbox" [checked]="false" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="picklist-section">
+              <div class="picklist-label">
+                {{ 'USER_ROLE_ASSIGNMENT.SELECTED_BRANCH_MANAGERS' | translate }} 
+                <span class="selected-count">({{ getSelectedCount('branchManagers') }})</span>
+              </div>
+              <div class="picklist-search">
+                <button type="button" (click)="removeAllFromSelected('branchManagers')" [disabled]="getSelectedCount('branchManagers') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.REMOVE_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of multiSelectStates['branchManagers'].selected" 
+                     class="picklist-item" 
+                     (click)="removeFromSelected('branchManagers', item)">
+                  <input type="checkbox" [checked]="true" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Roles Section -->
+        <div class="form-section" *ngIf="sectionVisibility['roles']">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.ROLES' | translate }}</h4>
+          <div class="picklist-container">
+            <div class="picklist-section">
+              <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_ROLES' | translate }}</div>
+              <div class="picklist-search">
+                <input type="text" 
+                       [(ngModel)]="multiSelectStates['roles'].searchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_ROLES' | translate">
+                <button type="button" (click)="addAllToSelected('roles')" [disabled]="getAvailableCount('roles') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.ADD_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of filterAvailableItems('roles', multiSelectStates['roles'].searchTerm)" 
+                     class="picklist-item" 
+                     (click)="addToSelected('roles', item)">
+                  <input type="checkbox" [checked]="false" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="picklist-section">
+              <div class="picklist-label">
+                {{ 'USER_ROLE_ASSIGNMENT.SELECTED_ROLES' | translate }} 
+                <span class="selected-count">({{ getSelectedCount('roles') }})</span>
+              </div>
+              <div class="picklist-search">
+                <button type="button" (click)="removeAllFromSelected('roles')" [disabled]="getSelectedCount('roles') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.REMOVE_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of multiSelectStates['roles'].selected" 
+                     class="picklist-item" 
+                     (click)="removeFromSelected('roles', item)">
+                  <input type="checkbox" [checked]="true" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Range Section -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.DATE_RANGE' | translate }}</h4>
+          <div class="form-grid">
+            <!-- Start Date -->
+            <div class="form-group">
+              <label for="startDate">{{ 'USER_ROLE_ASSIGNMENT.START_DATE' | translate }} <span class="required">*</span></label>
+              <input 
+                type="date" 
+                id="startDate"
+                class="form-input"
+                [class.error]="isFieldInvalid('startDate')"
+                formControlName="startDate">
+              <div class="error-message" *ngIf="isFieldInvalid('startDate')">
+                {{ getFieldError('startDate') }}
+              </div>
+            </div>
+
+            <!-- End Date -->
+            <div class="form-group">
+              <label for="endDate">{{ 'USER_ROLE_ASSIGNMENT.END_DATE' | translate }} <span class="required">*</span></label>
+              <input 
+                type="date" 
+                id="endDate"
+                class="form-input"
+                [class.error]="isFieldInvalid('endDate')"
+                formControlName="endDate">
+              <div class="error-message" *ngIf="isFieldInvalid('endDate')">
+                {{ getFieldError('endDate') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.NOTES' | translate }}</h4>
+          <div class="form-group">
+            <label for="notes">{{ 'USER_ROLE_ASSIGNMENT.ENTER_NOTES' | translate }}</label>
             <textarea 
               id="notes"
               class="form-textarea"
-              rows="3"
-              [placeholder]="'USER_ROLE_ASSIGNMENT.ENTER_NOTES' | translate"
+              rows="4"
+              [placeholder]="'USER_ROLE_ASSIGNMENT.NOTES_PLACEHOLDER' | translate"
               formControlName="notes"></textarea>
           </div>
         </div>
@@ -311,11 +583,8 @@
           <button type="button" class="cancel-btn" (click)="closeModal()">
             {{ 'USER_ROLE_ASSIGNMENT.CANCEL' | translate }}
           </button>
-          <button type="submit" class="submit-btn" [disabled]="!isUserRoleAssignmentFormValid" *ngIf="!isEditMode">
-            {{ 'USER_ROLE_ASSIGNMENT.ADD' | translate }}
-          </button>
-          <button type="submit" class="submit-btn" [disabled]="!isUserRoleAssignmentFormValid" *ngIf="isEditMode">
-            {{ 'USER_ROLE_ASSIGNMENT.UPDATE' | translate }}
+          <button type="submit" class="submit-btn" [disabled]="!isUserRoleAssignmentFormValid">
+            {{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLES' | translate }}
           </button>
         </div>
       </form>

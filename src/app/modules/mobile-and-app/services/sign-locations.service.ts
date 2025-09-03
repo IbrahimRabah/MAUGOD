@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CreateMobileSignLocationRequest, CreateMobileSignLocationResponse, MobileSignLocationsResponse, UpdateMobileSignLocationRequest, UpdateMobileSignLocationResponse } from '../../../core/models/signLocation';
 import { Observable } from 'rxjs';
+import { PaginationRequest } from '../../../core/models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -11,21 +12,29 @@ export class SignLocationsService {
   private apiUrl = `${environment.apiUrl}/MobileAndApp`;
   constructor(private http: HttpClient) { }
 
-  getMobileSignLocations(
-    pageNumber: number,
-    pageSize: number,
-    lang: number
-  ): Observable<MobileSignLocationsResponse> {
-    const headers = new HttpHeaders({
-      accept: '*/*',
-      lang: lang.toString(),
-      pageNumber: pageNumber.toString(),
-      pageSize: pageSize.toString(),
-    });
+getMobileSignLocations(
+  paginationRequest: PaginationRequest,
+  lang: number,
+): Observable<MobileSignLocationsResponse> {
 
-    const url = `${this.apiUrl}/GetMobileSignLocations`;
-    return this.http.get<MobileSignLocationsResponse>(url, { headers });
-  }
+  const headers = new HttpHeaders()
+    .set('accept', '*/*')
+    .set('lang', lang.toString());
+
+  const body = {
+    pageNumber: paginationRequest.pageNumber,
+    pageSize: paginationRequest.pageSize,
+    searchColumn: paginationRequest.searchColumn,
+    searchText: paginationRequest.searchText
+  };
+
+  return this.http.post<MobileSignLocationsResponse>(
+    `${this.apiUrl}/GetMobileSignLocations`,
+    body,
+    { headers }
+  );
+}
+
 
   deleteMobileSignLocation(lang: number, locId: number): Observable<any> {
     const headers = new HttpHeaders({

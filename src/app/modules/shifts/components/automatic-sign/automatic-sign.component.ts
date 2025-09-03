@@ -82,6 +82,36 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     { id: 2, name: '2nd Shift' }
   ];
 
+    searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns
+  { column: 'EMP_NAME', label: 'AUTOMATIC_SIGN.EMPLOYEE' },
+  { column: 'DEPT_NAME', label: 'AUTOMATIC_SIGN.DEPARTMENT' },
+  { column: 'MGR_OF_DEPT_NAME', label: 'AUTOMATIC_SIGN.MANAGER_OF_DEPARTMENT' },
+  { column: 'BRANCH_NAME', label: 'AUTOMATIC_SIGN.BRANCH' },
+  { column: 'MGR_OF_BRANCH_NAME', label: 'AUTOMATIC_SIGN.MANAGER_OF_BRANCH' },
+  { column: 'ROLE_NAME', label: 'AUTOMATIC_SIGN.ROLE' },
+  { column: 'SDATE', label: 'AUTOMATIC_SIGN.START_DATE' },
+  { column: 'EDATE', label: 'AUTOMATIC_SIGN.END_DATE' },
+  { column: 'SHIFT_PART_NAME', label: 'AUTOMATIC_SIGN.SHIFT_PART' },
+  { column: 'AUTO_IN_DESC', label: 'AUTOMATIC_SIGN.AUTO_IN' },
+  { column: 'AUTO_OUT_DESC', label: 'AUTOMATIC_SIGN.AUTO_OUT' },
+  { column: 'STS_DESC', label: 'AUTOMATIC_SIGN.STATUS' },
+  { column: 'SAT_DESC', label: 'AUTOMATIC_SIGN.SATURDAY' },
+  { column: 'SUN_DESC', label: 'AUTOMATIC_SIGN.SUNDAY' },
+  { column: 'MON_DESC', label: 'AUTOMATIC_SIGN.MONDAY' },
+  { column: 'TUE_DESC', label: 'AUTOMATIC_SIGN.TUESDAY' },
+  { column: 'WED_DESC', label: 'AUTOMATIC_SIGN.WEDNESDAY' },
+  { column: 'THU_DESC', label: 'AUTOMATIC_SIGN.THURSDAY' },
+  { column: 'FRI_DESC', label: 'AUTOMATIC_SIGN.FRIDAY' },
+  { column: 'NOTE', label: 'AUTOMATIC_SIGN.NOTE' }
+];
+
+
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchTerm: string = '';
+
+
   constructor(
     private automaticSignService: AutomaticSignService,
     private dropdownlistsService: DropdownlistsService,
@@ -104,9 +134,7 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       this.preloadDropdownData();
     });
 
-    // Setup search with debouncing for better performance
-    this.setupSearchDebouncing();
-    
+
     // Preload dropdown data immediately
     this.preloadDropdownData();
   }
@@ -116,20 +144,11 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     this.searchSubscription.unsubscribe();
   }
 
-  private setupSearchDebouncing() {
-    this.searchSubscription = this.searchForm.get('searchTerm')!.valueChanges
-      .pipe(
-        debounceTime(500), // Wait 500ms after user stops typing for better performance
-        distinctUntilChanged() // Only trigger if value actually changed
-      )
-      .subscribe(() => {
-        // Only auto-search if there's actual content or if clearing the search
-        const searchTerm = this.searchForm.get('searchTerm')?.value?.trim();
-        if (searchTerm || searchTerm === '') {
-          this.onSearch();
-        }
-      });
+    selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
   }
+
 
   private resetDataCache() {
     this.dataCache = {
@@ -150,7 +169,6 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
 
   private initializeForms() {
     this.searchForm = this.fb.group({
-      searchTerm: [''],
       pageSize: [10]
     });
 
@@ -263,6 +281,8 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     return Math.ceil(this.totalRecords / this.pageSize);
   }
 
+  
+
   get currentPageStart(): number {
     return (this.currentPage - 1) * this.pageSize + 1;
   }
@@ -285,25 +305,14 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
   loadAutoSigns() {
     this.loading = true;
     
-    this.automaticSignService.GetAutomaticSign(this.currentLang, this.currentPage, this.pageSize).subscribe({
+    this.automaticSignService.GetAutomaticSign(this.currentLang, this.currentPage, this.pageSize,this.selectedColumn,this.searchTerm).subscribe({
       next: (response) => {
         if (response.isSuccess && response.data?.autoSigns) {
           this.autoSigns = response.data.autoSigns;
-          
-          // Calculate total records based on returned data
-          if (this.autoSigns.length < this.pageSize) {
-            this.totalRecords = (this.currentPage - 1) * this.pageSize + this.autoSigns.length;
-          } else {
-            this.totalRecords = this.currentPage * this.pageSize + 1;
-          }
+          this.totalRecords =response.data.totalCount 
         } else {
           this.autoSigns = [];
           this.totalRecords = 0;
-          this.showErrorMessage(
-            this.langService.getCurrentLang() === 'ar' ? 
-              'فشل في تحميل البيانات' : 
-              'Failed to load data'
-          );
         }
         this.loading = false;
       },
@@ -352,10 +361,7 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
     this.loadAutoSigns();
   }
 
-  // Helper method to get search term
-  get searchTerm(): string {
-    return this.searchForm.get('searchTerm')?.value || '';
-  }
+
 
   // Modal methods
   openCreateModal() {

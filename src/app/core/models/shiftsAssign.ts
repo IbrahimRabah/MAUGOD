@@ -18,7 +18,10 @@ export interface GetShiftsAssignResponse {
   statusCode: number;
   message: string;
   isSuccess: boolean;
-  data: ShiftAssign[];
+  data: {
+      records: ShiftAssign[];
+      totalCount: number;
+    };
 }
 
 export interface DeleteShiftsAssignRequest {
@@ -27,6 +30,7 @@ export interface DeleteShiftsAssignRequest {
 }
 
 export interface CreateShiftsAssignRequest {
+
   empId: number | null;
   deptId: number | null;
   branchId: number | null;

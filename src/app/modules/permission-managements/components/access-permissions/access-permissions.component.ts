@@ -239,7 +239,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       fromRoleId: [0],
       
       // Additional fields
-      changeDataEmp: [0],
+      changeDataEmp: [1],
       sDate: [''],
       eDate: [''],
       note: ['']
@@ -564,7 +564,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     }
 
     this.confirmationService.confirm({
-      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION', { count: this.selectedItems.length }),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -612,9 +612,9 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
 
   // Modal Methods
   openCreateModal() {
-    this.showCreateModal = true;
     this.resetCreateForm();
     this.clearAllToSelections();
+    this.showCreateModal = true;
     // Only load basic dropdown data, target-specific data will be loaded on demand
   }
 
@@ -634,7 +634,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       fromMgrOfBranchId: 0,
       fromBranchId: 0,
       fromRoleId: 0,
-      changeDataEmp: 0,
+      changeDataEmp: 1,
       note: ''
     });
   }
@@ -1509,7 +1509,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     }
 
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this item?',
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_ITEM'),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -1535,7 +1535,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Permission deleted successfully'
+            detail: response.message
           });
           this.loadData();
         },

@@ -6,6 +6,7 @@ import { JobService } from '../../services/job.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { CustomValidators } from '../../../../shared/validators/custom-validators';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-jobs',
@@ -25,11 +26,24 @@ export class JobsComponent implements OnInit {
   
   // Reactive Forms
   jobForm!: FormGroup;
+searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns option
+  { column: 'ar_title', label: 'MENU.GENERAL_DATA.JOBS_TABLE.ARABIC_NAME' },
+  { column: 'en_title', label: 'MENU.GENERAL_DATA.JOBS_TABLE.ENGLISH_NAME' },
+  { column: 'ar_job_desc', label: 'MENU.GENERAL_DATA.JOBS_TABLE.ARABIC_DESCRIPTION' },
+  { column: 'en_job_desc', label: 'MENU.GENERAL_DATA.JOBS_TABLE.ENGLISH_DESCRIPTION' },
+  { column: 'note', label: 'MENU.GENERAL_DATA.JOBS_TABLE.NOTES' }
+];
+
+selectedColumn: string = '';
+selectedColumnLabel: string = this.searchColumns[0].label;
   
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
     pageSize: 10,
-    lang: 1 // Default to English
+    lang: 1, // Default to English
+    searchColumn: this.selectedColumn, 
+    searchText:this.searchTerm 
   };
 
   constructor(
@@ -37,7 +51,8 @@ export class JobsComponent implements OnInit {
     public langService: LanguageService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+      private translate: TranslateService
   ) {
     this.initializeForm();
     
@@ -65,6 +80,10 @@ export class JobsComponent implements OnInit {
     this.loadJobs();
   }
 
+      selectColumn(col: any) {
+  this.selectedColumn = col.column;
+  this.selectedColumnLabel = col.label;
+}
   // Custom pagination methods
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
@@ -112,6 +131,8 @@ export class JobsComponent implements OnInit {
   onSearch() {
     this.currentPage = 1;
     this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn=this.selectedColumn;
+    this.paginationRequest.searchText=this.searchTerm;
     this.loadJobs();
   }
 
@@ -238,9 +259,7 @@ export class JobsComponent implements OnInit {
   deleteJob(job: Job) {
     console.log('Deleting job:', job);
     this.confirmationService.confirm({
-      message: this.langService.getCurrentLang() === 'ar' ? 
-        `هل أنت متأكد من حذف الوظيفة "${job.arTitle}"؟` : 
-        `Are you sure you want to delete the job "${job.enTitle}"?`,
+      message: this.translate.instant('VALIDATION.CONFIRM_DELETE') ,
       header: this.langService.getCurrentLang() === 'ar' ? 'تأكيد الحذف' : 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',

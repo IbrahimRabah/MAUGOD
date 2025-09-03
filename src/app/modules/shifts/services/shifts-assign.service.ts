@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CreateShiftsAssignRequest, GetShiftsAssignResponse } from '../../../core/models/shiftsAssign';
 import { Observable } from 'rxjs';
+import { PaginationShiftsAssignRequest } from '../../../core/models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -17,15 +18,14 @@ export class ShiftsAssignService {
     empID:number,
     lang: number,
     sDate?: string,
-    eDate?: string
+    eDate?: string,
+    selectedColumn?:string,
+    searchTerm?:string
   ): Observable<GetShiftsAssignResponse> {
 
     let headers = new HttpHeaders()
       .set('accept', '*/*')
-      .set('lang', lang.toString())
-      .set('pageNumber', pageNumber.toString())
-      .set('empID', empID.toString())
-      .set('pageSize', pageSize.toString());
+      .set('lang', lang.toString());
 
     // Add optional date headers if provided
     if (sDate) {
@@ -34,8 +34,19 @@ export class ShiftsAssignService {
     if (eDate) {
       headers = headers.set('eDate', eDate);
     }
-    return this.http.get<GetShiftsAssignResponse>(
+
+    const paginationRequest: PaginationShiftsAssignRequest = {
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        empId: empID,
+        sDate:sDate,
+        eDate:eDate,
+        searchColumn: selectedColumn,
+        searchText: searchTerm
+      };
+    return this.http.post<GetShiftsAssignResponse>(
       `${this.apiUrl}/Attendance/GetGetShiftsAssign`,
+      paginationRequest,
       { headers }
     );
   }

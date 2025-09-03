@@ -959,14 +959,34 @@
           <div class="form-grid">
             <div class="form-group">
               <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.CHANGE_DATA_EMP' | translate }}</label>
-              <input 
-                type="number" 
-                formControlName="changeDataEmp" 
-                class="form-input"
-                min="0"
-                placeholder="0">
-            </div>
 
+              <div class="d-flex align-items-center flex-wrap">
+                <div class="form-check form-check-inline me-3">
+                  <input type="radio" class="form-check-input" [value]="1" formControlName="changeDataEmp"
+                    id="CANNOT_VIEW" />
+                  <label class="form-check-label" for="CANNOT_VIEW">
+                    {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.ADDITIONAL_INFO_Details.CANNOT_VIEW' | translate }}
+                  </label>
+                </div>
+
+                <div class="form-check form-check-inline me-3">
+                  <input type="radio" class="form-check-input" [value]="2" formControlName="changeDataEmp"
+                    id="VIEW_ONLY" />
+                  <label class="form-check-label" for="VIEW_ONLY">
+                    {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.ADDITIONAL_INFO_Details.VIEW_ONLY' | translate }}
+                  </label>
+                </div>
+
+                <div class="form-check form-check-inline me-3">
+                  <input type="radio" class="form-check-input" [value]="3" formControlName="changeDataEmp"
+                    id="CAN_EDIT" />
+                  <label class="form-check-label" for="CAN_EDIT">
+                    {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.ADDITIONAL_INFO_Details.CAN_EDIT' | translate }}
+                  </label>
+                </div>
+                
+              </div>
+            </div>
             <div class="form-group full-width">
               <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.NOTE' | translate }}</label>
               <textarea 

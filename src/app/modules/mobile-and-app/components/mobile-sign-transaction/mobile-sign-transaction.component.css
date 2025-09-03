@@ -218,8 +218,60 @@
 
 .right-actions {
   display: flex;
-  gap: 15px;
   align-items: center;
+  gap: 10px;
+}
+
+/* Search Container */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+/* RTL (Arabic) - Padding for icon on the right */
+.search-container.rtl .search-input {
+  padding: 10px 40px 10px 15px;
+}
+
+/* LTR (English) - Padding for icon on the left */
+.search-container.ltr .search-input {
+  padding: 10px 15px 10px 40px;
+}
+
+/* Default fallback - Padding for icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-input {
+  padding: 10px 40px 10px 15px;
+}
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-input::placeholder {
+  color: #666;
+}
+
+.search-icon {
+  position: absolute;
+  color: #666;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* RTL (Arabic) - Icon on the right */
+.search-container.rtl .search-icon {
+  right: 12px;
+}
+
+/* LTR (English) - Icon on the left */
+.search-container.ltr .search-icon {
+  left: 12px;
+}
+
+/* Default fallback - Icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-icon {
+  left: 12px;
 }
 
 /* Recalculate Button */
@@ -580,6 +632,11 @@ input[type="checkbox"] {
   .custom-table thead tr.table-header th,
   .custom-table tbody tr.table-row td {
     padding: 8px 6px;
+  }
+
+  .search-input {
+  width: 100%;
+  max-width: 300px;
   }
 }
 

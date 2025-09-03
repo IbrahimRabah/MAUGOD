@@ -107,9 +107,41 @@
     </div>
 
     <div class="right-actions">
-      <div class="records-info">
-        {{ 'MOBILE_SIGN_TRANSACTION.TOTAL_RECORDS' | translate }}: {{ totalRecords }}
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
       </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
   </div>
 
@@ -144,7 +176,7 @@
               [title]="'COMMON.SELECT_ITEM' | translate">
           </td>
           <td class="text-center">{{ item.empName }}</td>
-          <td class="text-center">{{ formatDate(item.signDate) }}</td>
+          <td class="text-center">{{ item.signDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
           <td class="text-center">
             <span [class]="getStatusBadgeClass(item.sts)">
               {{ item.statusName }}
@@ -247,7 +279,7 @@
 
     <div class="page-size-selector">
       <label>{{ 'MOBILE_SIGN_TRANSACTION.ITEMS_PER_PAGE' | translate }}</label>
-      <select [value]="pageSize" (change)="onPageSizeChangeEvent($event)">
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChangeEvent($event)">
         <option value="5">5</option>
         <option value="10">10</option>
         <option value="25">25</option>

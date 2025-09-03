@@ -2,6 +2,10 @@
   "SUCCESS": "Success",
   "ERROR": "Error",
   "WARNING": "Warning",
+  "SEARCH": "Go",
+  "OK": "Ok",
+  "CANCEL": "Cancel",
+  "CONFIRM_DELE": "Confirm Deletion",
   "HOME": {
     "TITLE": "Home"
   },
@@ -49,7 +53,8 @@
         "SELECT_ALL": "Select All",
         "SELECT_ITEM": "Select Item",
         "DELETE_SELECTED": "Delete Selected",
-        "DELETE_SELECTED_CONFIRMATION": "Are you sure you want to delete {count} selected item(s)?",
+        "DELETE_SELECTED_CONFIRMATION": "Are you sure you want to delete {{count}} selected item(s)?",
+        "DELETE_ITEM": "Are you sure you want to delete this item?",
         "DELETE_CONFIRMATION": "Are you sure you want to delete the role module right for '{name}'?",
         "DELETE_CONFIRMATION_HEADER": "Delete Confirmation",
         "DELETE_SUCCESS": "Role module right deleted successfully",
@@ -161,6 +166,11 @@
             "TO_TARGETS_TITLE": "Targets",
             "VALIDITY_PERIOD_TITLE": "Validity Period",
             "ADDITIONAL_INFO_TITLE": "Additional Information",
+            "ADDITIONAL_INFO_Details":{
+              "CANNOT_VIEW":"Cannot view",
+              "VIEW_ONLY":"View only",
+              "CAN_EDIT":"Can edit"
+            },
             "TARGET_TYPES": {
               "TO_EMPLOYEES": "To Employees",
               "TO_MANAGERS_OF_DEPARTMENT": "To Department Managers",
@@ -294,8 +304,8 @@
       "COMMITTEE_SUBJECT_CLASSES": "Minutes Subject Classification",
       "VOTING_TYPES": "Voting Types",
       "MEETING_AND_SUBJECTS": "Minutes & Subjects"
-    },   
-     "GENERAL_DATA": {
+    },
+    "GENERAL_DATA": {
       "BRANCHES": "Branches",
       "DEPARTMENTS": "Departments",
       "EMPLOYEES": "Employees",
@@ -332,7 +342,7 @@
           "MANAGER": "Manager",
           "PARENT_DEPARTMENT": "Parent Department",
           "BRANCH": "Branch",
-          "LEVEL": "Level",
+          "LEVEL": "Department Level",
           "LOCATION": "Location",
           "LOCATION_DESC": "Location Description",
           "NOTES": "Notes",
@@ -348,7 +358,7 @@
           "SELECT_BRANCH": "Select Branch",
           "SELECT_LEVEL": "Select Level",
           "SELECT_LOCATION": "Select Location",
-          "New_Dept_Id":"New Department ID"
+          "New_Dept_Id": "New Department ID"
         },
         "CHANGE_NUMBER_MODAL": {
           "TITLE": "Change Department ID",
@@ -392,12 +402,14 @@
         "NOTES": "Notes",
         "DELETE": "Delete",
         "CHANGE_NUMBER": "Change Number"
-      },      "BRANCHES_ACTIONS": {
+      },
+      "BRANCHES_ACTIONS": {
         "ADD_BRANCH": "Add Branch",
         "SEARCH_PLACEHOLDER": "Search in branches...",
         "SEARCH_TITLE": "Search",
         "ADD_BRANCH_TITLE": "Add New Branch"
-      },      "BRANCHES_MODALS": {
+      },
+      "BRANCHES_MODALS": {
         "ADD_BRANCH_MODAL": {
           "TITLE": "Add New Branch",
           "EDIT_TITLE": "Edit Branch",
@@ -438,7 +450,8 @@
           "ENTER_NEW_NUMBER": "Enter New Number",
           "NOTES_PLACEHOLDER": "Enter notes for this change"
         }
-      },      "BRANCHES_PAGINATION": {
+      },
+      "BRANCHES_PAGINATION": {
         "SHOWING": "Showing",
         "TO": "-",
         "OF": "of",
@@ -451,7 +464,8 @@
         "PREVIOUS_PAGE": "Previous Page",
         "NEXT_PAGE": "Next Page",
         "LAST_PAGE": "Last Page"
-      },      "BRANCHES_GENERAL": {
+      },
+      "BRANCHES_GENERAL": {
         "LOADING": "Loading...",
         "EDIT_TOOLTIP": "Edit",
         "DELETE_TOOLTIP": "Delete",
@@ -471,7 +485,7 @@
         "DELETE": "Delete",
         "CHANGE_NUMBER": "Change Number",
         "CHANGE_PASSWORD": "Change Password"
-      },      
+      },
       "EMPLOYEES_ACTIONS": {
         "ADD_EMPLOYEE": "Add Employee",
         "SEARCH_PLACEHOLDER": "Search in employees...",
@@ -480,9 +494,9 @@
         "EDIT_EMPLOYEE": "Edit Employee",
         "DELETE_EMPLOYEE": "Delete Employee",
         "CHANGE_PASSWORD": "Change Password",
-        "RESET_PASSWORD":"Reset Password"
+        "RESET_PASSWORD": "Reset Password"
       },
-      "EMPLOYEES_MODALS": {        
+      "EMPLOYEES_MODALS": {
         "ADD_EMPLOYEE_MODAL": {
           "TITLE": "Add New Employee",
           "EDIT_TITLE": "Edit Employee",
@@ -596,6 +610,57 @@
         "SUCCESS_CHANGE_PASSWORD": "Password changed successfully!",
         "ERROR_OCCURRED": "An error occurred. Please try again.",
         "NO_EMPLOYEES_FOUND": "No employees found."
+      },
+            "ROLEREPORTRIGHTS_TABLE": {
+        "ROLE": "Role",
+        "REPORT": "Report",
+        "DELEGATE": "Delegate",
+        "DELETE": "Delete",
+        "DELETE_SELECTED": "Delete Selected"
+      },
+      "ROLEREPORTRIGHTS_ACTIONS": {
+        "ADD_ROLEREPORTRIGHT": "Add Role Report Right",
+        "SEARCH_PLACEHOLDER": "Search in role report rights...",
+        "SEARCH_TITLE": "Search",
+        "ADD_ROLEREPORTRIGHT_TITLE": "Add New Role Report Right",
+        "DELETE_SELECTED": "Delete Selected",
+        "DELETE_SELECTED_TITLE": "Delete Selected Items"
+      },
+      "ROLEREPORTRIGHTS_GENERAL": {
+        "LOADING": "Loading...",
+        "LOADING_REPORTS": "Loading reports...",
+        "EDIT_TOOLTIP": "Edit",
+        "DELETE_TOOLTIP": "Delete",
+        "SELECT_ALL": "Select All",
+        "SELECT_ITEM": "Select Item",
+        "NO_REPORTS_FOUND": "No reports found."
+      },
+      "ROLEREPORTRIGHTS_PAGINATION": {
+        "SHOWING": "Showing",
+        "TO": "-",
+        "OF": "of",
+        "ITEMS": "items",
+        "PAGE": "Page",
+        "PAGE_OF": "of",
+        "ITEMS_PER_PAGE": "Items per page:",
+        "NO_DATA": "No data available",
+        "FIRST_PAGE": "First Page",
+        "PREVIOUS_PAGE": "Previous Page",
+        "NEXT_PAGE": "Next Page",
+        "LAST_PAGE": "Last Page"
+      },
+      "ROLEREPORTRIGHTS_MODALS": {
+        "ADD_ROLEREPORTRIGHTS_MODAL": {
+          "TITLE": "Add New Role report right",
+          "ROLE_ID": "Role",
+          "SELECT_REPORTS": "Select Reports",
+          "SEARCH_ROLE_PLACEHOLDER": "Search for a role...",
+          "SEARCH_REPORTS": "Search reports...",
+          "NO_ROLES_FOUND": "No roles found.",
+          "ROLE_REQUIRED": "Role selection is required",
+          "CANCEL": "Cancel",
+          "SAVE": "Save"
+        }
       },
       "NATIONALITIES_TABLE": {
         "EDIT": "Edit",
@@ -812,7 +877,7 @@
     "ATTENDANCE_DATA_SECTIONS": {
       "PUNCH_TRANSACTION": "Punch in transactions",
       "ATTENDANCE": "Attendance",
-      "CHANGE_ATTENDANCE_TIME":"Change attendance time direct"
+      "CHANGE_ATTENDANCE_TIME": "Change attendance time direct"
     },
     "SHIFTS_SECTIONS": {
       "SHIFTS": "Shifts",
@@ -880,7 +945,7 @@
       "USER_PROFILE": "User profile",
       "SESSIONS_MANAGEMENT": "Sessions management"
     },
-    "CONSORSHIP":"Consorship",
+    "CONSORSHIP": "Consorship",
     "CONSORSHIP_SECTIONS": {
       "CENSORSHIP_TOUR": "Censorship tour",
       "ALARMS": "Alarms"
@@ -897,6 +962,7 @@
   },
   "USER_ROLE_ASSIGNMENT": {
     "LOADING": "Loading...",
+    "SELECT_SECTIONS": "Select Sections to Configure",
     "ADD_USER_ROLE_ASSIGNMENT": "Add User Role Assignment",
     "EDIT_USER_ROLE_ASSIGNMENT": "Edit User Role Assignment",
     "DELETE_SELECTED": "Delete Selected",
@@ -905,13 +971,20 @@
     "SELECT_ALL": "Select All",
     "SELECT_ITEM": "Select Item",
     "EMPLOYEE": "Employee",
+    "EMPLOYEES": "Employees",
     "DEPARTMENT": "Department",
+    "DEPARTMENTS": "Departments",
     "MANAGER_OF_DEPARTMENT": "Manager of Department",
+    "DEPARTMENT_MANAGERS": "Department Managers",
     "BRANCH": "Branch",
+    "BRANCHES": "Branches",
     "MANAGER_OF_BRANCH": "Manager of Branch",
+    "BRANCH_MANAGERS": "Branch Managers",
     "ASSIGN_ROLE": "Assign Role",
+    "ROLES": "Roles",
     "START_DATE": "Start Date",
     "END_DATE": "End Date",
+    "DATE_RANGE": "Date Range",
     "NOTE": "Note",
     "DELETE": "Delete",
     "NO_DATA_AVAILABLE": "No data available",
@@ -931,11 +1004,34 @@
     "SELECT_MANAGER": "Select Manager",
     "SELECT_BRANCH": "Select Branch",
     "SELECT_ROLE": "Select Role",
+    "NOTES": "Notes",
     "ENTER_NOTES": "Enter notes...",
+    "NOTES_PLACEHOLDER": "Add any additional notes or comments here...",
     "CANCEL": "Cancel",
     "ADD": "Add",
     "UPDATE": "Update",
-    "DELETE_ROLE_ASSIGNMENT": "Delete Role Assignment"
+    "ASSIGN_ROLES": "Assign Roles",
+    "DELETE_ROLE_ASSIGNMENT": "Delete Role Assignment",
+    "AVAILABLE_EMPLOYEES": "Available Employees",
+    "SELECTED_EMPLOYEES": "Selected Employees",
+    "SEARCH_EMPLOYEES": "Search employees...",
+    "AVAILABLE_DEPARTMENTS": "Available Departments",
+    "SELECTED_DEPARTMENTS": "Selected Departments",
+    "SEARCH_DEPARTMENTS": "Search departments...",
+    "AVAILABLE_DEPT_MANAGERS": "Available Department Managers",
+    "SELECTED_DEPT_MANAGERS": "Selected Department Managers",
+    "SEARCH_DEPT_MANAGERS": "Search department managers...",
+    "AVAILABLE_BRANCHES": "Available Branches",
+    "SELECTED_BRANCHES": "Selected Branches",
+    "SEARCH_BRANCHES": "Search branches...",
+    "AVAILABLE_BRANCH_MANAGERS": "Available Branch Managers",
+    "SELECTED_BRANCH_MANAGERS": "Selected Branch Managers",
+    "SEARCH_BRANCH_MANAGERS": "Search branch managers...",
+    "AVAILABLE_ROLES": "Available Roles",
+    "SELECTED_ROLES": "Selected Roles",
+    "SEARCH_ROLES": "Search roles...",
+    "ADD_ALL": "Add All",
+    "REMOVE_ALL": "Remove All"
   },
   "EMPLOYEE_BALANCE": {
     "LOADING": "Loading...",
@@ -1025,7 +1121,7 @@
     "SELECTED": "selected",
     "CLEAR_ALL": "Clear All"
   },
-    "SALARY_ADD_ONS_DEDUCTS": {
+  "SALARY_ADD_ONS_DEDUCTS": {
     "LOADING": "Loading...",
     "ADD_ADDON": "Add Add-on/Deduction",
     "ADD_ADDON_TITLE": "Add New Add-on/Deduction",
@@ -1217,6 +1313,7 @@
     "END_DATE": "End Date",
     "SALARY": "Salary",
     "ADDONS_TOTAL": "Add-ons Total",
+    "MINUS_TOTAL": "Minus total",
     "OVERTIME_TOTAL": "Overtime Total",
     "LATE_DEDUCT": "Late Deduction",
     "ABSENT_DEDUCT": "Absent Deduction",
@@ -1404,16 +1501,15 @@
       "PREVIOUS_PAGE": "Previous Page"
     }
   },
-
-  "Attendance":{
+  "Attendance": {
     "DATE_FILTER": {
-    "TITLE": "Filter by date",
-    "START_DATE": "Start date",
-    "END_DATE": "End date",
-    "EMPLOYEE": "Employee",
-    "DEPARTMENT": "Department",
-    "ALL_DEPARTMENTS":"All Departments",
-    "ALL_EMPLOYEES":"All Employees"
+      "TITLE": "Filter by date",
+      "START_DATE": "Start date",
+      "END_DATE": "End date",
+      "EMPLOYEE": "Employee",
+      "DEPARTMENT": "Department",
+      "ALL_DEPARTMENTS": "All Departments",
+      "ALL_EMPLOYEES": "All Employees"
     },
     "RESULTS_TABLE": {
       "EMPLOYEE_HEADER": "Employee",
@@ -1431,10 +1527,9 @@
       "ROWS_PER_PAGE": "Rows",
       "ACTIONS": "Actions",
       "DELETE_SELECTED": "Delete selected",
-      "RECORD_DATE":"Record date",
-      "DATA_SOURCE":"Data source"
+      "RECORD_DATE": "Record date",
+      "DATA_SOURCE": "Data source"
     }
-
   },
   "SHIFTS_TABLE": {
     "LOADING": "Loading...",
@@ -1471,6 +1566,7 @@
     "DETAILS_TOOLTIP": "Details",
     "DELETE_TOOLTIP": "Delete",
     "CREATE_SHIFT_TITLE": "Create New Shift",
+    "EDIT_SHIFT_TITLE": "Edit Shift",
     "TWO_PARTS": "Two Parts Shift",
     "BASIC_INFO": "Basic Information",
     "ARABIC_NAME": "Arabic Name",
@@ -1478,7 +1574,7 @@
     "ARABIC_NAME_PLACEHOLDER": "Enter Arabic name",
     "ENGLISH_NAME_PLACEHOLDER": "Enter English name",
     "WEEKDAYS": "Weekdays Configuration",
-    "SELECT_OPTION": "Select option",
+    "SELECT_OPTION": "Select",
     "PART_1": "Part 1",
     "PART_2": "Part 2",
     "OPEN_SHIFT": "Open Shift",
@@ -1503,7 +1599,20 @@
     "UPDATE": "Update",
     "UPDATING": "Updating...",
     "SHIFT_CREATED_SUCCESSFULLY": "Shift created successfully",
-    "SHIFT_UPDATED_SUCCESSFULLY": "Shift updated successfully"
+    "SHIFT_UPDATED_SUCCESSFULLY": "Shift updated successfully",
+    "SHIFT_DETAILS": {
+      "TITLE": "Shift information",
+      "DAY_NAME": "Day name",
+      "SHIFT": "Shift",
+      "PART": "Part",
+      "OPEN_SHIFT": "Open shift",
+      "EARLY_IN": "Early in",
+      "IN": "In",
+      "ALLOW_IN": "Allow in",
+      "MAX_IN": "Max in",
+      "OVERTIME_IN": "Overtime in",
+      "OUT": "Out"
+    }
   },
   "AUTOMATIC_SIGN": {
     "LOADING": "Loading...",
@@ -1539,6 +1648,10 @@
     "DELETE": "Delete",
     "DELETE_TITLE": "Delete Automatic Sign",
     "TOGGLE_SETTINGS": "Toggle Settings",
+    "TOGGLE_SETTINGS_ENABLED":{
+      "MINUTES_BEFORE":"Before in random",
+      "MINUTES_AFTER":"After In random"
+    },
     "WEEK_DAYS": "Week Days",
     "NO_DATA_AVAILABLE": "No data available",
     "SHOWING": "Showing",
@@ -1571,7 +1684,7 @@
     "LOADING": "Loading...",
     "CREATE": "Create New Assignment",
     "CREATE_TITLE": "Create New Shift Assignment",
-    "CREATE_MODAL_TITLE": "Create Shift Assignment",
+    "CREATE_MODAL_TITLE": "Shifts assign",
     "CREATE_NOT_IMPLEMENTED": "Create functionality is not yet implemented",
     "DELETE_SELECTED": "Delete Selected",
     "SEARCH_PLACEHOLDER": "Search shift assignments...",
@@ -1583,6 +1696,7 @@
     "SELECT_ITEM": "Select Item",
     "EMPLOYEE": "Employee",
     "SHIFT": "Shift",
+    "DELETE_CONFIRMATION_MESSAGE": "Are you sure you want to delete this shift?",
     "START_DATE": "Start Date",
     "END_DATE": "End Date",
     "ACTIONS": "Actions",
@@ -1605,13 +1719,13 @@
     "RESET_FILTER": "Reset Date Filter",
     "CLOSE": "Close",
     "CANCEL": "Cancel",
-    "ASSIGNMENT_TYPE": "Assignment Type",
-    "SELECT_TARGETS": "Select Targets",
+    "ASSIGNMENT_TYPE": "Type",
+    "SELECT_TARGETS": "Select",
     "SELECT_SHIFT": "Select Shift",
     "SELECT_SHIFT_PLACEHOLDER": "Choose a shift...",
-    "DATE_RANGE": "Date Range",
+    "DATE_RANGE": "Assign Date",
     "SELECT_DATE": "Select date",
-    "TARGETS_REQUIRED": "Please select at least one target",
+    "TARGETS_REQUIRED": "You must select an employee, department, branch, or role",
     "SHIFT_REQUIRED": "Please select a shift",
     "START_DATE_REQUIRED": "Start date is required",
     "END_DATE_REQUIRED": "End date is required",
@@ -1697,7 +1811,7 @@
     "SELECT_ITEM": "Select Item",
     "EMPLOYEE": "Employee",
     "MANAGER_OF_DEPARTMENT": "Manager of Department",
-    "DEPARTMENT": "Department", 
+    "DEPARTMENT": "Department",
     "MANAGER_OF_BRANCH": "Manager of Branch",
     "BRANCH": "Branch",
     "ROLE": "Role",
@@ -1717,7 +1831,7 @@
     "STATUS": "Status",
     "START_DATE": "Start Date",
     "HIJRI_START": "Hijri Start",
-    "END_DATE": "End Date", 
+    "END_DATE": "End Date",
     "HIJRI_END": "Hijri End",
     "NOTE": "Note",
     "NOTE_PLACEHOLDER": "Enter notes...",
@@ -1922,7 +2036,7 @@
     "ASSIGN_TYPE_REQUIRED": "Assignment type is required",
     "GROUP_SELECTION_SECTION": "Group Selection",
     "SELECT_EMPLOYEES": "Select Employees",
-    "SELECT_DEPARTMENTS": "Select Departments", 
+    "SELECT_DEPARTMENTS": "Select Departments",
     "SELECT_BRANCHES": "Select Branches",
     "SELECT_ROLES": "Select Roles",
     "DEPARTMENT_MANAGERS": "Department Managers",
@@ -1965,7 +2079,7 @@
   "MOBILE_SIGN_TRANSACTION": {
     "LOADING": "Loading...",
     "EMPLOYEE": "Employee",
-    "SIGN_DATE": "Sign Date", 
+    "SIGN_DATE": "Sign Date",
     "STATUS": "Status",
     "PHONE": "Phone",
     "ACCEPTED_BY_LOCATION": "Accepted By Location",
@@ -2242,5 +2356,16 @@
     "NO_SEARCH_RESULTS": "No search results found",
     "CANCEL": "Cancel",
     "CLOSE": "Close"
+  },
+  "VALIDATION": {
+    "VALIDTION_INPUT": "Please make sure the entered data is correct",
+    "FAILED_UPDATE_DEPT": "Failed to update the department. Please try again.",
+    "FAILED_ADD_DEPT": "Failed to add the department. Please try again.",
+    "FAILED_LOAD_DATA": "Failed to load some data.",
+    "REQUIRED_FIELD": "This field is required",
+    "CONFIRM_DELETE": "Item will be deleted .. Continue?",
+    "INVALID_NEW_BRANCH_NUMBER": "Please enter a valid number for the new branch",
+    "BRANCH_DETAILS_LOAD_FAILED": "Failed to load branch details.Please try again or contact support.",
+    "BRANCHES_LOAD_FAILED": "Failed to load branches. Please try again or contact support."
   }
 }

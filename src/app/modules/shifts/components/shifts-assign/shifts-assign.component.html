@@ -1,9 +1,10 @@
 <div class="shifts-assign-container">
   <!-- Toast Messages -->
   <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
-  
+
   <!-- Confirmation Dialog -->
-  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="loading-spinner">
@@ -12,57 +13,54 @@
   </div>
 
   <!-- Filter Section -->
-  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'"
+    [class.ltr]="langService.getCurrentLang() === 'en'">
+
     <form [formGroup]="filterForm" class="filter-form">
+
+      <!-- Wrap both pickers in one row -->
       <div class="filter-row">
+
+        <!-- Start Date -->
         <div class="filter-group">
           <label for="startDate">{{ 'SHIFTS_ASSIGN.START_DATE' | translate }}</label>
-          <input 
-            type="date" 
-            id="startDate"
-            formControlName="startDate"
-            class="form-input"
-            [title]="'SHIFTS_ASSIGN.START_DATE' | translate">
+          <input type="date" id="startDate" formControlName="startDate" class="form-input"
+            [title]="'SHIFTS_ASSIGN.START_DATE' | translate" (change)="onDateChange($event, 'startDate')">
+          <div>
+            <label *ngIf="hijriDates['startDate']" class="hijri-date">
+              {{ hijriDates['startDate'] }}
+            </label>
+          </div>
         </div>
-        
+
+        <!-- End Date -->
         <div class="filter-group">
           <label for="endDate">{{ 'SHIFTS_ASSIGN.END_DATE' | translate }}</label>
-          <input 
-            type="date" 
-            id="endDate"
-            formControlName="endDate"
-            class="form-input"
-            [title]="'SHIFTS_ASSIGN.END_DATE' | translate">
+          <input type="date" id="endDate" formControlName="endDate" class="form-input"
+            [title]="'SHIFTS_ASSIGN.END_DATE' | translate" (change)="onDateChange($event, 'endDate')">
+          <div>
+            <label *ngIf="hijriDates['endDate']" class="hijri-date">
+              {{ hijriDates['endDate'] }}
+            </label>
+          </div>
         </div>
-        
-        <div class="filter-actions">
-          <button type="button" class="filter-btn apply-btn" (click)="onFilter()" [title]="'SHIFTS_ASSIGN.APPLY_FILTER' | translate">
-            <i class="fas fa-search"></i>
-            {{ 'SHIFTS_ASSIGN.FILTER' | translate }}
-          </button>
-          <button type="button" class="filter-btn reset-btn" (click)="onResetFilter()" [title]="'SHIFTS_ASSIGN.RESET_FILTER' | translate">
-            <i class="fas fa-times"></i>
-            {{ 'SHIFTS_ASSIGN.RESET' | translate }}
-          </button>
-        </div>
+
       </div>
+
     </form>
   </div>
+
 
   <!-- Table Header Actions -->
   <div *ngIf="!loading" class="table-header-actions">
     <div class="left-actions">
-      <button class="add-btn" 
-              (click)="openCreateModal()" 
-              [title]="'SHIFTS_ASSIGN.CREATE_TITLE' | translate">
+      <button class="add-btn" (click)="openCreateModal()" [title]="'SHIFTS_ASSIGN.CREATE_TITLE' | translate">
         <i class="fas fa-plus"></i>
         {{ 'SHIFTS_ASSIGN.CREATE' | translate }}
       </button>
-      
-      <button class="delete-selected-btn" 
-              (click)="deleteSelected()" 
-              [disabled]="selectedItems.length === 0"
-              [title]="'SHIFTS_ASSIGN.DELETE_SELECTED' | translate">
+
+      <button class="delete-selected-btn" (click)="deleteSelected()" [disabled]="selectedItems.length === 0"
+        [title]="'SHIFTS_ASSIGN.DELETE_SELECTED' | translate">
         <i class="fas fa-trash"></i>
         {{ 'SHIFTS_ASSIGN.DELETE_SELECTED' | translate }}
         <span *ngIf="selectedItems.length > 0" class="selection-count">({{ selectedItems.length }})</span>
@@ -70,20 +68,41 @@
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input 
-            type="text" 
-            formControlName="searchTerm"
-            class="search-input"
-            [placeholder]="'SHIFTS_ASSIGN.SEARCH_PLACEHOLDER' | translate"
-            [title]="'SHIFTS_ASSIGN.SEARCH_TITLE' | translate"
-            (keyup.enter)="onSearch()">
-          <button type="button" class="search-btn" (click)="onSearch()" [title]="'SHIFTS_ASSIGN.SEARCH' | translate">
-            <i class="fas fa-search search-icon"></i>
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
           </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
   </div>
 
@@ -93,10 +112,7 @@
       <thead>
         <tr class="table-header">
           <th class="checkbox-column">
-            <input 
-              type="checkbox"
-              [(ngModel)]="selectAll"
-              (change)="onSelectAll()"
+            <input type="checkbox" [(ngModel)]="selectAll" (change)="onSelectAll()"
               [title]="'SHIFTS_ASSIGN.SELECT_ALL' | translate">
           </th>
           <th>{{ 'SHIFTS_ASSIGN.EMPLOYEE' | translate }}</th>
@@ -109,20 +125,23 @@
       <tbody>
         <tr *ngFor="let shiftAssign of shiftsAssign" class="table-row">
           <td class="checkbox-column">
-            <input 
-              type="checkbox"
-              [(ngModel)]="shiftAssign.sel"
-              (change)="onItemSelect(shiftAssign)"
+            <input type="checkbox" [(ngModel)]="shiftAssign.sel" (change)="onItemSelect(shiftAssign)"
               [title]="'SHIFTS_ASSIGN.SELECT_ITEM' | translate">
           </td>
-          <td [title]="shiftAssign.emp_Name">{{ shiftAssign.emp_Name }}</td>
-          <td [title]="shiftAssign.shift_Label">{{ shiftAssign.shift_Label }}</td>
-          <td [title]="formatDate(shiftAssign.sdate)">{{ formatDate(shiftAssign.sdate) }}</td>
-          <td [title]="formatDate(shiftAssign.edate)">{{ formatDate(shiftAssign.edate) }}</td>
+          <td [title]="shiftAssign.emp_Name"
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            shiftAssign.emp_Name }}</td>
+          <td [title]="shiftAssign.shift_Label"
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            shiftAssign.shift_Label }}</td>
+          <td [title]="formatDate(shiftAssign.sdate)"
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            formatDate(shiftAssign.sdate) }}</td>
+          <td [title]="formatDate(shiftAssign.edate)"
+            [ngStyle]="shiftAssign.assign_Sts ? styleStringToObject(shiftAssign.assign_Sts) : {}">{{
+            formatDate(shiftAssign.edate) }}</td>
           <td class="actions-column">
-            <button 
-              class="action-btn delete-btn" 
-              (click)="deleteShiftAssign(shiftAssign)"
+            <button class="action-btn delete-btn" (click)="deleteShiftAssign(shiftAssign)"
               [title]="'SHIFTS_ASSIGN.DELETE_TOOLTIP' | translate">
               <i class="text-danger fs-4 fas fa-trash"></i>
             </button>
@@ -140,73 +159,54 @@
   </div>
 
   <!-- Custom Pagination -->
-  <div *ngIf="!loading && shiftsAssign.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+  <div *ngIf="!loading && shiftsAssign.length > 0" class="pagination-wrapper"
+    [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
     <div class="pagination-info">
-      <span>{{ 'SHIFTS_ASSIGN.SHOWING' | translate }} {{ currentPageStart }} {{ 'SHIFTS_ASSIGN.TO' | translate }} {{ currentPageEnd }} {{ 'SHIFTS_ASSIGN.OF' | translate }} {{ totalRecords }} {{ 'SHIFTS_ASSIGN.ITEMS' | translate }}</span>
+      <span>{{ 'SHIFTS_ASSIGN.SHOWING' | translate }} {{ currentPageStart }} {{ 'SHIFTS_ASSIGN.TO' | translate }} {{
+        currentPageEnd }} {{ 'SHIFTS_ASSIGN.OF' | translate }} {{ totalRecords }} {{ 'SHIFTS_ASSIGN.ITEMS' | translate
+        }}</span>
     </div>
 
     <div class="pagination-controls">
       <!-- RTL (Arabic) Layout -->
       <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
-        <button 
-          class="pagination-btn"
-          (click)="goToPage(totalPages)"
-          [disabled]="currentPage === totalPages"
+        <button class="pagination-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"
           [title]="'SHIFTS_ASSIGN.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
-        <button 
-          class="pagination-btn"
-          (click)="nextPage()"
-          [disabled]="!canGoNext"
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="!canGoNext"
           [title]="'SHIFTS_ASSIGN.NEXT_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
-        <span class="page-info">{{ 'SHIFTS_ASSIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'SHIFTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
-        <button 
-          class="pagination-btn"
-          (click)="previousPage()"
-          [disabled]="!canGoPrevious"
+        <span class="page-info">{{ 'SHIFTS_ASSIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{
+            'SHIFTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button class="pagination-btn" (click)="previousPage()" [disabled]="!canGoPrevious"
           [title]="'SHIFTS_ASSIGN.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
-        <button 
-          class="pagination-btn"
-          (click)="goToPage(1)"
-          [disabled]="currentPage === 1"
+        <button class="pagination-btn" (click)="goToPage(1)" [disabled]="currentPage === 1"
           [title]="'SHIFTS_ASSIGN.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
       </ng-container>
-      
+
       <!-- LTR (English) Layout -->
       <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
-        <button 
-          class="pagination-btn"
-          (click)="goToPage(1)"
-          [disabled]="currentPage === 1"
+        <button class="pagination-btn" (click)="goToPage(1)" [disabled]="currentPage === 1"
           [title]="'SHIFTS_ASSIGN.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
-        <button 
-          class="pagination-btn"
-          (click)="previousPage()"
-          [disabled]="!canGoPrevious"
+        <button class="pagination-btn" (click)="previousPage()" [disabled]="!canGoPrevious"
           [title]="'SHIFTS_ASSIGN.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
-        <span class="page-info">{{ 'SHIFTS_ASSIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{ 'SHIFTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
-        <button 
-          class="pagination-btn"
-          (click)="nextPage()"
-          [disabled]="!canGoNext"
+        <span class="page-info">{{ 'SHIFTS_ASSIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{
+            'SHIFTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="!canGoNext"
           [title]="'SHIFTS_ASSIGN.NEXT_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
-        <button 
-          class="pagination-btn"
-          (click)="goToPage(totalPages)"
-          [disabled]="currentPage === totalPages"
+        <button class="pagination-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"
           [title]="'SHIFTS_ASSIGN.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
@@ -236,21 +236,18 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    
-    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'"
+      [class.ltr]="langService.getCurrentLang() === 'en'">
       <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
-        
+
         <!-- Assignment Type Section -->
         <div class="form-section">
           <h4>{{ 'SHIFTS_ASSIGN.ASSIGNMENT_TYPE' | translate }}</h4>
           <div class="radio-group">
             <div *ngFor="let option of assignmentTypeOptions" class="radio-item">
-              <input 
-                type="radio" 
-                [id]="'assignmentType_' + option.id"
-                [value]="option.id"
-                formControlName="assignmentType"
-                (change)="onAssignmentTypeChange()">
+              <input type="radio" [id]="'assignmentType_' + option.id" [value]="option.id"
+                formControlName="assignmentType" (change)="onAssignmentTypeChange()">
               <label [for]="'assignmentType_' + option.id">
                 {{ langService.getCurrentLang() === 'ar' ? option.nameAr : option.name }}
               </label>
@@ -265,41 +262,32 @@
         <div class="form-section">
           <h4>{{ 'SHIFTS_ASSIGN.SELECT_TARGETS' | translate }}</h4>
           <div class="form-group">
-            <p-multiSelect 
-              #targetDropdown
-              formControlName="selectedTargets"
-              [options]="currentTargetOptions"
-              optionLabel="name"
-              optionValue="id"
-              [placeholder]="'SHIFTS_ASSIGN.SELECT_TARGETS' | translate"
-              [filter]="true"
-              [filterBy]="'name'"
-              [showToggleAll]="true"
-              [showHeader]="true"
-              (onShow)="onDropdownShow('target')"
-              (onChange)="onTargetSelectionChange($event.value)"
-              [class.error]="isFieldInvalid('selectedTargets')"
-              class="w-100"
-              [maxSelectedLabels]="3">
-              
+            <p-multiSelect #targetDropdown formControlName="selectedTargets" [options]="currentTargetOptions"
+              optionLabel="name" optionValue="id" [placeholder]="'SHIFTS_ASSIGN.SELECT_TARGETS' | translate"
+              [filter]="true" [filterBy]="'name'" [showToggleAll]="true" (onShow)="onDropdownShow('target')"
+              (onChange)="onTargetSelectionChange($event.value)" [class.error]="isFieldInvalid('selectedTargets')"
+              class="w-100" [maxSelectedLabels]="3" [virtualScroll]="true" [itemSize]="38" scrollHeight="200px">
+
               <ng-template let-option pTemplate="item">
                 <div class="multiselect-item">
                   <span>{{ option.name }}</span>
                 </div>
               </ng-template>
             </p-multiSelect>
-            
-            <div *ngIf="loadingEmployees || loadingDepartments || loadingBranches || loadingRoles" class="loading-message">
+
+            <div *ngIf="loadingEmployees || loadingDepartments || loadingBranches || loadingRoles"
+              class="loading-message">
               <i class="fas fa-spinner fa-spin"></i>
               {{ 'SHIFTS_ASSIGN.LOADING_OPTIONS' | translate }}
             </div>
-            
+
             <div *ngIf="isFieldInvalid('selectedTargets')" class="error-message">
               {{ 'SHIFTS_ASSIGN.TARGETS_REQUIRED' | translate }}
             </div>
-            
+
             <div class="selected-summary" *ngIf="createForm.get('selectedTargets')?.value?.length > 0">
-              <span>{{ 'SHIFTS_ASSIGN.SELECTED_COUNT' | translate }}: {{ createForm.get('selectedTargets')?.value?.length }}</span>
+              <span>{{ 'SHIFTS_ASSIGN.SELECTED_COUNT' | translate }}: {{
+                createForm.get('selectedTargets')?.value?.length }}</span>
             </div>
           </div>
         </div>
@@ -308,20 +296,10 @@
         <div class="form-section">
           <h4>{{ 'SHIFTS_ASSIGN.SELECT_SHIFT' | translate }}</h4>
           <div class="form-group">
-            <p-dropdown 
-              #shiftsDropdown
-              formControlName="shiftId"
-              [options]="shifts"
-              optionLabel="name"
-              optionValue="id"
-              [placeholder]="'SHIFTS_ASSIGN.SELECT_SHIFT_PLACEHOLDER' | translate"
-              [filter]="true"
-              [filterBy]="'name'"
-              [showClear]="true"
-              [loading]="loadingShifts"
-              (onShow)="onDropdownShow('shifts')"
-              [class.error]="isFieldInvalid('shiftId')"
-              class="w-100">
+            <p-dropdown #shiftsDropdown formControlName="shiftId" [options]="shifts" optionLabel="name" optionValue="id"
+              [placeholder]="'SHIFTS_ASSIGN.SELECT_SHIFT_PLACEHOLDER' | translate" [filter]="true" [filterBy]="'name'"
+              [showClear]="true" [loading]="loadingShifts" (onShow)="onDropdownShow('shifts')"
+              [class.error]="isFieldInvalid('shiftId')" class="w-100">
             </p-dropdown>
             <div *ngIf="isFieldInvalid('shiftId')" class="error-message">
               {{ 'SHIFTS_ASSIGN.SHIFT_REQUIRED' | translate }}
@@ -333,48 +311,59 @@
         <div class="form-section">
           <h4>{{ 'SHIFTS_ASSIGN.DATE_RANGE' | translate }}</h4>
           <div class="date-row">
+
+            <!-- Start Date -->
             <div class="form-group">
-              <label>{{ 'SHIFTS_ASSIGN.START_DATE' | translate }} <span class="required">*</span></label>
-              <p-calendar 
-                formControlName="startDate"
-                [placeholder]="'SHIFTS_ASSIGN.SELECT_DATE' | translate"
-                [showIcon]="true"
-                dateFormat="yy-mm-dd"
-                [class.error]="isFieldInvalid('startDate')"
-                class="w-100">
-              </p-calendar>
+              <label for="startDate">
+                {{ 'SHIFTS_ASSIGN.START_DATE' | translate }} <span class="required">*</span>
+              </label>
+              <input type="date" id="startDate" formControlName="startDate" class="form-input w-100"
+                [class.error]="isFieldInvalid('startDate')" [title]="'SHIFTS_ASSIGN.START_DATE' | translate"
+                (change)="onDateChange($event, 'startDate')">
+
               <div *ngIf="isFieldInvalid('startDate')" class="error-message">
                 {{ 'SHIFTS_ASSIGN.START_DATE_REQUIRED' | translate }}
               </div>
+
+              <div>
+                <label *ngIf="hijriDates['startDate']" class="hijri-date">
+                  {{ hijriDates['startDate'] }}
+                </label>
+              </div>
             </div>
 
+            <!-- End Date -->
             <div class="form-group">
-              <label>{{ 'SHIFTS_ASSIGN.END_DATE' | translate }} <span class="required">*</span></label>
-              <p-calendar 
-                formControlName="endDate"
-                [placeholder]="'SHIFTS_ASSIGN.SELECT_DATE' | translate"
-                [showIcon]="true"
-                dateFormat="yy-mm-dd"
-                [class.error]="isFieldInvalid('endDate')"
-                class="w-100">
-              </p-calendar>
+              <label for="endDate">
+                {{ 'SHIFTS_ASSIGN.END_DATE' | translate }} <span class="required">*</span>
+              </label>
+              <input type="date" id="endDate" formControlName="endDate" class="form-input w-100"
+                [class.error]="isFieldInvalid('endDate')" [title]="'SHIFTS_ASSIGN.END_DATE' | translate"
+                (change)="onDateChange($event, 'endDate')">
+
               <div *ngIf="isFieldInvalid('endDate')" class="error-message">
                 {{ 'SHIFTS_ASSIGN.END_DATE_REQUIRED' | translate }}
               </div>
               <div *ngIf="createForm.errors?.['dateRangeInvalid']" class="error-message date-range-error">
                 {{ 'SHIFTS_ASSIGN.END_DATE_BEFORE_START' | translate }}
               </div>
+
+              <div>
+                <label *ngIf="hijriDates['endDate']" class="hijri-date">
+                  {{ hijriDates['endDate'] }}
+                </label>
+              </div>
             </div>
+
           </div>
         </div>
+
 
         <div class="modal-footer">
           <button type="button" class="cancel-btn" (click)="closeCreateModal()">
             {{ 'SHIFTS_ASSIGN.CANCEL' | translate }}
           </button>
-          <button type="submit" 
-                  class="submit-btn" 
-                  [disabled]="!isFormValid">
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
             {{ 'SHIFTS_ASSIGN.CREATE' | translate }}
           </button>
         </div>

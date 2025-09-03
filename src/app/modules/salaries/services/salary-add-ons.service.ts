@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Addon, AddOnsApiResponse } from '../../../core/models/addon';
 import { Observable } from 'rxjs';
 
@@ -13,12 +13,20 @@ export class SalaryAddOnsService {
   constructor(private http: HttpClient) { }
   
   // Method to get all salary add-ons
-  getAllSalaryAddOns(lang: number, pageIndex: number, pageSize: number): Observable<AddOnsApiResponse> {
+  getAllSalaryAddOns(lang: number, pageIndex: number, pageSize: number, colunmSearchName: string | null, colunmSearchValue: string | null): Observable<AddOnsApiResponse> {
     const headers = {
       'accept': 'text/plain',
       'lang': lang.toString()
     };
-    return this.http.get<AddOnsApiResponse>(`${this.apiUrl}?pageIndex=${pageIndex}&pageSize=${pageSize}`, { headers });
+
+    let params = new HttpParams()
+                  .set('pageSize', pageSize.toString())
+                  .set('pageIndex', pageIndex.toString());
+
+    if(colunmSearchName && colunmSearchValue){
+        params = params.set(colunmSearchName, colunmSearchValue);
+    }
+    return this.http.get<AddOnsApiResponse>(`${this.apiUrl}`, { headers,params });
   }
 
   // Method to add a new salary add-on

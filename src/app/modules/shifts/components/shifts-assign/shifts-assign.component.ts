@@ -34,6 +34,8 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSize = 10;
   showCreateModal = false;
+  hijriDates: { [key: string]: string } = {};
+loadingTargets = true;
   
   private langSubscription: Subscription = new Subscription();
   private searchSubscription: Subscription = new Subscription();
@@ -85,6 +87,23 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   selectedTargetIds: number[] = [];
   targetSelectAll = false;
   
+  // Cache for target options to avoid recalculation
+  private _cachedTargetOptions: DropdownItem[] = [];
+  private _lastAssignmentType: number | null = null;
+
+   searchColumns = [
+  { column: '', label: 'All Columns' }, // all columns
+  { column: 'EMP_NAME', label: 'SHIFTS_ASSIGN.EMPLOYEE' },
+  { column: 'SHIFT_LABEL', label: 'SHIFTS_ASSIGN.SHIFT' },
+  { column: 'SDATE', label: 'SHIFTS_ASSIGN.START_DATE' },
+  { column: 'EDATE', label: 'SHIFTS_ASSIGN.END_DATE' }
+];
+
+  selectedColumn: string = '';
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchTerm: string = '';
+  
+  
   constructor(
     private shiftsAssignService: ShiftsAssignService,
     private authService: AuthenticationService,
@@ -106,12 +125,17 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     this.langSubscription = this.langService.currentLang$.subscribe((lang: string) => {
       this.currentLang = lang === 'ar' ? 2 : 1;
       this.loadShiftsAssign();
+      this.preloadAllDropdownData();
     });
 
     // Setup search debouncing
     this.setupSearchDebouncing();
     
+    // Initial load
+    this.loadShiftsAssign();
+    this.preloadAllDropdownData();
   }
+
 
   ngOnDestroy() {
     this.langSubscription.unsubscribe();
@@ -150,6 +174,64 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
       });
   }
 
+
+  onDateChange(event: Event, controlName: string) {
+  const input = event.target as HTMLInputElement;
+  const value = input.value;
+  if (value) {
+    this.hijriDates[controlName] = this.toObservedHijri(value);
+  } else {
+    this.hijriDates[controlName] = '';
+  }
+    this.loadShiftsAssign();
+}
+
+toObservedHijri(date: Date | string, adjustment: number = -1): string {
+  // Ensure date is a Date object
+  const d: Date = date instanceof Date ? new Date(date) : new Date(date);
+  if (isNaN(d.getTime())) return ''; // handle invalid date
+
+  // Apply adjustment in days
+  d.setDate(d.getDate() + adjustment);
+
+  const formatter = new Intl.DateTimeFormat('en-US-u-ca-islamic', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
+  const parts = formatter.formatToParts(d);
+
+  const year = parts.find(p => p.type === 'year')?.value ?? '0000';
+  const month = parts.find(p => p.type === 'month')?.value ?? '00';
+  const day = parts.find(p => p.type === 'day')?.value ?? '00';
+
+  return `${year}/${month}/${day}`;
+}
+
+styleStringToObject(style?: string): { [key: string]: string } {
+  if (!style) {
+    return {}; 
+  }
+
+  // remove leading 'style="' and trailing '"'
+  style = style.replace(/^style="/i, "").replace(/"$/, "");
+
+  return style.split(';').reduce((acc, rule) => {
+    if (rule.trim()) {
+      const [key, value] = rule.split(':');
+      if (key && value) {
+        acc[key.trim()] = value.trim();
+      }
+    }
+    return acc;
+  }, {} as { [key: string]: string });
+}
+
+  selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
   // Pagination computed properties
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.pageSize);
@@ -171,6 +253,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   get canGoPrevious(): boolean {
     return this.currentPage > 1;
   }
+  
 
   // Core business methods
   loadShiftsAssign() {
@@ -185,13 +268,14 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
       this.empId,
       this.currentLang,
       startDate ? this.formatDateForApi(startDate) : undefined,
-      endDate ? this.formatDateForApi(endDate) : undefined
+      endDate ? this.formatDateForApi(endDate) : undefined,
+      this.selectedColumn,this.searchTerm
     ).subscribe({
       next: (response: GetShiftsAssignResponse) => {
         if (response.isSuccess) {
-          this.shiftsAssign = response.data || [];
+          this.shiftsAssign = response.data.records || [];
           // Since the API doesn't return total count, we'll estimate it
-          this.totalRecords = this.shiftsAssign.length;
+          this.totalRecords =response.data.totalCount;
           this.resetSelection();
         } else {
           this.showErrorMessage(response.message);
@@ -301,7 +385,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
 
   deleteShiftAssign(item: ShiftAssign) {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete the shift assignment for ${item.emp_Name}?`,
+      message: this.translate.instant('SHIFTS_ASSIGN.DELETE_CONFIRMATION_MESSAGE'),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -313,7 +397,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
   private performDelete(ids: number[]) {
     this.shiftsAssignService.deleteShiftsAssignSelected(ids, this.currentLang).subscribe({
       next: (response) => {
-        this.showSuccessMessage('Items deleted successfully');
+        this.showSuccessMessage(response.message);
         this.loadShiftsAssign();
       },
       error: (error) => {
@@ -385,16 +469,15 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     this.resetCreateForm();
     this.showCreateModal = true;
     this.loadShifts();
-    // Preload all dropdown data for better performance
-    this.preloadAllDropdownData();
+    // Since Employee (ID 1) is the default selection, load employees immediately
+    this.loadEmployees();
   }
 
-  // Preload all dropdown data for better performance
+  // Preload essential dropdown data for better performance
   private preloadAllDropdownData() {
-    this.loadEmployees();
-    this.loadDepartments();
-    this.loadBranches();
-    this.loadRoles();
+    // Only preload shifts as they are always needed
+    this.loadShifts();
+    // Other data will be loaded on demand when assignment type changes
   }
 
   closeCreateModal() {
@@ -413,6 +496,10 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     this.selectedTargetItems = [];
     this.selectedTargetIds = [];
     this.targetSelectAll = false;
+    
+    // Clear cache to ensure fresh calculation for Employee options
+    this.clearTargetOptionsCache();
+    
     // Don't reset data cache as we want to keep loaded data for performance
   }
 
@@ -432,6 +519,11 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     this.selectedTargetIds = [];
     this.targetSelectAll = false;
     this.createForm.patchValue({ selectedTargets: [] });
+    
+    // Clear cache to force recalculation
+    this._cachedTargetOptions = [];
+    this._lastAssignmentType = null;
+    
     // Don't load data again if already cached
     this.loadTargetDataIfNeeded();
   }
@@ -526,17 +618,37 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Get current target options based on assignment type
+  // Get current target options based on assignment type (with caching)
   get currentTargetOptions(): DropdownItem[] {
     const assignmentType = this.createForm.get('assignmentType')?.value;
     
-    switch (assignmentType) {
-      case 1: return this.employees;
-      case 2: return this.departments;
-      case 3: return this.branches;
-      case 4: return this.roles;
-      default: return [];
+    // Return cached options if assignment type hasn't changed
+    if (this._lastAssignmentType === assignmentType && this._cachedTargetOptions.length > 0) {
+      return this._cachedTargetOptions;
     }
+    
+    // Update cache
+    this._lastAssignmentType = assignmentType;
+    
+    switch (assignmentType) {
+      case 1: 
+        this._cachedTargetOptions = this.employees;
+        break;
+      case 2: 
+        this._cachedTargetOptions = this.departments;
+        break;
+      case 3: 
+        this._cachedTargetOptions = this.branches;
+        break;
+      case 4: 
+        this._cachedTargetOptions = this.roles;
+        break;
+      default: 
+        this._cachedTargetOptions = [];
+        break;
+    }
+    
+    return this._cachedTargetOptions;
   }
 
   // Dropdown loading methods
@@ -576,6 +688,8 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
             name: item.label
           }));
           this.dataCache.employees = true;
+          // Clear cache to ensure fresh data is reflected
+          this.clearTargetOptionsCache();
         }
         this.loadingEmployees = false;
       },
@@ -599,6 +713,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
             name: item.label
           }));
           this.dataCache.departments = true;
+          this.clearTargetOptionsCache();
         }
         this.loadingDepartments = false;
       },
@@ -622,6 +737,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
             name: item.label
           }));
           this.dataCache.branches = true;
+          this.clearTargetOptionsCache();
         }
         this.loadingBranches = false;
       },
@@ -645,6 +761,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
             name: item.label
           }));
           this.dataCache.roles = true;
+          this.clearTargetOptionsCache();
         }
         this.loadingRoles = false;
       },
@@ -665,6 +782,50 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
     if (currentDropdownId !== 'target' && this.targetDropdown) {
       this.targetDropdown.hide();
     }
+
+    // Ensure target data is available when target dropdown is shown
+    if (currentDropdownId === 'target') {
+      this.ensureTargetDataLoaded();
+    }
+  }
+
+  // Ensure target data is loaded based on current assignment type
+  private ensureTargetDataLoaded() {
+    const assignmentType = this.createForm.get('assignmentType')?.value;
+    
+    switch (assignmentType) {
+      case 1: // Employee
+        if (!this.dataCache.employees) {
+          this.loadEmployees();
+        }
+        break;
+      case 2: // Department
+        if (!this.dataCache.departments) {
+          this.loadDepartments();
+        }
+        break;
+      case 3: // Branch
+        if (!this.dataCache.branches) {
+          this.loadBranches();
+        }
+        break;
+      case 4: // Role
+        if (!this.dataCache.roles) {
+          this.loadRoles();
+        }
+        break;
+    }
+  }
+
+  // Clear target options cache
+  private clearTargetOptionsCache() {
+    this._cachedTargetOptions = [];
+    this._lastAssignmentType = null;
+  }
+
+  // TrackBy function for better performance in dropdowns
+  trackByFn(index: number, item: DropdownItem): any {
+    return item.id;
   }
 
   // Submit create form
@@ -710,7 +871,7 @@ export class ShiftsAssignComponent implements OnInit, OnDestroy {
 
       this.shiftsAssignService.createShiftsAssign(payload, this.currentLang).subscribe({
         next: (response) => {
-          this.showSuccessMessage(`Shift assignment created successfully for ${target.name}`);
+          this.showSuccessMessage(response.message);
         },
         error: (error) => {
           console.error('Error creating shift assignment:', error);

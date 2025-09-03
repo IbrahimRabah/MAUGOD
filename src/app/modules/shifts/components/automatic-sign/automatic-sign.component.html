@@ -23,20 +23,42 @@
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input 
-            type="text"
-            formControlName="searchTerm"
-            class="search-input"
-            [placeholder]="'AUTOMATIC_SIGN.SEARCH_PLACEHOLDER' | translate"
-            [title]="'AUTOMATIC_SIGN.SEARCH_TITLE' | translate"
-            (keyup.enter)="onSearch()">
-          <button type="button" class="search-btn" (click)="onSearch()" [title]="'AUTOMATIC_SIGN.SEARCH' | translate">
-            <i class="fas fa-search search-icon"></i>
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
           </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </form>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control"
+          [placeholder]="'Search: '+(selectedColumnLabel | translate)" [(ngModel)]="searchTerm"
+              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
     </div>
   </div>
 
@@ -89,48 +111,48 @@
           <td [title]="getDisplayValue(autoSign.shiftPartName)">{{ getDisplayValue(autoSign.shiftPartName) }}</td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.autoIn === 1" [class.no]="autoSign.autoIn === 0">
-              {{ getYesNoDisplay(autoSign.autoIn) }}
+              {{ autoSign.autoInDesc }}
             </span>
           </td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.autoOut === 1" [class.no]="autoSign.autoOut === 0">
-              {{ getYesNoDisplay(autoSign.autoOut) }}
+              {{ autoSign.autoOutDesc }}
             </span>
           </td>
           <td [title]="getDisplayValue(autoSign.stsDesc)">{{ getDisplayValue(autoSign.stsDesc) }}</td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.sat === 1" [class.no]="autoSign.sat === 0">
-              {{ getYesNoDisplay(autoSign.sat) }}
+              {{ autoSign.satDesc }}
             </span>
           </td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.sun === 1" [class.no]="autoSign.sun === 0">
-              {{ getYesNoDisplay(autoSign.sun) }}
+              {{autoSign.sunDesc }}
             </span>
           </td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.mon === 1" [class.no]="autoSign.mon === 0">
-              {{ getYesNoDisplay(autoSign.mon) }}
+              {{autoSign.monDesc }}
             </span>
           </td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.tue === 1" [class.no]="autoSign.tue === 0">
-              {{ getYesNoDisplay(autoSign.tue) }}
+              {{autoSign.tueDesc}}
             </span>
           </td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.wed === 1" [class.no]="autoSign.wed === 0">
-              {{ getYesNoDisplay(autoSign.wed) }}
+              {{ autoSign.wedDesc }}
             </span>
           </td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.thu === 1" [class.no]="autoSign.thu === 0">
-              {{ getYesNoDisplay(autoSign.thu) }}
+              {{ autoSign.thuDesc }}
             </span>
           </td>
           <td>
             <span class="boolean-badge" [class.yes]="autoSign.fri === 1" [class.no]="autoSign.fri === 0">
-              {{ getYesNoDisplay(autoSign.fri) }}
+              {{ autoSign.friDesc }}
             </span>
           </td>
           <td [title]="getDisplayValue(autoSign.note)">{{ getDisplayValue(autoSign.note) }}</td>
@@ -391,14 +413,14 @@
           <!-- Start Date -->
           <div class="form-group">
             <label class="required">{{ 'AUTOMATIC_SIGN.START_DATE' | translate }}</label>
-            <p-calendar 
+            <input
+              type="date" 
               formControlName="sDate"
               [placeholder]="'AUTOMATIC_SIGN.SELECT_START_DATE' | translate"
-              [showIcon]="true"
               inputId="sDate"
               dateFormat="yy-mm-dd"
-              [class.error]="isFieldInvalid('sDate') || createForm.errors?.['dateRange']">
-            </p-calendar>
+              class="form-input"
+              [class.error]="isFieldInvalid('sDate') || createForm.errors?.['dateRange']"/>
             <small *ngIf="isFieldInvalid('sDate')" class="error-message">
               {{ getFieldError('sDate') }}
             </small>
@@ -407,14 +429,14 @@
           <!-- End Date -->
           <div class="form-group">
             <label class="required">{{ 'AUTOMATIC_SIGN.END_DATE' | translate }}</label>
-            <p-calendar 
+            <input
+              type="date" 
               formControlName="eDate"
               [placeholder]="'AUTOMATIC_SIGN.SELECT_END_DATE' | translate"
-              [showIcon]="true"
               inputId="eDate"
+              class="form-input"
               dateFormat="yy-mm-dd"
-              [class.error]="isFieldInvalid('eDate')">
-            </p-calendar>
+              [class.error]="isFieldInvalid('eDate')"/>
             <small *ngIf="isFieldInvalid('eDate')" 
                    class="error-message" 
                    [class.date-range-error]="createForm.errors?.['dateRange']">
@@ -450,10 +472,45 @@
                 <p-inputSwitch formControlName="autoIn" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
               </div>
               
+              <div *ngIf="createForm.get('autoIn')?.value === 1">
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_BEFORE' | translate }}</label>
+                  <input type="number"
+                    formControlName="inRandomBfor"
+                  >
+                </div>
+
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_AFTER' | translate }}</label>
+                  <input type="number"
+                    formControlName="inRandomAftr"
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="auto-toggle-grid">
+
               <div class="toggle-item">
                 <label>{{ 'AUTOMATIC_SIGN.AUTO_OUT' | translate }}</label>
                 <p-inputSwitch formControlName="autoOut" [trueValue]="1" [falseValue]="0"></p-inputSwitch>
               </div>
+
+              <div *ngIf="createForm.get('autoOut')?.value === 1">
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_BEFORE' | translate }}</label>
+                  <input type="number"
+                    formControlName="outRandomBfor"
+                  >
+                </div>
+
+                <div class="random-min">
+                  <label>{{ 'AUTOMATIC_SIGN.TOGGLE_SETTINGS_ENABLED.MINUTES_AFTER' | translate }}</label>
+                  <input type="number"
+                    formControlName="outRandomAftr"
+                  >
+                </div>
+              </div>
+
             </div>
             
             <!-- Auto In/Out Validation Error -->

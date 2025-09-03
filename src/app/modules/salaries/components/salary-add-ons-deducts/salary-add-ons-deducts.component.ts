@@ -30,6 +30,30 @@ export class SalaryAddOnsDeductsComponent implements OnInit, OnDestroy {
   addonForm!: FormGroup;
   searchForm!: FormGroup;
 
+ searchColumns = [
+    { column: 'AllFields', label: 'All Columns' }, // all columns option
+    { column: 'ar', label: 'SALARY_ADD_ONS_DEDUCTS.ARABIC_NAME' },
+    { column: 'en', label: 'SALARY_ADD_ONS_DEDUCTS.ENGLISH_NAME' },
+    { column: 'addDed', label: 'SALARY_ADD_ONS_DEDUCTS.ADD_OR_DEDUCT' },
+    { column: 'perWorkingDay', label: 'SALARY_ADD_ONS_DEDUCTS.PER_WORKING_DAY' },
+    { column: 'includeWhenDedAbsent', label: 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_DEDUCT_ABSENT' },
+    { column: 'includeWhenInVaction', label: 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_IN_VACATION' },
+    { column: 'includeWhenInPaidVaction', label: 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_WHEN_IN_PAID_VACATION' },
+    { column: 'includeInEndOfService', label: 'SALARY_ADD_ONS_DEDUCTS.INCLUDE_IN_END_OF_SERVICE' },
+    { column: 'note', label: 'SALARY_ADD_ONS_DEDUCTS.NOTE' },
+  ];
+  searchText: string = '';
+  
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  selectedColumn: string = this.searchColumns[0].column;
+
+
+
+selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
   constructor(
     private salaryAddOnsService: SalaryAddOnsService,
     public langService: LanguageService,
@@ -256,7 +280,7 @@ export class SalaryAddOnsDeductsComponent implements OnInit, OnDestroy {
     this.loading = true;
     const lang = this.currentLang ;
     
-    this.salaryAddOnsService.getAllSalaryAddOns(lang, this.currentPage, this.pageSize).subscribe({
+    this.salaryAddOnsService.getAllSalaryAddOns(lang, this.currentPage, this.pageSize,this.selectedColumn, this.searchText).subscribe({
       next: (response) => {
         this.addons = response.data || [];
         this.totalRecords = response.totalCount;

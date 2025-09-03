@@ -21,6 +21,7 @@ export interface Department {
   branchId: number;
   branchName: string;
   deptLevel: number;
+  deptLevelLable:string;
   note: string;
   updatePk: string;
   del: string;
@@ -46,11 +47,11 @@ export interface DepartmentLevel {
 export interface DepartmentCreateUpdateRequest {
   ar: string;
   en: string;
-  mgrId: number;
-  parentDeptId: number;
+  mgrId: number | null;
+  parentDeptId: number | null;
   branchId: number;
   deptLevel: number;
-  locId: number;
+  locId: number | null;
   locDesc: string;
   note: string;
 }

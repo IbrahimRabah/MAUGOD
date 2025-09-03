@@ -45,6 +45,41 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
   filterForm!: FormGroup;
   createForm!: FormGroup;
   
+
+
+
+  
+  searchColumns = [
+    { column: 'AllFields', label: 'All Columns' }, // all columns option
+    { column: 'empName', label: 'REQUEST_POST_PERMISSIONS.EMPLOYEE' },
+    { column: 'deptName', label: 'REQUEST_POST_PERMISSIONS.DEPARTMENT' },
+    { column: 'mgrDeptName', label: 'REQUEST_POST_PERMISSIONS.MANAGER_OF_DEPARTMENT' },
+    { column: 'branchName', label: 'REQUEST_POST_PERMISSIONS.BRANCH' },
+    { column: 'mgrBranchName', label: 'REQUEST_POST_PERMISSIONS.MANAGER_OF_BRANCH' },
+    { column: 'roleName', label: 'REQUEST_POST_PERMISSIONS.ROLE' },
+    { column: 'everyone', label: 'REQUEST_POST_PERMISSIONS.EVERYONE' },
+    { column: 'stsName', label: 'REQUEST_POST_PERMISSIONS.STATUS' },
+    { column: 'sDate', label: 'REQUEST_POST_PERMISSIONS.START_DATE' },
+    { column: 'hsDate', label: 'REQUEST_POST_PERMISSIONS.HIJRI_START' },
+    { column: 'eDate', label: 'REQUEST_POST_PERMISSIONS.END_DATE' },
+    { column: 'heDate', label: 'REQUEST_POST_PERMISSIONS.HIJRI_END' },
+    { column: 'note', label: 'REQUEST_POST_PERMISSIONS.NOTE' },
+  ];
+  searchTerm: string = '';
+  
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  selectedColumn: string = this.searchColumns[0].column;
+
+
+
+selectColumn(col: any) {
+    this.selectedColumn = col.column;
+    this.selectedColumnLabel = col.label;
+  }
+
+
+
+
   // Selected items for bulk operations
   selectedItems: RequestPostPermission[] = [];
   selectAll = false;
@@ -119,7 +154,6 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
     });
 
     this.setupSearchDebouncing();
-    this.loadRequestPostPermissions();
   }
 
   ngOnDestroy() {
@@ -188,7 +222,9 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
     this.requestPostPermissionsService.getRequestPostPermissions(
       this.currentLang,
       this.pageSize,
-      this.currentPage
+      this.currentPage,
+      this.selectedColumn,
+      this.searchTerm
     ).subscribe({
       next: (response) => {
         this.requestPostPermissions = response.data || [];
@@ -285,7 +321,7 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
 
     const itemCount = this.selectedItems.length;
     this.confirmationService.confirm({
-      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION', { count: this.selectedItems.length }),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -303,7 +339,7 @@ export class RequestPostPremisionsComponent implements OnInit, OnDestroy {
     }
 
     this.confirmationService.confirm({
-      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION'),
+      message: this.translate.instant('MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.DELETE_SELECTED_CONFIRMATION', { count: this.selectedItems.length }),
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

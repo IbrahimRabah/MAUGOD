@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PaginationRequest } from '../../../core/models/pagination';
 import { Observable } from 'rxjs';
-import { UserRoleAssignment, UserRoleAssignmentsResponse } from '../../../core/models/roleAssignment';
+import { AssignUserRolesRequest, UserRoleAssignment, UserRoleAssignmentsResponse } from '../../../core/models/roleAssignment';
 
 @Injectable({
   providedIn: 'root'
@@ -22,29 +22,29 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
 
     return this.http.get<UserRoleAssignmentsResponse>(`${this.apiUrl}/GetUserRoleAssignment`, { headers });
   }
-  getUserRoleAssignmentById(id: number): Observable<UserRoleAssignmentsResponse> {
+  getUserRoleAssignmentById(id: number,lang:number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
-      'lang': 'en',
+      'lang': lang.toString(),
       'id': id.toString()
     });
 
     return this.http.get<UserRoleAssignmentsResponse>(`${this.apiUrl}/GetUserRoleAssignmentById`, { headers });
   }
-  addUserRoleAssignment(userRoleAssignment: UserRoleAssignment): Observable<UserRoleAssignment> {
+  addUserRoleAssignment(userRoleAssignment: UserRoleAssignment, lang:number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'lang': 'en'
+      'lang': lang.toString()
     });
 
-    return this.http.post<UserRoleAssignment>(`${this.apiUrl}/AddUserRoleAssignment`, userRoleAssignment, { headers });
+    return this.http.post<UserRoleAssignmentsResponse>(`${environment.apiUrl}/UserRoleAssignmentInputForm/AssignUserRoles`, userRoleAssignment, { headers });
   }
-  updateUserRoleAssignment(userRoleAssignment: UserRoleAssignment): Observable<UserRoleAssignment> {
+  updateUserRoleAssignment(userRoleAssignment: UserRoleAssignment, lang:number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'lang': 'en'
+      'lang': lang.toString()
     });
 
-    return this.http.put<UserRoleAssignment>(`${this.apiUrl}/UpdateUserRoleAssignment`, userRoleAssignment, { headers });
+    return this.http.put<UserRoleAssignmentsResponse>(`${this.apiUrl}/UpdateUserRoleAssignment`, userRoleAssignment, { headers });
   }
   deleteUserRoleAssignment(lang:number,id: number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
@@ -55,5 +55,13 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
     return this.http.delete<UserRoleAssignmentsResponse>(`${this.apiUrl}/DeleteRoleByID`, { headers });
   }
 
-  
+  assignUserRoles( lang: number, payload: AssignUserRolesRequest): Observable<string> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'lang': lang.toString()
+    });
+    // Endpoint base here is NOT /SystemPermissions; it’s the input form controller
+    const url = `${environment.apiUrl}/UserRoleAssignmentInputForm/AssignUserRoles`;
+    return this.http.post<string>(url, payload, {headers});
+  }  
 }

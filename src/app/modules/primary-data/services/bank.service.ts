@@ -15,12 +15,10 @@ private apiUrl = `${environment.apiUrl}/Banks`  ;
   constructor(private http:HttpClient) { }
   getBanks(pagination:PaginationRequest): Observable<BankResponse> {
     const headers  =  new HttpHeaders({
-      'lang': pagination.lang,
-      'pageNumber': pagination.pageNumber,
-      'pageSize': pagination.pageSize
+      'lang': pagination.lang
     });
 
-    return this.http.get<BankResponse>(`${this.apiUrl}/GetBanks`, { headers });
+    return this.http.post<BankResponse>(`${this.apiUrl}/GetBanks`, pagination,{ headers });
   }
   getBankById(id: number, lang: number): Observable<Bank> {
     const params = { lang: lang.toString() };
