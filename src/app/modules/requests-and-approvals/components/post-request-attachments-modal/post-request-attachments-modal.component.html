@@ -1,0 +1,220 @@
+<div class="modal-backdrop" *ngIf="showModal" (click)="onCloseModal()">
+  <!-- Toast Messages with higher z-index to ensure visibility -->
+  <p-toast position="top-right" [baseZIndex]="10001" [preventOpenDuplicates]="true"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <div class="modal-content" (click)="$event.stopPropagation()" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="fa fa-paperclip"></i>
+        {{ 'POST_REQUEST.ATTACHMENTS_TITLE' | translate }}
+        <span class="request-id">{{ 'POST_REQUEST.REQUEST_ID' | translate }}: {{ requestId }}</span>
+      </h4>
+      <button class="close-btn" (click)="onCloseModal()" [title]="'COMMON.CLOSE' | translate">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>{{ 'POST_REQUEST.LOADING_ATTACHMENTS' | translate }}</p>
+      </div>
+
+      <!-- Attachments Content -->
+      <div *ngIf="!loading" class="attachments-content">
+        
+        <!-- Upload Button -->
+        <div class="upload-section">
+          <button class="upload-btn" (click)="openUploadDialog()">
+            <i class="fa fa-upload"></i>
+            {{ 'POST_REQUEST.UPLOAD_ATTACHMENT' | translate }}
+          </button>
+          <div class="attachments-count">
+            <i class="fa fa-info-circle"></i>
+            <span>{{ 'POST_REQUEST.TOTAL_ATTACHMENTS' | translate }}: {{ totalCount }}</span>
+          </div>
+        </div>
+
+        <!-- No Attachments -->
+        <div *ngIf="attachments.length === 0" class="no-attachments">
+          <div class="no-attachments-icon">
+            <i class="fa fa-paperclip"></i>
+          </div>
+          <h5>{{ 'POST_REQUEST.NO_ATTACHMENTS' | translate }}</h5>
+          <p>{{ 'POST_REQUEST.NO_ATTACHMENTS_MESSAGE' | translate }}</p>
+        </div>
+
+        <!-- Attachments Table -->
+        <div *ngIf="attachments.length > 0" class="attachments-table-wrapper">
+          <table class="attachments-table">
+            <thead>
+              <tr>
+                <th>{{ 'POST_REQUEST.REQUEST_ID' | translate }}</th>
+                <th>{{ 'POST_REQUEST.SEQUENCE' | translate }}</th>
+                <th>{{ 'POST_REQUEST.ATTACHMENT' | translate }}</th>
+                <th>{{ 'POST_REQUEST.NOTE' | translate }}</th>
+                <th>{{ 'POST_REQUEST.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let attachment of attachments; let i = index" class="attachment-row">
+                <!-- Request ID -->
+                <td>{{ attachment.req_ID }}</td>
+                
+                <!-- Sequence -->
+                <td>
+                  <span class="sequence-badge">{{ attachment.seq }}</span>
+                </td>
+                
+                <!-- Attachment -->
+                <td class="attachment-file-cell">
+                  <div class="file-info">
+                    <div class="file-icon">
+                      <i class="fa" [ngClass]="getFileIcon(attachment.m_File_Type)"></i>
+                    </div>
+                    <div class="file-details">
+                      <div class="file-type">{{ attachment.m_File_Type.toUpperCase() }}</div>
+                      <div class="file-size">{{ formatFileSize(attachment.m_File_Size) }}</div>
+                    </div>
+                    <div class="download-action">
+                      <button 
+                        class="action-btn download-btn" 
+                        (click)="downloadAttachment(attachment)"
+                        [title]="'POST_REQUEST.DOWNLOAD_ATTACHMENT' | translate">
+                        <i class="fa fa-download"></i>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                
+                <!-- Note -->
+                <td class="note-cell">
+                  <div class="note-content" [title]="attachment.note">
+                    {{ attachment.note || '-' }}
+                  </div>
+                </td>
+                
+                <!-- Actions -->
+                <td class="actions-cell">
+                  <div class="action-buttons">
+                    <button 
+                      class="action-btn view-btn" 
+                      (click)="viewAttachment(attachment)"
+                      [title]="'POST_REQUEST.VIEW_ATTACHMENT' | translate">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                    
+                    <button 
+                      class="action-btn delete-btn" 
+                      (click)="deleteAttachment(attachment)"
+                      [disabled]="deleting"
+                      [title]="'POST_REQUEST.DELETE_ATTACHMENT' | translate">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button class="footer-btn close-footer-btn" (click)="onCloseModal()">
+        <i class="fa fa-times"></i>
+        {{ 'COMMON.CLOSE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Dialog -->
+<div class="modal-backdrop upload-backdrop" *ngIf="showUploadDialog" (click)="closeUploadDialog()">
+  <div class="upload-modal-content" (click)="$event.stopPropagation()" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    
+    <!-- Upload Modal Header -->
+    <div class="upload-modal-header">
+      <h4 class="upload-modal-title">
+        <i class="fa fa-upload"></i>
+        {{ 'POST_REQUEST.UPLOAD_NEW_ATTACHMENT' | translate }}
+      </h4>
+      <button class="close-btn" (click)="closeUploadDialog()">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Upload Modal Body -->
+    <div class="upload-modal-body">
+      <form [formGroup]="uploadForm" (ngSubmit)="onUploadSubmit()">
+        
+        <!-- File Selection -->
+        <div class="form-group">
+          <label class="required-label">{{ 'POST_REQUEST.SELECT_FILE' | translate }}</label>
+          <div class="file-upload-container">
+            <input 
+              type="file" 
+              id="uploadFileInput"
+              (change)="onFileSelected($event)"
+              class="file-input"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt,.xls,.xlsx">
+            <button type="button" class="file-upload-btn" (click)="triggerFileInput()">
+              <i class="fa fa-upload"></i>
+              {{ 'POST_REQUEST.CHOOSE_FILE' | translate }}
+            </button>
+            
+            <div *ngIf="selectedFile" class="selected-file">
+              <i class="fa" [ngClass]="getFileIcon(getFileExtension(selectedFile.name))"></i>
+              <span class="file-name">{{ selectedFile.name }}</span>
+              <span class="file-size">({{ formatFileSize(selectedFile.size) }})</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div class="form-group">
+          <label class="required-label">{{ 'POST_REQUEST.NOTE' | translate }}</label>
+          <textarea 
+            formControlName="note"
+            rows="3"
+            [placeholder]="'POST_REQUEST.ATTACHMENT_NOTE_PLACEHOLDER' | translate"
+            class="form-input"
+            [class.is-invalid]="uploadForm.get('note')?.invalid && uploadForm.get('note')?.touched">
+          </textarea>
+          <small *ngIf="uploadForm.get('note')?.invalid && uploadForm.get('note')?.touched" class="error-message">
+            {{ 'POST_REQUEST.NOTE_REQUIRED' | translate }}
+          </small>
+        </div>
+      </form>
+    </div>
+
+    <!-- Upload Modal Footer -->
+    <div class="upload-modal-footer">
+      <button 
+        type="button" 
+        class="footer-btn cancel-btn" 
+        (click)="closeUploadDialog()"
+        [disabled]="uploading">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      
+      <button 
+        type="button" 
+        class="footer-btn save-btn" 
+        (click)="onUploadSubmit()"
+        [disabled]="uploading || !selectedFile || uploadForm.invalid">
+        <i *ngIf="uploading" class="fa fa-spinner fa-spin"></i>
+        {{ uploading ? ('POST_REQUEST.UPLOADING' | translate) : ('POST_REQUEST.SAVE' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>

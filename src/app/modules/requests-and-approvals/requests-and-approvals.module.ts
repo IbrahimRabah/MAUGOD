@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 // PrimeNG Components
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DropdownModule } from 'primeng/dropdown';
 
 import { RequestsAndApprovalsRoutingModule } from './requests-and-approvals-routing.module';
 import { RequestsAndApprovalsComponent } from './components/requests-and-approvals/requests-and-approvals.component';
@@ -17,6 +18,8 @@ import { RequestApprovalVacationsComponent } from './components/request-approval
 import { DeleteCompletedRequestComponent } from './components/delete-completed-request/delete-completed-request.component';
 import { RequestDetailsModalComponent } from './components/request-details-modal/request-details-modal.component';
 import { AttachmentsModalComponent } from './components/attachments-modal/attachments-modal.component';
+import { CreatePostRequestModalComponent } from './components/create-post-request-modal/create-post-request-modal.component';
+import { PostRequestAttachmentsModalComponent } from './components/post-request-attachments-modal/post-request-attachments-modal.component';
 
 
 @NgModule({
@@ -29,7 +32,9 @@ import { AttachmentsModalComponent } from './components/attachments-modal/attach
     RequestApprovalVacationsComponent,
     DeleteCompletedRequestComponent,
     RequestDetailsModalComponent,
-    AttachmentsModalComponent
+    AttachmentsModalComponent,
+    CreatePostRequestModalComponent,
+    PostRequestAttachmentsModalComponent
   ],
   imports: [
     CommonModule,
@@ -38,6 +43,7 @@ import { AttachmentsModalComponent } from './components/attachments-modal/attach
     TranslateModule,
     ToastModule,
     ConfirmDialogModule,
+    DropdownModule,
     RequestsAndApprovalsRoutingModule
   ]
 })
