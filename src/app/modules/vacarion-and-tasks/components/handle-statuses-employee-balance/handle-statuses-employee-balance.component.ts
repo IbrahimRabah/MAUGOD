@@ -82,27 +82,35 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
     pageSize: 10,
     lang: 2 // Default to Arabic
   };
-  searchColumns = [
-  { column: '', label: 'All Columns' }, // all columns
-  { column: 'sts_name', label: 'ATTENDANCE_STATUSES.STATUS_NAME' },
-  { column: 'count_in_desc', label: 'ATTENDANCE_STATUSES.COUNT_IN' },
-  { column: 'insert_default_in_desc', label: 'ATTENDANCE_STATUSES.INSERT_DEFAULT_IN' },
-  { column: 'count_out_desc', label: 'ATTENDANCE_STATUSES.COUNT_OUT' },
-  { column: 'insert_default_out_desc', label: 'ATTENDANCE_STATUSES.INSERT_DEFAULT_OUT' },
-  { column: 'is_it_vaction_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_VACATION' },
-  { column: 'is_it_paid_vaction_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_PAID_VACATION' },
-  { column: 'is_it_absent_when_calc_salry_desc', label: 'ATTENDANCE_STATUSES.CALCULATE_AS_ABSENT' },
-  { column: 'is_it_working_day_desc', label: 'ATTENDANCE_STATUSES.WORKING_DAY' },
-  { column: 'created_by_desc', label: 'ATTENDANCE_STATUSES.CREATED_BY' },
-  { column: 'app_calssifay_as_desc', label: 'ATTENDANCE_STATUSES.APPLICATION_CLASSIFY_AS' },
-  { column: 'web_calssifay_as_desc', label: 'ATTENDANCE_STATUSES.WEB_CLASSIFY_AS' },
-  { column: 'note', label: 'ATTENDANCE_STATUSES.NOTE' }
+searchColumns = [
+  { column: 'allFields', label: 'All Columns' }, // global search
+
+  { column: 'allEmployee', label: 'EMPLOYEE_BALANCE.ALL_EMPLOYEES' },
+  { column: 'employeeName', label: 'EMPLOYEE_BALANCE.EMPLOYEE' },
+  { column: 'departmentName', label: 'EMPLOYEE_BALANCE.DEPARTMENT' },
+  { column: 'branchName', label: 'EMPLOYEE_BALANCE.BRANCH' },
+  { column: 'roleName', label: 'EMPLOYEE_BALANCE.ROLE' },
+  { column: 'statusName', label: 'EMPLOYEE_BALANCE.STATUS' },
+  { column: 'allSts', label: 'EMPLOYEE_BALANCE.ALL_STATUSES' },
+
+  { column: 'maxPerWeek', label: 'EMPLOYEE_BALANCE.MAX_PER_WEEK' },
+  { column: 'maxPerMonth', label: 'EMPLOYEE_BALANCE.MAX_PER_MONTH' },
+  { column: 'maxPerYear', label: 'EMPLOYEE_BALANCE.MAX_PER_YEAR' },
+
+  { column: 'forwardBalance', label: 'EMPLOYEE_BALANCE.FORWARD_BALANCE' },
+  { column: 'countBaseContractStart', label: 'EMPLOYEE_BALANCE.COUNT_BASE_CONTRACT_START' },
+  { column: 'fractionFloorCeil', label: 'EMPLOYEE_BALANCE.IGNORE_FRACTION' },
+  { column: 'includeWeekendInBetween', label: 'EMPLOYEE_BALANCE.INCLUDE_WEEKEND' },
+
+  { column: 'note', label: 'EMPLOYEE_BALANCE.NOTES' }
 ];
 
 
-  selectedColumn: string = '';
+
+   searchTerm: string = '';
+  
   selectedColumnLabel: string = this.searchColumns[0].label;
-  searchTerm: string = '';
+  selectedColumn: string = this.searchColumns[0].column;
 
   constructor(
     private employeeBalanceService: EmployeeHandlesBalanceService,
@@ -357,7 +365,8 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
     });
   }
 
-    selectColumn(col: any) {
+
+selectColumn(col: any) {
     this.selectedColumn = col.column;
     this.selectedColumnLabel = col.label;
   }
@@ -922,7 +931,9 @@ export class HandleStatusesEmployeeBalanceComponent implements OnInit, OnDestroy
     this.employeeBalanceService.getEmployeeHandlesBalance(
       this.currentLang.toString(),
       this.paginationRequest.pageNumber, 
-      this.paginationRequest.pageSize
+      this.paginationRequest.pageSize,
+      this.selectedColumn,
+      this.searchTerm
     ).subscribe({
       next: (response: any) => {
         const typedResponse = response as EmployeeHandlesBalanceResponse;

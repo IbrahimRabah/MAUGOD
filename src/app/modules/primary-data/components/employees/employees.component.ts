@@ -137,7 +137,7 @@ export class EmployeesComponent implements OnInit {
       empArName: [''],
       empEnName: [''],
       deptId: ['', Validators.required],
-      activeFlag: [false],
+      activeFlag: [true],
       statusId: [1, Validators.required],
       fingerPrint: [''],
       natId: [3],
@@ -473,7 +473,7 @@ export class EmployeesComponent implements OnInit {
       // Prepare employee object based on the API requirements
       const employeeData: EmployeeCreateUpdateRequest = {
         rowId: formData.rowId || 0,
-        empId: formData.empNumber || 0,
+        empId: formData.empNumber || null,
         ar: formData.empArName || null,
         en: formData.empEnName || null,
   // API expects 1 or 0 (not null). Convert boolean/form value accordingly.
