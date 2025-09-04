@@ -1,0 +1,885 @@
+<!-- Modal Backdrop -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="onClose()">
+  <div class="modal-content create-modal" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h4>Create Request Approval Route</h4>
+      <button class="close-btn" (click)="onClose()" type="button">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Main Configuration Section -->
+        <div class="form-section">
+          <h5 class="section-title">Main Configuration</h5>
+          
+          <!-- For Everyone Radio Buttons -->
+          <div class="form-group">
+            <label class="form-label required">Target Audience</label>
+            <div class="radio-group">
+              <div class="radio-option" *ngFor="let option of forEveryoneOptions">
+                <input 
+                  type="radio" 
+                  [id]="'forEveryone_' + option.value" 
+                  [value]="option.value" 
+                  formControlName="forEveryone"
+                  (change)="onForEveryoneChange()"
+                  class="radio-input">
+                <label [for]="'forEveryone_' + option.value" class="radio-label">
+                  {{ option.label }}
+                </label>
+              </div>
+            </div>
+            <div class="error-message" *ngIf="isFieldRequired('forEveryone')">
+              This field is required
+            </div>
+          </div>
+
+          <!-- Show form only for "For Everyone" option -->
+          <div *ngIf="selectedForEveryone === 1">
+            
+            <!-- Status Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Status</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
+                  <option value="">Select Status</option>
+                  <option *ngFor="let status of statuses" [value]="status.value">
+                    {{ status.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingStatuses">Loading statuses...</div>
+              <div class="error-message" *ngIf="isFieldRequired('statusId')">
+                Please select a status
+              </div>
+            </div>
+
+            <!-- Request Levels Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Request Levels</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="reqLevels" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevels')">
+                  <option value="">Select Request Level</option>
+                  <option *ngFor="let level of requestLevels" [value]="level.value">
+                    {{ level.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingRequestLevels">Loading request levels...</div>
+              <div class="error-message" *ngIf="isFieldRequired('reqLevels')">
+                Please select request levels
+              </div>
+            </div>
+
+            <!-- Note Input -->
+            <div class="form-group">
+              <label class="form-label required">Note</label>
+              <textarea 
+                formControlName="note" 
+                class="form-textarea" 
+                rows="3" 
+                placeholder="Enter note..."
+                [class.error]="isFieldRequired('note')">
+              </textarea>
+              <div class="error-message" *ngIf="isFieldRequired('note')">
+                Note is required
+              </div>
+            </div>
+
+            <!-- Dynamic Level Details -->
+            <div class="levels-container" formArrayName="levelDetails">
+              <div 
+                *ngFor="let levelControl of levelDetailsArray.controls; let i = index" 
+                class="level-section"
+                [formGroupName]="i">
+                
+                <h5 class="level-title">{{ getLevelLabel(i) }}</h5>
+                
+                <!-- Dynamic Direct Manager -->
+                <div class="form-subsection">
+                  <div class="form-group">
+                    <label class="form-label">Dynamic Direct Manager</label>
+                    <div class="radio-group inline">
+                      <div class="radio-option" *ngFor="let option of yesNoOptions">
+                        <input 
+                          type="radio" 
+                          [id]="'dynDirectMgr_' + i + '_' + option.value" 
+                          [value]="option.value" 
+                          formControlName="dynDirectMgr"
+                          class="radio-input">
+                        <label [for]="'dynDirectMgr_' + i + '_' + option.value" class="radio-label">
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Direct Manager Details -->
+                  <div class="dynamic-details" *ngIf="isDynDirectMgrSelected(i)">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Days Limits</label>
+                        <input 
+                          type="number" 
+                          formControlName="dynDirectMgrDaysLimits" 
+                          class="form-input"
+                          placeholder="Enter days limits">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">After Limit Action</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynDirectMgrAfterLimitAction" class="form-select">
+                            <option value="">Select Action</option>
+                            <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                              {{ action.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynDirectMgrLevel" class="form-select">
+                            <option value="">Select Level</option>
+                            <option *ngFor="let level of levels" [value]="level.value">
+                              {{ level.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Dynamic Manager of Department -->
+                <div class="form-subsection">
+                  <div class="form-group">
+                    <label class="form-label">Dynamic Manager of Department</label>
+                    <div class="radio-group inline">
+                      <div class="radio-option" *ngFor="let option of yesNoOptions">
+                        <input 
+                          type="radio" 
+                          [id]="'dynMgrOfDept_' + i + '_' + option.value" 
+                          [value]="option.value" 
+                          formControlName="dynMgrOfDept"
+                          class="radio-input">
+                        <label [for]="'dynMgrOfDept_' + i + '_' + option.value" class="radio-label">
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Manager of Department Details -->
+                  <div class="dynamic-details" *ngIf="isDynMgrOfDeptSelected(i)">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Days Limits</label>
+                        <input 
+                          type="number" 
+                          formControlName="dynMgrOfDeptDaysLimits" 
+                          class="form-input"
+                          placeholder="Enter days limits">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">After Limit Action</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfDeptAfterLimitAction" class="form-select">
+                            <option value="">Select Action</option>
+                            <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                              {{ action.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfDeptLevel" class="form-select">
+                            <option value="">Select Level</option>
+                            <option *ngFor="let level of levels" [value]="level.value">
+                              {{ level.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Dynamic Manager of Branch -->
+                <div class="form-subsection">
+                  <div class="form-group">
+                    <label class="form-label">Dynamic Manager of Branch</label>
+                    <div class="radio-group inline">
+                      <div class="radio-option" *ngFor="let option of yesNoOptions">
+                        <input 
+                          type="radio" 
+                          [id]="'dynMgrOfBranch_' + i + '_' + option.value" 
+                          [value]="option.value" 
+                          formControlName="dynMgrOfBranch"
+                          class="radio-input">
+                        <label [for]="'dynMgrOfBranch_' + i + '_' + option.value" class="radio-label">
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Manager of Branch Details -->
+                  <div class="dynamic-details" *ngIf="isDynMgrOfBranchSelected(i)">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Days Limits</label>
+                        <input 
+                          type="number" 
+                          formControlName="dynMgrOfBranchDaysLimits" 
+                          class="form-input"
+                          placeholder="Enter days limits">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">After Limit Action</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfBranchAfterLimitAction" class="form-select">
+                            <option value="">Select Action</option>
+                            <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                              {{ action.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfBranchLevel" class="form-select">
+                            <option value="">Select Level</option>
+                            <option *ngFor="let level of levels" [value]="level.value">
+                              {{ level.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Static Dropdowns Section -->
+                <div class="form-subsection">
+                  <h6 class="subsection-title">Assignments</h6>
+                  
+                  <div class="form-row">
+                    <!-- Manager -->
+                    <div class="form-group">
+                      <label class="form-label">Manager</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="mgrId" class="form-select">
+                          <option value="">Select Manager</option>
+                          <option *ngFor="let manager of managers" [value]="manager.value">
+                            {{ manager.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingManagers">Loading managers...</div>
+                    </div>
+
+                    <!-- Manager of Department -->
+                    <div class="form-group">
+                      <label class="form-label">Manager of Department</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="mgrOfDeptId" class="form-select">
+                          <option value="">Select Manager of Department</option>
+                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
+                            {{ dept.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
+                    </div>
+
+                    <!-- Manager of Branch -->
+                    <div class="form-group">
+                      <label class="form-label">Manager of Branch</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="mgrOfBranchId" class="form-select">
+                          <option value="">Select Manager of Branch</option>
+                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
+                            {{ branch.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <!-- Department -->
+                    <div class="form-group">
+                      <label class="form-label">Department</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="deptId" class="form-select">
+                          <option value="">Select Department</option>
+                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
+                            {{ dept.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
+                    </div>
+
+                    <!-- Branch -->
+                    <div class="form-group">
+                      <label class="form-label">Branch</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="branchId" class="form-select">
+                          <option value="">Select Branch</option>
+                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
+                            {{ branch.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="form-group">
+                      <label class="form-label">Role</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="roleId" class="form-select">
+                          <option value="">Select Role</option>
+                          <option *ngFor="let role of roles" [value]="role.value">
+                            {{ role.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingRoles">Loading roles...</div>
+                    </div>
+                  </div>
+
+                  <!-- Note Details -->
+                  <div class="form-group">
+                    <label class="form-label">Level Note</label>
+                    <textarea 
+                      formControlName="noteDetails" 
+                      class="form-textarea" 
+                      rows="2" 
+                      placeholder="Enter level-specific note...">
+                    </textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form for "For a given group" option -->
+          <div *ngIf="selectedForEveryone === 0">
+            
+            <!-- Employee Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Employee</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="empId" class="form-select" [class.error]="isFieldRequired('empId')">
+                  <option value="">Select Employee</option>
+                  <option *ngFor="let employee of employees" [value]="employee.value">
+                    {{ employee.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingEmployees">Loading employees...</div>
+              <div class="error-message" *ngIf="isFieldRequired('empId')">
+                Please select an employee
+              </div>
+            </div>
+
+            <!-- Manager of Department Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Manager of Department</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="mgrOfDeptId" class="form-select" [class.error]="isFieldRequired('mgrOfDeptId')">
+                  <option value="">Select Manager of Department</option>
+                  <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
+                    {{ dept.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
+              <div class="error-message" *ngIf="isFieldRequired('mgrOfDeptId')">
+                Please select a manager of department
+              </div>
+            </div>
+
+            <!-- Manager of Branch Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Manager of Branch</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="mgrOfBranchId" class="form-select" [class.error]="isFieldRequired('mgrOfBranchId')">
+                  <option value="">Select Manager of Branch</option>
+                  <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
+                    {{ branch.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
+              <div class="error-message" *ngIf="isFieldRequired('mgrOfBranchId')">
+                Please select a manager of branch
+              </div>
+            </div>
+
+            <!-- Department Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Department</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="deptId" class="form-select" [class.error]="isFieldRequired('deptId')">
+                  <option value="">Select Department</option>
+                  <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
+                    {{ dept.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
+              <div class="error-message" *ngIf="isFieldRequired('deptId')">
+                Please select a department
+              </div>
+            </div>
+
+            <!-- Branch Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Branch</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="branchId" class="form-select" [class.error]="isFieldRequired('branchId')">
+                  <option value="">Select Branch</option>
+                  <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
+                    {{ branch.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
+              <div class="error-message" *ngIf="isFieldRequired('branchId')">
+                Please select a branch
+              </div>
+            </div>
+
+            <!-- Role Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Role</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="roleId" class="form-select" [class.error]="isFieldRequired('roleId')">
+                  <option value="">Select Role</option>
+                  <option *ngFor="let role of roles" [value]="role.value">
+                    {{ role.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingRoles">Loading roles...</div>
+              <div class="error-message" *ngIf="isFieldRequired('roleId')">
+                Please select a role
+              </div>
+            </div>
+
+            <!-- Status Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Status</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
+                  <option value="">Select Status</option>
+                  <option *ngFor="let status of statuses" [value]="status.value">
+                    {{ status.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingStatuses">Loading statuses...</div>
+              <div class="error-message" *ngIf="isFieldRequired('statusId')">
+                Please select a status
+              </div>
+            </div>
+
+            <!-- Request Levels Dropdown -->
+            <div class="form-group">
+              <label class="form-label required">Request Levels</label>
+              <div class="dropdown-wrapper">
+                <select formControlName="reqLevels" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevels')">
+                  <option value="">Select Request Level</option>
+                  <option *ngFor="let level of requestLevels" [value]="level.value">
+                    {{ level.label }}
+                  </option>
+                </select>
+                <i class="fa fa-chevron-down dropdown-icon"></i>
+              </div>
+              <div class="loading-text" *ngIf="loadingRequestLevels">Loading request levels...</div>
+              <div class="error-message" *ngIf="isFieldRequired('reqLevels')">
+                Please select request levels
+              </div>
+            </div>
+
+            <!-- Note Input -->
+            <div class="form-group">
+              <label class="form-label required">Note</label>
+              <textarea 
+                formControlName="note" 
+                class="form-textarea" 
+                rows="3" 
+                placeholder="Enter note..."
+                [class.error]="isFieldRequired('note')">
+              </textarea>
+              <div class="error-message" *ngIf="isFieldRequired('note')">
+                Note is required
+              </div>
+            </div>
+
+            <!-- Dynamic Level Details for Group -->
+            <div class="levels-container" formArrayName="levelDetails">
+              <div 
+                *ngFor="let levelControl of levelDetailsArray.controls; let i = index" 
+                class="level-section"
+                [formGroupName]="i">
+                
+                <h5 class="level-title">{{ getLevelLabel(i) }}</h5>
+                
+                <!-- Dynamic Direct Manager -->
+                <div class="form-subsection">
+                  <div class="form-group">
+                    <label class="form-label">Dynamic Direct Manager</label>
+                    <div class="radio-group inline">
+                      <div class="radio-option" *ngFor="let option of yesNoOptions">
+                        <input 
+                          type="radio" 
+                          [id]="'dynDirectMgr_' + i + '_' + option.value" 
+                          [value]="option.value" 
+                          formControlName="dynDirectMgr"
+                          class="radio-input">
+                        <label [for]="'dynDirectMgr_' + i + '_' + option.value" class="radio-label">
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Direct Manager Details -->
+                  <div class="dynamic-details" *ngIf="isDynDirectMgrSelected(i)">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Days Limits</label>
+                        <input 
+                          type="number" 
+                          formControlName="dynDirectMgrDaysLimits" 
+                          class="form-input"
+                          placeholder="Enter days limits">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">After Limit Action</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynDirectMgrAfterLimitAction" class="form-select">
+                            <option value="">Select Action</option>
+                            <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                              {{ action.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynDirectMgrLevel" class="form-select">
+                            <option value="">Select Level</option>
+                            <option *ngFor="let level of levels" [value]="level.value">
+                              {{ level.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Dynamic Manager of Department -->
+                <div class="form-subsection">
+                  <div class="form-group">
+                    <label class="form-label">Dynamic Manager of Department</label>
+                    <div class="radio-group inline">
+                      <div class="radio-option" *ngFor="let option of yesNoOptions">
+                        <input 
+                          type="radio" 
+                          [id]="'dynMgrOfDept_' + i + '_' + option.value" 
+                          [value]="option.value" 
+                          formControlName="dynMgrOfDept"
+                          class="radio-input">
+                        <label [for]="'dynMgrOfDept_' + i + '_' + option.value" class="radio-label">
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Manager of Department Details -->
+                  <div class="dynamic-details" *ngIf="isDynMgrOfDeptSelected(i)">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Days Limits</label>
+                        <input 
+                          type="number" 
+                          formControlName="dynMgrOfDeptDaysLimits" 
+                          class="form-input"
+                          placeholder="Enter days limits">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">After Limit Action</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfDeptAfterLimitAction" class="form-select">
+                            <option value="">Select Action</option>
+                            <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                              {{ action.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfDeptLevel" class="form-select">
+                            <option value="">Select Level</option>
+                            <option *ngFor="let level of levels" [value]="level.value">
+                              {{ level.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Dynamic Manager of Branch -->
+                <div class="form-subsection">
+                  <div class="form-group">
+                    <label class="form-label">Dynamic Manager of Branch</label>
+                    <div class="radio-group inline">
+                      <div class="radio-option" *ngFor="let option of yesNoOptions">
+                        <input 
+                          type="radio" 
+                          [id]="'dynMgrOfBranch_' + i + '_' + option.value" 
+                          [value]="option.value" 
+                          formControlName="dynMgrOfBranch"
+                          class="radio-input">
+                        <label [for]="'dynMgrOfBranch_' + i + '_' + option.value" class="radio-label">
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Manager of Branch Details -->
+                  <div class="dynamic-details" *ngIf="isDynMgrOfBranchSelected(i)">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Days Limits</label>
+                        <input 
+                          type="number" 
+                          formControlName="dynMgrOfBranchDaysLimits" 
+                          class="form-input"
+                          placeholder="Enter days limits">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">After Limit Action</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfBranchAfterLimitAction" class="form-select">
+                            <option value="">Select Action</option>
+                            <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                              {{ action.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <div class="dropdown-wrapper">
+                          <select formControlName="dynMgrOfBranchLevel" class="form-select">
+                            <option value="">Select Level</option>
+                            <option *ngFor="let level of levels" [value]="level.value">
+                              {{ level.label }}
+                            </option>
+                          </select>
+                          <i class="fa fa-chevron-down dropdown-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Static Dropdowns Section -->
+                <div class="form-subsection">
+                  <h6 class="subsection-title">Assignments</h6>
+                  
+                  <div class="form-row">
+                    <!-- Manager -->
+                    <div class="form-group">
+                      <label class="form-label">Manager</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="mgrId" class="form-select">
+                          <option value="">Select Manager</option>
+                          <option *ngFor="let manager of managers" [value]="manager.value">
+                            {{ manager.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingManagers">Loading managers...</div>
+                    </div>
+
+                    <!-- Manager of Department -->
+                    <div class="form-group">
+                      <label class="form-label">Manager of Department</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="mgrOfDeptId" class="form-select">
+                          <option value="">Select Manager of Department</option>
+                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
+                            {{ dept.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
+                    </div>
+
+                    <!-- Manager of Branch -->
+                    <div class="form-group">
+                      <label class="form-label">Manager of Branch</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="mgrOfBranchId" class="form-select">
+                          <option value="">Select Manager of Branch</option>
+                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
+                            {{ branch.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <!-- Department -->
+                    <div class="form-group">
+                      <label class="form-label">Department</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="deptId" class="form-select">
+                          <option value="">Select Department</option>
+                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
+                            {{ dept.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
+                    </div>
+
+                    <!-- Branch -->
+                    <div class="form-group">
+                      <label class="form-label">Branch</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="branchId" class="form-select">
+                          <option value="">Select Branch</option>
+                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
+                            {{ branch.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="form-group">
+                      <label class="form-label">Role</label>
+                      <div class="dropdown-wrapper">
+                        <select formControlName="roleId" class="form-select">
+                          <option value="">Select Role</option>
+                          <option *ngFor="let role of roles" [value]="role.value">
+                            {{ role.label }}
+                          </option>
+                        </select>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                      </div>
+                      <div class="loading-text" *ngIf="loadingRoles">Loading roles...</div>
+                    </div>
+                  </div>
+
+                  <!-- Note Details -->
+                  <div class="form-group">
+                    <label class="form-label">Level Note</label>
+                    <textarea 
+                      formControlName="noteDetails" 
+                      class="form-textarea" 
+                      rows="2" 
+                      placeholder="Enter level-specific note...">
+                    </textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="onClose()" [disabled]="submitting">
+        Cancel
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        (click)="onSubmit()" 
+        [disabled]="submitting">
+        <span *ngIf="submitting" class="spinner-sm"></span>
+        <span *ngIf="!submitting">Create Route</span>
+        <span *ngIf="submitting">Creating...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Messages -->
+<p-toast position="top-right"></p-toast>
