@@ -29,18 +29,25 @@ export class EmployeeHandlesBalanceService {
   private apiUrl = `${environment.apiUrl}/api/EmployeeHandlesBalance`;
 
   constructor(private http: HttpClient) { }
-  getEmployeeHandlesBalance(lang: string, pageNumber: number, pageSize: number, colunmSearchName : string | null, colunmSearchValue : string|null ) {
-    let params = new HttpParams()
-                      .set('pageSize', pageSize.toString())
-                      .set('pageIndex', pageNumber.toString());
-          
-          if(colunmSearchName && colunmSearchValue){
-            params = params.set(colunmSearchName, colunmSearchValue);
-          }
-    
-        const headers = new HttpHeaders().set('lang', lang.toString());
-    return this.http.get(`${this.apiUrl}/index`, { headers, params });
+getEmployeeHandlesBalance(
+  lang: string,
+  pageNumber: number,
+  pageSize: number,
+  colunmSearchName: string | null,
+  colunmSearchValue: string | null
+) {
+  let params = new HttpParams()
+    .set('pageSize', pageSize.toString())
+    .set('pageIndex', pageNumber.toString());
+
+  if (colunmSearchName && colunmSearchValue !== null) {
+    params = params.set(colunmSearchName, colunmSearchValue);
   }
+
+  const headers = new HttpHeaders().set('lang', lang.toString());
+  return this.http.get(`${this.apiUrl}/index`, { headers, params });
+}
+
   getEmployeeHandleBalanceById(id: number, lang: string) {
     const headers = { 'lang': lang }; // Use the passed language parameter directly
     return this.http.get(`${this.apiUrl}/GetEmployeeHandleBalanceById/${id}`, { headers });

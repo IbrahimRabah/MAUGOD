@@ -925,32 +925,54 @@ selectColumn(col: any) {
     });
   }
 
-  loadEmployeeBalances() {
-    this.loading = true;
-    
-    this.employeeBalanceService.getEmployeeHandlesBalance(
-      this.currentLang.toString(),
-      this.paginationRequest.pageNumber, 
-      this.paginationRequest.pageSize,
-      this.selectedColumn,
-      this.searchTerm
-    ).subscribe({
-      next: (response: any) => {
-        const typedResponse = response as EmployeeHandlesBalanceResponse;
-        this.employeeBalances = typedResponse.data;
-        this.totalRecords = typedResponse.totalCount;
-        this.loading = false;
-      },
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'خطأ',
-          detail: 'فشل في تحميل بيانات توازن الموظفين'
-        });
-        this.loading = false;
-      }
-    });
+loadEmployeeBalances() {
+  this.loading = true;
+
+  let searchValue: any = this.searchTerm?.trim();
+
+  const lowerTerm = searchValue?.toLowerCase();
+
+  // Boolean filters
+  if (["allEmployee", "allSts", "forwardBalance", "fractionFloorCeil", "countBaseContractStart", "includeWeekendInBetween"]
+      .includes(this.selectedColumn)) {
+    if (lowerTerm === "yes" || lowerTerm === "نعم") searchValue = true;
+    else if (lowerTerm === "no" || lowerTerm === "لا") searchValue = false;
+    else searchValue = null;
   }
+
+  // Numeric filters
+  if (["maxPerWeek", "maxPerMonth", "maxPerYear"].includes(this.selectedColumn)) {
+    const num = Number(searchValue);
+    searchValue = isNaN(num) ? null : num;
+  }
+
+  // Strings & global search (allFields) remain as-is
+
+  this.employeeBalanceService.getEmployeeHandlesBalance(
+    this.currentLang.toString(),
+    this.paginationRequest.pageNumber,
+    this.paginationRequest.pageSize,
+    this.selectedColumn,
+    searchValue
+  ).subscribe({
+    next: (response: any) => {
+      const typedResponse = response as EmployeeHandlesBalanceResponse;
+      this.employeeBalances = typedResponse.data;
+      this.totalRecords = typedResponse.totalCount;
+      this.loading = false;
+    },
+    error: () => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'خطأ',
+        detail: 'فشل في تحميل بيانات توازن الموظفين'
+      });
+      this.loading = false;
+    }
+  });
+}
+
+
 
   editBalance(balance: EmployeeHandleBalance) {
     this.isEditMode = true;
