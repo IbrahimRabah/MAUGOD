@@ -235,6 +235,7 @@
           <div class="form-group">
             <label class="required">{{ 'SHIFTS_TABLE.ARABIC_NAME' | translate }}</label>
             <input type="text" formControlName="ar" class="form-input"
+            (blur)="addAROption()"
               [placeholder]="'SHIFTS_TABLE.ARABIC_NAME_PLACEHOLDER' | translate" [class.error]="isFieldInvalid('ar')">
             <div *ngIf="isFieldInvalid('ar')" class="error-message">
               {{ getFieldError('ar') }}
@@ -243,6 +244,7 @@
           <div class="form-group">
             <label>{{ 'SHIFTS_TABLE.ENGLISH_NAME' | translate }} </label>
             <input type="text" formControlName="en" class="form-input"
+            (blur)="addENOption()"
               [placeholder]="'SHIFTS_TABLE.ENGLISH_NAME_PLACEHOLDER' | translate">
           </div>
         </div>
