@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-
+import { PaginationRequest } from '../../../../core/models/pagination';
 import { RequestRouteService } from '../../services/request-route.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { 
@@ -24,10 +24,54 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   // Core component state
   approvalRoutes: RequestApprovalRoute[] = [];
   filteredApprovalRoutes: RequestApprovalRoute[] = [];
+  searchTerm: string = '';
   loading = false;
   totalRecords = 0;
   currentPage = 1;
   pageSize = 10;
+
+  
+    private isInitialized = false; // Prevent double API calls on init
+
+    searchColumns = [
+      { column: '', label: 'All Columns' }, // all columns option
+      { column: 'route_id', label: 'REQUEST_APPROVAL_ROUTE.route_id' },
+      { column: 'EMP_NAME', label: 'REQUEST_APPROVAL_ROUTE.EMP_NAME' },
+      { column: 'MGR_OF_DEPT_NAME', label: 'REQUEST_APPROVAL_ROUTE.MGR_OF_DEPT_NAME' },
+      { column: 'MGR_OF_BRANCH_NAME', label: 'REQUEST_APPROVAL_ROUTE.MGR_OF_BRANCH_NAME' },
+      { column: 'DEPT_NAME', label: 'REQUEST_APPROVAL_ROUTE.DEPT_NAME' },
+      { column: 'BRANCH_NAME', label: 'REQUEST_APPROVAL_ROUTE.BRANCH_NAME' },
+      { column: 'ROLE_NAME', label: 'REQUEST_APPROVAL_ROUTE.ROLE_NAME' },
+      { column: 'FOREVERYONE_NAME', label: 'REQUEST_APPROVAL_ROUTE.FOREVERYONE_NAME' },
+      { column: 'STS_NAME', label: 'REQUEST_APPROVAL_ROUTE.STS_NAME' },
+      { column: 'REQLEVEL_NAME', label: 'REQUEST_APPROVAL_ROUTE.REQLEVEL_NAME' },
+      { column: 'ISACTIVE_NAME', label: 'REQUEST_APPROVAL_ROUTE.ISACTIVE_NAME' },
+      { column: 'note', label: 'REQUEST_APPROVAL_ROUTE.note' }
+    ];
+    selectedColumn: string = '';
+    selectedColumnLabel: string = this.searchColumns[0].label;
+  
+    selectColumn(col: any) {
+      this.paginationRequest.searchColumn = col.column;
+      this.selectedColumnLabel = col.label;
+    }
+  
+    paginationRequest: PaginationRequest = {
+        pageNumber: 1,
+        pageSize: 10,
+        lang: 1,// Default to English, can be changed based on app's language settings
+        searchColumn: this.selectedColumn,
+        searchText: this.searchTerm
+      };
+    
+    onSearch() {
+      this.currentPage = 1;
+      this.paginationRequest.pageNumber = 1;
+      this.paginationRequest.searchColumn = this.selectedColumn;
+      this.paginationRequest.searchText = this.searchTerm;
+      this.loadApprovalRoutes();
+    }
+  
   
   // Modal state
   showRoadMapModal = false;
@@ -39,12 +83,10 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   loadingRoadMap = false;
   
   private langSubscription: Subscription = new Subscription();
-  private searchSubscription: Subscription = new Subscription();
   private roadMapSearchSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic (2) - made public for template access
   
   // Reactive Forms
-  searchForm!: FormGroup;
   roadMapSearchForm!: FormGroup;
 
   constructor(
@@ -59,8 +101,17 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeForms();
     this.initializeLanguage();
-    this.setupSearchSubscription();
     this.setupRoadMapSearchSubscription();
+
+       // Set the language for the pagination request based on the current language setting
+  this.langService.currentLang$.subscribe(lang => {
+    this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+
+    // Only reload approvalRoutes if component is already initialized (not first time)
+    if (this.isInitialized) {
+      this.loadApprovalRoutes(); // Reload approvalRoutes when language changes
+      }
+    })
     
     // Wait for translations to load before loading data
     this.translateService.onLangChange.subscribe(() => {
@@ -75,17 +126,11 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.langSubscription.unsubscribe();
-    this.searchSubscription.unsubscribe();
     this.roadMapSearchSubscription.unsubscribe();
   }
 
   // Initialize reactive forms
   private initializeForms() {
-    this.searchForm = this.fb.group({
-      searchText: [''],
-      pageSize: [this.pageSize]
-    });
-
     this.roadMapSearchForm = this.fb.group({
       searchText: ['']
     });
@@ -99,18 +144,6 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
       // Reload data when language changes
       this.loadApprovalRoutes();
     });
-  }
-
-  // Setup search functionality
-  private setupSearchSubscription() {
-    this.searchSubscription = this.searchForm.get('searchText')!.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe(() => {
-        this.applySearch();
-      });
   }
 
   // Setup road map search functionality
@@ -127,15 +160,15 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
 
   // Pagination computed properties
   get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
+    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
   }
 
   get currentPageStart(): number {
-    return (this.currentPage - 1) * this.pageSize + 1;
+    return (this.currentPage - 1) * this.paginationRequest.pageSize + 1;
   }
 
   get currentPageEnd(): number {
-    return Math.min(this.currentPage * this.pageSize, this.totalRecords);
+    return Math.min(this.currentPage * this.paginationRequest.pageSize, this.totalRecords);
   }
 
   get canGoNext(): boolean {
@@ -153,7 +186,8 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
     const request: GetRequestApprovalRoutesRequest = {
       pageNumber: this.currentPage,
       pageSize: this.pageSize,
-      searchText: this.searchForm.get('searchText')?.value || ''
+      searchColumn: this.paginationRequest.searchColumn,
+      searchText: this.paginationRequest.searchText
     };
 
     this.requestRouteService.getRequestApprovalRoutes(request, this.currentLang)
@@ -162,7 +196,6 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
           if (response.isSuccess) {
             this.approvalRoutes = response.data.requestApprovalRoutes;
             this.totalRecords = response.data.totalCount;
-            this.applySearch();
           } else {
             this.showErrorMessage(response.message);
           }
@@ -174,28 +207,6 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
           this.loading = false;
         }
       });
-  }
-
-  // Apply search filter to the data
-  private applySearch() {
-    const searchText = this.searchForm.get('searchText')?.value?.toLowerCase() || '';
-    
-    if (!searchText) {
-      this.filteredApprovalRoutes = [...this.approvalRoutes];
-    } else {
-      this.filteredApprovalRoutes = this.approvalRoutes.filter(route =>
-        route.empName?.toLowerCase().includes(searchText) ||
-        route.deptMgrName?.toLowerCase().includes(searchText) ||
-        route.deptName?.toLowerCase().includes(searchText) ||
-        route.branchMgrName?.toLowerCase().includes(searchText) ||
-        route.branchName?.toLowerCase().includes(searchText) ||
-        route.roleName?.toLowerCase().includes(searchText) ||
-        route.forEveryoneName?.toLowerCase().includes(searchText) ||
-        route.stsName?.toLowerCase().includes(searchText) ||
-        route.reqLevelName?.toLowerCase().includes(searchText) ||
-        route.note?.toLowerCase().includes(searchText)
-      );
-    }
   }
 
   // Apply road map search filter
@@ -216,6 +227,7 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.paginationRequest.pageNumber = page;
       this.loadApprovalRoutes();
     }
   }
@@ -223,6 +235,7 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   nextPage() {
     if (this.canGoNext) {
       this.currentPage++;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadApprovalRoutes();
     }
   }
@@ -230,6 +243,7 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   previousPage() {
     if (this.canGoPrevious) {
       this.currentPage--;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadApprovalRoutes();
     }
   }
@@ -243,13 +257,8 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   }
 
   onPageSizeChange() {
-    this.pageSize = this.searchForm.get('pageSize')?.value || 10;
     this.currentPage = 1;
-    this.loadApprovalRoutes();
-  }
-
-  onSearch() {
-    this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
     this.loadApprovalRoutes();
   }
 

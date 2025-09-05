@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-
+import { PaginationRequest } from '../../../../core/models/pagination';
 import { PostRequestService } from '../../services/post-request.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -30,10 +30,51 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   // Core component state
   postRequests: PostRequest[] = [];
   filteredPostRequests: PostRequest[] = [];
+  searchTerm: string = '';
   loading = false;
   totalRecords = 0;
   currentPage = 1;
   pageSize = 10;
+
+    private isInitialized = false; // Prevent double API calls on init
+
+    searchColumns = [
+      { column: '', label: 'All Columns' }, // all columns option
+      { column: 'REQ_ID', label: 'POST_REQUEST.REQUEST_ID' },
+      { column: 'EMP_NAME', label: 'POST_REQUEST.EMPLOYEE' },
+      { column: 'REQUEST_BY_EMP_NAME', label: 'POST_REQUEST.REQUEST_BY_EMPLOYEE' },
+      { column: 'STS_NAME', label: 'POST_REQUEST.STATUS' },
+      { column: 'PART_NAME', label: 'POST_REQUEST.PART' },
+      { column: 'REQ_STS_NAME', label: 'POST_REQUEST.REQUEST_STATUS' },
+      { column: 'SDATE', label: 'POST_REQUEST.START_DATE_HEADER' },
+      { column: 'EDATE', label: 'POST_REQUEST.END_DATE_HEADER' },
+      { column: 'NOTE', label: 'POST_REQUEST.NOTE' },
+    ];
+    selectedColumn: string = '';
+    selectedColumnLabel: string = this.searchColumns[0].label;
+  
+    selectColumn(col: any) {
+      this.paginationRequest.searchColumn = col.column;
+      this.selectedColumnLabel = col.label;
+    }
+  
+    paginationRequest: PaginationRequest = {
+        pageNumber: 1,
+        pageSize: 10,
+        lang: 1,// Default to English, can be changed based on app's language settings
+        searchColumn: this.selectedColumn,
+        searchText: this.searchTerm
+      };
+    
+    onSearch() {
+      this.currentPage = 1;
+      this.paginationRequest.pageNumber = 1;
+      this.paginationRequest.searchColumn = this.selectedColumn;
+      this.paginationRequest.searchText = this.searchTerm;
+      this.loadPostRequests();
+    }
+  
+
   
   // Date utilities
   maxDate = new Date();
@@ -61,7 +102,6 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   public currentLang = 2; // Default to Arabic (2) - made public for template access
   
   // Reactive Forms
-  searchForm!: FormGroup;
   filterForm!: FormGroup;
 
   constructor(
@@ -77,9 +117,18 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeForms();
     this.initializeLanguage();
-    this.setupSearchSubscription();
-    // this.loadPostRequests();
+
+      // Set the language for the pagination request based on the current language setting
+  this.langService.currentLang$.subscribe(lang => {
+    this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+
+    // Only reload postRequests if component is already initialized (not first time)
+    if (this.isInitialized) {
+      this.loadPostRequests(); // Reload postRequests when language changes
+      }
+    })
   }
+
 
   ngOnDestroy() {
     this.langSubscription.unsubscribe();
@@ -88,11 +137,6 @@ export class PostRequestComponent implements OnInit, OnDestroy {
 
   // Initialize reactive forms
   private initializeForms() {
-    this.searchForm = this.fb.group({
-      searchTerm: [''],
-      pageSize: [this.pageSize]
-    });
-
     this.filterForm = this.fb.group({
       startDate: [''],
       endDate: ['']
@@ -108,33 +152,17 @@ export class PostRequestComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Setup search functionality
-  private setupSearchSubscription() {
-    this.searchSubscription = this.searchForm.get('searchTerm')!.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
-      .subscribe(() => {
-        this.applySearch();
-      });
-
-    this.searchForm.get('pageSize')!.valueChanges.subscribe(() => {
-      this.onPageSizeChange();
-    });
-  }
-
   // Pagination computed properties
   get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
+    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
   }
 
   get currentPageStart(): number {
-    return (this.currentPage - 1) * this.pageSize + 1;
+    return (this.currentPage - 1) * this.paginationRequest.pageSize + 1;
   }
 
   get currentPageEnd(): number {
-    return Math.min(this.currentPage * this.pageSize, this.totalRecords);
+    return Math.min(this.currentPage * this.paginationRequest.pageSize, this.totalRecords);
   }
 
   get canGoNext(): boolean {
@@ -157,7 +185,6 @@ export class PostRequestComponent implements OnInit, OnDestroy {
     }
 
     const filterFormValue = this.filterForm.value;
-    const searchTerm = this.searchForm.get('searchTerm')?.value || '';
     
     const payload: GetPostRequestsPayload = {
       empId: empId,
@@ -165,8 +192,8 @@ export class PostRequestComponent implements OnInit, OnDestroy {
       pageSize: this.pageSize,
       sDate: filterFormValue.startDate || undefined,
       eDate: filterFormValue.endDate || undefined,
-      searchColumn: searchTerm ? 'empName' : undefined,
-      searchText: searchTerm || undefined
+      searchColumn: this.paginationRequest.searchColumn,
+      searchText: this.paginationRequest.searchText
     };
 
     this.postRequestService.getPostRequests(payload, this.currentLang)
@@ -195,17 +222,11 @@ export class PostRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Apply search filter to the data
-  private applySearch() {
-    // For server-side search, reload data when search term changes
-    this.currentPage = 1; // Reset to first page when searching
-    this.loadPostRequests();
-  }
-
   // Pagination methods
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.paginationRequest.pageNumber = page;
       this.loadPostRequests();
     }
   }
@@ -213,6 +234,7 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   nextPage() {
     if (this.canGoNext) {
       this.currentPage++;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadPostRequests();
     }
   }
@@ -220,6 +242,7 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   previousPage() {
     if (this.canGoPrevious) {
       this.currentPage--;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadPostRequests();
     }
   }
@@ -239,16 +262,9 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   }
 
   onPageSizeChange() {
-    const newPageSize = parseInt(this.searchForm.get('pageSize')?.value, 10);
-    if (newPageSize !== this.pageSize) {
-      this.pageSize = newPageSize;
       this.currentPage = 1; // Reset to first page
+      this.paginationRequest.pageNumber = 1;
       this.loadPostRequests();
-    }
-  }
-
-  onSearch() {
-    this.applySearch();
   }
 
   // Filter methods
