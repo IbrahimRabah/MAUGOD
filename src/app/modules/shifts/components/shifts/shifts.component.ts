@@ -276,6 +276,19 @@ export class ShiftsComponent implements OnInit, OnDestroy {
     this.loadShifts();
   }
 
+  addAROption() {
+    const value = this.createShiftForm.get('ar')?.value?.trim();
+    if (value && !this.daysShifts.includes(value) && this.langService.getCurrentLang() === 'ar' ) {      
+      this.daysShifts.unshift({ label: value, value: -1 });
+    }
+  }
+
+  addENOption() {
+    const value = this.createShiftForm.get('en')?.value?.trim();
+    if (value && !this.daysShifts.includes(value) && this.langService.getCurrentLang() === 'en' ) {
+      this.daysShifts.unshift({ label: value, value: -1 });
+    }
+  }
 
   // Delete functionality
   deleteShift(shift: Shift) {
@@ -515,7 +528,7 @@ getDefaultDate(): string {
     const formValues = this.createShiftForm.value;
 
     // Helper function to get default date string
-
+console.log(formValues);
     const payload: CreatShift = {
       shiftId: this.isEditMode ? (this.currentEditingShift?.shiftId || 0) : 0,
       ar: formValues.ar || "string",

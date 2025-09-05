@@ -11,10 +11,16 @@ export interface MenuItem {
 }
 
 export interface LoginResponse {
-  empId: number;
-  lang: number;
-  empName: string | null;
-  loginId: string | null;
-  token: string;
-  menuList: MenuItem[];
+  statusCode: number;
+    message: string;
+    isSuccess: boolean;
+    data: {
+      empId: number;
+      lang: number;
+      empName: string | null;
+      loginId: string | null;
+      token: string;
+      menuList: MenuItem[];
+    };
+  
 }

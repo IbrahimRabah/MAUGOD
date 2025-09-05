@@ -1,5 +1,5 @@
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
@@ -29,17 +29,25 @@ export class EmployeeHandlesBalanceService {
   private apiUrl = `${environment.apiUrl}/api/EmployeeHandlesBalance`;
 
   constructor(private http: HttpClient) { }
-  getEmployeeHandlesBalance(lang: string, pageNumber: number, pageSize: number) {
-    const headers = {
-      'lang': lang, // Use the passed language parameter directly
-    };
+getEmployeeHandlesBalance(
+  lang: string,
+  pageNumber: number,
+  pageSize: number,
+  colunmSearchName: string | null,
+  colunmSearchValue: string | null
+) {
+  let params = new HttpParams()
+    .set('pageSize', pageSize.toString())
+    .set('pageIndex', pageNumber.toString());
 
-    const params = {
-      pageIndex: pageNumber,
-      pageSize: pageSize
-    }
-    return this.http.get(`${this.apiUrl}/index`, { headers, params });
+  if (colunmSearchName && colunmSearchValue !== null) {
+    params = params.set(colunmSearchName, colunmSearchValue);
   }
+
+  const headers = new HttpHeaders().set('lang', lang.toString());
+  return this.http.get(`${this.apiUrl}/index`, { headers, params });
+}
+
   getEmployeeHandleBalanceById(id: number, lang: string) {
     const headers = { 'lang': lang }; // Use the passed language parameter directly
     return this.http.get(`${this.apiUrl}/GetEmployeeHandleBalanceById/${id}`, { headers });
