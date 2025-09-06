@@ -96,6 +96,7 @@ export interface TimeTransactionApprovalRequestAttachmentsData {
 // Single attachment
 export interface TimeTransactionApprovalRequestAttachment {
   id: number;
+  req_ID?: number;
   reqId: number;
   fileName: string;
   filePath: string;
@@ -103,6 +104,14 @@ export interface TimeTransactionApprovalRequestAttachment {
   uploadedByEmpName: string;
   uploadedDate: string; // e.g. "2021-12-07"
   note: string; // Note field for the attachment
+  attchs_ID: number;
+  m_File: string; // base64
+  m_File_Size: number;
+  m_File_Type: string;
+  m_File_Path: string;
+
+  seq: number;
+  del: string;
 }
 export interface UploadTimeTransactionApprovalRequestAttachmentDto {
   ReqType: number;        // always 2

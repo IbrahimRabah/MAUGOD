@@ -41,7 +41,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let attachment of attachments; trackBy: trackByAttachmentId; let i = index">
-              <td>{{ attachment.reqId }}</td>
+              <td>{{ attachment.req_ID }}</td>
               <td>{{ i + 1 + (currentPage - 1) * pageSize }}</td>
               <td>
                 <div class="attachment-info">
