@@ -1,0 +1,178 @@
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container i {
+  font-size: 2rem;
+  color: white;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  color: #333;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+/* Card specific colors */
+.time-change-approval .icon-container {
+  background-color: #E91E63;
+}
+
+.attendance-time-change .icon-container {
+  background-color: #3F51B5;
+}
+
+.post-request .icon-container {
+  background-color: #009688;
+}
+
+.approval-route .icon-container {
+  background-color: #FF5722;
+}
+
+.approval-vacations .icon-container {
+  background-color: #795548;
+}
+
+.delete-requests .icon-container {
+  background-color: #F44336;
+}
+
+/* Hover effects */
+.time-change-approval:hover {
+  background-color: rgba(233, 30, 99, 0.1);
+}
+
+.attendance-time-change:hover {
+  background-color: rgba(63, 81, 181, 0.1);
+}
+
+.post-request:hover {
+  background-color: rgba(0, 150, 136, 0.1);
+}
+
+.approval-route:hover {
+  background-color: rgba(255, 87, 34, 0.1);
+}
+
+.approval-vacations:hover {
+  background-color: rgba(121, 85, 72, 0.1);
+}
+
+.delete-requests:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+.time-change-approval:hover .card-title {
+  color: #E91E63;
+}
+
+.attendance-time-change:hover .card-title {
+  color: #3F51B5;
+}
+
+.post-request:hover .card-title {
+  color: #009688;
+}
+
+.approval-route:hover .card-title {
+  color: #FF5722;
+}
+
+.approval-vacations:hover .card-title {
+  color: #795548;
+}
+
+.delete-requests:hover .card-title {
+  color: #F44336;
+}
+
+.visit-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.visit-indicator i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.visit-indicator span {
+  font-size: 0.9rem;
+  color: inherit;
+}
+
+.card:hover .visit-indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover .visit-indicator i {
+  transform: translateX(5px);
+}
+
+/* Card specific colors for visit indicator */
+.time-change-approval:hover .visit-indicator {
+  color: #E91E63;
+}
+
+.attendance-time-change:hover .visit-indicator {
+  color: #3F51B5;
+}
+
+.post-request:hover .visit-indicator {
+  color: #009688;
+}
+
+.approval-route:hover .visit-indicator {
+  color: #FF5722;
+}
+
+.approval-vacations:hover .visit-indicator {
+  color: #795548;
+}
+
+.delete-requests:hover .visit-indicator {
+  color: #F44336;
+}

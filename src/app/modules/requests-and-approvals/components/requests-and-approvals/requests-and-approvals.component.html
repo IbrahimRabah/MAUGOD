@@ -1,1 +1,73 @@
-asdsd
+<div class="cards-container">
+    <!-- Time Change Approval Steps Card -->
+    <a [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" class="card time-change-approval">
+        <div class="icon-container">
+            <i class="fas fa-clock"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.REQUESTS_APPROVALS_SECTIONS.TIME_CHANGE_APPROVAL_STEPS' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Attendance Time Change Request Card -->
+    <a [routerLink]="['/requests-and-approvals/attendance-time-change-request']" class="card attendance-time-change">
+        <div class="icon-container">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.REQUESTS_APPROVALS_SECTIONS.ATTENDANCE_TIME_CHANGE_REQUEST' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Post Request Card -->
+    <a [routerLink]="['/requests-and-approvals/post-request']" class="card post-request">
+        <div class="icon-container">
+            <i class="fas fa-paper-plane"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.REQUESTS_APPROVALS_SECTIONS.POST_REQUEST' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Request Approval Route Card -->
+    <a [routerLink]="['/requests-and-approvals/request-approval-route']" class="card approval-route">
+        <div class="icon-container">
+            <i class="fas fa-route"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.REQUESTS_APPROVALS_SECTIONS.REQUEST_APPROVAL_ROUTE' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Request Approval Vacations Card -->
+    <a [routerLink]="['/requests-and-approvals/request-approval-vacations']" class="card approval-vacations">
+        <div class="icon-container">
+            <i class="fas fa-umbrella-beach"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.REQUESTS_APPROVALS_SECTIONS.REQUESTS_APPROVAL_VACATIONS' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+
+    <!-- Delete Completed Requests Card -->
+    <a [routerLink]="['/requests-and-approvals/delete-completed-request']" class="card delete-requests">
+        <div class="icon-container">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <h2 class="card-title">{{ 'MENU.REQUESTS_APPROVALS_SECTIONS.DELETE_COMPLETED_REQUESTS' | translate }}</h2>
+        <div class="visit-indicator">
+            <i class="fa-solid fa-eye"></i>
+            <span>{{ 'VISIT' | translate }}</span>
+        </div>
+    </a>
+</div>
