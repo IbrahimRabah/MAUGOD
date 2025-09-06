@@ -23,7 +23,6 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   
   // Core component state
   approvalRoutes: RequestApprovalRoute[] = [];
-  filteredApprovalRoutes: RequestApprovalRoute[] = [];
   searchTerm: string = '';
   loading = false;
   totalRecords = 0;

@@ -78,7 +78,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let route of filteredApprovalRoutes; trackBy: trackByRouteId" class="table-row">
+        <tr *ngFor="let route of approvalRoutes; trackBy: trackByRouteId" class="table-row">
           <!-- Edit Action -->
           <td class="action-column">
             <button class="action-btn details-btn" 
@@ -158,7 +158,7 @@
         </tr>
         
         <!-- Empty state row -->
-        <tr *ngIf="filteredApprovalRoutes.length === 0" class="empty-row">
+        <tr *ngIf="approvalRoutes.length === 0" class="empty-row">
           <td colspan="16" class="empty-message text-center">
             <i class="fa fa-inbox"></i>
             No approval routes found
@@ -169,7 +169,7 @@
   </div>
 
   <!-- Custom Pagination -->
-  <div *ngIf="!loading && filteredApprovalRoutes.length > 0" class="pagination-wrapper" 
+  <div *ngIf="!loading && approvalRoutes.length > 0" class="pagination-wrapper" 
        [class.rtl]="langService.getCurrentLang() === 'ar'" 
        [class.ltr]="langService.getCurrentLang() === 'en'">
     <div class="pagination-info">
