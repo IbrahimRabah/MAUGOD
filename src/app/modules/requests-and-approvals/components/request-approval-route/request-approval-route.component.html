@@ -8,13 +8,13 @@
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="loading-spinner">
     <div class="spinner"></div>
-    <p>Loading...</p>
+    <p>{{ 'REQUEST_APPROVAL_ROUTE.LOADING' | translate }}</p>
   </div>
 
   <!-- Table Header Actions -->
   <div *ngIf="!loading" class="table-header-actions">
     <div class="left-actions">
-      <h3>Request Approval Routes</h3>
+      <h3>{{ 'REQUEST_APPROVAL_ROUTE.TITLE' | translate }}</h3>
     </div>
 
     <div class="right-actions">
@@ -26,7 +26,7 @@
             type="text" 
             formControlName="searchText"
             class="search-input" 
-            placeholder="Search approval routes...">
+            [placeholder]="'REQUEST_APPROVAL_ROUTE.SEARCH_PLACEHOLDER' | translate">
           <button type="button" class="search-btn" (click)="onSearch()">
             <i class="fa fa-search search-icon"></i>
           </button>
@@ -35,32 +35,32 @@
       
       <button type="button" class="btn btn-primary create-btn" (click)="openCreateModal()">
         <i class="fa fa-plus"></i>
-        Create Route
+        {{ 'REQUEST_APPROVAL_ROUTE.CREATE_ROUTE' | translate }}
       </button>
     </div>
   </div>
 
   <!-- Custom Table -->
-  <div *ngIf="!loading" class="table-wrapper" title="Scroll horizontally to see more columns">
+  <div *ngIf="!loading" class="table-wrapper" [title]="'REQUEST_APPROVAL_ROUTE.SCROLL_HINT' | translate">
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th class="action-column">Edit</th>
-          <th>ID</th>
-          <th>Employee</th>
-          <th>Manager of Department</th>
-          <th>Department</th>
-          <th>Manager of Branch</th>
-          <th>Branch</th>
-          <th>Role</th>
-          <th>For Everyone</th>
-          <th>Status</th>
-          <th>Request Levels</th>
-          <th>Is Active</th>
-          <th>Note</th>
-          <th class="action-column">Details</th>
-          <th class="action-column">Chart</th>
-          <th class="action-column">Delete</th>
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.EDIT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.ROUTE_ID' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.EMPLOYEE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.FOR_EVERYONE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</th>
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.DETAILS' | translate }}</th>
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.CHART' | translate }}</th>
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.DELETE' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -69,7 +69,7 @@
           <td class="action-column">
             <button class="action-btn details-btn" 
                     (click)="editRoute(route)"
-                    title="Edit">
+                    [title]="'REQUEST_APPROVAL_ROUTE.EDIT' | translate">
               <i class="fa fa-edit"></i>
             </button>
           </td>
@@ -108,7 +108,7 @@
           <td class="text-center">
             <span [class]="getActiveStatusClass(route.isActive)">
               <i [class]="route.isActive ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
-              {{ route.isActive ? 'Active' : 'Inactive' }}
+              {{ route.isActive ? ('REQUEST_APPROVAL_ROUTE.ACTIVE' | translate) : ('REQUEST_APPROVAL_ROUTE.INACTIVE' | translate) }}
             </span>
           </td>
           
@@ -119,7 +119,7 @@
           <td class="action-column">
             <button class="action-btn graph-btn" 
                     (click)="viewDetails(route)"
-                    title="Details">
+                    [title]="'REQUEST_APPROVAL_ROUTE.DETAILS' | translate">
               <i class="fa fa-list-alt"></i>
             </button>
           </td>
@@ -128,7 +128,7 @@
           <td class="action-column">
             <button class="action-btn attachments-btn" 
                     (click)="viewChart(route)"
-                    title="Chart">
+                    [title]="'REQUEST_APPROVAL_ROUTE.CHART' | translate">
               <i class="fa fa-chart-line"></i>
             </button>
           </td>
@@ -137,7 +137,7 @@
           <td class="action-column">
             <button class="action-btn delete-btn" 
                     (click)="deleteRoute(route)"
-                    title="Delete">
+                    [title]="'REQUEST_APPROVAL_ROUTE.DELETE' | translate">
               <i class="fa fa-trash"></i>
             </button>
           </td>
@@ -147,7 +147,7 @@
         <tr *ngIf="filteredApprovalRoutes.length === 0" class="empty-row">
           <td colspan="16" class="empty-message text-center">
             <i class="fa fa-inbox"></i>
-            No approval routes found
+            {{ 'REQUEST_APPROVAL_ROUTE.NO_DATA_FOUND' | translate }}
           </td>
         </tr>
       </tbody>
@@ -159,7 +159,7 @@
        [class.rtl]="langService.getCurrentLang() === 'ar'" 
        [class.ltr]="langService.getCurrentLang() === 'en'">
     <div class="pagination-info">
-      <span>Showing {{ currentPageStart }} to {{ currentPageEnd }} of {{ totalRecords }} items</span>
+      <span>{{ 'REQUEST_APPROVAL_ROUTE.SHOWING' | translate }} {{ currentPageStart }} {{ 'REQUEST_APPROVAL_ROUTE.TO' | translate }} {{ currentPageEnd }} {{ 'REQUEST_APPROVAL_ROUTE.OF' | translate }} {{ totalRecords }} {{ 'REQUEST_APPROVAL_ROUTE.ITEMS' | translate }}</span>
     </div>
 
     <div class="pagination-controls">
@@ -169,7 +169,7 @@
         <button class="pagination-btn first-last-btn" 
                 [disabled]="!canGoNext" 
                 (click)="goToLastPage()"
-                title="Last">
+                [title]="'REQUEST_APPROVAL_ROUTE.LAST_PAGE' | translate">
           <i class="fa fa-angle-double-left"></i>
         </button>
         
@@ -177,7 +177,7 @@
         <button class="pagination-btn" 
                 [disabled]="!canGoNext" 
                 (click)="nextPage()"
-                title="Next">
+                [title]="'REQUEST_APPROVAL_ROUTE.NEXT' | translate">
           <i class="fa fa-angle-left"></i>
         </button>
         
@@ -192,7 +192,7 @@
         <button class="pagination-btn" 
                 [disabled]="!canGoPrevious" 
                 (click)="previousPage()"
-                title="Previous">
+                [title]="'REQUEST_APPROVAL_ROUTE.PREVIOUS' | translate">
           <i class="fa fa-angle-right"></i>
         </button>
         
@@ -200,7 +200,7 @@
         <button class="pagination-btn first-last-btn" 
                 [disabled]="!canGoPrevious" 
                 (click)="goToFirstPage()"
-                title="First">
+                [title]="'REQUEST_APPROVAL_ROUTE.FIRST_PAGE' | translate">
           <i class="fa fa-angle-double-right"></i>
         </button>
       </ng-container>
@@ -211,7 +211,7 @@
         <button class="pagination-btn first-last-btn" 
                 [disabled]="!canGoPrevious" 
                 (click)="goToFirstPage()"
-                title="First">
+                [title]="'REQUEST_APPROVAL_ROUTE.FIRST_PAGE' | translate">
           <i class="fa fa-angle-double-left"></i>
         </button>
         
@@ -219,7 +219,7 @@
         <button class="pagination-btn" 
                 [disabled]="!canGoPrevious" 
                 (click)="previousPage()"
-                title="Previous">
+                [title]="'REQUEST_APPROVAL_ROUTE.PREVIOUS' | translate">
           <i class="fa fa-angle-left"></i>
         </button>
         
@@ -234,7 +234,7 @@
         <button class="pagination-btn" 
                 [disabled]="!canGoNext" 
                 (click)="nextPage()"
-                title="Next">
+                [title]="'REQUEST_APPROVAL_ROUTE.NEXT' | translate">
           <i class="fa fa-angle-right"></i>
         </button>
         
@@ -242,14 +242,14 @@
         <button class="pagination-btn first-last-btn" 
                 [disabled]="!canGoNext" 
                 (click)="goToLastPage()"
-                title="Last">
+                [title]="'REQUEST_APPROVAL_ROUTE.LAST_PAGE' | translate">
           <i class="fa fa-angle-double-right"></i>
         </button>
       </ng-container>
     </div>
 
     <div class="page-size-selector">
-      <label>Items per page</label>
+      <label>{{ 'REQUEST_APPROVAL_ROUTE.ITEMS_PER_PAGE' | translate }}</label>
       <form [formGroup]="searchForm">
         <select formControlName="pageSize" (change)="onPageSizeChange()">
           <option value="10">10</option>
@@ -265,7 +265,7 @@
   <div class="modal-backdrop" *ngIf="showRoadMapModal" (click)="onCloseRoadMapModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h4>Request Approval Road Map</h4>
+        <h4>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_TITLE' | translate }}</h4>
         <button class="close-btn" (click)="onCloseRoadMapModal()">
           <i class="fa fa-times"></i>
         </button>
@@ -280,23 +280,23 @@
               type="text" 
               formControlName="searchText"
               class="search-input" 
-              placeholder="Search road map details...">
+              [placeholder]="'REQUEST_APPROVAL_ROUTE.ROAD_MAP_SEARCH_PLACEHOLDER' | translate">
           </form>
         </div>
         
         <!-- Road Map Table -->
         <div *ngIf="loadingRoadMap" class="loading-spinner">
           <div class="spinner"></div>
-          <p>Loading...</p>
+          <p>{{ 'REQUEST_APPROVAL_ROUTE.LOADING' | translate }}</p>
         </div>
         
         <div *ngIf="!loadingRoadMap" class="table-wrapper modal-table">
           <table class="custom-table">
             <thead>
               <tr class="table-header">
-                <th>Level</th>
-                <th>Level Name</th>
-                <th>Details</th>
+                <th>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_LEVEL' | translate }}</th>
+                <th>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_LEVEL_NAME' | translate }}</th>
+                <th>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_DETAILS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -310,7 +310,7 @@
               <tr *ngIf="filteredRoadMapDetails.length === 0" class="empty-row">
                 <td colspan="3" class="empty-message text-center">
                   <i class="fa fa-inbox"></i>
-                  No road map details found
+                  {{ 'REQUEST_APPROVAL_ROUTE.NO_ROAD_MAP_FOUND' | translate }}
                 </td>
               </tr>
             </tbody>
@@ -319,7 +319,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" (click)="onCloseRoadMapModal()">
-          Close
+          {{ 'COMMON.CLOSE' | translate }}
         </button>
       </div>
     </div>

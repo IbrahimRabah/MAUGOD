@@ -161,4 +161,10 @@ getLevelsDropdownListForTimeTransactionApproval(lang: number) {
     { headers: { accept: '*/*', lang: lang.toString() } }
   );
 }
+getLevelsDropdownListForTimeTransactionApprovalForLevel(lang: number) {
+  return this.http.get<ApiResponse<LevelsDropdownData>>(
+    `${this.apiUrl}/GetLevelsDropdownListForTimeTransactionApproval`,
+    { headers: { accept: '*/*', lang: lang.toString() } }
+  );
+}
 }
