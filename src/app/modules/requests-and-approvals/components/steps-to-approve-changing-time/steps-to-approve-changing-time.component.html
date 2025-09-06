@@ -1,1 +1,340 @@
-<p>steps-to-approve-changing-time works!</p>
+<div class="steps-to-approve-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [baseZIndex]="10001" [preventOpenDuplicates]="true" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'STEPS_TO_APPROVE.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="create-btn" 
+              (click)="createApprovalRoute()">
+        <i class="fa fa-plus"></i>
+        {{ 'CREATE_TIME_TRANSACTION_APPROVAL.TITLE' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            class="search-input" 
+            formControlName="searchText"
+            [placeholder]="'STEPS_TO_APPROVE.SEARCH_PLACEHOLDER' | translate">
+          <button 
+            type="button" 
+            class="search-btn" 
+            (click)="onSearch()">
+            <i class="fa fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'STEPS_TO_APPROVE.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="action-column">{{ 'STEPS_TO_APPROVE.EDIT' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.ID' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.EMPLOYEE' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.MANAGER_OF_DEPARTMENT' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.DEPARTMENT' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.MANAGER_OF_BRANCH' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.BRANCH' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.ROLE' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.FOR_EVERYONE' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.REQUEST_LEVELS' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.IS_ACTIVE' | translate }}</th>
+          <th>{{ 'STEPS_TO_APPROVE.NOTE' | translate }}</th>
+          <th class="action-column">{{ 'STEPS_TO_APPROVE.DETAILS' | translate }}</th>
+          <th class="action-column">{{ 'STEPS_TO_APPROVE.CHART' | translate }}</th>
+          <th class="action-column">{{ 'STEPS_TO_APPROVE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredApprovals; trackBy: trackByRouteId" class="table-row">
+          <!-- Edit Action -->
+          <td class="action-column text-center">
+            <button 
+              class="action-btn edit-btn" 
+              (click)="editApprovalRoute(item)"
+              [title]="'STEPS_TO_APPROVE.EDIT' | translate">
+              <i class="fa fa-edit"></i>
+            </button>
+          </td>
+
+          <!-- ID -->
+          <td class="text-center">{{ item.routeId }}</td>
+
+          <!-- Employee -->
+          <td>{{ item.empName || '-' }}</td>
+
+          <!-- Manager of Department -->
+          <td>{{ item.deptMgrName || '-' }}</td>
+
+          <!-- Department -->
+          <td>{{ item.deptName || '-' }}</td>
+
+          <!-- Manager of Branch -->
+          <td>{{ item.branchMgrName || '-' }}</td>
+
+          <!-- Branch -->
+          <td>{{ item.branchName || '-' }}</td>
+
+          <!-- Role -->
+          <td>{{ item.roleName || '-' }}</td>
+
+          <!-- For Everyone -->
+          <td>{{ item.forEveryoneName || '-' }}</td>
+
+          <!-- Request Levels -->
+          <td>{{ item.reqLevelName || '-' }}</td>
+
+          <!-- Is Active -->
+          <td class="text-center">
+            <span class="status-badge" [ngClass]="item.isActive ? 'status-active' : 'status-inactive'">
+              <i [class]="getStatusIcon(item.isActive)"></i>
+              {{ getStatusDisplayText(item) }}
+            </span>
+          </td>
+
+          <!-- Note -->
+          <td>{{ item.note || '-' }}</td>
+
+          <!-- Details Action -->
+          <td class="action-column text-center">
+            <button 
+              class="action-btn details-btn" 
+              (click)="viewDetails(item)"
+              [title]="'STEPS_TO_APPROVE.VIEW_DETAILS' | translate">
+              <i class="fa fa-info-circle"></i>
+            </button>
+          </td>
+
+          <!-- Chart Action -->
+          <td class="action-column text-center">
+            <button 
+              class="action-btn graph-btn" 
+              (click)="viewChart(item)"
+              [disabled]="!canDeleteOrSelect(item)"
+              [title]="'STEPS_TO_APPROVE.VIEW_CHART' | translate">
+              <i class="fa fa-chart-line"></i>
+            </button>
+          </td>
+
+          <!-- Delete Action -->
+          <td class="action-column text-center">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteApprovalRoute(item)"
+              
+              [title]="'STEPS_TO_APPROVE.DELETE' | translate">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Empty row when no data -->
+        <tr *ngIf="filteredApprovals.length === 0" class="empty-row">
+          <td colspan="15" class="empty-message">
+            <i class="fa fa-inbox"></i>
+            {{ 'STEPS_TO_APPROVE.NO_DATA' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && filteredApprovals.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'STEPS_TO_APPROVE.SHOWING' | translate }} {{ currentPageStart }} {{ 'STEPS_TO_APPROVE.TO' | translate }} {{ currentPageEnd }} {{ 'STEPS_TO_APPROVE.OF' | translate }} {{ totalRecords }} {{ 'STEPS_TO_APPROVE.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- Enhanced Pagination with First/Last -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <!-- Arabic RTL Layout -->
+        <button 
+          class="pagination-btn first-last-btn" 
+          (click)="goToLastPage()" 
+          [disabled]="!canGoNext"
+          [title]="'STEPS_TO_APPROVE.LAST_PAGE' | translate">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="!canGoNext"
+          [title]="'STEPS_TO_APPROVE.NEXT_PAGE' | translate">
+          <i class="fa fa-angle-right"></i>
+        </button>
+
+        <div class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">/</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </div>
+
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="!canGoPrevious"
+          [title]="'STEPS_TO_APPROVE.PREVIOUS_PAGE' | translate">
+          <i class="fa fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn first-last-btn" 
+          (click)="goToFirstPage()" 
+          [disabled]="!canGoPrevious"
+          [title]="'STEPS_TO_APPROVE.FIRST_PAGE' | translate">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- English LTR Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn first-last-btn" 
+          (click)="goToFirstPage()" 
+          [disabled]="!canGoPrevious"
+          [title]="'STEPS_TO_APPROVE.FIRST_PAGE' | translate">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="!canGoPrevious"
+          [title]="'STEPS_TO_APPROVE.PREVIOUS_PAGE' | translate">
+          <i class="fa fa-angle-left"></i>
+        </button>
+
+        <div class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">/</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </div>
+
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="!canGoNext"
+          [title]="'STEPS_TO_APPROVE.NEXT_PAGE' | translate">
+          <i class="fa fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn first-last-btn" 
+          (click)="goToLastPage()" 
+          [disabled]="!canGoNext"
+          [title]="'STEPS_TO_APPROVE.LAST_PAGE' | translate">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'STEPS_TO_APPROVE.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()" class="form-input">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+
+  <!-- Road Map Details Modal -->
+  <div class="modal-backdrop" *ngIf="showDetailsModal" (click)="onCloseDetailsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ 'STEPS_TO_APPROVE.ROADMAP_DETAILS' | translate }}</h3>
+        <button class="close-btn" (click)="onCloseDetailsModal()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Search for Road Map -->
+        <div class="modal-search-container">
+          <form [formGroup]="roadMapSearchForm">
+            <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input 
+                type="text" 
+                class="search-input" 
+                formControlName="searchText"
+                [placeholder]="'STEPS_TO_APPROVE.SEARCH_ROADMAP_PLACEHOLDER' | translate">
+              <button 
+                type="button" 
+                class="search-btn" 
+                (click)="onRoadMapSearch()">
+                <i class="fa fa-search search-icon"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Loading Spinner for Road Map -->
+        <div *ngIf="loadingRoadMap" class="loading-spinner">
+          <div class="spinner"></div>
+          <p>{{ 'STEPS_TO_APPROVE.LOADING_ROADMAP' | translate }}</p>
+        </div>
+
+        <!-- Road Map Details Table -->
+        <div *ngIf="!loadingRoadMap" class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr class="table-header">
+                <th>{{ 'STEPS_TO_APPROVE.LEVEL' | translate }}</th>
+                <th>{{ 'STEPS_TO_APPROVE.LEVEL_NAME' | translate }}</th>
+                <th>{{ 'STEPS_TO_APPROVE.DETAILS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let detail of filteredRoadMapDetails; trackBy: trackByLevel" class="table-row">
+                <td class="text-center">{{ detail.level }}</td>
+                <td>{{ detail.levelName || '-' }}</td>
+                <td>{{ detail.details || '-' }}</td>
+              </tr>
+
+              <!-- Empty row when no data -->
+              <tr *ngIf="filteredRoadMapDetails.length === 0" class="empty-row">
+                <td colspan="3" class="empty-message">
+                  <i class="fa fa-inbox"></i>
+                  {{ 'STEPS_TO_APPROVE.NO_ROADMAP_DATA' | translate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn close-modal-btn" (click)="onCloseDetailsModal()">
+          {{ 'COMMON.CLOSE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Time Transaction Approval Modal -->
+<app-create-time-transaction-approval 
+  *ngIf="showCreateModal"
+  [routeId]="selectedRouteId"
+  (modalClosed)="onCloseCreateModal()"
+  (approvalCreated)="onApprovalCreated()">
+</app-create-time-transaction-approval>

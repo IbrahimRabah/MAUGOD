@@ -1,0 +1,754 @@
+<!-- Modal backdrop -->
+<div class="modal-backdrop" [class.rtl]="isRTL" [class.ltr]="!isRTL">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <!-- Modal header -->
+    <div class="modal-header">
+      <h3>{{ isEditMode ? ('CREATE_TIME_TRANSACTION_APPROVAL.EDIT_TITLE' | translate) : ('CREATE_TIME_TRANSACTION_APPROVAL.TITLE' | translate) }}</h3>
+      <button 
+        type="button" 
+        class="close-btn" 
+        (click)="onCancel()"
+        [attr.aria-label]="'CREATE_TIME_TRANSACTION_APPROVAL.CLOSE' | translate">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <div class="modal-body">
+      <form [formGroup]="createForm" (ngSubmit)="onSave()">
+        
+        <!-- For Everyone Section -->
+        <div class="form-section">
+          <label class="section-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.FOR_EVERYONE' | translate }}</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input 
+                type="radio" 
+                id="forEveryone" 
+                name="forEveryone" 
+                [value]="1"
+                formControlName="forEveryone"
+                (change)="onForEveryoneChange(1)"
+                >
+              <label for="forEveryone">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.FOR_EVERYONE_OPTION' | translate }}</label>
+            </div>
+            <div class="radio-option">
+              <input 
+                type="radio" 
+                id="forGroup" 
+                name="forEveryone" 
+                [value]="0"
+                formControlName="forEveryone"
+                (change)="onForEveryoneChange(0)"
+                >
+              <label for="forGroup">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.FOR_GROUP_OPTION' | translate }}</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note Section -->
+        <div class="form-section">
+          <label for="note" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NOTE' | translate }}</label>
+          <textarea 
+            id="note"
+            formControlName="note"
+            class="form-textarea"
+            rows="3"
+            [placeholder]="'CREATE_TIME_TRANSACTION_APPROVAL.NOTE_PLACEHOLDER' | translate">
+          </textarea>
+        </div>
+
+        <!-- Request Levels Section -->
+        <div class="form-section">
+          <label for="requestLevel" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.REQUEST_LEVELS' | translate }}</label>
+          <select 
+            id="requestLevel"
+            formControlName="requestLevel"
+            class="form-select"
+            [disabled]="loadingRequestLevels">
+            <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_REQUEST_LEVEL' | translate }}</option>
+            <option *ngFor="let level of requestLevels" [value]="level.value">
+              {{ level.label }}
+            </option>
+          </select>
+          <div *ngIf="loadingRequestLevels" class="loading-indicator">
+            <i class="fas fa-spinner fa-spin"></i>
+            {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+          </div>
+        </div>
+
+        <!-- Group Selection Section (only shown when For Group is selected) -->
+        <div *ngIf="selectedForEveryone === 0" class="group-selection-section">
+          
+          <!-- Employee Dropdown -->
+          <div class="form-group">
+            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
+            <select formControlName="empId" class="form-control">
+              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+              <option *ngFor="let employee of employees" [value]="employee.value">
+                {{ employee.label }}
+              </option>
+            </select>
+            <div *ngIf="loadingEmployees" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Manager of Department Dropdown -->
+          <div class="form-group">
+            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
+            <select formControlName="mgrOfDeptId" class="form-control">
+              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+              <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
+                {{ dept.label }}
+              </option>
+            </select>
+            <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Manager of Branch Dropdown -->
+          <div class="form-group">
+            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
+            <select formControlName="mgrOfBranchId" class="form-control">
+              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+              <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
+                {{ branch.label }}
+              </option>
+            </select>
+            <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Department Dropdown -->
+          <div class="form-group">
+            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
+            <select formControlName="deptId" class="form-control">
+              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+              <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
+                {{ dept.label }}
+              </option>
+            </select>
+            <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Branch Dropdown -->
+          <div class="form-group">
+            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
+            <select formControlName="branchId" class="form-control">
+              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+              <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
+                {{ branch.label }}
+              </option>
+            </select>
+            <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Role Dropdown -->
+          <div class="form-group">
+            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
+            <select formControlName="roleId" class="form-control">
+              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+              <option *ngFor="let role of roles" [value]="role.value">
+                {{ role.label }}
+              </option>
+            </select>
+            <div *ngIf="loadingRoles" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Level Configuration Sections -->
+        <div *ngFor="let levelNumber of activeLevels" class="level-section">
+          <h4 class="level-title">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.LEVEL' | translate }} {{ levelNumber }}</h4>
+          
+          <!-- Group Selection for Each Level (only shown when For Group is selected) -->
+          <div *ngIf="selectedForEveryone === 0" class="level-group-selection-section">
+            <h5 class="subsection-title">Group Selection for Level {{ levelNumber }}</h5>
+            
+            <!-- Employee Dropdown for this level -->
+            <div class="form-group">
+              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
+              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'empId')" (change)="updateLevelFormValue(levelNumber, 'empId', $event)">
+                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+                <option *ngFor="let employee of employees" [value]="employee.value">
+                  {{ employee.label }}
+                </option>
+              </select>
+              <div *ngIf="loadingEmployees" class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+              </div>
+            </div>
+
+            <!-- Manager of Department Dropdown for this level -->
+            <div class="form-group">
+              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
+              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'mgrOfDeptId')" (change)="updateLevelFormValue(levelNumber, 'mgrOfDeptId', $event)">
+                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+                <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
+                  {{ dept.label }}
+                </option>
+              </select>
+              <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+              </div>
+            </div>
+
+            <!-- Manager of Branch Dropdown for this level -->
+            <div class="form-group">
+              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
+              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'mgrOfBranchId')" (change)="updateLevelFormValue(levelNumber, 'mgrOfBranchId', $event)">
+                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+                <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
+                  {{ branch.label }}
+                </option>
+              </select>
+              <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+              </div>
+            </div>
+
+            <!-- Department Dropdown for this level -->
+            <div class="form-group">
+              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
+              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'deptId')" (change)="updateLevelFormValue(levelNumber, 'deptId', $event)">
+                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+                <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
+                  {{ dept.label }}
+                </option>
+              </select>
+              <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+              </div>
+            </div>
+
+            <!-- Branch Dropdown for this level -->
+            <div class="form-group">
+              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
+              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'branchId')" (change)="updateLevelFormValue(levelNumber, 'branchId', $event)">
+                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+                <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
+                  {{ branch.label }}
+                </option>
+              </select>
+              <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+              </div>
+            </div>
+
+            <!-- Role Dropdown for this level -->
+            <div class="form-group">
+              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
+              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'roleId')" (change)="updateLevelFormValue(levelNumber, 'roleId', $event)">
+                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
+                <option *ngFor="let role of roles" [value]="role.value">
+                  {{ role.label }}
+                </option>
+              </select>
+              <div *ngIf="loadingRoles" class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+              </div>
+            </div>
+
+          </div>
+          
+          <!-- Dynamic Direct Manager -->
+          <div class="dynamic-section">
+            <label class="section-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DYNAMIC_DIRECT_MANAGER' | translate }}</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  [id]="'dynDirectMgr_yes_' + levelNumber" 
+                  [name]="'dynDirectMgr_' + levelNumber" 
+                  value="1"
+                  (change)="onDynamicToggle(levelNumber, 'dynDirectMgr', 1)">
+                <label [for]="'dynDirectMgr_yes_' + levelNumber">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.YES' | translate }}</label>
+              </div>
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  [id]="'dynDirectMgr_no_' + levelNumber" 
+                  [name]="'dynDirectMgr_' + levelNumber" 
+                  value="0"
+                  (change)="onDynamicToggle(levelNumber, 'dynDirectMgr', 0)"
+                  checked>
+                <label [for]="'dynDirectMgr_no_' + levelNumber">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NO' | translate }}</label>
+              </div>
+            </div>
+            
+            <!-- Dynamic Direct Manager Fields -->
+            <div *ngIf="getLevelFormControl(levelNumber, 'dynDirectMgr')?.value == 1" class="dynamic-fields">
+              <div class="form-row">
+                <div class="form-group">
+                  <label [for]="'dynDirectMgrDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                  <input 
+                    type="number" 
+                    [id]="'dynDirectMgrDaysLimits_' + levelNumber"
+                    class="form-input"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynDirectMgrDaysLimits')"
+                    min="0">
+                </div>
+                <div class="form-group">
+                  <label [for]="'dynDirectMgrAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                  <select 
+                    [id]="'dynDirectMgrAfterLimitAction_' + levelNumber"
+                    class="form-select"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynDirectMgrAfterLimitAction')"
+                    [disabled]="loadingAfterLimitActions">
+                    <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                    <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                      {{ action.label }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label [for]="'dynDirectMgrLevel_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.LEVEL' | translate }}</label>
+                  <select 
+                    [id]="'dynDirectMgrLevel_' + levelNumber"
+                    class="form-select"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynDirectMgrLevel')"
+                    [disabled]="loadingLevels">
+                    <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_LEVEL' | translate }}</option>
+                    <option *ngFor="let level of levels" [value]="level.value">
+                      {{ level.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Manager of Department -->
+          <div class="dynamic-section">
+            <label class="section-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DYNAMIC_MANAGER_OF_DEPARTMENT' | translate }}</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  [id]="'dynMgrOfDept_yes_' + levelNumber" 
+                  [name]="'dynMgrOfDept_' + levelNumber" 
+                  value="1"
+                  (change)="onDynamicToggle(levelNumber, 'dynMgrOfDept', 1)">
+                <label [for]="'dynMgrOfDept_yes_' + levelNumber">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.YES' | translate }}</label>
+              </div>
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  [id]="'dynMgrOfDept_no_' + levelNumber" 
+                  [name]="'dynMgrOfDept_' + levelNumber" 
+                  value="0"
+                  (change)="onDynamicToggle(levelNumber, 'dynMgrOfDept', 0)"
+                  checked>
+                <label [for]="'dynMgrOfDept_no_' + levelNumber">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NO' | translate }}</label>
+              </div>
+            </div>
+            
+            <!-- Dynamic Manager of Department Fields -->
+            <div *ngIf="getLevelFormControl(levelNumber, 'dynMgrOfDept')?.value == 1" class="dynamic-fields">
+              <div class="form-row">
+                <div class="form-group">
+                  <label [for]="'dynMgrOfDeptDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                  <input 
+                    type="number" 
+                    [id]="'dynMgrOfDeptDaysLimits_' + levelNumber"
+                    class="form-input"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynMgrOfDeptDaysLimits')"
+                    min="0">
+                </div>
+                <div class="form-group">
+                  <label [for]="'dynMgrOfDeptAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                  <select 
+                    [id]="'dynMgrOfDeptAfterLimitAction_' + levelNumber"
+                    class="form-select"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynMgrOfDeptAfterLimitAction')"
+                    [disabled]="loadingAfterLimitActions">
+                    <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                    <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                      {{ action.label }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label [for]="'dynMgrOfDeptLevel_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.LEVEL' | translate }}</label>
+                  <select 
+                    [id]="'dynMgrOfDeptLevel_' + levelNumber"
+                    class="form-select"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynMgrOfDeptLevel')"
+                    [disabled]="loadingLevels">
+                    <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_LEVEL' | translate }}</option>
+                    <option *ngFor="let level of levels" [value]="level.value">
+                      {{ level.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Manager of Branch -->
+          <div class="dynamic-section">
+            <label class="section-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DYNAMIC_MANAGER_OF_BRANCH' | translate }}</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  [id]="'dynMgrOfBranch_yes_' + levelNumber" 
+                  [name]="'dynMgrOfBranch_' + levelNumber" 
+                  value="1"
+                  (change)="onDynamicToggle(levelNumber, 'dynMgrOfBranch', 1)">
+                <label [for]="'dynMgrOfBranch_yes_' + levelNumber">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.YES' | translate }}</label>
+              </div>
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  [id]="'dynMgrOfBranch_no_' + levelNumber" 
+                  [name]="'dynMgrOfBranch_' + levelNumber" 
+                  value="0"
+                  (change)="onDynamicToggle(levelNumber, 'dynMgrOfBranch', 0)"
+                  checked>
+                <label [for]="'dynMgrOfBranch_no_' + levelNumber">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NO' | translate }}</label>
+              </div>
+            </div>
+            
+            <!-- Dynamic Manager of Branch Fields -->
+            <div *ngIf="getLevelFormControl(levelNumber, 'dynMgrOfBranch')?.value == 1" class="dynamic-fields">
+              <div class="form-row">
+                <div class="form-group">
+                  <label [for]="'dynMgrOfBranchDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                  <input 
+                    type="number" 
+                    [id]="'dynMgrOfBranchDaysLimits_' + levelNumber"
+                    class="form-input"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynMgrOfBranchDaysLimits')"
+                    min="0">
+                </div>
+                <div class="form-group">
+                  <label [for]="'dynMgrOfBranchAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                  <select 
+                    [id]="'dynMgrOfBranchAfterLimitAction_' + levelNumber"
+                    class="form-select"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynMgrOfBranchAfterLimitAction')"
+                    [disabled]="loadingAfterLimitActions">
+                    <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                    <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                      {{ action.label }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label [for]="'dynMgrOfBranchLevel_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.LEVEL' | translate }}</label>
+                  <select 
+                    [id]="'dynMgrOfBranchLevel_' + levelNumber"
+                    class="form-select"
+                    [formControl]="getLevelFormControl(levelNumber, 'dynMgrOfBranchLevel')"
+                    [disabled]="loadingLevels">
+                    <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_LEVEL' | translate }}</option>
+                    <option *ngFor="let level of levels" [value]="level.value">
+                      {{ level.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Static Dropdowns for this level -->
+          <div class="static-section">
+            <!-- 1. Manager -->
+            <div class="form-row">
+              <div class="form-group">
+                <label [for]="'mgrId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.MANAGERS' | translate }}</label>
+                <select 
+                  [id]="'mgrId_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrId')"
+                  [disabled]="loadingManagers">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER' | translate }}</option>
+                  <option *ngFor="let manager of managers" [value]="manager.value">
+                    {{ manager.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label [for]="'mgrIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                <input 
+                  type="number" 
+                  [id]="'mgrIdDaysLimits_' + levelNumber"
+                  class="form-input"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrIdDaysLimits')"
+                  min="0">
+              </div>
+              <div class="form-group">
+                <label [for]="'mgrIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                <select 
+                  [id]="'mgrIdAfterLimitAction_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrIdAfterLimitAction')"
+                  [disabled]="loadingAfterLimitActions">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                  <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                    {{ action.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 2. Manager of Department -->
+            <div class="form-row">
+              <div class="form-group">
+                <label [for]="'mgrOfDeptId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.MANAGER_OF_DEPARTMENT' | translate }}</label>
+                <select 
+                  [id]="'mgrOfDeptId_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrOfDeptId')"
+                  [disabled]="loadingDepartmentsOrMgr">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
+                  <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
+                    {{ dept.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label [for]="'mgrOfDeptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                <input 
+                  type="number" 
+                  [id]="'mgrOfDeptIdDaysLimits_' + levelNumber"
+                  class="form-input"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrOfDeptIdDaysLimits')"
+                  min="0">
+              </div>
+              <div class="form-group">
+                <label [for]="'mgrOfDeptIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                <select 
+                  [id]="'mgrOfDeptIdAfterLimitAction_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrOfDeptIdAfterLimitAction')"
+                  [disabled]="loadingAfterLimitActions">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                  <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                    {{ action.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 3. Manager of Branch -->
+            <div class="form-row">
+              <div class="form-group">
+                <label [for]="'mgrOfBranchId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.MANAGER_OF_BRANCH' | translate }}</label>
+                <select 
+                  [id]="'mgrOfBranchId_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrOfBranchId')"
+                  [disabled]="loadingBranchesOrMgr">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
+                  <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
+                    {{ branch.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label [for]="'mgrOfBranchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                <input 
+                  type="number" 
+                  [id]="'mgrOfBranchIdDaysLimits_' + levelNumber"
+                  class="form-input"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrOfBranchIdDaysLimits')"
+                  min="0">
+              </div>
+              <div class="form-group">
+                <label [for]="'mgrOfBranchIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                <select 
+                  [id]="'mgrOfBranchIdAfterLimitAction_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'mgrOfBranchIdAfterLimitAction')"
+                  [disabled]="loadingAfterLimitActions">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                  <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                    {{ action.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 4. Department -->
+            <div class="form-row">
+              <div class="form-group">
+                <label [for]="'deptId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DEPARTMENT' | translate }}</label>
+                <select 
+                  [id]="'deptId_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'deptId')"
+                  [disabled]="loadingDepartmentsOrMgr">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_DEPARTMENT' | translate }}</option>
+                  <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
+                    {{ dept.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label [for]="'deptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                <input 
+                  type="number" 
+                  [id]="'deptIdDaysLimits_' + levelNumber"
+                  class="form-input"
+                  [formControl]="getLevelFormControl(levelNumber, 'deptIdDaysLimits')"
+                  min="0">
+              </div>
+              <div class="form-group">
+                <label [for]="'deptIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                <select 
+                  [id]="'deptIdAfterLimitAction_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'deptIdAfterLimitAction')"
+                  [disabled]="loadingAfterLimitActions">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                  <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                    {{ action.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 5. Branch -->
+            <div class="form-row">
+              <div class="form-group">
+                <label [for]="'branchId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.BRANCH' | translate }}</label>
+                <select 
+                  [id]="'branchId_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'branchId')"
+                  [disabled]="loadingBranchesOrMgr">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_BRANCH' | translate }}</option>
+                  <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
+                    {{ branch.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label [for]="'branchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                <input 
+                  type="number" 
+                  [id]="'branchIdDaysLimits_' + levelNumber"
+                  class="form-input"
+                  [formControl]="getLevelFormControl(levelNumber, 'branchIdDaysLimits')"
+                  min="0">
+              </div>
+              <div class="form-group">
+                <label [for]="'branchIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                <select 
+                  [id]="'branchIdAfterLimitAction_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'branchIdAfterLimitAction')"
+                  [disabled]="loadingAfterLimitActions">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                  <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                    {{ action.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 6. Role -->
+            <div class="form-row">
+              <div class="form-group">
+                <label [for]="'roleId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.ROLE' | translate }}</label>
+                <select 
+                  [id]="'roleId_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'roleId')"
+                  [disabled]="loadingRoles">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_ROLE' | translate }}</option>
+                  <option *ngFor="let role of roles" [value]="role.value">
+                    {{ role.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label [for]="'roleIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
+                <input 
+                  type="number" 
+                  [id]="'roleIdDaysLimits_' + levelNumber"
+                  class="form-input"
+                  [formControl]="getLevelFormControl(levelNumber, 'roleIdDaysLimits')"
+                  min="0">
+              </div>
+              <div class="form-group">
+                <label [for]="'roleIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
+                <select 
+                  [id]="'roleIdAfterLimitAction_' + levelNumber"
+                  class="form-select"
+                  [formControl]="getLevelFormControl(levelNumber, 'roleIdAfterLimitAction')"
+                  [disabled]="loadingAfterLimitActions">
+                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_AFTER_LIMIT_ACTION' | translate }}</option>
+                  <option *ngFor="let action of afterLimitActions" [value]="action.value">
+                    {{ action.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Note Details for this level -->
+            <div class="form-section">
+              <label [for]="'noteDetails_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NOTE' | translate }}</label>
+              <textarea 
+                [id]="'noteDetails_' + levelNumber"
+                class="form-textarea"
+                [formControl]="getLevelFormControl(levelNumber, 'noteDetails')"
+                rows="2"
+                [placeholder]="'CREATE_TIME_TRANSACTION_APPROVAL.NOTE_PLACEHOLDER' | translate">
+              </textarea>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Modal footer -->
+    <div class="modal-footer">
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="onCancel()"
+        [disabled]="loading">
+        {{ 'CREATE_TIME_TRANSACTION_APPROVAL.CANCEL' | translate }}
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        (click)="onSave()"
+        [disabled]="loading || createForm.invalid">
+        <span *ngIf="loading">
+          <i class="fas fa-spinner fa-spin"></i>
+          {{ isEditMode ? ('CREATE_TIME_TRANSACTION_APPROVAL.UPDATING' | translate) : ('CREATE_TIME_TRANSACTION_APPROVAL.CREATING' | translate) }}
+        </span>
+        <span *ngIf="!loading">
+          {{ isEditMode ? ('CREATE_TIME_TRANSACTION_APPROVAL.UPDATE' | translate) : ('CREATE_TIME_TRANSACTION_APPROVAL.SAVE' | translate) }}
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

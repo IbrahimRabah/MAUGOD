@@ -1,1 +1,334 @@
-<p>request-approval-route works!</p>
+<div class="request-approval-route-container">
+  <!-- Toast Messages with enhanced configuration -->
+  <p-toast position="top-right" [baseZIndex]="10001" [preventOpenDuplicates]="true" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'REQUEST_APPROVAL_ROUTE.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <h3>{{ 'REQUEST_APPROVAL_ROUTE.TITLE' | translate }}</h3>
+    </div>
+
+    <div class="right-actions">
+      <form [formGroup]="searchForm">
+        <div class="search-container" 
+             [class.rtl]="langService.getCurrentLang() === 'ar'" 
+             [class.ltr]="langService.getCurrentLang() === 'en'">
+          <input 
+            type="text" 
+            formControlName="searchText"
+            class="search-input" 
+            [placeholder]="'REQUEST_APPROVAL_ROUTE.SEARCH_PLACEHOLDER' | translate">
+          <button type="button" class="search-btn" (click)="onSearch()">
+            <i class="fa fa-search search-icon"></i>
+          </button>
+        </div>
+      </form>
+      
+      <button type="button" class="btn btn-primary create-btn" (click)="openCreateModal()">
+        <i class="fa fa-plus"></i>
+        {{ 'REQUEST_APPROVAL_ROUTE.CREATE_ROUTE' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" [title]="'REQUEST_APPROVAL_ROUTE.SCROLL_HINT' | translate">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.EDIT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.ROUTE_ID' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.EMPLOYEE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.FOR_EVERYONE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</th>
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.DETAILS' | translate }}</th>
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.CHART' | translate }}</th>
+          <th class="action-column">{{ 'REQUEST_APPROVAL_ROUTE.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let route of filteredApprovalRoutes; trackBy: trackByRouteId" class="table-row">
+          <!-- Edit Action -->
+          <td class="action-column">
+            <button class="action-btn details-btn" 
+                    (click)="editRoute(route)"
+                    [title]="'REQUEST_APPROVAL_ROUTE.EDIT' | translate">
+              <i class="fa fa-edit"></i>
+            </button>
+          </td>
+          
+          <!-- ID -->
+          <td class="text-center">{{ route.routeId }}</td>
+          
+          <!-- Employee -->
+          <td>{{ route.empName || '-' }}</td>
+          
+          <!-- Manager of Department -->
+          <td>{{ route.deptMgrName || '-' }}</td>
+          
+          <!-- Department -->
+          <td>{{ route.deptName || '-' }}</td>
+          
+          <!-- Manager of Branch -->
+          <td>{{ route.branchMgrName || '-' }}</td>
+          
+          <!-- Branch -->
+          <td>{{ route.branchName || '-' }}</td>
+          
+          <!-- Role -->
+          <td>{{ route.roleName || '-' }}</td>
+          
+          <!-- For Everyone -->
+          <td>{{ route.forEveryoneName || '-' }}</td>
+          
+          <!-- Status -->
+          <td>{{ route.stsName || '-' }}</td>
+          
+          <!-- Request Levels -->
+          <td>{{ route.reqLevelName || '-' }}</td>
+          
+          <!-- Is Active -->
+          <td class="text-center">
+            <span [class]="getActiveStatusClass(route.isActive)">
+              <i [class]="route.isActive ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+              {{ route.isActive ? ('REQUEST_APPROVAL_ROUTE.ACTIVE' | translate) : ('REQUEST_APPROVAL_ROUTE.INACTIVE' | translate) }}
+            </span>
+          </td>
+          
+          <!-- Note -->
+          <td>{{ route.note || '-' }}</td>
+          
+          <!-- Details Action -->
+          <td class="action-column">
+            <button class="action-btn graph-btn" 
+                    (click)="viewDetails(route)"
+                    [title]="'REQUEST_APPROVAL_ROUTE.DETAILS' | translate">
+              <i class="fa fa-list-alt"></i>
+            </button>
+          </td>
+          
+          <!-- Chart Action -->
+          <td class="action-column">
+            <button class="action-btn attachments-btn" 
+                    (click)="viewChart(route)"
+                    [title]="'REQUEST_APPROVAL_ROUTE.CHART' | translate">
+              <i class="fa fa-chart-line"></i>
+            </button>
+          </td>
+          
+          <!-- Delete Action -->
+          <td class="action-column">
+            <button class="action-btn delete-btn" 
+                    (click)="deleteRoute(route)"
+                    [title]="'REQUEST_APPROVAL_ROUTE.DELETE' | translate">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        
+        <!-- Empty state row -->
+        <tr *ngIf="filteredApprovalRoutes.length === 0" class="empty-row">
+          <td colspan="16" class="empty-message text-center">
+            <i class="fa fa-inbox"></i>
+            {{ 'REQUEST_APPROVAL_ROUTE.NO_DATA_FOUND' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && filteredApprovalRoutes.length > 0" class="pagination-wrapper" 
+       [class.rtl]="langService.getCurrentLang() === 'ar'" 
+       [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'REQUEST_APPROVAL_ROUTE.SHOWING' | translate }} {{ currentPageStart }} {{ 'REQUEST_APPROVAL_ROUTE.TO' | translate }} {{ currentPageEnd }} {{ 'REQUEST_APPROVAL_ROUTE.OF' | translate }} {{ totalRecords }} {{ 'REQUEST_APPROVAL_ROUTE.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- Arabic RTL Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <!-- Last Button -->
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoNext" 
+                (click)="goToLastPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.LAST_PAGE' | translate">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+        
+        <!-- Next Button -->
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext" 
+                (click)="nextPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.NEXT' | translate">
+          <i class="fa fa-angle-left"></i>
+        </button>
+        
+        <!-- Page Info -->
+        <div class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">/</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </div>
+        
+        <!-- Previous Button -->
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="previousPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.PREVIOUS' | translate">
+          <i class="fa fa-angle-right"></i>
+        </button>
+        
+        <!-- First Button -->
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="goToFirstPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.FIRST_PAGE' | translate">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- English LTR Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <!-- First Button -->
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="goToFirstPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.FIRST_PAGE' | translate">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+        
+        <!-- Previous Button -->
+        <button class="pagination-btn" 
+                [disabled]="!canGoPrevious" 
+                (click)="previousPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.PREVIOUS' | translate">
+          <i class="fa fa-angle-left"></i>
+        </button>
+        
+        <!-- Page Info -->
+        <div class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">/</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </div>
+        
+        <!-- Next Button -->
+        <button class="pagination-btn" 
+                [disabled]="!canGoNext" 
+                (click)="nextPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.NEXT' | translate">
+          <i class="fa fa-angle-right"></i>
+        </button>
+        
+        <!-- Last Button -->
+        <button class="pagination-btn first-last-btn" 
+                [disabled]="!canGoNext" 
+                (click)="goToLastPage()"
+                [title]="'REQUEST_APPROVAL_ROUTE.LAST_PAGE' | translate">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'REQUEST_APPROVAL_ROUTE.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Road Map Modal -->
+  <div class="modal-backdrop" *ngIf="showRoadMapModal" (click)="onCloseRoadMapModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h4>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_TITLE' | translate }}</h4>
+        <button class="close-btn" (click)="onCloseRoadMapModal()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Search for Road Map -->
+        <div class="search-container modal-search" 
+             [class.rtl]="langService.getCurrentLang() === 'ar'" 
+             [class.ltr]="langService.getCurrentLang() === 'en'">
+          <form [formGroup]="roadMapSearchForm">
+            <input 
+              type="text" 
+              formControlName="searchText"
+              class="search-input" 
+              [placeholder]="'REQUEST_APPROVAL_ROUTE.ROAD_MAP_SEARCH_PLACEHOLDER' | translate">
+          </form>
+        </div>
+        
+        <!-- Road Map Table -->
+        <div *ngIf="loadingRoadMap" class="loading-spinner">
+          <div class="spinner"></div>
+          <p>{{ 'REQUEST_APPROVAL_ROUTE.LOADING' | translate }}</p>
+        </div>
+        
+        <div *ngIf="!loadingRoadMap" class="table-wrapper modal-table">
+          <table class="custom-table">
+            <thead>
+              <tr class="table-header">
+                <th>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_LEVEL' | translate }}</th>
+                <th>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_LEVEL_NAME' | translate }}</th>
+                <th>{{ 'REQUEST_APPROVAL_ROUTE.ROAD_MAP_DETAILS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let detail of filteredRoadMapDetails; trackBy: trackByRoadMapLevel" class="table-row">
+                <td class="text-center">{{ detail.level }}</td>
+                <td>{{ detail.levelName || '-' }}</td>
+                <td>{{ detail.details || '-' }}</td>
+              </tr>
+              
+              <!-- Empty state row -->
+              <tr *ngIf="filteredRoadMapDetails.length === 0" class="empty-row">
+                <td colspan="3" class="empty-message text-center">
+                  <i class="fa fa-inbox"></i>
+                  {{ 'REQUEST_APPROVAL_ROUTE.NO_ROAD_MAP_FOUND' | translate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="onCloseRoadMapModal()">
+          {{ 'COMMON.CLOSE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Request Approval Route Modal -->
+<app-create-request-approval-route-modal 
+  [showModal]="showCreateModal"
+  (closeModal)="onCloseCreateModal()"
+  (routeCreated)="onRouteCreated()">
+</app-create-request-approval-route-modal>
