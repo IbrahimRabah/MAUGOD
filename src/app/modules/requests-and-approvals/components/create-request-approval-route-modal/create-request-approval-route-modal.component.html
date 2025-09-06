@@ -1,32 +1,26 @@
-﻿<!-- Modal Backdrop -->
-<div class="modal-backdrop" *ngIf="showModal" (click)="onClose()" [class.rtl]="isRTL" [class.ltr]="!isRTL">
+<!-- Modal Backdrop -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="onClose()">
   <div class="modal-content create-modal" (click)="$event.stopPropagation()">
     
     <!-- Modal Header -->
-    <div class="modal-header" [class.rtl]="isRTL" [class.ltr]="!isRTL">
-      <h4>{{ (editMode ? 'CREATE_REQUEST_APPROVAL_ROUTE.EDIT_TITLE' : 'CREATE_REQUEST_APPROVAL_ROUTE.TITLE') | translate }}</h4>
-      <button class="close-btn" (click)="onClose()" type="button" [attr.aria-label]="'CREATE_REQUEST_APPROVAL_ROUTE.CLOSE' | translate">
+    <div class="modal-header">
+      <h4>Create Request Approval Route</h4>
+      <button class="close-btn" (click)="onClose()" type="button">
         <i class="fa fa-times"></i>
       </button>
     </div>
 
     <!-- Modal Body -->
     <div class="modal-body">
-      <!-- Loading Edit Data -->
-      <div *ngIf="loadingEditData" class="loading-spinner">
-        <div class="spinner"></div>
-        <p>{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DATA' | translate }}</p>
-      </div>
-
-      <form [formGroup]="createForm" (ngSubmit)="onSubmit()" *ngIf="!loadingEditData">
+      <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
         
         <!-- Main Configuration Section -->
         <div class="form-section">
-          <h5 class="section-title">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MAIN_CONFIGURATION' | translate }}</h5>
+          <h5 class="section-title">Main Configuration</h5>
           
           <!-- For Everyone Radio Buttons -->
           <div class="form-group">
-            <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.TARGET_AUDIENCE' | translate }}</label>
+            <label class="form-label required">Target Audience</label>
             <div class="radio-group">
               <div class="radio-option" *ngFor="let option of forEveryoneOptions">
                 <input 
@@ -37,12 +31,12 @@
                   (change)="onForEveryoneChange()"
                   class="radio-input">
                 <label [for]="'forEveryone_' + option.value" class="radio-label">
-                  {{ option.label | translate }}
+                  {{ option.label }}
                 </label>
               </div>
             </div>
             <div class="error-message" *ngIf="isFieldRequired('forEveryone')">
-              {{ 'CREATE_REQUEST_APPROVAL_ROUTE.FIELD_REQUIRED' | translate }}
+              This field is required
             </div>
           </div>
 
@@ -51,52 +45,52 @@
             
             <!-- Status Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
+              <label class="form-label required">Status</label>
               <div class="dropdown-wrapper">
                 <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}</option>
+                  <option value="">Select Status</option>
                   <option *ngFor="let status of statuses" [value]="status.value">
                     {{ status.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingStatuses">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_STATUSES' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingStatuses">Loading statuses...</div>
               <div class="error-message" *ngIf="isFieldRequired('statusId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS_REQUIRED' | translate }}
+                Please select a status
               </div>
             </div>
 
             <!-- Request Levels Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</label>
+              <label class="form-label required">Request Levels</label>
               <div class="dropdown-wrapper">
                 <select formControlName="reqLevels" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevels')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_REQUEST_LEVELS' | translate }}</option>
+                  <option value="">Select Request Level</option>
                   <option *ngFor="let level of requestLevels" [value]="level.value">
                     {{ level.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingRequestLevels">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_REQUEST_LEVELS' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingRequestLevels">Loading request levels...</div>
               <div class="error-message" *ngIf="isFieldRequired('reqLevels')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS_REQUIRED' | translate }}
+                Please select request levels
               </div>
             </div>
 
             <!-- Note Input -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</label>
+              <label class="form-label required">Note</label>
               <textarea 
                 formControlName="note" 
                 class="form-textarea" 
                 rows="3" 
-                [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.NOTE_PLACEHOLDER' | translate"
+                placeholder="Enter note..."
                 [class.error]="isFieldRequired('note')">
               </textarea>
               <div class="error-message" *ngIf="isFieldRequired('note')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE_REQUIRED' | translate }}
+                Note is required
               </div>
             </div>
 
@@ -107,12 +101,12 @@
                 class="level-section"
                 [formGroupName]="i">
                 
-                <h5 class="level-title">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }} {{ i + 1 }}</h5>
+                <h5 class="level-title">{{ getLevelLabel(i) }}</h5>
                 
                 <!-- Dynamic Direct Manager -->
                 <div class="form-subsection">
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DYNAMIC_DIRECT_MANAGER' | translate }}</label>
+                    <label class="form-label">Dynamic Direct Manager</label>
                     <div class="radio-group inline">
                       <div class="radio-option" *ngFor="let option of yesNoOptions">
                         <input 
@@ -122,7 +116,7 @@
                           formControlName="dynDirectMgr"
                           class="radio-input">
                         <label [for]="'dynDirectMgr_' + i + '_' + option.value" class="radio-label">
-                          {{ option.label | translate }}
+                          {{ option.label }}
                         </label>
                       </div>
                     </div>
@@ -132,19 +126,19 @@
                   <div class="dynamic-details" *ngIf="isDynDirectMgrSelected(i)">
                     <div class="form-row">
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                        <label class="form-label">Days Limits</label>
                         <input 
                           type="number" 
                           formControlName="dynDirectMgrDaysLimits" 
                           class="form-input"
-                          [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                          placeholder="Enter days limits">
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                        <label class="form-label">After Limit Action</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynDirectMgrAfterLimitAction" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}</option>
+                            <option value="">Select Action</option>
                             <option *ngFor="let action of afterLimitActions" [value]="action.value">
                               {{ action.label }}
                             </option>
@@ -154,10 +148,10 @@
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }}</label>
+                        <label class="form-label">Level</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynDirectMgrLevel" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_LEVEL' | translate }}</option>
+                            <option value="">Select Level</option>
                             <option *ngFor="let level of levels" [value]="level.value">
                               {{ level.label }}
                             </option>
@@ -172,7 +166,7 @@
                 <!-- Dynamic Manager of Department -->
                 <div class="form-subsection">
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DYNAMIC_MANAGER_DEPARTMENT' | translate }}</label>
+                    <label class="form-label">Dynamic Manager of Department</label>
                     <div class="radio-group inline">
                       <div class="radio-option" *ngFor="let option of yesNoOptions">
                         <input 
@@ -182,7 +176,7 @@
                           formControlName="dynMgrOfDept"
                           class="radio-input">
                         <label [for]="'dynMgrOfDept_' + i + '_' + option.value" class="radio-label">
-                          {{ option.label | translate }}
+                          {{ option.label }}
                         </label>
                       </div>
                     </div>
@@ -192,19 +186,19 @@
                   <div class="dynamic-details" *ngIf="isDynMgrOfDeptSelected(i)">
                     <div class="form-row">
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                        <label class="form-label">Days Limits</label>
                         <input 
                           type="number" 
                           formControlName="dynMgrOfDeptDaysLimits" 
                           class="form-input"
-                          [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                          placeholder="Enter days limits">
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                        <label class="form-label">After Limit Action</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfDeptAfterLimitAction" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}</option>
+                            <option value="">Select Action</option>
                             <option *ngFor="let action of afterLimitActions" [value]="action.value">
                               {{ action.label }}
                             </option>
@@ -214,10 +208,10 @@
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }}</label>
+                        <label class="form-label">Level</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfDeptLevel" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_LEVEL' | translate }}</option>
+                            <option value="">Select Level</option>
                             <option *ngFor="let level of levels" [value]="level.value">
                               {{ level.label }}
                             </option>
@@ -232,7 +226,7 @@
                 <!-- Dynamic Manager of Branch -->
                 <div class="form-subsection">
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DYNAMIC_MANAGER_BRANCH' | translate }}</label>
+                    <label class="form-label">Dynamic Manager of Branch</label>
                     <div class="radio-group inline">
                       <div class="radio-option" *ngFor="let option of yesNoOptions">
                         <input 
@@ -242,7 +236,7 @@
                           formControlName="dynMgrOfBranch"
                           class="radio-input">
                         <label [for]="'dynMgrOfBranch_' + i + '_' + option.value" class="radio-label">
-                          {{ option.label | translate }}
+                          {{ option.label }}
                         </label>
                       </div>
                     </div>
@@ -252,19 +246,19 @@
                   <div class="dynamic-details" *ngIf="isDynMgrOfBranchSelected(i)">
                     <div class="form-row">
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                        <label class="form-label">Days Limits</label>
                         <input 
                           type="number" 
                           formControlName="dynMgrOfBranchDaysLimits" 
                           class="form-input"
-                          [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                          placeholder="Enter days limits">
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                        <label class="form-label">After Limit Action</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfBranchAfterLimitAction" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}</option>
+                            <option value="">Select Action</option>
                             <option *ngFor="let action of afterLimitActions" [value]="action.value">
                               {{ action.label }}
                             </option>
@@ -274,10 +268,10 @@
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }}</label>
+                        <label class="form-label">Level</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfBranchLevel" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_LEVEL' | translate }}</option>
+                            <option value="">Select Level</option>
                             <option *ngFor="let level of levels" [value]="level.value">
                               {{ level.label }}
                             </option>
@@ -291,110 +285,110 @@
 
                 <!-- Static Dropdowns Section -->
                 <div class="form-subsection">
-                  <h6 class="subsection-title">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ASSIGNMENTS' | translate }}</h6>
+                  <h6 class="subsection-title">Assignments</h6>
                   
                   <div class="form-row">
                     <!-- Manager -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER' | translate }}</label>
+                      <label class="form-label">Manager</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="mgrId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER' | translate }}</option>
+                          <option value="">Select Manager</option>
                           <option *ngFor="let manager of managers" [value]="manager.value">
                             {{ manager.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_MANAGERS' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingManagers">Loading managers...</div>
                     </div>
 
                     <!-- Manager of Department -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
+                      <label class="form-label">Manager of Department</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="mgrOfDeptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
+                          <option value="">Select Manager of Department</option>
                           <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
                             {{ dept.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
                     </div>
 
                     <!-- Manager of Branch -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
+                      <label class="form-label">Manager of Branch</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="mgrOfBranchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
+                          <option value="">Select Manager of Branch</option>
                           <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
                             {{ branch.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
                     </div>
                   </div>
 
                   <div class="form-row">
                     <!-- Department -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
+                      <label class="form-label">Department</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="deptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}</option>
+                          <option value="">Select Department</option>
                           <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
                             {{ dept.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
                     </div>
 
                     <!-- Branch -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
+                      <label class="form-label">Branch</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="branchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}</option>
+                          <option value="">Select Branch</option>
                           <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
                             {{ branch.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
                     </div>
 
                     <!-- Role -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
+                      <label class="form-label">Role</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="roleId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}</option>
+                          <option value="">Select Role</option>
                           <option *ngFor="let role of roles" [value]="role.value">
                             {{ role.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingRoles">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_ROLES' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingRoles">Loading roles...</div>
                     </div>
                   </div>
 
                   <!-- Note Details -->
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL_NOTE' | translate }}</label>
+                    <label class="form-label">Level Note</label>
                     <textarea 
                       formControlName="noteDetails" 
                       class="form-textarea" 
                       rows="2" 
-                      [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL_NOTE_PLACEHOLDER' | translate">
+                      placeholder="Enter level-specific note...">
                     </textarea>
                   </div>
                 </div>
@@ -407,160 +401,160 @@
             
             <!-- Employee Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.EMPLOYEE' | translate }}</label>
+              <label class="form-label required">Employee</label>
               <div class="dropdown-wrapper">
                 <select formControlName="empId" class="form-select" [class.error]="isFieldRequired('empId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_EMPLOYEE' | translate }}</option>
+                  <option value="">Select Employee</option>
                   <option *ngFor="let employee of employees" [value]="employee.value">
                     {{ employee.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingEmployees">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_EMPLOYEES' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingEmployees">Loading employees...</div>
               <div class="error-message" *ngIf="isFieldRequired('empId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.EMPLOYEE_REQUIRED' | translate }}
+                Please select an employee
               </div>
             </div>
 
             <!-- Manager of Department Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
+              <label class="form-label required">Manager of Department</label>
               <div class="dropdown-wrapper">
                 <select formControlName="mgrOfDeptId" class="form-select" [class.error]="isFieldRequired('mgrOfDeptId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
+                  <option value="">Select Manager of Department</option>
                   <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
                     {{ dept.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
               <div class="error-message" *ngIf="isFieldRequired('mgrOfDeptId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_DEPARTMENT_REQUIRED' | translate }}
+                Please select a manager of department
               </div>
             </div>
 
             <!-- Manager of Branch Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
+              <label class="form-label required">Manager of Branch</label>
               <div class="dropdown-wrapper">
                 <select formControlName="mgrOfBranchId" class="form-select" [class.error]="isFieldRequired('mgrOfBranchId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
+                  <option value="">Select Manager of Branch</option>
                   <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
                     {{ branch.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
               <div class="error-message" *ngIf="isFieldRequired('mgrOfBranchId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_BRANCH_REQUIRED' | translate }}
+                Please select a manager of branch
               </div>
             </div>
 
             <!-- Department Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
+              <label class="form-label required">Department</label>
               <div class="dropdown-wrapper">
                 <select formControlName="deptId" class="form-select" [class.error]="isFieldRequired('deptId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}</option>
+                  <option value="">Select Department</option>
                   <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
                     {{ dept.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
               <div class="error-message" *ngIf="isFieldRequired('deptId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT_REQUIRED' | translate }}
+                Please select a department
               </div>
             </div>
 
             <!-- Branch Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
+              <label class="form-label required">Branch</label>
               <div class="dropdown-wrapper">
                 <select formControlName="branchId" class="form-select" [class.error]="isFieldRequired('branchId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}</option>
+                  <option value="">Select Branch</option>
                   <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
                     {{ branch.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
               <div class="error-message" *ngIf="isFieldRequired('branchId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH_REQUIRED' | translate }}
+                Please select a branch
               </div>
             </div>
 
             <!-- Role Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
+              <label class="form-label required">Role</label>
               <div class="dropdown-wrapper">
                 <select formControlName="roleId" class="form-select" [class.error]="isFieldRequired('roleId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}</option>
+                  <option value="">Select Role</option>
                   <option *ngFor="let role of roles" [value]="role.value">
                     {{ role.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingRoles">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_ROLES' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingRoles">Loading roles...</div>
               <div class="error-message" *ngIf="isFieldRequired('roleId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE_REQUIRED' | translate }}
+                Please select a role
               </div>
             </div>
 
             <!-- Status Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
+              <label class="form-label required">Status</label>
               <div class="dropdown-wrapper">
                 <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}</option>
+                  <option value="">Select Status</option>
                   <option *ngFor="let status of statuses" [value]="status.value">
                     {{ status.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingStatuses">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_STATUSES' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingStatuses">Loading statuses...</div>
               <div class="error-message" *ngIf="isFieldRequired('statusId')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS_REQUIRED' | translate }}
+                Please select a status
               </div>
             </div>
 
             <!-- Request Levels Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</label>
+              <label class="form-label required">Request Levels</label>
               <div class="dropdown-wrapper">
                 <select formControlName="reqLevels" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevels')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_REQUEST_LEVELS' | translate }}</option>
+                  <option value="">Select Request Level</option>
                   <option *ngFor="let level of requestLevels" [value]="level.value">
                     {{ level.label }}
                   </option>
                 </select>
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
-              <div class="loading-text" *ngIf="loadingRequestLevels">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_REQUEST_LEVELS' | translate }}</div>
+              <div class="loading-text" *ngIf="loadingRequestLevels">Loading request levels...</div>
               <div class="error-message" *ngIf="isFieldRequired('reqLevels')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS_REQUIRED' | translate }}
+                Please select request levels
               </div>
             </div>
 
             <!-- Note Input -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</label>
+              <label class="form-label required">Note</label>
               <textarea 
                 formControlName="note" 
                 class="form-textarea" 
                 rows="3" 
-                [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.NOTE_PLACEHOLDER' | translate"
+                placeholder="Enter note..."
                 [class.error]="isFieldRequired('note')">
               </textarea>
               <div class="error-message" *ngIf="isFieldRequired('note')">
-                {{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE_REQUIRED' | translate }}
+                Note is required
               </div>
             </div>
 
@@ -571,12 +565,12 @@
                 class="level-section"
                 [formGroupName]="i">
                 
-                <h5 class="level-title">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }} {{ i + 1 }}</h5>
+                <h5 class="level-title">{{ getLevelLabel(i) }}</h5>
                 
                 <!-- Dynamic Direct Manager -->
                 <div class="form-subsection">
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DYNAMIC_DIRECT_MANAGER' | translate }}</label>
+                    <label class="form-label">Dynamic Direct Manager</label>
                     <div class="radio-group inline">
                       <div class="radio-option" *ngFor="let option of yesNoOptions">
                         <input 
@@ -586,7 +580,7 @@
                           formControlName="dynDirectMgr"
                           class="radio-input">
                         <label [for]="'dynDirectMgr_' + i + '_' + option.value" class="radio-label">
-                          {{ option.label | translate }}
+                          {{ option.label }}
                         </label>
                       </div>
                     </div>
@@ -596,19 +590,19 @@
                   <div class="dynamic-details" *ngIf="isDynDirectMgrSelected(i)">
                     <div class="form-row">
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                        <label class="form-label">Days Limits</label>
                         <input 
                           type="number" 
                           formControlName="dynDirectMgrDaysLimits" 
                           class="form-input"
-                          [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                          placeholder="Enter days limits">
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                        <label class="form-label">After Limit Action</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynDirectMgrAfterLimitAction" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}</option>
+                            <option value="">Select Action</option>
                             <option *ngFor="let action of afterLimitActions" [value]="action.value">
                               {{ action.label }}
                             </option>
@@ -618,10 +612,10 @@
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }}</label>
+                        <label class="form-label">Level</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynDirectMgrLevel" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_LEVEL' | translate }}</option>
+                            <option value="">Select Level</option>
                             <option *ngFor="let level of levels" [value]="level.value">
                               {{ level.label }}
                             </option>
@@ -636,7 +630,7 @@
                 <!-- Dynamic Manager of Department -->
                 <div class="form-subsection">
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DYNAMIC_MANAGER_DEPARTMENT' | translate }}</label>
+                    <label class="form-label">Dynamic Manager of Department</label>
                     <div class="radio-group inline">
                       <div class="radio-option" *ngFor="let option of yesNoOptions">
                         <input 
@@ -646,7 +640,7 @@
                           formControlName="dynMgrOfDept"
                           class="radio-input">
                         <label [for]="'dynMgrOfDept_' + i + '_' + option.value" class="radio-label">
-                          {{ option.label | translate }}
+                          {{ option.label }}
                         </label>
                       </div>
                     </div>
@@ -656,19 +650,19 @@
                   <div class="dynamic-details" *ngIf="isDynMgrOfDeptSelected(i)">
                     <div class="form-row">
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                        <label class="form-label">Days Limits</label>
                         <input 
                           type="number" 
                           formControlName="dynMgrOfDeptDaysLimits" 
                           class="form-input"
-                          [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                          placeholder="Enter days limits">
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                        <label class="form-label">After Limit Action</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfDeptAfterLimitAction" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}</option>
+                            <option value="">Select Action</option>
                             <option *ngFor="let action of afterLimitActions" [value]="action.value">
                               {{ action.label }}
                             </option>
@@ -678,10 +672,10 @@
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }}</label>
+                        <label class="form-label">Level</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfDeptLevel" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_LEVEL' | translate }}</option>
+                            <option value="">Select Level</option>
                             <option *ngFor="let level of levels" [value]="level.value">
                               {{ level.label }}
                             </option>
@@ -696,7 +690,7 @@
                 <!-- Dynamic Manager of Branch -->
                 <div class="form-subsection">
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DYNAMIC_MANAGER_BRANCH' | translate }}</label>
+                    <label class="form-label">Dynamic Manager of Branch</label>
                     <div class="radio-group inline">
                       <div class="radio-option" *ngFor="let option of yesNoOptions">
                         <input 
@@ -706,7 +700,7 @@
                           formControlName="dynMgrOfBranch"
                           class="radio-input">
                         <label [for]="'dynMgrOfBranch_' + i + '_' + option.value" class="radio-label">
-                          {{ option.label | translate }}
+                          {{ option.label }}
                         </label>
                       </div>
                     </div>
@@ -716,19 +710,19 @@
                   <div class="dynamic-details" *ngIf="isDynMgrOfBranchSelected(i)">
                     <div class="form-row">
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                        <label class="form-label">Days Limits</label>
                         <input 
                           type="number" 
                           formControlName="dynMgrOfBranchDaysLimits" 
                           class="form-input"
-                          [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                          placeholder="Enter days limits">
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                        <label class="form-label">After Limit Action</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfBranchAfterLimitAction" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}</option>
+                            <option value="">Select Action</option>
                             <option *ngFor="let action of afterLimitActions" [value]="action.value">
                               {{ action.label }}
                             </option>
@@ -738,10 +732,10 @@
                       </div>
                       
                       <div class="form-group">
-                        <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL' | translate }}</label>
+                        <label class="form-label">Level</label>
                         <div class="dropdown-wrapper">
                           <select formControlName="dynMgrOfBranchLevel" class="form-select">
-                            <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_LEVEL' | translate }}</option>
+                            <option value="">Select Level</option>
                             <option *ngFor="let level of levels" [value]="level.value">
                               {{ level.label }}
                             </option>
@@ -755,110 +749,110 @@
 
                 <!-- Static Dropdowns Section -->
                 <div class="form-subsection">
-                  <h6 class="subsection-title">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ASSIGNMENTS' | translate }}</h6>
+                  <h6 class="subsection-title">Assignments</h6>
                   
                   <div class="form-row">
                     <!-- Manager -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER' | translate }}</label>
+                      <label class="form-label">Manager</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="mgrId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER' | translate }}</option>
+                          <option value="">Select Manager</option>
                           <option *ngFor="let manager of managers" [value]="manager.value">
                             {{ manager.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_MANAGERS' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingManagers">Loading managers...</div>
                     </div>
 
                     <!-- Manager of Department -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
+                      <label class="form-label">Manager of Department</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="mgrOfDeptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
+                          <option value="">Select Manager of Department</option>
                           <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
                             {{ dept.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
                     </div>
 
                     <!-- Manager of Branch -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
+                      <label class="form-label">Manager of Branch</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="mgrOfBranchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
+                          <option value="">Select Manager of Branch</option>
                           <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
                             {{ branch.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
                     </div>
                   </div>
 
                   <div class="form-row">
                     <!-- Department -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
+                      <label class="form-label">Department</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="deptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}</option>
+                          <option value="">Select Department</option>
                           <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
                             {{ dept.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">Loading departments...</div>
                     </div>
 
                     <!-- Branch -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
+                      <label class="form-label">Branch</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="branchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}</option>
+                          <option value="">Select Branch</option>
                           <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
                             {{ branch.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">Loading branches...</div>
                     </div>
 
                     <!-- Role -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
+                      <label class="form-label">Role</label>
                       <div class="dropdown-wrapper">
                         <select formControlName="roleId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}</option>
+                          <option value="">Select Role</option>
                           <option *ngFor="let role of roles" [value]="role.value">
                             {{ role.label }}
                           </option>
                         </select>
                         <i class="fa fa-chevron-down dropdown-icon"></i>
                       </div>
-                      <div class="loading-text" *ngIf="loadingRoles">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_ROLES' | translate }}</div>
+                      <div class="loading-text" *ngIf="loadingRoles">Loading roles...</div>
                     </div>
                   </div>
 
                   <!-- Note Details -->
                   <div class="form-group">
-                    <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL_NOTE' | translate }}</label>
+                    <label class="form-label">Level Note</label>
                     <textarea 
                       formControlName="noteDetails" 
                       class="form-textarea" 
                       rows="2" 
-                      [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.LEVEL_NOTE_PLACEHOLDER' | translate">
+                      placeholder="Enter level-specific note...">
                     </textarea>
                   </div>
                 </div>
@@ -872,7 +866,7 @@
     <!-- Modal Footer -->
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="onClose()" [disabled]="submitting">
-        {{ 'CREATE_REQUEST_APPROVAL_ROUTE.CANCEL' | translate }}
+        Cancel
       </button>
       <button 
         type="button" 
@@ -880,8 +874,8 @@
         (click)="onSubmit()" 
         [disabled]="submitting">
         <span *ngIf="submitting" class="spinner-sm"></span>
-        <span *ngIf="!submitting">{{ (editMode ? 'CREATE_REQUEST_APPROVAL_ROUTE.UPDATE_ROUTE' : 'CREATE_REQUEST_APPROVAL_ROUTE.CREATE_ROUTE') | translate }}</span>
-        <span *ngIf="submitting">{{ (editMode ? 'CREATE_REQUEST_APPROVAL_ROUTE.UPDATING' : 'CREATE_REQUEST_APPROVAL_ROUTE.CREATING') | translate }}</span>
+        <span *ngIf="!submitting">Create Route</span>
+        <span *ngIf="submitting">Creating...</span>
       </button>
     </div>
   </div>
@@ -889,4 +883,3 @@
 
 <!-- Toast Messages -->
 <p-toast position="top-right"></p-toast>
-

@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges, S
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
-import { TranslateService } from '@ngx-translate/core';
 
 import { RequestRouteService } from '../../services/request-route.service';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -10,8 +9,7 @@ import {
   DropdownItem,
   CreateRequestApprovalRouteRequest,
   RequestApprovalRouteCreateDto,
-  RouteDetailsLevel,
-  RequestApprovalRouteItem
+  RouteDetailsLevel
 } from '../../../../core/models/requestRoute';
 
 @Component({
@@ -22,8 +20,6 @@ import {
 })
 export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() showModal = false;
-  @Input() editMode = false;
-  @Input() editRouteId: number | null = null;
   @Output() closeModal = new EventEmitter<void>();
   @Output() routeCreated = new EventEmitter<void>();
 
@@ -88,17 +84,16 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   loadingBranchesOrManagers = false;
   loadingRoles = false;
   submitting = false;
-  loadingEditData = false;
   
   // Options for radio buttons
   forEveryoneOptions = [
-    { label: 'CREATE_REQUEST_APPROVAL_ROUTE.FOR_EVERYONE', value: 1 },
-    { label: 'CREATE_REQUEST_APPROVAL_ROUTE.FOR_GROUP', value: 0 }
+    { label: 'For Everyone', value: 1 },
+    { label: 'For a given group of employees', value: 0 }
   ];
   
   yesNoOptions = [
-    { label: 'CREATE_REQUEST_APPROVAL_ROUTE.YES', value: 1 },
-    { label: 'CREATE_REQUEST_APPROVAL_ROUTE.NO', value: 0 }
+    { label: 'Yes', value: 1 },
+    { label: 'No', value: 0 }
   ];
   
   // Selected values
@@ -112,8 +107,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     private fb: FormBuilder,
     private requestRouteService: RequestRouteService,
     public langService: LanguageService,
-    private messageService: MessageService,
-    private translateService: TranslateService
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -140,23 +134,11 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('Modal ngOnChanges called:', changes);
-    console.log('Current showModal state:', this.showModal);
-    console.log('Current editMode state:', this.editMode);
-    
-    if (changes['showModal']) {
-      console.log('showModal changed from', changes['showModal'].previousValue, 'to', changes['showModal'].currentValue);
-      
-      if (changes['showModal'].currentValue) {
-        console.log('Modal opened, loading dropdown data...');
-        this.loadDropdownData();
-        this.resetForm();
-        
-        // If in edit mode and editRouteId is provided, load the route data
-        if (this.editMode && this.editRouteId) {
-          this.loadRouteForEdit();
-        }
-      }
+    console.log('ngOnChanges called:', changes);
+    if (changes['showModal'] && changes['showModal'].currentValue) {
+      console.log('Modal opened, loading dropdown data...');
+      this.loadDropdownData();
+      this.resetForm();
     }
   }
 
@@ -389,59 +371,6 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
           this.loadingRoles = false;
         }
       });
-  }
-
-  private loadRouteForEdit() {
-    if (!this.editRouteId) return;
-    
-    this.loadingEditData = true;
-    console.log('Loading route for edit, ID:', this.editRouteId);
-    
-    this.requestRouteService.getRequestApprovalRouteById({
-      routeId: this.editRouteId,
-      lang: this.currentLang
-    }).subscribe({
-      next: (response) => {
-        console.log('Edit route response:', response);
-        if (response.isSuccess && response.data.requestApprovalRoutes.length > 0) {
-          const routeData = response.data.requestApprovalRoutes[0];
-          this.populateFormWithRouteData(routeData);
-        } else {
-          this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.FAILED_LOAD_ROUTE');
-        }
-        this.loadingEditData = false;
-      },
-      error: (error) => {
-        console.error('Error loading route for edit:', error);
-        this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.ERROR_LOADING_DATA');
-        this.loadingEditData = false;
-      }
-    });
-  }
-
-  private populateFormWithRouteData(routeData: RequestApprovalRouteItem) {
-    console.log('Populating form with route data:', routeData);
-    
-    // Update selectedForEveryone based on route data
-    this.selectedForEveryone = routeData.forEveryoneId;
-    
-    // Patch form values
-    this.createForm.patchValue({
-      forEveryone: routeData.forEveryoneId,
-      statusId: routeData.stsId || '',
-      reqLevels: routeData.reqLevelId,
-      note: routeData.note || '',
-      empId: routeData.empId || null,
-      mgrOfDeptId: routeData.deptIdMgr || null,
-      mgrOfBranchId: routeData.branchIdMgr || null,
-      deptId: routeData.deptId || null,
-      branchId: routeData.branchId || null,
-      roleId: routeData.roleId || null
-    });
-
-    // Set selected request levels and recreate level details
-    this.selectedRequestLevels = routeData.reqLevelId;
-    this.onRequestLevelsChange();
   }
 
   // Getters for form arrays
@@ -732,7 +661,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   onSubmit() {
     if (this.createForm.invalid) {
       this.markFormGroupTouched();
-      this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.FORM_INVALID');
+      this.showErrorMessage('Please fill in all required fields');
       return;
     }
 
@@ -795,32 +724,21 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
       requestApprovalRouteCreateDto: createDto
     };
 
-    // Add routeId for update operation
-    if (this.editMode && this.editRouteId) {
-      (createDto as any).routeId = this.editRouteId;
-    }
-
-    const serviceCall = this.editMode ? 
-      this.requestRouteService.updateRequestApprovalRoute(request, this.currentLang) :
-      this.requestRouteService.createRequestApprovalRoute(request, this.currentLang);
-
-    serviceCall.subscribe({
+    this.requestRouteService.createRequestApprovalRoute(request, this.currentLang)
+      .subscribe({
         next: (response) => {
           if (response.isSuccess) {
-            const successMessage = this.editMode ? 
-              'CREATE_REQUEST_APPROVAL_ROUTE.SUCCESS_UPDATE_MESSAGE' : 
-              'CREATE_REQUEST_APPROVAL_ROUTE.SUCCESS_MESSAGE';
-            this.showSuccessMessage(successMessage);
+            this.showSuccessMessage('Request approval route created successfully');
             this.routeCreated.emit();
             this.onClose();
           } else {
-            this.showErrorMessage(response.message || 'CREATE_REQUEST_APPROVAL_ROUTE.ERROR_MESSAGE');
+            this.showErrorMessage(response.message || 'Error creating request approval route');
           }
           this.submitting = false;
         },
         error: (error) => {
-          console.error('Error with request approval route:', error);
-          this.showErrorMessage(error.error?.message || 'CREATE_REQUEST_APPROVAL_ROUTE.ERROR_MESSAGE');
+          console.error('Error creating request approval route:', error);
+          this.showErrorMessage(error.error?.message || 'Error creating request approval route');
           this.submitting = false;
         }
       });
@@ -879,25 +797,21 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   }
 
   // Message helper methods
-  private showSuccessMessage(messageKey: string) {
-    this.translateService.get(messageKey).subscribe(translatedMessage => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: translatedMessage,
-        life: 3000
-      });
+  private showSuccessMessage(message: string) {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: message,
+      life: 3000
     });
   }
 
-  private showErrorMessage(messageKey: string) {
-    this.translateService.get(messageKey).subscribe(translatedMessage => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: translatedMessage,
-        life: 5000
-      });
+  private showErrorMessage(message: string) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: message,
+      life: 5000
     });
   }
 
@@ -943,10 +857,5 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     this.departmentsDropdownOpen = false;
     this.branchesDropdownOpen = false;
     this.rolesDropdownOpen = false;
-  }
-
-  // Utility methods
-  get isRTL(): boolean {
-    return this.currentLang === 2; // Arabic
   }
 }

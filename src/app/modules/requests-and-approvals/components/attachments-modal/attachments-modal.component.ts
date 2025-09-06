@@ -200,60 +200,36 @@ export class AttachmentsModalComponent implements OnInit, OnDestroy {
 
     reader.readAsDataURL(this.selectedFile);
   }
-  private getMimeType(fileType: string): string {
-    const mimeTypes: { [key: string]: string } = {
-      'pdf': 'application/pdf',
-      'jpg': 'image/jpeg',
-      'jpeg': 'image/jpeg',
-      'png': 'image/png',
-      'gif': 'image/gif',
-      'doc': 'application/msword',
-      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'xls': 'application/vnd.ms-excel',
-      'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'txt': 'text/plain'
-    };
-    return mimeTypes[fileType.toLowerCase()] || 'application/octet-stream';
-  }
 
-  private getFileExtension(mimeType: string): string {
-    const extensionMap: { [key: string]: string } = {
-      'application/pdf': 'pdf',
-      'image/jpeg': 'jpg',
-      'image/jpg': 'jpg',
-      'image/png': 'png',
-      'image/gif': 'gif',
-      'application/msword': 'doc',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-      'application/vnd.ms-excel': 'xls',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-      'text/plain': 'txt'
-    };
-    return extensionMap[mimeType.toLowerCase()] || 'bin';
-  }
   downloadAttachment(attachment: TimeTransactionApprovalRequestAttachment) {
-    if (attachment.m_File) {
-      // Convert base64 to blob and download
-      const byteCharacters = atob(attachment.m_File);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: this.getMimeType(attachment.m_File_Type) });
-      
-      const url = window.URL.createObjectURL(blob);
+    console.log('Download attachment clicked:', attachment);
+    
+    // Check if filePath is a valid URL or just a filename
+    if (attachment.filePath && attachment.filePath.startsWith('http')) {
+      // If it's a full URL, use it directly
       const link = document.createElement('a');
-      link.href = url;
-      const fileExtension = this.getFileExtension(attachment.m_File_Type);
-      link.download = `attachment_${attachment.attchs_ID}.${fileExtension}`;
+      link.href = attachment.filePath;
+      link.download = attachment.fileName;
+      link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+    } else {
+      // If it's not a URL, construct a proper download URL
+      // You might need to adjust this based on your backend file serving setup
+      const downloadUrl = `${environment.apiUrl}/Files/Download/${attachment.filePath}`;
+      console.log('Download URL:', downloadUrl);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = attachment.fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
+    
+    this.showInfoMessage('ATTACHMENTS.DOWNLOAD_STARTED');
   }
-  
 
   deleteAttachment(attachment: TimeTransactionApprovalRequestAttachment) {
     console.log('Delete attachment clicked:', attachment);
