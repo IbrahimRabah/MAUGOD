@@ -21,6 +21,7 @@ import { AttachmentsModalComponent } from './components/attachments-modal/attach
 import { CreatePostRequestModalComponent } from './components/create-post-request-modal/create-post-request-modal.component';
 import { PostRequestAttachmentsModalComponent } from './components/post-request-attachments-modal/post-request-attachments-modal.component';
 import { CreateRequestApprovalRouteModalComponent } from './components/create-request-approval-route-modal/create-request-approval-route-modal.component';
+import { CreateTimeTransactionApprovalComponent } from './components/create-time-transaction-approval/create-time-transaction-approval.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { CreateRequestApprovalRouteModalComponent } from './components/create-re
     AttachmentsModalComponent,
     CreatePostRequestModalComponent,
     PostRequestAttachmentsModalComponent,
-    CreateRequestApprovalRouteModalComponent
+    CreateRequestApprovalRouteModalComponent,
+    CreateTimeTransactionApprovalComponent
   ],
   imports: [
     CommonModule,
