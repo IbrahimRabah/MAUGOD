@@ -125,3 +125,36 @@ export interface UploadTimeTransactionApprovalRequestAttachmentDto {
 export interface UploadTimeTransactionApprovalRequestAttachmentBody {
   UploadTimeTransactionApprovalRequestAttachmentDto: UploadTimeTransactionApprovalRequestAttachmentDto;
 }
+
+export interface TimeTransactionApprovalRequestCreateDto {
+  empId: number;
+  reqByEmpId: number;
+
+  // Send as ISO string e.g. "2025-09-06T19:29:35.538Z"
+  signDate: string;
+  in: string;
+  out: string;
+
+  note: string;
+
+  /** Base64 of the file (raw base64; data URL prefix is okay too — we’ll strip it) */
+  file: string;
+
+  /** File type (e.g. "application/pdf" or "pdf") */
+  fileType: string;
+
+  /** Optional server-side relative path if you use it; can be empty */
+  filePath: string;
+
+  /** Optional note for the attachment */
+  noteAttach: string;
+}
+
+// Full request payload wrapper
+export interface CreateTimeTransactionApprovalRequestPayload {
+  timeTransactionApprovalRequestCreateDto: TimeTransactionApprovalRequestCreateDto;
+}
+
+// Response (adjust the inner type if your API returns a specific object/id)
+export type CreateTimeTransactionApprovalRequestResponse =
+  ApiResponse<boolean | { requestId?: number; reqId?: number }>;

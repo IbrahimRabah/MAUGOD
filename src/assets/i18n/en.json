@@ -2246,7 +2246,22 @@
     "ATTACHMENTS_NOT_IMPLEMENTED": "Attachments view is not yet implemented",
     "CREATE_NOT_IMPLEMENTED": "Create request is not yet implemented",
     "MANUAL_ATTENDANCE_NOT_IMPLEMENTED": "Manual attendance is not yet implemented",
-    "DEPARTMENT_ATTENDANCE_NOT_IMPLEMENTED": "Attendance by department is not yet implemented"
+    "DEPARTMENT_ATTENDANCE_NOT_IMPLEMENTED": "Attendance by department is not yet implemented",
+    "SELECT_EMPLOYEE": "Select Employee",
+    "LOADING_EMPLOYEES": "Loading employees...",
+    "EMPLOYEE_REQUIRED": "Employee selection is required",
+    "SIGN_DATE_REQUIRED": "Sign date is required",
+    "IN_TIME_REQUIRED": "In time is required",
+    "OUT_TIME_REQUIRED": "Out time is required",
+    "NOTE_PLACEHOLDER": "Enter request note...",
+    "ATTACHMENT": "Attachment",
+    "ATTACHMENT_NOTE": "Attachment Note",
+    "ATTACHMENT_NOTE_PLACEHOLDER": "Enter attachment note...",
+    "SUBMIT": "Submit",
+    "CREATE_SUCCESS": "Request created successfully",
+    "CREATE_ERROR": "Error creating request",
+    "INVALID_FORM": "Please fill in all required fields",
+    "LOAD_EMPLOYEES_ERROR": "Error loading employees"
   },
   "REQUEST_DETAILS": {
     "TITLE": "Request Details",

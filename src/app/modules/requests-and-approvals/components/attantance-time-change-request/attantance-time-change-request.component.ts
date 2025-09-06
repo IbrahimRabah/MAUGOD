@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -7,7 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
 import { AttendanceTimeService } from '../../services/attendance-time.service';
-import { TimeTransactionApprovalRequest } from '../../../../core/models/TimeTransactionApprovalData';
+import { RequestRouteService } from '../../services/request-route.service';
+import { TimeTransactionApprovalRequest, TimeTransactionApprovalRequestCreateDto } from '../../../../core/models/TimeTransactionApprovalData';
+import { DropdownItem } from '../../../../core/models/requestRoute';
 
 @Component({
   selector: 'app-attantance-time-change-request',
@@ -33,6 +35,14 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   showAttachmentsModal = false;
   selectedAttachmentRequestId = 0;
   
+  // Create request modal state
+  showCreateRequestModal = false;
+  createRequestForm!: FormGroup;
+  employees: any[] = [];
+  loadingEmployees = false;
+  selectedFile: File | null = null;
+  selectedFileBase64: string = '';
+  
   private langSubscription: Subscription = new Subscription();
   private searchSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic (2) - made public for template access
@@ -43,6 +53,7 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
 
   constructor(
     private attendanceTimeService: AttendanceTimeService,
+    private requestRouteService: RequestRouteService,
     public langService: LanguageService,
     private authService: AuthenticationService,
     private messageService: MessageService,
@@ -72,6 +83,16 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
     this.filterForm = this.fb.group({
       startDate: [''],
       endDate: ['']
+    });
+
+    this.createRequestForm = this.fb.group({
+      empId: ['', Validators.required],
+      signDate: ['', Validators.required],
+      inTime: ['', Validators.required],
+      outTime: ['', Validators.required],
+      note: [''],
+      attachment: [null],
+      attachmentNote: ['']
     });
   }
 
@@ -295,7 +316,107 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
 
   // Placeholder action methods
   createRequest() {
-    this.showInfoMessage('ATTENDANCE_TIME_CHANGE.CREATE_NOT_IMPLEMENTED');
+    this.showCreateRequestModal = true;
+    this.loadEmployees();
+  }
+
+  loadEmployees() {
+    this.loadingEmployees = true;
+    this.requestRouteService.getEmployeesDropdownListForTimeTransactionApproval(this.currentLang)
+      .subscribe({
+        next: (response) => {
+          if (response.isSuccess && response.data) {
+            this.employees = response.data.dropdownListsForTimeTransactionApprovals;
+          }
+          this.loadingEmployees = false;
+        },
+        error: (error) => {
+          console.error('Error loading employees:', error);
+          this.showErrorMessage('ATTENDANCE_TIME_CHANGE.LOAD_EMPLOYEES_ERROR');
+          this.loadingEmployees = false;
+        }
+      });
+  }
+
+  onCloseCreateRequestModal() {
+    this.showCreateRequestModal = false;
+    this.createRequestForm.reset();
+    this.selectedFile = null;
+    this.selectedFileBase64 = '';
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.selectedFileBase64 = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onSubmitCreateRequest() {
+    if (this.createRequestForm.valid) {
+      const formValue = this.createRequestForm.value;
+      
+      // Convert date and time to ISO format
+      const signDate = new Date(formValue.signDate);
+      const inTime = new Date();
+      const outTime = new Date();
+      
+      // Set time for in and out using today's date
+      const [inHours, inMinutes] = formValue.inTime.split(':');
+      inTime.setHours(parseInt(inHours), parseInt(inMinutes), 0, 0);
+      
+      const [outHours, outMinutes] = formValue.outTime.split(':');
+      outTime.setHours(parseInt(outHours), parseInt(outMinutes), 0, 0);
+
+      // Get base64 without data URL prefix
+      let fileBase64 = '';
+      let fileType = '';
+      let fileName = '';
+      
+      if (this.selectedFileBase64) {
+        const base64Data = this.selectedFileBase64.split(',')[1];
+        fileBase64 = base64Data;
+        fileType = this.selectedFile?.type || 'application/octet-stream';
+        fileName = this.selectedFile?.name || 'attachment';
+      }
+
+      const dto: TimeTransactionApprovalRequestCreateDto = {
+        empId: parseInt(formValue.empId),
+        reqByEmpId: this.authService.getEmpIdAsNumber() || 0,
+        signDate: signDate.toISOString(),
+        in: inTime.toISOString(),
+        out: outTime.toISOString(),
+        note: formValue.note || '',
+        file: fileBase64,
+        fileType: fileType,
+        filePath: fileName,
+        noteAttach: formValue.attachmentNote || ''
+      };
+
+      this.attendanceTimeService.createTimeTransactionApprovalRequest(dto, this.currentLang)
+        .subscribe({
+          next: (response) => {
+            if (response.isSuccess) {
+              this.showSuccessMessage('ATTENDANCE_TIME_CHANGE.CREATE_SUCCESS');
+              this.onCloseCreateRequestModal();
+              this.loadTimeTransactionRequests();
+            } else {
+              this.showErrorMessage('ATTENDANCE_TIME_CHANGE.CREATE_ERROR');
+            }
+          },
+          error: (error) => {
+            console.error('Error creating request:', error);
+            this.showErrorMessage('ATTENDANCE_TIME_CHANGE.CREATE_ERROR');
+          }
+        });
+    } else {
+      this.showWarningMessage('ATTENDANCE_TIME_CHANGE.INVALID_FORM');
+    }
   }
 
   manualAttendance() {

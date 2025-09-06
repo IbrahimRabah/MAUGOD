@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse, RequestRoadMapForAttendanceTimeChangeRequestDetailsData, RequestTransactionsForAttendanceTimeChangeRequestDetailsData, TimeTransactionApprovalData, TimeTransactionApprovalRequestAttachmentsData, TimeTransactionApprovalRequestBody, UploadTimeTransactionApprovalRequestAttachmentBody } from '../../../core/models/TimeTransactionApprovalData';
+import { ApiResponse, CreateTimeTransactionApprovalRequestPayload, CreateTimeTransactionApprovalRequestResponse, RequestRoadMapForAttendanceTimeChangeRequestDetailsData, RequestTransactionsForAttendanceTimeChangeRequestDetailsData, TimeTransactionApprovalData, TimeTransactionApprovalRequestAttachmentsData, TimeTransactionApprovalRequestBody, TimeTransactionApprovalRequestCreateDto, UploadTimeTransactionApprovalRequestAttachmentBody } from '../../../core/models/TimeTransactionApprovalData';
 
 @Injectable({
   providedIn: 'root'
@@ -148,12 +148,48 @@ DeleteTimeTransactionApprovalRequestAttachment(
   return this.http.delete<ApiResponse<boolean>>(url, { headers });
 }
 
+  createTimeTransactionApprovalRequest(
+    dto: TimeTransactionApprovalRequestCreateDto,
+    lang: number = 1
+  ): Observable<CreateTimeTransactionApprovalRequestResponse> {
+    const headers = new HttpHeaders({
+      'accept': '*/*',
+      'Content-Type': 'application/json',
+      'lang': String(lang),
+    });
 
+    // Normalize file to raw base64 (no data:...;base64, prefix)
+    const normalizedDto: TimeTransactionApprovalRequestCreateDto = {
+      ...dto,
+      file: this.asPureBase64(dto.file),
+      // optional: normalize/standardize fileType (keep as-is if you prefer)
+      fileType: (dto.fileType || '').toLowerCase(),
+    };
+
+    const body: CreateTimeTransactionApprovalRequestPayload = {
+      timeTransactionApprovalRequestCreateDto: normalizedDto,
+    };
+
+    return this.http.post<CreateTimeTransactionApprovalRequestResponse>(
+      `${this.apiUrl}/CreateTimeTransactionApproval` ,
+      body,
+      { headers }
+    );
+  }
+
+  /** Utility: strip data URL prefix, keep raw base64 only */
+  private asPureBase64(input: string): string {
+    if (!input) return '';
+    if (input.startsWith('data:')) {
+      const parts = input.split(',');
+      return parts.length > 1 ? parts[1] : '';
+    }
+    return input;
+  }
 
 /*
 
-  ... create 
-  CreateTimeTransactionApprovalRequest
+  // ... add other methods as needed, e.g., for fetching
   
   attendance by depaertment 
   GetDepartmentAttendanceForAttendanceTimeChangeRequest

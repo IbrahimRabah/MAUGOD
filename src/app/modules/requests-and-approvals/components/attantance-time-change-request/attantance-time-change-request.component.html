@@ -233,4 +233,97 @@
     [requestId]="selectedAttachmentRequestId"
     (closeModal)="onCloseAttachmentsModal()">
   </app-attachments-modal>
+
+  <!-- Create Request Modal -->
+  <div *ngIf="showCreateRequestModal" class="modal-overlay">
+    <div class="modal-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <div class="modal-header">
+        <h3>{{ 'ATTENDANCE_TIME_CHANGE.CREATE_REQUEST' | translate }}</h3>
+        <button type="button" class="close-btn" (click)="onCloseCreateRequestModal()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <form [formGroup]="createRequestForm" (ngSubmit)="onSubmitCreateRequest()">
+          
+          <!-- Employee Selection -->
+          <div class="form-group">
+            <label for="empId">{{ 'ATTENDANCE_TIME_CHANGE.EMPLOYEE' | translate }} *</label>
+            <select id="empId" formControlName="empId" class="form-input" [disabled]="loadingEmployees">
+              <option value="">{{ 'ATTENDANCE_TIME_CHANGE.SELECT_EMPLOYEE' | translate }}</option>
+              <option *ngFor="let employee of employees" [value]="employee.value">{{ employee.label }}</option>
+            </select>
+            <div *ngIf="loadingEmployees" class="loading-text">
+              {{ 'ATTENDANCE_TIME_CHANGE.LOADING_EMPLOYEES' | translate }}
+            </div>
+            <div *ngIf="createRequestForm.get('empId')?.invalid && createRequestForm.get('empId')?.touched" class="error-message">
+              {{ 'ATTENDANCE_TIME_CHANGE.EMPLOYEE_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- Sign Date -->
+          <div class="form-group">
+            <label for="signDate">{{ 'ATTENDANCE_TIME_CHANGE.SIGN_DATE' | translate }} *</label>
+            <input type="date" id="signDate" formControlName="signDate" class="form-input">
+            <div *ngIf="createRequestForm.get('signDate')?.invalid && createRequestForm.get('signDate')?.touched" class="error-message">
+              {{ 'ATTENDANCE_TIME_CHANGE.SIGN_DATE_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- In Time -->
+          <div class="form-group">
+            <label for="inTime">{{ 'ATTENDANCE_TIME_CHANGE.IN_TIME' | translate }} *</label>
+            <input type="time" id="inTime" formControlName="inTime" class="form-input">
+            <div *ngIf="createRequestForm.get('inTime')?.invalid && createRequestForm.get('inTime')?.touched" class="error-message">
+              {{ 'ATTENDANCE_TIME_CHANGE.IN_TIME_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- Out Time -->
+          <div class="form-group">
+            <label for="outTime">{{ 'ATTENDANCE_TIME_CHANGE.OUT_TIME' | translate }} *</label>
+            <input type="time" id="outTime" formControlName="outTime" class="form-input">
+            <div *ngIf="createRequestForm.get('outTime')?.invalid && createRequestForm.get('outTime')?.touched" class="error-message">
+              {{ 'ATTENDANCE_TIME_CHANGE.OUT_TIME_REQUIRED' | translate }}
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div class="form-group">
+            <label for="note">{{ 'ATTENDANCE_TIME_CHANGE.NOTE' | translate }}</label>
+            <textarea id="note" formControlName="note" class="form-input" rows="3" 
+                      [placeholder]="'ATTENDANCE_TIME_CHANGE.NOTE_PLACEHOLDER' | translate"></textarea>
+          </div>
+
+          <!-- Attachment -->
+          <div class="form-group">
+            <label for="attachment">{{ 'ATTENDANCE_TIME_CHANGE.ATTACHMENT' | translate }}</label>
+            <input type="file" id="attachment" (change)="onFileSelected($event)" class="form-input" accept="*/*">
+            <div *ngIf="selectedFile" class="file-info">
+              <i class="fa fa-file"></i>
+              <span>{{ selectedFile.name }}</span>
+            </div>
+          </div>
+
+          <!-- Attachment Note -->
+          <div class="form-group">
+            <label for="attachmentNote">{{ 'ATTENDANCE_TIME_CHANGE.ATTACHMENT_NOTE' | translate }}</label>
+            <textarea id="attachmentNote" formControlName="attachmentNote" class="form-input" rows="2" 
+                      [placeholder]="'ATTENDANCE_TIME_CHANGE.ATTACHMENT_NOTE_PLACEHOLDER' | translate"></textarea>
+          </div>
+
+        </form>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="cancel-btn" (click)="onCloseCreateRequestModal()">
+          {{ 'CANCEL' | translate }}
+        </button>
+        <button type="submit" class="submit-btn" [disabled]="!createRequestForm.valid" (click)="onSubmitCreateRequest()">
+          {{ 'ATTENDANCE_TIME_CHANGE.SUBMIT' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

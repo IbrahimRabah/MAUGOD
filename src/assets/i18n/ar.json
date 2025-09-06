@@ -2247,7 +2247,22 @@
     "ATTACHMENTS_NOT_IMPLEMENTED": "عرض المرفقات غير مطبق بعد",
     "CREATE_NOT_IMPLEMENTED": "إنشاء الطلب غير مطبق بعد",
     "MANUAL_ATTENDANCE_NOT_IMPLEMENTED": "الحضور اليدوي غير مطبق بعد",
-    "DEPARTMENT_ATTENDANCE_NOT_IMPLEMENTED": "الحضور حسب القسم غير مطبق بعد"
+    "DEPARTMENT_ATTENDANCE_NOT_IMPLEMENTED": "الحضور حسب القسم غير مطبق بعد",
+    "SELECT_EMPLOYEE": "اختر الموظف",
+    "LOADING_EMPLOYEES": "جاري تحميل الموظفين...",
+    "EMPLOYEE_REQUIRED": "اختيار الموظف مطلوب",
+    "SIGN_DATE_REQUIRED": "تاريخ التبصيم مطلوب",
+    "IN_TIME_REQUIRED": "وقت الدخول مطلوب",
+    "OUT_TIME_REQUIRED": "وقت الخروج مطلوب",
+    "NOTE_PLACEHOLDER": "أدخل ملاحظة الطلب...",
+    "ATTACHMENT": "المرفق",
+    "ATTACHMENT_NOTE": "ملاحظة المرفق",
+    "ATTACHMENT_NOTE_PLACEHOLDER": "أدخل ملاحظة المرفق...",
+    "SUBMIT": "إرسال",
+    "CREATE_SUCCESS": "تم إنشاء الطلب بنجاح",
+    "CREATE_ERROR": "خطأ في إنشاء الطلب",
+    "INVALID_FORM": "يرجى ملء جميع الحقول المطلوبة",
+    "LOAD_EMPLOYEES_ERROR": "خطأ في تحميل الموظفين"
   },
   "REQUEST_DETAILS": {
     "TITLE": "تفاصيل الطلب",
