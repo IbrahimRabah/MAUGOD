@@ -14,7 +14,10 @@
   <!-- Table Header Actions -->
   <div *ngIf="!loading" class="table-header-actions">
     <div class="left-actions">
-      <h3>{{ 'REQUEST_APPROVAL_ROUTE.TITLE' | translate }}</h3>
+      <button type="button" class="btn btn-primary create-btn" (click)="openCreateModal()">
+        <i class="fa fa-plus"></i>
+        {{ 'REQUEST_APPROVAL_ROUTE.CREATE_ROUTE' | translate }}
+      </button>
     </div>
 
     <div class="right-actions">
@@ -51,11 +54,6 @@
       color: white;">
       {{ 'SEARCH' | translate }}
     </button>
-
-    <button type="button" class="btn btn-primary create-btn" (click)="openCreateModal()">
-        <i class="fa fa-plus"></i>
-        {{ 'REQUEST_APPROVAL_ROUTE.CREATE_ROUTE' | translate }}
-      </button>
     </div>
   </div>
 
