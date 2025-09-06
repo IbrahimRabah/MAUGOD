@@ -179,3 +179,69 @@ export interface CreateRequestApprovalRouteResponse {
   isSuccess: boolean;
   data: boolean;
 }
+
+// Generic API response wrapper
+export interface ApiResponse<T> {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: T;
+}
+
+// One route row
+export interface RequestApprovalRouteItem {
+  routeId: number;
+  empId: number;
+  empName: string;
+
+  deptIdMgr: number | null;
+  deptMgrName: string;
+
+  branchIdMgr: number | null;
+  branchMgrName: string;
+
+  deptId: number | null;
+  deptName: string;
+
+  branchId: number | null;
+  branchName: string;
+
+  roleId: number | null;
+  roleName: string;
+
+  forEveryoneId: number;
+  forEveryoneName: string;
+
+  reqLevelId: number;
+  reqLevelName: string;
+
+  isActive: boolean;
+  isActiveText: string;
+
+  // Status (can be empty string)
+  stsId: string;
+  stsName: string;
+
+  note: string;
+
+  // Action strings
+  det: string;
+  str: string;
+  del: string;
+}
+
+// The `data` object
+export interface RequestApprovalRouteByIdData {
+  requestApprovalRoutes: RequestApprovalRouteItem[];
+  totalCount: number;
+}
+
+// Full typed response
+export type GetRequestApprovalRouteByIdResponse =
+  ApiResponse<RequestApprovalRouteByIdData>;
+
+// “Payload” for the GET call (headers/params you send)
+export interface GetRequestApprovalRouteByIdRequest {
+  routeId: number;
+  lang?: number; // default 1
+}

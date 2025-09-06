@@ -18,7 +18,9 @@ import {
   CreateRequestApprovalRouteRequest,
   AfterLimitActionsDropdownData,
   LevelsDropdownData,
-  ManagersDropdownData
+  ManagersDropdownData,
+  GetRequestApprovalRouteByIdResponse,
+  GetRequestApprovalRouteByIdRequest
 } from '../../../core/models/requestRoute';
 
 @Injectable({
@@ -87,6 +89,37 @@ getRoadMapDetailsForRequestApprovalRoute(
         routeId: routeId.toString(),
         pageNumer: pageNumber.toString(), // API uses "pageNumer" typo
         pageSize: pageSize.toString()
+      }
+    }
+  );
+}
+ getRequestApprovalRouteById(
+    req: GetRequestApprovalRouteByIdRequest
+  ): Observable<GetRequestApprovalRouteByIdResponse> {
+    const headers = new HttpHeaders({
+      'accept': '*/*',
+      'lang': String(req.lang ?? 1),
+      'routeId': String(req.routeId),
+    });
+
+    return this.http.get<GetRequestApprovalRouteByIdResponse>(
+      `${this.apiUrl}/GetRequestApprovalRouteById`,
+      { headers }
+    );
+  }
+  
+  updateRequestApprovalRoute(
+  body: CreateRequestApprovalRouteRequest,
+  lang: number
+) {
+  return this.http.post<CreateRequestApprovalRouteResponse>(
+    `${this.apiUrl}/UpdateRequestApprovalRoute`,
+    body,
+    {
+      headers: {
+        accept: '*/*',
+        lang: lang.toString(),
+        'Content-Type': 'application/json'
       }
     }
   );

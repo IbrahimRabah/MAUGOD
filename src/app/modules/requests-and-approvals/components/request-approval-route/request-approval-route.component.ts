@@ -75,6 +75,8 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   // Modal state
   showRoadMapModal = false;
   showCreateModal = false;
+  editMode = false;
+  editRouteId: number | null = null;
   selectedRouteId = 0;
   roadMapDetails: RoadMapDetail[] = [];
   filteredRoadMapDetails: RoadMapDetail[] = [];
@@ -98,6 +100,9 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    console.log('RequestApprovalRoute component initializing...');
+    console.log('Initial modal state:', { showCreateModal: this.showCreateModal, editMode: this.editMode, editRouteId: this.editRouteId });
+    
     this.initializeForms();
     this.initializeLanguage();
     this.setupRoadMapSearchSubscription();
@@ -117,10 +122,6 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
       this.loadApprovalRoutes();
     });
     
-    // Initial load
-    setTimeout(() => {
-      this.loadApprovalRoutes();
-    }, 100);
   }
 
   ngOnDestroy() {
@@ -261,12 +262,6 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
     this.loadApprovalRoutes();
   }
 
-  // Action methods
-  editRoute(route: RequestApprovalRoute) {
-    // TODO: Implement edit functionality
-    this.showInfoMessage('Edit functionality is not yet implemented');
-  }
-
   deleteRoute(route: RequestApprovalRoute) {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this approval route?',
@@ -342,7 +337,11 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   }
 
   onCloseCreateModal() {
+    console.log('Closing modal...');
     this.showCreateModal = false;
+    this.editMode = false;
+    this.editRouteId = null;
+    console.log('Modal state after closing:', { showCreateModal: this.showCreateModal, editMode: this.editMode, editRouteId: this.editRouteId });
   }
 
   onRouteCreated() {
@@ -350,7 +349,20 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
   }
 
   openCreateModal() {
+    console.log('Opening create modal...');
+    this.editMode = false;
+    this.editRouteId = null;
     this.showCreateModal = true;
+    console.log('Modal state after opening:', { showCreateModal: this.showCreateModal, editMode: this.editMode, editRouteId: this.editRouteId });
+  }
+
+  // Action methods
+  editRoute(route: RequestApprovalRoute) {
+    console.log('Opening edit modal for route:', route.routeId);
+    this.editMode = true;
+    this.editRouteId = route.routeId;
+    this.showCreateModal = true;
+    console.log('Modal state after edit:', { showCreateModal: this.showCreateModal, editMode: this.editMode, editRouteId: this.editRouteId });
   }
 
   // Helper methods for displaying data

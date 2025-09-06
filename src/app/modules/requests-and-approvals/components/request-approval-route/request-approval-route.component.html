@@ -344,6 +344,8 @@
 <!-- Create Request Approval Route Modal -->
 <app-create-request-approval-route-modal 
   [showModal]="showCreateModal"
+  [editMode]="editMode"
+  [editRouteId]="editRouteId"
   (closeModal)="onCloseCreateModal()"
   (routeCreated)="onRouteCreated()">
 </app-create-request-approval-route-modal>
