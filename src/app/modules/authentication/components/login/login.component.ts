@@ -53,26 +53,26 @@ export class LoginComponent {
   }
 
   setInfoInStorage(response: LoginResponse): void {
-    localStorage.setItem('token', response.token);
+    localStorage.setItem('token', response.data.token);
     
     try {
-      const decodedToken: any = jwtDecode(response.token);      
-      localStorage.setItem('lang', decodedToken.lang || response.lang.toString());
+      const decodedToken: any = jwtDecode(response.data.token);      
+      localStorage.setItem('lang', decodedToken.lang || response.data.lang.toString());
       localStorage.setItem('exp', decodedToken.exp?.toString() || '');
       localStorage.setItem('langUserName', decodedToken.langUserName || '');
-      localStorage.setItem('empId', decodedToken.empId?.toString() || response.empId.toString());
-      localStorage.setItem('empName', decodedToken.empName || response.empName || '');
-      localStorage.setItem('loginId', decodedToken.loginId || response.loginId || '');
+      localStorage.setItem('empId', decodedToken.empId?.toString() || response.data.empId.toString());
+      localStorage.setItem('empName', decodedToken.empName || response.data.empName || '');
+      localStorage.setItem('loginId', decodedToken.loginId || response.data.loginId || '');
     } catch (error) {
       console.error('Error decoding token:', error);
       // Fallback to response values if token decoding fails
-      localStorage.setItem('lang', response.lang.toString());
-      localStorage.setItem('empId', response.empId.toString());
-      localStorage.setItem('empName', response.empName || '');
-      localStorage.setItem('loginId', response.loginId || '');
+      localStorage.setItem('lang', response.data.lang.toString());
+      localStorage.setItem('empId', response.data.empId.toString());
+      localStorage.setItem('empName', response.data.empName || '');
+      localStorage.setItem('loginId', response.data.loginId || '');
     }
-     localStorage.setItem('menuList', JSON.stringify(response.menuList));
-     switch (response.lang) {
+     localStorage.setItem('menuList', JSON.stringify(response.data.menuList));
+     switch (response.data.lang) {
       case 2:
         this.LanguageService.setLanguage('ar');
         break;
