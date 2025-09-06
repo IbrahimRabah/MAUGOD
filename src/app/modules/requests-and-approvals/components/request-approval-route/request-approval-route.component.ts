@@ -34,18 +34,18 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
 
     searchColumns = [
       { column: '', label: 'All Columns' }, // all columns option
-      { column: 'route_id', label: 'REQUEST_APPROVAL_ROUTE.route_id' },
-      { column: 'EMP_NAME', label: 'REQUEST_APPROVAL_ROUTE.EMP_NAME' },
-      { column: 'MGR_OF_DEPT_NAME', label: 'REQUEST_APPROVAL_ROUTE.MGR_OF_DEPT_NAME' },
-      { column: 'MGR_OF_BRANCH_NAME', label: 'REQUEST_APPROVAL_ROUTE.MGR_OF_BRANCH_NAME' },
-      { column: 'DEPT_NAME', label: 'REQUEST_APPROVAL_ROUTE.DEPT_NAME' },
-      { column: 'BRANCH_NAME', label: 'REQUEST_APPROVAL_ROUTE.BRANCH_NAME' },
-      { column: 'ROLE_NAME', label: 'REQUEST_APPROVAL_ROUTE.ROLE_NAME' },
-      { column: 'FOREVERYONE_NAME', label: 'REQUEST_APPROVAL_ROUTE.FOREVERYONE_NAME' },
-      { column: 'STS_NAME', label: 'REQUEST_APPROVAL_ROUTE.STS_NAME' },
-      { column: 'REQLEVEL_NAME', label: 'REQUEST_APPROVAL_ROUTE.REQLEVEL_NAME' },
-      { column: 'ISACTIVE_NAME', label: 'REQUEST_APPROVAL_ROUTE.ISACTIVE_NAME' },
-      { column: 'note', label: 'REQUEST_APPROVAL_ROUTE.note' }
+      { column: 'route_id', label: 'REQUEST_APPROVAL_ROUTE.ROUTE_ID' },
+      { column: 'EMP_NAME', label: 'REQUEST_APPROVAL_ROUTE.EMPLOYEE' },
+      { column: 'MGR_OF_DEPT_NAME', label: 'REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' },
+      { column: 'MGR_OF_BRANCH_NAME', label: 'REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' },
+      { column: 'DEPT_NAME', label: 'REQUEST_APPROVAL_ROUTE.DEPARTMENT' },
+      { column: 'BRANCH_NAME', label: 'REQUEST_APPROVAL_ROUTE.BRANCH' },
+      { column: 'ROLE_NAME', label: 'REQUEST_APPROVAL_ROUTE.ROLE' },
+      { column: 'FOREVERYONE_NAME', label: 'REQUEST_APPROVAL_ROUTE.FOR_EVERYONE' },
+      { column: 'STS_NAME', label: 'REQUEST_APPROVAL_ROUTE.STATUS' },
+      { column: 'REQLEVEL_NAME', label: 'REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' },
+      { column: 'ISACTIVE_NAME', label: 'REQUEST_APPROVAL_ROUTE.IS_ACTIVE' },
+      { column: 'note', label: 'REQUEST_APPROVAL_ROUTE.NOTE' }
     ];
     selectedColumn: string = '';
     selectedColumnLabel: string = this.searchColumns[0].label;
