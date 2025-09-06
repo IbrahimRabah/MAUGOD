@@ -18,22 +18,41 @@
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" 
-             [class.rtl]="langService.getCurrentLang() === 'ar'" 
-             [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input 
-            type="text" 
-            formControlName="searchText"
-            class="search-input" 
-            [placeholder]="'REQUEST_APPROVAL_ROUTE.SEARCH_PLACEHOLDER' | translate">
-          <button type="button" class="search-btn" (click)="onSearch()">
-            <i class="fa fa-search search-icon"></i>
-          </button>
-        </div>
-      </form>
-      
-      <button type="button" class="btn btn-primary create-btn" (click)="openCreateModal()">
+        <div class="input-group search-container">
+
+      <!-- Dropdown Button -->
+      <div class="input-group-prepend" [ngClass]="{
+      'order-0': langService.getCurrentLang() === 'en', 
+      'order-1': langService.getCurrentLang() === 'ar'}">
+
+        <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+            border-bottom-right-radius: unset;
+            border-top-right-radius: unset;
+            border: 1px solid #e8e3e3;">
+          <i class="fas fa-search"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li *ngFor="let col of searchColumns">
+            <a class="dropdown-item" (click)="selectColumn(col)">
+              {{ col.label | translate }}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Search Input -->
+      <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+        [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+            'order-1': langService.getCurrentLang() === 'en',
+            'order-0': langService.getCurrentLang() === 'ar'
+          }">
+    </div>
+    <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;">
+      {{ 'SEARCH' | translate }}
+    </button>
+
+    <button type="button" class="btn btn-primary create-btn" (click)="openCreateModal()">
         <i class="fa fa-plus"></i>
         {{ 'REQUEST_APPROVAL_ROUTE.CREATE_ROUTE' | translate }}
       </button>
@@ -64,7 +83,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let route of filteredApprovalRoutes; trackBy: trackByRouteId" class="table-row">
+        <tr *ngFor="let route of approvalRoutes; trackBy: trackByRouteId" class="table-row">
           <!-- Edit Action -->
           <td class="action-column">
             <button class="action-btn details-btn" 
@@ -144,7 +163,7 @@
         </tr>
         
         <!-- Empty state row -->
-        <tr *ngIf="filteredApprovalRoutes.length === 0" class="empty-row">
+        <tr *ngIf="approvalRoutes.length === 0" class="empty-row">
           <td colspan="16" class="empty-message text-center">
             <i class="fa fa-inbox"></i>
             {{ 'REQUEST_APPROVAL_ROUTE.NO_DATA_FOUND' | translate }}
@@ -155,7 +174,7 @@
   </div>
 
   <!-- Custom Pagination -->
-  <div *ngIf="!loading && filteredApprovalRoutes.length > 0" class="pagination-wrapper" 
+  <div *ngIf="!loading && approvalRoutes.length > 0" class="pagination-wrapper" 
        [class.rtl]="langService.getCurrentLang() === 'ar'" 
        [class.ltr]="langService.getCurrentLang() === 'en'">
     <div class="pagination-info">
@@ -249,15 +268,13 @@
     </div>
 
     <div class="page-size-selector">
-      <label>{{ 'REQUEST_APPROVAL_ROUTE.ITEMS_PER_PAGE' | translate }}</label>
-      <form [formGroup]="searchForm">
-        <select formControlName="pageSize" (change)="onPageSizeChange()">
+      <label>Items per page</label>
+        <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
           <option value="10">10</option>
           <option value="25">25</option>
           <option value="50">50</option>
           <option value="100">100</option>
         </select>
-      </form>
     </div>
   </div>
   

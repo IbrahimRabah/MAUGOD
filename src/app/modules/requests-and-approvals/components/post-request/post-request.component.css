@@ -120,12 +120,6 @@
   flex-wrap: wrap;
 }
 
-.right-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
 /* Create Button */
 .create-btn {
   background-color: #28a745;
@@ -152,57 +146,31 @@
 }
 
 /* Search Container */
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .search-container {
   position: relative;
   display: flex;
   align-items: center;
 }
-
-.search-input {
-  padding: 10px 45px 10px 15px;
-  border: 2px solid #e9ecef;
-  border-radius: 6px;
-  font-size: 14px;
-  width: 300px;
-  transition: all 0.3s ease;
-  background-color: white;
-}
-
-.search-btn {
-  position: absolute;
-  right: 5px;
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  color: #6c757d;
-  transition: color 0.3s ease;
-}
-
-.search-btn:hover {
-  color: #007bff;
-}
-
-/* RTL (Arabic) - Reverse button order */
+/* RTL (Arabic) - Padding for icon on the right */
 .search-container.rtl .search-input {
-  padding: 10px 15px 10px 45px;
+  padding: 10px 40px 10px 15px;
 }
 
-.search-container.rtl .search-btn {
-  right: auto;
-  left: 5px;
-}
-
-/* LTR (English) - Standard button order */
+/* LTR (English) - Padding for icon on the left */
 .search-container.ltr .search-input {
-  padding: 10px 45px 10px 15px;
+  padding: 10px 15px 10px 40px;
 }
 
-.search-container.ltr .search-btn {
-  right: 5px;
-  left: auto;
+/* Default fallback - Padding for icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-input {
+  padding: 10px 40px 10px 15px;
 }
-
 .search-input:focus {
   outline: none;
   border-color: #007bff;
@@ -210,12 +178,32 @@
 }
 
 .search-input::placeholder {
-  color: #adb5bd;
+  color: #666;
 }
 
 .search-icon {
+  position: absolute;
+  color: #666;
   font-size: 14px;
+  pointer-events: none;
 }
+
+/* RTL (Arabic) - Icon on the right */
+.search-container.rtl .search-icon {
+  right: 12px;
+}
+
+/* LTR (English) - Icon on the left */
+.search-container.ltr .search-icon {
+  left: 12px;
+}
+
+/* Default fallback - Icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-icon {
+  left: 12px;
+}
+
+
 
 /* Table Wrapper - X-axis scrolling only */
 .table-wrapper {
