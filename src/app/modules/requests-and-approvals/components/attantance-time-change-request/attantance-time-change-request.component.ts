@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/services/language.service';
@@ -9,7 +8,7 @@ import { AuthenticationService } from '../../../authentication/services/authenti
 import { AttendanceTimeService } from '../../services/attendance-time.service';
 import { RequestRouteService } from '../../services/request-route.service';
 import { TimeTransactionApprovalRequest, TimeTransactionApprovalRequestCreateDto } from '../../../../core/models/TimeTransactionApprovalData';
-import { DropdownItem } from '../../../../core/models/requestRoute';
+import { PaginationRequest } from '../../../../core/models/pagination';
 
 @Component({
   selector: 'app-attantance-time-change-request',
@@ -21,7 +20,7 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   
   // Core component state
   timeTransactionRequests: TimeTransactionApprovalRequest[] = [];
-  filteredTimeTransactionRequests: TimeTransactionApprovalRequest[] = [];
+  searchTerm: string = '';
   loading = false;
   totalRecords = 0;
   currentPage = 1;
@@ -44,11 +43,49 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   selectedFileBase64: string = '';
   
   private langSubscription: Subscription = new Subscription();
-  private searchSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic (2) - made public for template access
   
+  
+    private isInitialized = false; // Prevent double API calls on init
+
+    searchColumns = [
+      { column: '', label: 'All Columns' }, // all columns option
+      { column: 'req_id', label: 'ATTENDANCE_TIME_CHANGE.REQUEST_ID' },
+      { column: 'EMP_NAME', label: 'ATTENDANCE_TIME_CHANGE.EMPLOYEE' },
+      { column: 'REQUEST_BY_EMP_NAME', label: 'ATTENDANCE_TIME_CHANGE.REQUESTED_BY' },
+      { column: 'sign_date', label: 'ATTENDANCE_TIME_CHANGE.SIGN_DATE' },
+      { column: 'in1', label: 'ATTENDANCE_TIME_CHANGE.IN_TIME' },
+      { column: 'out1', label: 'ATTENDANCE_TIME_CHANGE.OUT_TIME' },
+      { column: 'REQ_STS_NAME', label: 'ATTENDANCE_TIME_CHANGE.REQUEST_STATUS' },
+      { column: 'note', label: 'ATTENDANCE_TIME_CHANGE.NOTE' }
+    ];
+    selectedColumn: string = '';
+    selectedColumnLabel: string = this.searchColumns[0].label;
+  
+    selectColumn(col: any) {
+      this.paginationRequest.searchColumn = col.column;
+      this.selectedColumnLabel = col.label;
+    }
+  
+    paginationRequest: PaginationRequest = {
+        pageNumber: 1,
+        pageSize: 10,
+        lang: 1,// Default to English, can be changed based on app's language settings
+        searchColumn: this.selectedColumn,
+        searchText: this.searchTerm
+      };
+    
+    onSearch() {
+      this.currentPage = 1;
+      this.paginationRequest.pageNumber = 1;
+      this.paginationRequest.searchColumn = this.selectedColumn;
+      this.paginationRequest.searchText = this.searchTerm;
+      this.loadTimeTransactionRequests();
+    }
+  
+
+
   // Reactive Forms
-  searchForm!: FormGroup;
   filterForm!: FormGroup;
 
   constructor(
@@ -65,21 +102,25 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeForms();
     this.initializeLanguage();
-    this.setupSearchSubscription();
+
+    
+    // Set the language for the pagination request based on the current language setting
+  this.langService.currentLang$.subscribe(lang => {
+    this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+
+    // Only reload timeTransactionRequests if component is already initialized (not first time)
+    if (this.isInitialized) {
+      this.loadTimeTransactionRequests(); // Reload timeTransactionRequests when language changes
+      }
+    })
   }
 
   ngOnDestroy() {
     this.langSubscription.unsubscribe();
-    this.searchSubscription.unsubscribe();
   }
 
   // Initialize reactive forms
   private initializeForms() {
-    this.searchForm = this.fb.group({
-      searchTerm: [''],
-      pageSize: [this.pageSize]
-    });
-
     this.filterForm = this.fb.group({
       startDate: [''],
       endDate: ['']
@@ -105,33 +146,17 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Setup search functionality
-  private setupSearchSubscription() {
-    this.searchSubscription = this.searchForm.get('searchTerm')!.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged()
-      )
-      .subscribe(() => {
-        this.applySearch();
-      });
-
-    this.searchForm.get('pageSize')!.valueChanges.subscribe(() => {
-      this.onPageSizeChange();
-    });
-  }
-
   // Pagination computed properties
   get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
+    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
   }
 
   get currentPageStart(): number {
-    return (this.currentPage - 1) * this.pageSize + 1;
+    return (this.currentPage - 1) * this.paginationRequest.pageSize + 1;
   }
 
   get currentPageEnd(): number {
-    return Math.min(this.currentPage * this.pageSize, this.totalRecords);
+    return Math.min(this.currentPage * this.paginationRequest.pageSize, this.totalRecords);
   }
 
   get canGoNext(): boolean {
@@ -148,6 +173,8 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
     const empId = this.authService.getEmpIdAsNumber() || 0;
     const startDate = this.filterForm.get('startDate')?.value || undefined;
     const endDate = this.filterForm.get('endDate')?.value || undefined;
+    const searchColumn = this.paginationRequest.searchColumn;
+    const searchText = this.paginationRequest.searchText;
 
     this.attendanceTimeService.GetTimeTransactionApprovalRequests(
       this.currentLang,
@@ -155,14 +182,15 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
       this.currentPage,
       this.pageSize,
       startDate,
-      endDate
+      endDate,
+      searchColumn,
+      searchText
     ).subscribe({
       next: (response) => {
         if (response.isSuccess) {
           this.timeTransactionRequests = response.data.timeTransactionApprovalRequests;
           // Handle pagination information from API response if available
           this.totalRecords = response.data.totalRecords || this.timeTransactionRequests.length;
-          this.applySearch();
         } else {
           this.showErrorMessage(response.message);
         }
@@ -176,27 +204,11 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Apply search filter to the data
-  private applySearch() {
-    const searchTerm = this.searchForm.get('searchTerm')?.value?.toLowerCase() || '';
-    
-    if (!searchTerm) {
-      this.filteredTimeTransactionRequests = [...this.timeTransactionRequests];
-    } else {
-      this.filteredTimeTransactionRequests = this.timeTransactionRequests.filter(request =>
-        request.empName.toLowerCase().includes(searchTerm) ||
-        request.requestByEmpName.toLowerCase().includes(searchTerm) ||
-        request.reqStsName.toLowerCase().includes(searchTerm) ||
-        request.note.toLowerCase().includes(searchTerm) ||
-        request.reqId.toString().includes(searchTerm)
-      );
-    }
-  }
-
   // Pagination methods
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.paginationRequest.pageNumber = page;
       this.loadTimeTransactionRequests();
     }
   }
@@ -204,6 +216,7 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   nextPage() {
     if (this.canGoNext) {
       this.currentPage++;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadTimeTransactionRequests();
     }
   }
@@ -211,18 +224,15 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   previousPage() {
     if (this.canGoPrevious) {
       this.currentPage--;
+      this.paginationRequest.pageNumber = this.currentPage;
       this.loadTimeTransactionRequests();
     }
   }
 
   onPageSizeChange() {
-    this.pageSize = this.searchForm.get('pageSize')?.value || 10;
     this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
     this.loadTimeTransactionRequests();
-  }
-
-  onSearch() {
-    this.applySearch();
   }
 
   // Filter methods

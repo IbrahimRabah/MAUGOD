@@ -10,7 +10,7 @@ import { ApiResponse, CreateTimeTransactionApprovalRequestPayload, CreateTimeTra
 export class AttendanceTimeService {
   private apiUrl = `${environment.apiUrl}/RequestsAndApprovals`;
   constructor(private http: HttpClient) { }
-  GetTimeTransactionApprovalRequests(lang:number,empId:number,pageNumber:number,pageSize:number,sDate?:string,eDate?:string):Observable<ApiResponse<TimeTransactionApprovalData>> {
+  GetTimeTransactionApprovalRequests(lang:number,empId:number,pageNumber:number,pageSize:number,sDate?:string,eDate?:string,searchColumn?:string,searchText?:string):Observable<ApiResponse<TimeTransactionApprovalData>> {
     const url = `${this.apiUrl}/GetTimeTransactionApprovalRequests`;
         const headers = new HttpHeaders({
       accept: '*/*',
@@ -23,6 +23,8 @@ export class AttendanceTimeService {
       eDate,
       pageNumber,
       pageSize,
+      searchColumn,
+      searchText
     };
     return this.http.post<ApiResponse<TimeTransactionApprovalData>>(url, body, { headers });
   }
