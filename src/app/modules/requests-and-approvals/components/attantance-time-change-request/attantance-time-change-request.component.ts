@@ -66,6 +66,8 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
     this.initializeForms();
     this.initializeLanguage();
     this.setupSearchSubscription();
+    // Ensure initial data load
+    this.loadTimeTransactionRequests();
   }
 
   ngOnDestroy() {
@@ -160,8 +162,8 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.isSuccess) {
           this.timeTransactionRequests = response.data.timeTransactionApprovalRequests;
-          // Handle pagination information from API response if available
-          this.totalRecords = response.data.totalRecords || this.timeTransactionRequests.length;
+          // Handle pagination information from API response - fix: use totalCount instead of totalRecords
+          this.totalRecords = response.data.totalCount || this.timeTransactionRequests.length;
           this.applySearch();
         } else {
           this.showErrorMessage(response.message);

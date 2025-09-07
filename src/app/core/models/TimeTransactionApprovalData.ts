@@ -10,6 +10,7 @@ export interface ApiResponse<T> {
 export interface TimeTransactionApprovalData {
   timeTransactionApprovalRequests: TimeTransactionApprovalRequest[];
   totalRecords?: number;
+  totalCount?: number; // Added to match actual API response
   currentPage?: number;
   pageSize?: number;
   totalPages?: number;
