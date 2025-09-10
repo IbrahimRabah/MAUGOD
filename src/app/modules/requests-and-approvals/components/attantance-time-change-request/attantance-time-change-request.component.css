@@ -121,6 +121,7 @@
 .right-actions {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 /* Delete Selected Button */
@@ -229,65 +230,56 @@
 
 /* Search Container */
 .search-container {
+  position: relative;
   display: flex;
-  border-radius: 5px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  align-items: center;
 }
-
-.search-input {
-  border: 1px solid #ced4da;
-  padding: 8px 15px;
-  font-size: 14px;
-  outline: none;
-  width: 250px;
-  border-radius: 5px 0 0 5px;
-}
-
-.search-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 0 5px 5px 0;
-}
-
-.search-btn:hover {
-  background-color: #0056b3;
-}
-
-/* RTL (Arabic) - Reverse button order */
+/* RTL (Arabic) - Padding for icon on the right */
 .search-container.rtl .search-input {
-  border-radius: 0 5px 5px 0;
+  padding: 10px 40px 10px 15px;
 }
 
-.search-container.rtl .search-btn {
-  border-radius: 5px 0 0 5px;
-}
-
-/* LTR (English) - Standard button order */
+/* LTR (English) - Padding for icon on the left */
 .search-container.ltr .search-input {
-  border-radius: 5px 0 0 5px;
+  padding: 10px 15px 10px 40px;
 }
 
-.search-container.ltr .search-btn {
-  border-radius: 0 5px 5px 0;
+/* Default fallback - Padding for icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-input {
+  padding: 10px 40px 10px 15px;
 }
-
 .search-input:focus {
+  outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .search-input::placeholder {
-  color: #6c757d;
+  color: #666;
 }
 
 .search-icon {
+  position: absolute;
+  color: #666;
   font-size: 14px;
+  pointer-events: none;
 }
+
+/* RTL (Arabic) - Icon on the right */
+.search-container.rtl .search-icon {
+  right: 12px;
+}
+
+/* LTR (English) - Icon on the left */
+.search-container.ltr .search-icon {
+  left: 12px;
+}
+
+/* Default fallback - Icon on the left */
+.search-container:not(.rtl):not(.ltr) .search-icon {
+  left: 12px;
+}
+
 
 /* Table Wrapper - X-axis scrolling only */
 .table-wrapper {

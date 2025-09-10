@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-
+import { PaginationRequest } from '../../../../core/models/pagination';
 import { StepsService } from '../../services/steps.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
@@ -25,7 +25,7 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
   
   // Core component state
   timeTransactionApprovals: TimeTransactionApproval[] = [];
-  filteredApprovals: TimeTransactionApproval[] = [];
+  searchTerm: string = '';
   loading = false;
   totalRecords = 0;
   currentPage = 1;
@@ -43,12 +43,52 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
   roadMapPageSize = 10;
   
   private langSubscription: Subscription = new Subscription();
-  private searchSubscription: Subscription = new Subscription();
   private roadMapSearchSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic (2)
+
+    private isInitialized = false; // Prevent double API calls on init
+
+    searchColumns = [
+      { column: '', label: 'All Columns' }, // all columns option
+      { column: 'route_id', label: 'STEPS_TO_APPROVE.ID' },
+      { column: 'EMP_NAME', label: 'STEPS_TO_APPROVE.EMPLOYEE' },
+      { column: 'MGR_OF_DEPT_NAME', label: 'STEPS_TO_APPROVE.MANAGER_OF_DEPARTMENT' },
+      { column: 'MGR_OF_BRANCH_NAME', label: 'STEPS_TO_APPROVE.MANAGER_OF_BRANCH' },
+      { column: 'DEPT_NAME', label: 'STEPS_TO_APPROVE.DEPARTMENT' },
+      { column: 'BRANCH_NAME', label: 'STEPS_TO_APPROVE.BRANCH' },
+      { column: 'ROLE_NAME', label: 'STEPS_TO_APPROVE.ROLE' },
+      { column: 'FOREVERYONE_NAME', label: 'STEPS_TO_APPROVE.FOR_EVERYONE' },
+      { column: 'REQLEVEL_NAME', label: 'STEPS_TO_APPROVE.REQUEST_LEVELS' },
+      { column: 'ISACTIVE_NAME', label: 'STEPS_TO_APPROVE.IS_ACTIVE' },
+      { column: 'note', label: 'STEPS_TO_APPROVE.NOTE' }
+    ];
+    selectedColumn: string = '';
+    selectedColumnLabel: string = this.searchColumns[0].label;
+  
+    selectColumn(col: any) {
+      this.paginationRequest.searchColumn = col.column;
+      this.selectedColumnLabel = col.label;
+    }
+  
+    paginationRequest: PaginationRequest = {
+        pageNumber: 1,
+        pageSize: 10,
+        lang: 1,// Default to English, can be changed based on app's language settings
+        searchColumn: this.selectedColumn,
+        searchText: this.searchTerm
+      };
+    
+    onSearch() {
+      this.currentPage = 1;
+      this.paginationRequest.pageNumber = 1;
+      this.paginationRequest.searchColumn = this.selectedColumn;
+      this.paginationRequest.searchText = this.searchTerm;
+      this.loadTimeTransactionApprovals();
+    }
+  
+
   
   // Reactive Forms
-  searchForm!: FormGroup;
   roadMapSearchForm!: FormGroup;
 
   constructor(
@@ -66,21 +106,25 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
     this.initializeLanguage();
     this.setupSearchSubscription();
     this.loadTimeTransactionApprovals();
+
+    // Set the language for the pagination request based on the current language setting
+  this.langService.currentLang$.subscribe(lang => {
+    this.paginationRequest.lang = lang === 'ar' ? 2 : 1;
+
+    // Only reload timeTransactionApprovals if component is already initialized (not first time)
+    if (this.isInitialized) {
+      this.loadTimeTransactionApprovals(); // Reload timeTransactionApprovals when language changes
+      }
+    })
   }
 
   ngOnDestroy() {
     this.langSubscription.unsubscribe();
-    this.searchSubscription.unsubscribe();
     this.roadMapSearchSubscription.unsubscribe();
   }
 
   // Initialize reactive forms
   private initializeForms() {
-    this.searchForm = this.fb.group({
-      searchText: [''],
-      pageSize: [this.pageSize]
-    });
-
     this.roadMapSearchForm = this.fb.group({
       searchText: ['']
     });
@@ -98,16 +142,6 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
 
   // Setup search functionality
   private setupSearchSubscription() {
-    this.searchSubscription = this.searchForm.get('searchText')!.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe(() => {
-        this.currentPage = 1;
-        this.applySearch();
-      });
-
     this.roadMapSearchSubscription = this.roadMapSearchForm.get('searchText')!.valueChanges
       .pipe(
         debounceTime(300),
@@ -120,15 +154,15 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
 
   // Pagination computed properties
   get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
+    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
   }
 
   get currentPageStart(): number {
-    return ((this.currentPage - 1) * this.pageSize) + 1;
+    return ((this.currentPage - 1) * this.paginationRequest.pageSize) + 1;
   }
 
   get currentPageEnd(): number {
-    const end = this.currentPage * this.pageSize;
+    const end = this.currentPage * this.paginationRequest.pageSize;
     return end > this.totalRecords ? this.totalRecords : end;
   }
 
@@ -152,7 +186,8 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
     const request: GetTimeTransactionApprovals = {
       pageNumber: this.currentPage,
       pageSize: this.pageSize,
-      searchText: this.searchForm.get('searchText')?.value || undefined
+      searchColumn: this.paginationRequest.searchColumn,
+      searchText: this.paginationRequest.searchText
     };
 
     this.stepsService.getRequestApprovalRoutes(request, this.currentLang)
@@ -161,7 +196,6 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
           if (response.isSuccess && response.data) {
             this.timeTransactionApprovals = response.data.timeTransactionApprovals || [];
             this.totalRecords = response.data.totalCount || 0;
-            this.applySearch();
           } else {
             this.showErrorMessage(response.message || 'STEPS_TO_APPROVE.LOAD_ERROR');
           }
@@ -173,27 +207,6 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
           this.loading = false;
         }
       });
-  }
-
-  // Apply search filter to the data
-  private applySearch() {
-    const searchText = this.searchForm.get('searchText')?.value?.toLowerCase() || '';
-    
-    if (!searchText.trim()) {
-      this.filteredApprovals = [...this.timeTransactionApprovals];
-    } else {
-      this.filteredApprovals = this.timeTransactionApprovals.filter(item =>
-        item.empName?.toLowerCase().includes(searchText) ||
-        item.deptMgrName?.toLowerCase().includes(searchText) ||
-        item.deptName?.toLowerCase().includes(searchText) ||
-        item.branchMgrName?.toLowerCase().includes(searchText) ||
-        item.branchName?.toLowerCase().includes(searchText) ||
-        item.roleName?.toLowerCase().includes(searchText) ||
-        item.forEveryoneName?.toLowerCase().includes(searchText) ||
-        item.reqLevelName?.toLowerCase().includes(searchText) ||
-        item.note?.toLowerCase().includes(searchText)
-      );
-    }
   }
 
   // Apply search filter to road map details
@@ -215,6 +228,7 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
       this.currentPage = page;
+      this.paginationRequest.pageNumber = page;
       this.loadTimeTransactionApprovals();
     }
   }
@@ -222,12 +236,14 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
   nextPage() {
     if (this.canGoNext) {
       this.goToPage(this.currentPage + 1);
+      this.paginationRequest.pageNumber = this.currentPage;
     }
   }
 
   previousPage() {
     if (this.canGoPrevious) {
       this.goToPage(this.currentPage - 1);
+      this.paginationRequest.pageNumber = this.currentPage;
     }
   }
 
@@ -240,13 +256,8 @@ export class StepsToApproveChangingTimeComponent implements OnInit, OnDestroy {
   }
 
   onPageSizeChange() {
-    this.pageSize = this.searchForm.get('pageSize')?.value || 10;
     this.currentPage = 1;
-    this.loadTimeTransactionApprovals();
-  }
-
-  onSearch() {
-    this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
     this.loadTimeTransactionApprovals();
   }
 
