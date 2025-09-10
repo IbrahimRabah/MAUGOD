@@ -43,6 +43,8 @@ export interface TimeTransactionApprovalRequestBody {
   eDate?: string;
   pageNumber: number;
   pageSize: number;
+  searchColumn?: string;
+  searchText?: string;
 }
 // Response wrapper
 export interface RequestTransactionsForAttendanceTimeChangeRequestDetailsData {

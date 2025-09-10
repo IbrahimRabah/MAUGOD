@@ -98,7 +98,6 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   showCreateModal = false;
   
   private langSubscription: Subscription = new Subscription();
-  private searchSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic (2) - made public for template access
   
   // Reactive Forms
@@ -132,7 +131,6 @@ export class PostRequestComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.langSubscription.unsubscribe();
-    this.searchSubscription.unsubscribe();
   }
 
   // Initialize reactive forms

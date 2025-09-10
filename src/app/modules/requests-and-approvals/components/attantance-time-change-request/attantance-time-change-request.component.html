@@ -75,17 +75,39 @@
     </div>
 
     <div class="right-actions">
-      <form [formGroup]="searchForm">
-        <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-          <input type="text" 
-                 formControlName="searchTerm"
-                 class="search-input" 
-                 [placeholder]="'ATTENDANCE_TIME_CHANGE.SEARCH_PLACEHOLDER' | translate">
-          <button type="button" class="search-btn" (click)="onSearch()">
-            <i class="fa fa-search search-icon"></i>
-          </button>
+       <div class="input-group search-container">
+
+          <!-- Dropdown Button -->
+          <div class="input-group-prepend" [ngClass]="{
+          'order-0': langService.getCurrentLang() === 'en', 
+          'order-1': langService.getCurrentLang() === 'ar'}">
+
+            <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+                border-bottom-right-radius: unset;
+                border-top-right-radius: unset;
+                border: 1px solid #e8e3e3;">
+              <i class="fas fa-search"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li *ngFor="let col of searchColumns">
+                <a class="dropdown-item" (click)="selectColumn(col)">
+                  {{ col.label | translate }}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Search Input -->
+          <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+            [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+              'order-1': langService.getCurrentLang() === 'en',
+              'order-0': langService.getCurrentLang() === 'ar'
+            }">
         </div>
-      </form>
+        <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+          color: white;">
+          {{ 'SEARCH' | translate }}
+        </button>
     </div>
   </div>
 
@@ -109,7 +131,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let request of filteredTimeTransactionRequests; trackBy: trackByRequestId" class="table-row">
+        <tr *ngFor="let request of timeTransactionRequests; trackBy: trackByRequestId" class="table-row">
           <td>{{ request.reqId }}</td>
           <td>{{ request.empName }}</td>
           <td>{{ request.requestByEmpName }}</td>
@@ -154,7 +176,7 @@
         </tr>
 
         <!-- Empty state row -->
-        <tr *ngIf="filteredTimeTransactionRequests.length === 0" class="empty-row">
+        <tr *ngIf="timeTransactionRequests.length === 0" class="empty-row">
           <td colspan="12" class="empty-message text-center">
             <i class="fa fa-inbox"></i>
             <p>{{ 'ATTENDANCE_TIME_CHANGE.NO_DATA_FOUND' | translate }}</p>
@@ -165,7 +187,7 @@
   </div>
 
   <!-- Custom Pagination -->
-  <div *ngIf="!loading && filteredTimeTransactionRequests.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+  <div *ngIf="!loading && timeTransactionRequests.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
     <div class="pagination-info">
       <span>{{ 'ATTENDANCE_TIME_CHANGE.SHOWING' | translate }} {{ currentPageStart }} {{ 'ATTENDANCE_TIME_CHANGE.TO' | translate }} {{ currentPageEnd }} {{ 'ATTENDANCE_TIME_CHANGE.OF' | translate }} {{ totalRecords }} {{ 'ATTENDANCE_TIME_CHANGE.ITEMS' | translate }}</span>
     </div>
@@ -208,15 +230,13 @@
 
     <div class="page-size-selector">
       <label>{{ 'ATTENDANCE_TIME_CHANGE.ITEMS_PER_PAGE' | translate }}</label>
-      <form [formGroup]="searchForm">
-        <select formControlName="pageSize" class="form-input">
+        <select [(ngModel)]="paginationRequest.pageSize" class="form-input">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="25">25</option>
           <option value="50">50</option>
           <option value="100">100</option>
         </select>
-      </form>
     </div>
   </div>
   
