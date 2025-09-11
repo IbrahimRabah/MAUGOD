@@ -659,7 +659,7 @@ selectColumn(col: any) {
 
   private loadRoles() {
     this.loadingRoles = true;
-    this.roleModuleRightService.getSourceRolesDropdownListForRoleModuleRights(this.currentLang)
+    this.roleModuleRightService.getRolesDropdownListForRoleModuleRights(this.currentLang)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data?.dropdownListsForRoleModuleRights) {

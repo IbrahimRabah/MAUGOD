@@ -475,13 +475,13 @@
                 formControlName="fromMgrOfDeptId" 
                 class="form-select">
                 <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate }}</option>
-                <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+                <option *ngFor="let emp of departments" [value]="emp.id">{{ emp.name }}</option>
               </select>
             </div>
 
             <!-- From Department -->
             <div class="form-group">
-              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.TO_DEPARTMENT' | translate }}</label>
+              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_DEPARTMENT' | translate }}</label>
               <select 
                 formControlName="fromDeptId" 
                 class="form-select">
@@ -497,7 +497,7 @@
                 formControlName="fromMgrOfBranchId" 
                 class="form-select">
                 <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate }}</option>
-                <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+                <option *ngFor="let emp of branches" [value]="emp.id">{{ emp.name }}</option>
               </select>
             </div>
 

@@ -12,6 +12,68 @@ export class MobileSignLocationAssignService {
   private apiUrl = `${environment.apiUrl}/MobileAndApp`;
   constructor(private http: HttpClient) { }
 
+
+  getEmpsDropdownList(lang: number, empId: number ): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString(),
+      'empId': empId.toString()
+    });
+
+    console.log('Calling employees API:', `${this.apiUrl}/GetEmployeesDropdownListForMobileSignLocationsAssign`);
+    return this.http.get<any>(
+      `${this.apiUrl}/GetEmployeesDropdownListForMobileSignLocationsAssign`,
+      { headers }
+    );
+  }
+
+  getDepartmentsOrMgrOfDeptsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling departments API:', `${this.apiUrl}/GetDepartmentsDropdownListForMobileSignLocationsAssign`);
+    return this.http.get<any>(
+      `${this.apiUrl}/GetDepartmentsDropdownListForMobileSignLocationsAssign`,
+      { headers }
+    );
+  }
+
+  getBranchesOrMgrOfBranchsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling branches API:', `${this.apiUrl}/GetBranchesDropdownListForMobileSignLocationsAssign`);
+    return this.http.get<any>(
+      `${this.apiUrl}/GetBranchesDropdownListForMobileSignLocationsAssign`,
+      { headers }
+    );
+  }
+
+  getRolesDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    console.log('Calling employee roles API:', `${this.apiUrl}/GetRolesDropdownListForMobileSignLocationsAssign`);
+    return this.http.get<any>(
+      `${this.apiUrl}/GetRolesDropdownListForMobileSignLocationsAssign`,
+      { headers }
+    );
+  }
+
+   getLocationsDropdownList(lang: number): Observable<any> {
+      const headers = new HttpHeaders({
+        'lang': lang.toString()
+      });
+  
+      console.log('Calling locations API:', `${this.apiUrl}/GetLocationsDropdownListForMobileSignLocationsAssign`);
+      return this.http.get<any>(
+        `${this.apiUrl}/GetLocationsDropdownListForMobileSignLocationsAssign`,
+        { headers }
+      );
+    }
+
   getMobileSignLocationAssign(
   paginationRequest: PaginationRequest,
   empId: number,

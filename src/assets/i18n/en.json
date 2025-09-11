@@ -227,6 +227,7 @@
             "FROM_MANAGER_DEPT": "From Manager of Department",
             "FROM_MANAGER_BRANCH": "From Manager of Branch",
             "FROM_BRANCH": "From Branch",
+            "FROM_DEPARTMENT": "From Department",
             "FROM_ROLE": "From Role",
             "TO_EMPLOYEE": "To Employee",
             "TO_MANAGER_DEPT": "To Manager of Department",

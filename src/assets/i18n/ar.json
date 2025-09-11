@@ -228,6 +228,7 @@
             "FROM_MANAGER_DEPT": "من مدير القسم",
             "FROM_MANAGER_BRANCH": "من مدير الفرع",
             "FROM_BRANCH": "من الفرع",
+            "FROM_DEPARTMENT": "من القسم",
             "FROM_ROLE": "من الدور",
             "TO_EMPLOYEE": "إلى الموظف",
             "TO_MANAGER_DEPT": "إلى مدير القسم",

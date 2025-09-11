@@ -87,6 +87,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
   roles: SelectableItem[] = [];
   managers: SelectableItem[] = [];
   branchManagers: SelectableItem[] = [];
+  departmentManagers: SelectableItem[] = [];
   
   // Multi-select states for different target types
   toEmployeesMultiSelectState: MultiSelectState = {
@@ -146,7 +147,8 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     branches: { loaded: false, language: 0 },
     roles: { loaded: false, language: 0 },
     managers: { loaded: false, language: 0 },
-    branchManagers: { loaded: false, language: 0 }
+    branchManagers: { loaded: false, language: 0 },
+    departmentManagers: { loaded: false, language: 0 }
   };
 
   // Cache for dropdown data to avoid duplicate calls
@@ -156,7 +158,8 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     branches: [] as SelectableItem[],
     roles: [] as SelectableItem[],
     managers: [] as SelectableItem[],
-    branchManagers: [] as SelectableItem[]
+    branchManagers: [] as SelectableItem[],
+    departmentManagers: [] as SelectableItem[]
   };
   
   constructor(
@@ -205,7 +208,8 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       branches: { loaded: false, language: 0 },
       roles: { loaded: false, language: 0 },
       managers: { loaded: false, language: 0 },
-      branchManagers: { loaded: false, language: 0 }
+      branchManagers: { loaded: false, language: 0 },
+      departmentManagers: { loaded: false, language: 0 }
     };
     this.dataCache = {
       employees: [],
@@ -213,7 +217,8 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       branches: [],
       roles: [],
       managers: [],
-      branchManagers: []
+      branchManagers: [],
+      departmentManagers: []
     };
   }
 
@@ -616,6 +621,12 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     this.clearAllToSelections();
     this.showCreateModal = true;
     // Only load basic dropdown data, target-specific data will be loaded on demand
+
+     // load default target data (to employees)
+    const defaultTargetType = this.createForm.get('toTargetType')?.value;
+    if (defaultTargetType) {
+      this.loadToTargetData(defaultTargetType);
+    }
   }
 
   closeCreateModal() {
@@ -866,7 +877,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
   }
 
   // Method to preload specific data type if not already loaded
-  private preloadDataIfNeeded(dataType: 'employees' | 'departments' | 'branches' | 'roles' | 'branchManagers') {
+  private preloadDataIfNeeded(dataType: 'employees' | 'departments' | 'branches' | 'roles' | 'branchManagers' | 'departmentManagers') {
     if (!this.isDataLoadedForCurrentLanguage(dataType)) {
       switch (dataType) {
         case 'employees':
@@ -883,6 +894,9 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
           break;
         case 'branchManagers':
           this.loadManagersOfBranchForMultiSelect();
+          break;
+        case 'departmentManagers':
+          this.loadManagersOfDepartmentForMultiSelect();
           break;
       }
     }
@@ -1226,29 +1240,28 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
 
   private loadManagersOfDepartmentForMultiSelect() {
     // Reuse cached employee data for department managers (same data source)
-    if (this.isDataLoadedForCurrentLanguage('employees')) {
-      this.toManagersOfDepartmentMultiSelectState.available = [...this.dataCache.employees];
+    if (this.isDataLoadedForCurrentLanguage('departmentManagers')) {
+      this.toManagersOfDepartmentMultiSelectState.available = [...this.dataCache.departmentManagers];
       return;
     }
 
     if (this.loadingToManagersOfDepartment) return; // Prevent duplicate calls
 
     this.loadingToManagersOfDepartment = true;
-    const empId = this.getStoredEmpId() || 0;
 
-    this.dropdownlistsService.getEmpsDropdownList(this.currentLang, empId).subscribe({
+    this.dropdownlistsService.getDepartmentsDropdownList(this.currentLang).subscribe({
       next: (response) => {
         if (response && response.isSuccess && response.data) {
-          const employeeData = response.data.employees.map((emp: any) => ({
-            id: emp.value,
-            name: emp.label
+          const departmentManagersData = response.data.departments.map((manager: any) => ({
+            id: manager.value,
+            name: manager.label
           }));
-          this.toManagersOfDepartmentMultiSelectState.available = employeeData;
+          this.toManagersOfDepartmentMultiSelectState.available = departmentManagersData;
           
           // Cache the data for reuse
-          this.dataCache.employees = [...employeeData];
-          this.employees = [...employeeData];
-          this.markDataAsLoaded('employees');
+          this.dataCache.departmentManagers = [...departmentManagersData];
+          this.departmentManagers = [...departmentManagersData];
+          this.markDataAsLoaded('departmentManagers');
         } else {
           this.toManagersOfDepartmentMultiSelectState.available = [];
         }
@@ -1276,11 +1289,10 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     if (this.loadingToManagersOfBranch) return; // Prevent duplicate calls
 
     this.loadingToManagersOfBranch = true;
-   const empId = this.getStoredEmpId() || 0;
-    this.dropdownlistsService.getEmpsDropdownList(this.currentLang, empId).subscribe({
+    this.dropdownlistsService.getBranchesDropdownList(this.currentLang).subscribe({
       next: (response) => {
         if (response && response.isSuccess && response.data) {
-          const branchManagerData = response.data.employees.map((manager: any) => ({
+          const branchManagerData = response.data.parentBranches.map((manager: any) => ({
             id: manager.value,
             name: manager.label
           }));
