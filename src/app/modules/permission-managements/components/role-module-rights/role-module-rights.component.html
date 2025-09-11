@@ -11,17 +11,6 @@
     <p>{{ 'MENU.PERMISSION_MANAGEMENT.ROLE_MODULE_RIGHTS.LOADING' | translate }}</p>
   </div>
 
-  <!-- Filter Section -->
-  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
-    <form [formGroup]="filterForm" class="filter-form">
-      <div class="filter-row">
-        <!-- Add filter controls here if needed -->
-        <div class="filter-actions">
-        </div>
-      </div>
-    </form>
-  </div>
-
   <!-- Table Header Actions -->
   <div *ngIf="!loading" class="table-header-actions">
     <div class="left-actions">

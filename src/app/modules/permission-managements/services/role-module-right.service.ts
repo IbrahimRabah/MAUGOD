@@ -98,6 +98,19 @@ export class RoleModuleRightService {
       { headers }
     );
   }
+   getRolesDropdownListForRoleModuleRights(
+    lang: number
+  ): Observable<GetRolesDropdownListResponse> {
+    const headers = new HttpHeaders({
+      accept: '*/*',
+      lang: lang.toString(),
+    });
+
+    return this.http.get<GetRolesDropdownListResponse>(
+      `${this.apiUrl}/SystemPermissions/GetRolesDropdownListForRoleModuleRights`,
+      { headers }
+    );
+  }
   getSourceRolesDropdownListForRoleModuleRights(
     lang: number
   ): Observable<GetRolesDropdownListResponse> {

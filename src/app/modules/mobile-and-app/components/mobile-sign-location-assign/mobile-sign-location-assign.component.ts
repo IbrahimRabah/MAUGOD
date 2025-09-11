@@ -7,7 +7,6 @@ import { MobileSignLocationAssign, MobileSignLocationAssignCreateRequest } from 
 import { MobileSignLocationAssignService } from '../../services/mobile-sign-location-assign.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
-import { DropdownlistsService } from '../../../../shared/services/dropdownlists.service';
 import { PaginationRequest } from '../../../../core/models/pagination';
 
 interface SelectableItem {
@@ -125,7 +124,6 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
 
   constructor(
     private mobileSignLocationAssignService: MobileSignLocationAssignService,
-    private dropdownlistsService: DropdownlistsService,
     public langService: LanguageService,
     private authService: AuthenticationService,
     private messageService: MessageService,
@@ -198,11 +196,11 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.dropdownlistsService.getEmpsDropdownList(this.currentLang, empId)
+    this.mobileSignLocationAssignService.getEmpsDropdownList(this.currentLang, empId)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
-            this.employees = response.data.employees || [];
+            this.employees = response.data.dropdownListsForMobileSignLocationsAssigns || [];
             this.updateMultiSelectState('employees', 
               this.employees.map(emp => ({ id: emp.value, name: emp.label }))
             );
@@ -218,11 +216,11 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
 
   private loadDepartments() {
     this.loadingDepartments = true;
-    this.dropdownlistsService.getDepartmentsDropdownList(this.currentLang)
+    this.mobileSignLocationAssignService.getDepartmentsOrMgrOfDeptsDropdownList(this.currentLang)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
-            this.departments = response.data.departments || [];
+            this.departments = response.data.dropdownListsForMobileSignLocationsAssigns || [];
             this.updateMultiSelectState('departments', 
               this.departments.map(dept => ({ id: dept.value, name: dept.label }))
             );
@@ -238,11 +236,11 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
 
   private loadBranches() {
     this.loadingBranches = true;
-    this.dropdownlistsService.getBranchesDropdownList(this.currentLang)
+    this.mobileSignLocationAssignService.getBranchesOrMgrOfBranchsDropdownList(this.currentLang)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
-            this.branches = response.data.parentBranches || [];
+            this.branches = response.data.dropdownListsForMobileSignLocationsAssigns || [];
             this.updateMultiSelectState('branches', 
               this.branches.map(branch => ({ id: branch.value, name: branch.label }))
             );
@@ -258,11 +256,11 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
 
   private loadRoles() {
     this.loadingRoles = true;
-    this.dropdownlistsService.getEmployeeRolesDropdownList(this.currentLang)
+    this.mobileSignLocationAssignService.getRolesDropdownList(this.currentLang)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
-            this.roles = response.data.dropdownListsForRoleModuleRights || [];
+            this.roles = response.data.dropdownListsForMobileSignLocationsAssigns || [];
             this.updateMultiSelectState('roles',
               this.roles.map(role => ({ id: role.value, name: role.label }))
             );
@@ -278,12 +276,12 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
 
   private loadDepartmentManagers() {
     this.loadingDepartmentManagers = true;
-    this.dropdownlistsService.getDepartmentsDropdownList(this.currentLang)
+    this.mobileSignLocationAssignService.getDepartmentsOrMgrOfDeptsDropdownList(this.currentLang)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
             // Use departments data for department managers (same source)
-            const deptManagers = response.data.departments || [];
+            const deptManagers = response.data.dropdownListsForMobileSignLocationsAssigns || [];
             this.departmentManagers = deptManagers;
             this.updateMultiSelectState('departmentManagers', 
               this.departmentManagers.map(dept => ({ id: dept.value, name: dept.label }))
@@ -300,12 +298,12 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
 
   private loadBranchManagers() {
     this.loadingBranchManagers = true;
-    this.dropdownlistsService.getBranchesDropdownList(this.currentLang)
+    this.mobileSignLocationAssignService.getBranchesOrMgrOfBranchsDropdownList(this.currentLang)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
             // Use branches data for branch managers (same source)
-            const branchMgrs = response.data.parentBranches || [];
+            const branchMgrs = response.data.dropdownListsForMobileSignLocationsAssigns || [];
             this.branchManagers = branchMgrs;
             this.updateMultiSelectState('branchManagers', 
               this.branchManagers.map(branch => ({ id: branch.value, name: branch.label }))
@@ -322,11 +320,11 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
 
   private loadLocations() {
     this.loadingLocations = true;
-    this.dropdownlistsService.getLocationsDropdownList(this.currentLang)
+    this.mobileSignLocationAssignService.getLocationsDropdownList(this.currentLang)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data) {
-            this.locations = response.data.locations || [];
+            this.locations = response.data.dropdownListsForMobileSignLocationsAssigns || [];
           }
           this.loadingLocations = false;
         },
