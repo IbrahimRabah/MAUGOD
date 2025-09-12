@@ -1898,6 +1898,11 @@
     "PREVIOUS_PAGE": "الصفحة السابقة",
     "CANCEL": "إلغاء"
   },
+  "REQUEST_APPROVAL_VACATIONS": {
+    "LOADING": "Loading...",
+    "HANDLE_REQUEST": "الموافقة على طلبات الإجازات والمهام",
+    "TIMTRAN_REQUEST": "الموافقة على طلبات تعديل وقت الحضور"
+  },
   "SEND_APP_QR_CODE": {
     "LOADING": "جارٍ التحميل...",
     "TITLE": "إرسال رمز الدخول للتطبيق",
