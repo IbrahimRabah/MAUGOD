@@ -1897,6 +1897,11 @@
     "PREVIOUS_PAGE": "Previous Page",
     "CANCEL": "Cancel"
   },
+  "REQUEST_APPROVAL_VACATIONS": {
+    "LOADING": "Loading...",
+    "HANDLE_REQUEST": "Handle request",
+    "TIMTRAN_REQUEST": "Timtran request"
+  },
   "SEND_APP_QR_CODE": {
     "LOADING": "Loading...",
     "TITLE": "Send App QR Code",
