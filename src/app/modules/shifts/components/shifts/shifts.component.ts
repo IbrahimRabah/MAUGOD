@@ -477,10 +477,14 @@ export class ShiftsComponent implements OnInit, OnDestroy {
 
 
 
-  private extractTime(dateTime?: string|null): string | null {
-    if (!dateTime || dateTime === "0001-01-01T00:00:00") return null;
-    return new Date(dateTime).toISOString().substring(11, 16); // HH:mm
-  }
+private extractTime(dateTime?: string | null): string | null {
+  if (!dateTime || dateTime === "0001-01-01T00:00:00") return null;
+  const d = new Date(dateTime);
+  const hours = d.getHours().toString().padStart(2, '0');
+  const minutes = d.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
 
   private resetCreateShiftForm() {
     this.createShiftForm.reset({
@@ -499,19 +503,38 @@ export class ShiftsComponent implements OnInit, OnDestroy {
 getDefaultDate(): string {
   return "0001-01-01T00:00:00";
 }
-  getDateWithEnteredTime(enteredTime: string | null): string {
-    if (!enteredTime) return this.getDefaultDate();
-    const [hours, minutes, seconds] = enteredTime.split(':').map(Number);
-    const now = new Date();
-    return new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hours,
-      minutes,
-      seconds || 0
-    ).toISOString();
+getDateWithEnteredTime(enteredTime: string | null, compareTime?: string | null): string {
+  if (!enteredTime) return this.getDefaultDate();
+
+  const [hours, minutes, seconds] = enteredTime.split(':').map(Number);
+  const now = new Date();
+  let dt = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes,
+    seconds || 0
+  );
+
+  if (compareTime) {
+    const [inHours, inMinutes] = compareTime.split(':').map(Number);
+    if (hours < inHours || (hours === inHours && minutes < inMinutes)) {
+      dt.setDate(dt.getDate() + 1);
+    }
   }
+
+  const year = dt.getFullYear();
+  const month = String(dt.getMonth() + 1).padStart(2, '0');
+  const day = String(dt.getDate()).padStart(2, '0');
+  const hh = String(dt.getHours()).padStart(2, '0');
+  const mm = String(dt.getMinutes()).padStart(2, '0');
+  const ss = String(dt.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hh}:${mm}:${ss}`;
+}
+
+
 
   onSubmitCreateShift() {
     if (this.createShiftForm.invalid) {
@@ -544,7 +567,7 @@ console.log(formValues);
       maxIn1: formValues.maxIn1 || 0,
       makeupIn1: formValues.makeupIn1 || 0,
       earlyOut1: formValues.earlyOut1 || 0,
-      out1: formValues.out1 ? this.getDateWithEnteredTime(formValues.out1): null,
+      out1: formValues.out1 ? this.getDateWithEnteredTime(formValues.out1, formValues.in1): null,
       outAllowMin1: formValues.outAllowMin1 || 0,
       maxOut1: formValues.maxOut1 || 0,
       makeupOut1: formValues.makeupOut1 || 0,
@@ -559,7 +582,7 @@ console.log(formValues);
       maxIn2: formValues.isTwoParts ? (formValues.maxIn2 || 0) : 0,
       makeupIn2: formValues.isTwoParts ? (formValues.makeupIn2 || 0) : 0,
       earlyOut2: formValues.isTwoParts ? (formValues.earlyOut2 || 0) : 0,
-      out2: formValues.isTwoParts && formValues.out2 ? this.getDateWithEnteredTime(formValues.out2) : null,
+      out2: formValues.isTwoParts && formValues.out2 ? this.getDateWithEnteredTime(formValues.out2,formValues.in2) : null,
       outAllowMin2: formValues.isTwoParts ? (formValues.outAllowMin2 || 0) : 0,
       maxOut2: formValues.isTwoParts ? (formValues.maxOut2 || 0) : 0,
       makeupOut2: formValues.isTwoParts ? (formValues.makeupOut2 || 0) : 0,

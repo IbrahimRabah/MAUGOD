@@ -44,54 +44,54 @@ export interface ProcessEmployeeDto {
   stsIds: string[];
   empIds: number[];
   everyone: number; // 0 or 1
-  sDate: string;    // ISO date string
-  eDate: string;    // ISO date string
+  sDate: string |null;    // ISO date string
+  eDate: string |null;    // ISO date string
   note: string;
 }
 export interface ProcessManagersOfDepartmentsDto {
   stsIds: string[];
   mgrOfDeptIds: number[];
   everyone: number; // 0 or 1
-  sDate: string;    // ISO date string
-  eDate: string;    // ISO date string
+  sDate: string|null;    // ISO date string
+  eDate: string|null;    // ISO date string
   note: string;
 }
 export interface ProcessDepartmentDto {
   stsIds: string[];
   deptIds: number[];
   everyone: number; // 0 or 1
-  sDate: string;    // ISO date string
-  eDate: string;    // ISO date string
+  sDate: string|null;    // ISO date string
+  eDate: string|null;    // ISO date string
   note: string;
 }
 export interface ProcessManagersOfBranchesDto {
   stsIds: string[];
   mgrOfBranchIds: number[];
   everyone: number; // 0 or 1
-  sDate: string;    // ISO date string
-  eDate: string;    // ISO date string
+  sDate: string|null;    // ISO date string
+  eDate: string|null;    // ISO date string
   note: string;
 }
 export interface ProcessBranchesDto {
   stsIds: string[];
   branchIds: number[];
   everyone: number; // 0 or 1
-  sDate: string;    // ISO date string
-  eDate: string;    // ISO date string
+  sDate: string|null;    // ISO date string
+  eDate: string|null;    // ISO date string
   note: string;
 }
 export interface ProcessRolesDto {
   stsIds: string[];
   roleIds: number[];
   everyone: number; // 0 or 1
-  sDate: string;    // ISO date string
-  eDate: string;    // ISO date string
+  sDate: string|null;    // ISO date string
+  eDate: string|null;    // ISO date string
   note: string;
 }
 export interface ProcessEveryOneDto {
   stsIds: string[];
   everyone: number; // 0 or 1
-  sDate: string;    // ISO date string
-  eDate: string;    // ISO date string
+  sDate: string|null;    // ISO date string
+  eDate: string|null;    // ISO date string
   note: string;
 }

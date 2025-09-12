@@ -176,8 +176,8 @@ selectColumn(col: any) {
       targetType: [1], // Default to Employee (1)
       selectedTargets: [[]],
       selectedStatuses: [[], Validators.required],
-      startDate: [''],
-      endDate: [''],
+      startDate: [null],
+      endDate: [null],
       note: ['']
     }, { validators: this.dateRangeValidator });
   }
@@ -758,8 +758,8 @@ selectColumn(col: any) {
     const formValue = this.createForm.value;
     const isEveryone = formValue.everyoneType;
     const targetType = formValue.targetType;
-    const startDate = this.formatDateForApi(formValue.startDate);
-    const endDate = this.formatDateForApi(formValue.endDate);
+    const startDate = this.formatDateForApi(formValue.startDate) ||null;
+    const endDate = this.formatDateForApi(formValue.endDate)||null;
     const note = formValue.note || '';
     // Convert statusIds to array of strings
     const statusIds: string[] = formValue.selectedStatuses.map((id: any) => String(id));

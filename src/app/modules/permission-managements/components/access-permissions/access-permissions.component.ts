@@ -236,17 +236,17 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       toTargetType: [TO_TARGET_TYPES.EMPLOYEE, Validators.required],
       
       // FROM fields - all available simultaneously
-      fromEmpId: [0],
-      fromMgrOfDeptId: [0],
-      fromDeptId: [0],
-      fromMgrOfBranchId: [0],
-      fromBranchId: [0],
-      fromRoleId: [0],
+      fromEmpId: [null],
+      fromMgrOfDeptId: [null],
+      fromDeptId: [null],
+      fromMgrOfBranchId: [null],
+      fromBranchId: [null],
+      fromRoleId: [null],
       
       // Additional fields
       changeDataEmp: [1],
-      sDate: [''],
-      eDate: [''],
+      sDate: [null],
+      eDate: [null],
       note: ['']
     });
 
@@ -639,12 +639,12 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     this.createForm.reset();
     this.createForm.patchValue({
       toTargetType: TO_TARGET_TYPES.EMPLOYEE,
-      fromEmpId: 0,
-      fromMgrOfDeptId: 0,
-      fromDeptId: 0,
-      fromMgrOfBranchId: 0,
-      fromBranchId: 0,
-      fromRoleId: 0,
+      fromEmpId: null,
+      fromMgrOfDeptId: null,
+      fromDeptId: null,
+      fromMgrOfBranchId: null,
+      fromBranchId: null,
+      fromRoleId: null,
       changeDataEmp: 1,
       note: ''
     });
@@ -665,15 +665,15 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
       
       // Build the base payload structure
       const payload: any = {
-        fromEmpId: formValue.fromEmpId || 0,
-        fromMgrOfDeptId: formValue.fromMgrOfDeptId || 0,
-        fromDeptId: formValue.fromDeptId || 0,
-        fromMgrOfBranchId: formValue.fromMgrOfBranchId || 0,
-        fromBranchId: formValue.fromBranchId || 0,
-        fromRoleId: formValue.fromRoleId || 0,
+        fromEmpId: formValue.fromEmpId || null,
+        fromMgrOfDeptId: formValue.fromMgrOfDeptId || null,
+        fromDeptId: formValue.fromDeptId || null,
+        fromMgrOfBranchId: formValue.fromMgrOfBranchId || null,
+        fromBranchId: formValue.fromBranchId || null,
+        fromRoleId: formValue.fromRoleId || null,
         changeDataEmp: formValue.changeDataEmp || 0,
-        sDate: formValue.sDate ? new Date(formValue.sDate).toISOString() : new Date().toISOString(),
-        eDate: formValue.eDate ? new Date(formValue.eDate).toISOString() : new Date().toISOString(),
+        sDate: formValue.sDate ? new Date(formValue.sDate).toISOString() : null,
+        eDate: formValue.eDate ? new Date(formValue.eDate).toISOString() :null,
         note: formValue.note || ''
       };
 

@@ -459,69 +459,122 @@
           <div class="form-grid">
             <!-- From Employee -->
             <div class="form-group">
-              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_EMPLOYEE' | translate }}</label>
-              <select 
-                formControlName="fromEmpId" 
-                class="form-select">
-                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_EMPLOYEE' | translate }}</option>
-                <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
-              </select>
-            </div>
+            <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_EMPLOYEE' | translate }}</label>
+            <p-dropdown
+              formControlName="fromEmpId"
+              [options]="employees"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              [virtualScroll]="true"
+              [itemSize]="40"
+              [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_EMPLOYEE' | translate"
+              [style]="{'width':'100%'}"
+              [panelStyle]="{'min-width':'250px', 'max-height':'300px', 'overflow':'auto'}"
+              class="form-dropdown">
+            </p-dropdown>
+          </div>
 
             <!-- From Manager of Department -->
-            <div class="form-group">
-              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_DEPT' | translate }}</label>
-              <select 
-                formControlName="fromMgrOfDeptId" 
-                class="form-select">
-                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate }}</option>
-                <option *ngFor="let emp of departments" [value]="emp.id">{{ emp.name }}</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_DEPT' | translate }}
+            </label>
+            <p-dropdown
+              formControlName="fromMgrOfDeptId"
+              [options]="departments"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              [virtualScroll]="true"
+              [itemSize]="40"
+              [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate"
+              [style]="{'width':'100%'}"
+              [panelStyle]="{'min-width':'250px', 'max-height':'300px', 'overflow':'auto'}"
+              class="form-dropdown">
+            </p-dropdown>
+          </div>
 
-            <!-- From Department -->
-            <div class="form-group">
-              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_DEPARTMENT' | translate }}</label>
-              <select 
-                formControlName="fromDeptId" 
-                class="form-select">
-                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_DEPARTMENT' | translate }}</option>
-                <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
-              </select>
-            </div>
+          <!-- From Department -->
+          <div class="form-group">
+            <label>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_DEPARTMENT' | translate }}
+            </label>
+            <p-dropdown
+              formControlName="fromDeptId"
+              [options]="departments"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              [virtualScroll]="true"
+              [itemSize]="40"
+              [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_DEPARTMENT' | translate"
+              [style]="{'width':'100%'}"
+              [panelStyle]="{'min-width':'250px', 'max-height':'300px', 'overflow':'auto'}"
+              class="form-dropdown">
+            </p-dropdown>
+          </div>
 
-            <!-- From Manager of Branch -->
-            <div class="form-group">
-              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_BRANCH' | translate }}</label>
-              <select 
-                formControlName="fromMgrOfBranchId" 
-                class="form-select">
-                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate }}</option>
-                <option *ngFor="let emp of branches" [value]="emp.id">{{ emp.name }}</option>
-              </select>
-            </div>
+          <!-- From Manager of Branch -->
+          <div class="form-group">
+            <label>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_MANAGER_BRANCH' | translate }}
+            </label>
+            <p-dropdown
+              formControlName="fromMgrOfBranchId"
+              [options]="branches"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              [virtualScroll]="true"
+              [itemSize]="40"
+              [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_MANAGER' | translate"
+              [style]="{'width':'100%'}"
+              [panelStyle]="{'min-width':'250px', 'max-height':'300px', 'overflow':'auto'}"
+              class="form-dropdown">
+            </p-dropdown>
+          </div>
 
-            <!-- From Branch -->
-            <div class="form-group">
-              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_BRANCH' | translate }}</label>
-              <select 
-                formControlName="fromBranchId" 
-                class="form-select">
-                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_BRANCH' | translate }}</option>
-                <option *ngFor="let branch of branches" [value]="branch.id">{{ branch.name }}</option>
-              </select>
-            </div>
+          <!-- From Branch -->
+          <div class="form-group">
+            <label>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_BRANCH' | translate }}
+            </label>
+            <p-dropdown
+              formControlName="fromBranchId"
+              [options]="branches"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              [virtualScroll]="true"
+              [itemSize]="40"
+              [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_BRANCH' | translate"
+              [style]="{'width':'100%'}"
+              [panelStyle]="{'min-width':'250px', 'max-height':'300px', 'overflow':'auto'}"
+              class="form-dropdown">
+            </p-dropdown>
+          </div>
 
-            <!-- From Role -->
-            <div class="form-group">
-              <label>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_ROLE' | translate }}</label>
-              <select 
-                formControlName="fromRoleId" 
-                class="form-select">
-                <option value="0">{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_ROLE' | translate }}</option>
-                <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
-              </select>
-            </div>
+          <!-- From Role -->
+          <div class="form-group">
+            <label>
+              {{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.COLUMNS.FROM_ROLE' | translate }}
+            </label>
+            <p-dropdown
+              formControlName="fromRoleId"
+              [options]="roles"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              [virtualScroll]="true"
+              [itemSize]="40"
+              [placeholder]="'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.FORM.SELECT_ROLE' | translate"
+              [style]="{'width':'100%'}"
+              [panelStyle]="{'min-width':'250px', 'max-height':'300px', 'overflow':'auto'}"
+              class="form-dropdown">
+            </p-dropdown>
+          </div>
+
           </div>
         </div>
 
