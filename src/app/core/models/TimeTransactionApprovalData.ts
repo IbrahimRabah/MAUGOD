@@ -161,3 +161,49 @@ export interface CreateTimeTransactionApprovalRequestPayload {
 // Response (adjust the inner type if your API returns a specific object/id)
 export type CreateTimeTransactionApprovalRequestResponse =
   ApiResponse<boolean | { requestId?: number; reqId?: number }>;
+
+export interface HandleApprovalTransactionsData {
+  transactions: Transaction[];
+  totalCount: number;
+}
+export interface Transaction {
+  curLevel: string;
+  flag: number;
+  updatedByEmpId: number;
+  updatedBy: string;
+  status: string;
+  updatedByEmpName: string;
+  replyDate: string; // ISO date string, e.g. "2021-12-07"
+  note: string;
+}
+
+export interface HandleApprovalRoadMapData {
+  roadmaps: RoadMap[];
+  totalCount: number;
+}
+
+// RoadMap item
+export interface RoadMap {
+  curLevel: number;
+  levelName: string;
+  mgrId: number;
+  mgrName: string;
+}
+
+export interface HandleApprovalAttachmentsData {
+  attachments: Attachment[];
+  totalCount: number;
+}
+
+// Single attachment
+export interface Attachment {
+  attchId: number;
+  reqId: number;
+  fileLength: number;
+  fileType: string;
+  filePath: string;
+  note: string; // Note field for the attachment
+  seq: number;
+  del: string;
+  
+}

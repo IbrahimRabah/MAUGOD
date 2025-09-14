@@ -1897,6 +1897,47 @@
     "PREVIOUS_PAGE": "Previous Page",
     "CANCEL": "Cancel"
   },
+  "REQUEST_APPROVAL_VACATIONS": {
+    "LOADING": "Loading...",
+    "HANDLE_REQUEST": {
+      "TITLE":"Handle request",
+      "REQUEST_NO":"Request",
+      "EMP_NAME":"Employee",
+      "REQUEST_BY_EMPLOYEE":"Request by employee",
+      "STATUS":"Status",
+      "PART":"Part",
+      "START_DATE":"Start date",
+      "END_DATE":"End date",
+      "CURENT_LEVEL":"Current level",
+      "REQUEST_BY_NOTE":"Request by note",
+      "NOTE":"Note",
+      "ACCEPT":"Accept",
+      "REJECT":"Reject",
+      "DETAILS":"Details",
+      "GRAPH":"Graph",
+      "ATTACHMENT":"Attachments"
+    },
+    "TIMTRAN_REQUEST": {
+      "TITLE":"Timtran request",
+      "REC_ID":"Rec Id",
+      "REQ_ID":"Req Id",
+      "EMP_NAME":"Employee",
+      "REQUEST_BY_EMPLOYEE":"Request by employee",
+      "SIGN_DATE":"Sign Date",
+      "IN":"In",
+      "OUT":"Out",
+      "CURENT_LEVEL":"Current level",
+      "REQUEST_BY_NOTE":"Request by note",
+      "NOTE":"Note",
+      "ACCEPT":"Accept",
+      "REJECT":"Reject",
+      "DETAILS":"Details",
+      "GRAPH":"Graph",
+      "ATTACHMENT":"Attachments"
+    }
+
+    
+  },
   "SEND_APP_QR_CODE": {
     "LOADING": "Loading...",
     "TITLE": "Send App QR Code",
