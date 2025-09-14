@@ -355,6 +355,8 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
               summary: this.translate.instant("SUCCESS"),
               detail: response.message
             });
+            this.TimeTransactionApprovalRecords(); 
+            this.attendanceAdjustmentRecords();
           } else {
             this.messageService.add({
               severity: 'error',
@@ -402,6 +404,8 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
               summary: this.translate.instant("SUCCESS"),
               detail: response.message
             });
+            this.TimeTransactionApprovalRecords(); 
+            this.attendanceAdjustmentRecords();
           } else {
             this.messageService.add({
               severity: 'error',
@@ -512,6 +516,8 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
               summary: this.translate.instant("SUCCESS"),
               detail: response.message
             });
+            this.TimeTransactionApprovalRecords(); 
+            this.attendanceAdjustmentRecords();
           } else {
             this.messageService.add({
               severity: 'error',
@@ -559,6 +565,8 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
               summary: this.translate.instant("SUCCESS"),
               detail: response.message
             });
+            this.TimeTransactionApprovalRecords(); 
+        this.attendanceAdjustmentRecords();
           } else {
             this.messageService.add({
               severity: 'error',
