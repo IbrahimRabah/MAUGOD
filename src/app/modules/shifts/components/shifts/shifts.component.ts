@@ -517,12 +517,12 @@ getDateWithEnteredTime(enteredTime: string | null, compareTime?: string | null):
     seconds || 0
   );
 
-  if (compareTime) {
-    const [inHours, inMinutes] = compareTime.split(':').map(Number);
-    if (hours < inHours || (hours === inHours && minutes < inMinutes)) {
-      dt.setDate(dt.getDate() + 1);
-    }
-  }
+  // if (compareTime) {
+  //   const [inHours, inMinutes] = compareTime.split(':').map(Number);
+  //   if (hours < inHours || (hours === inHours && minutes < inMinutes)) {
+  //     dt.setDate(dt.getDate() + 1);
+  //   }
+  // }
 
   const year = dt.getFullYear();
   const month = String(dt.getMonth() + 1).padStart(2, '0');
@@ -550,8 +550,9 @@ getDateWithEnteredTime(enteredTime: string | null, compareTime?: string | null):
     const lang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
     const formValues = this.createShiftForm.value;
 
+
     // Helper function to get default date string
-console.log(formValues);
+//console.log(formValues);
     const payload: CreatShift = {
       shiftId: this.isEditMode ? (this.currentEditingShift?.shiftId || 0) : 0,
       ar: formValues.ar || "string",
