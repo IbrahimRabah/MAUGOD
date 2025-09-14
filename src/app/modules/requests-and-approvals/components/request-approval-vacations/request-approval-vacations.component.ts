@@ -299,10 +299,6 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
 
     this.TimeTransactionloading = true;
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
-    //////////////////////////////////////////////////////
-    //////////remove t
-    this.TimeTransactionApprovalRequest.empId = 0;
-    //////////////////////////////////////////////////////////
     this.requestApprovalVacationsService.getTimeTransactionApprovalRequests(this.TimeTransactionApprovalRequest, this.langService.getLangValue()).subscribe({
       next: (response: RequestApprovalVacationTimeTransactionApprovalResponse) => {
          if (response.isSuccess) {
