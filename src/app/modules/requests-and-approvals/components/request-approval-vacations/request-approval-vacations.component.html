@@ -54,7 +54,7 @@
     <div class="left-actions">
         <!-- (click)="deleteForSelected()" -->
       <p class="resetPass-btn" >
-        {{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST' | translate }}
+        {{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.TITLE' | translate }}
       </p>
     </div>
      <div class="right-actions">
@@ -101,27 +101,86 @@
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th>{{ 'Attendance.RESULTS_TABLE.EMPLOYEE_HEADER' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.DATE_SIGN' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.RECORD_DATE' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.DATA_SOURCE' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.DELETE_HEADER' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REQUEST_NO' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.EMP_NAME' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REQUEST_BY_EMPLOYEE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.STATUS' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.PART' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.START_DATE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.END_DATE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.CURENT_LEVEL' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REQUEST_BY_NOTE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.NOTE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.ACCEPT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REJECT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.DETAILS' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.GRAPH' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.ATTACHMENT' | translate }}</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let timeTransactionApproval of timeTransactionApprovals" class="table-row">
+          <td>{{ timeTransactionApproval.reqId }}</td>
           <td>{{ timeTransactionApproval.empName }}</td>
-          <td>{{ formatDateTime(timeTransactionApproval.signDate) }}</td>
-          <td>{{ formatDateTime(timeTransactionApproval.hsDate) }}</td>
-          <td>{{ timeTransactionApproval.requestByEmpName}}</td>
+          <td>{{ timeTransactionApproval.requestByName }}</td>
+          <td>{{ timeTransactionApproval.stsLabel }}</td>
+          <td>{{ timeTransactionApproval.partLabel }}</td>
+          <td style="white-space:nowrap;">{{ timeTransactionApproval.startDate | date:'yyyy-MM-dd' }}</td>
+          <td style="white-space:nowrap;">{{ timeTransactionApproval.endDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ timeTransactionApproval.currentLevelLabel }}</td>
+          <td>{{ timeTransactionApproval.note}}</td>
+          <td> <input type="text" class="form-control" [(ngModel)]="acceptHandleApprovalRequestnotes[timeTransactionApproval.recId]"/> </td>
+          <td>
+            <!--  -->
+            <button 
+              class="action-btn text-success" 
+              (click)="AcceptHandleApprovalRequest(timeTransactionApproval.recId)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.ACCEPT' | translate">
+              <i class="fa fa-check-square fa-2x"></i>
+            </button>
+          </td>
+
           <td>
             <!-- (click)="deletePunchTransaction(transaction)" -->
             <button 
-              class="action-btn delete-btn" 
-              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.DELETE_EMPLOYEE' | translate">
-              <i class="fas fa-trash"></i>
+              class="action-btn text-danger" 
+              (click)="RejectHandleApprovalRequest(timeTransactionApproval.recId)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REJECT' | translate">
+              <i class="fa fa-ban fa-2x"></i>
             </button>
           </td>
+
+          <td>
+            <!-- (click)="deletePunchTransaction(transaction)" -->
+            <button 
+              class="action-btn" 
+              (click)="viewTimtranRequestDetails(timeTransactionApproval)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.DETAILS' | translate">
+              <i class="text-primary fs-4 fas fa-info"></i>
+            </button>
+          </td>
+
+          <td>
+            <!-- (click)="deletePunchTransaction(transaction)" -->
+            <button 
+              class="action-btn" 
+              (click)="ViewTimtranRequestGraph(timeTransactionApproval)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.GRAPH' | translate">
+              <i class="text-primary fs-4 fa-solid fa-chart-diagram"></i>
+            </button>
+          </td>
+
+          <td>
+            <!--  -->
+            <button 
+              class="action-btn" 
+              (click)="viewTimtranRequestAttachments(timeTransactionApproval)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.ATTACHMENT' | translate">
+              <i class="text-primary fs-4 fa-solid fa-paperclip"></i>
+            </button>
+          </td>
+
+
         </tr>
         <tr *ngIf="attendanceAdjustments.length === 0" class="empty-row">
           <td colspan="13" class="empty-message">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NO_DATA' | translate }}</td>
@@ -215,6 +274,25 @@
 </div>
 
 
+
+  <!-- Request Details Modal -->
+  <app-approval-leave-details-modal
+    [showModal]="showtimtranRequestDetails"
+    [requestId]="timtranRequestDetails"
+    (closeModal)="onCloseTimtranRequestModal()">
+  </app-approval-leave-details-modal>
+  
+  <!-- Attachments Modal -->
+  <app-approval-leave-attachments-modal
+    [showModal]="showtimtranRequestAttachment"
+    [requestId]="timtranRequestAttachment"
+    (closeModal)="onCloseTimtranRequestAttachmentsModal()">
+  </app-approval-leave-attachments-modal>
+
+
+
+
+
 <p>-------------------------------------------------------------------------------</p>
 
 
@@ -273,7 +351,7 @@
     <div class="left-actions">
         <!-- (click)="deleteForSelected()" -->
       <p class="resetPass-btn" >
-        {{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST' | translate }}
+        {{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.TITLE' | translate }}
       </p>
     </div>
      <div class="right-actions">
@@ -320,27 +398,85 @@
     <table class="custom-table">
       <thead>
         <tr class="table-header">
-          <th>{{ 'Attendance.RESULTS_TABLE.EMPLOYEE_HEADER' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.DATE_SIGN' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.RECORD_DATE' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.DATA_SOURCE' | translate }}</th>
-          <th>{{ 'Attendance.RESULTS_TABLE.DELETE_HEADER' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REC_ID' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REQ_ID' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.EMP_NAME' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REQUEST_BY_EMPLOYEE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.SIGN_DATE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.IN' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.OUT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.CURENT_LEVEL' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REQUEST_BY_NOTE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.NOTE' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.ACCEPT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REJECT' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.DETAILS' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.GRAPH' | translate }}</th>
+          <th>{{ 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.ATTACHMENT' | translate }}</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let attendanceAdjustment of attendanceAdjustments" class="table-row">
+          <td>{{ attendanceAdjustment.recId }}</td>
+          <td>{{ attendanceAdjustment.reqId }}</td>
           <td>{{ attendanceAdjustment.empName }}</td>
-          <td>{{ formatDateTime(attendanceAdjustment.signDate) }}</td>
-          <td>{{ formatDateTime(attendanceAdjustment.signDateHijri) }}</td>
-          <td>{{ attendanceAdjustment.requestByName}}</td>
+          <td>{{ attendanceAdjustment.requestByName }}</td>
+          <td style="white-space:nowrap;" >{{ attendanceAdjustment.signDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ attendanceAdjustment.in1 }}</td>
+          <td>{{ attendanceAdjustment.out1 }}</td>
+          <td>{{ attendanceAdjustment.currentLevelLabel}}</td>
+          <td>{{ attendanceAdjustment.note}}</td>
+          <td> <input type="text" class="form-control" [(ngModel)]="attendanceAdjustmentnotes[attendanceAdjustment.recId]"/> </td>
+          <td>
+            <!--  -->
+            <button 
+              class="action-btn text-success" 
+              (click)="AcceptTimetranRequest(attendanceAdjustment.recId)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.ACCEPT' | translate">
+              <i class="fa fa-check-square fa-2x"></i>
+            </button>
+          </td>
+
           <td>
             <!-- (click)="deletePunchTransaction(transaction)" -->
             <button 
-              class="action-btn delete-btn" 
-              [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.DELETE_EMPLOYEE' | translate">
-              <i class="fas fa-trash"></i>
+              class="action-btn text-danger" 
+              (click)="RejectTimetranRequest(attendanceAdjustment.recId)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REJECT' | translate">
+              <i class="fa fa-ban fa-2x"></i>
             </button>
           </td>
+
+          <td>
+            <!-- (click)="deletePunchTransaction(transaction)" -->
+            <button 
+              class="action-btn" 
+              (click)="viewDetails(attendanceAdjustment)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.DETAILS' | translate">
+              <i class="text-primary fs-4 fas fa-info"></i>
+            </button>
+          </td>
+
+          <td>
+            <!-- (click)="deletePunchTransaction(transaction)" -->
+            <button 
+              class="action-btn" 
+              (click)="ViewGraph(attendanceAdjustment)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.GRAPH' | translate">
+              <i class="text-primary fs-4 fa-solid fa-chart-diagram"></i>
+            </button>
+          </td>
+
+          <td>
+            <!-- (click)="deletePunchTransaction(transaction)" -->
+            <button 
+              class="action-btn" 
+              (click)="viewAttachments(attendanceAdjustment)"
+              [title]="'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.ATTACHMENT' | translate">
+              <i class="text-primary fs-4 fa-solid fa-paperclip"></i>
+            </button>
+          </td>
+
         </tr>
         <tr *ngIf="attendanceAdjustments.length === 0" class="empty-row">
           <td colspan="13" class="empty-message">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NO_DATA' | translate }}</td>
@@ -433,3 +569,16 @@
   </div>
 </div>
 
+  <!-- Request Details Modal -->
+  <app-request-details-modal
+    [showModal]="showApprovalLeavelDetails"
+    [requestId]="ApprovalLeavelDetails"
+    (closeModal)="onCloseModal()">
+  </app-request-details-modal>
+  
+  <!-- Attachments Modal -->
+  <app-attachments-modal
+    [showModal]="showApprovalLeavelAttachment"
+    [requestId]="ApprovalLeavelAttachment"
+    (closeModal)="onCloseAttachmentsModal()">
+  </app-attachments-modal>

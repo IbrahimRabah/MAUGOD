@@ -1900,8 +1900,42 @@
   },
   "REQUEST_APPROVAL_VACATIONS": {
     "LOADING": "Loading...",
-    "HANDLE_REQUEST": "الموافقة على طلبات الإجازات والمهام",
-    "TIMTRAN_REQUEST": "الموافقة على طلبات تعديل وقت الحضور"
+    "HANDLE_REQUEST": {
+      "TITLE":"الموافقة على طلبات الإجازات والمهام",
+      "REQUEST_NO":"رقم الطلب",
+      "EMP_NAME":"الموظف",
+      "REQUEST_BY_EMPLOYEE":"مقدم الطلب",
+      "STATUS":"الحالة",
+      "PART":"الفترة",
+      "START_DATE":"تاريخ البداية",
+      "END_DATE":"تاريخ النهاية",
+      "CURENT_LEVEL":"المستوى الحالي",
+      "REQUEST_BY_NOTE":"ملاحظة مقدم الطلب",
+      "NOTE":"ملاحظات",
+      "ACCEPT":"قبول",
+      "REJECT":"رفض",
+      "DETAILS":"التفاصيل",
+      "GRAPH":"الخارطة",
+      "ATTACHMENT":"المرفقات"
+    },
+    "TIMTRAN_REQUEST": {
+      "TITLE":"الموافقة على طلبات تعديل وقت الحضور",
+      "REC_ID":"الرقم",
+      "REQ_ID":"رقم الطلب",
+      "EMP_NAME":"الموظف",
+      "REQUEST_BY_EMPLOYEE":"مقدم الطلب",
+      "SIGN_DATE":"تاريخ التبصيم",
+      "IN":"الدخول",
+      "OUT":"الخروج",
+      "CURENT_LEVEL":"المستوى الحالي",
+      "REQUEST_BY_NOTE":"ملاحظة مقدم الطلب",
+      "NOTE":"ملاحظات",
+      "ACCEPT":"قبول",
+      "REJECT":"رفض",
+      "DETAILS":"التفاصيل",
+      "GRAPH":"الخارطة",
+      "ATTACHMENT":"المرفقات"
+    }
   },
   "SEND_APP_QR_CODE": {
     "LOADING": "جارٍ التحميل...",

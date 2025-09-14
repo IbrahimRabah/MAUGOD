@@ -31,12 +31,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let transaction of requestTransactions; trackBy: trackByTransactionId" class="table-row">
-                <td>{{ transaction.curlLevel }}</td>
-                <td class="status-cell">
-                  <i [class]="getStatusIcon(transaction.flag)"></i>
-                  {{ getStatusText(transaction.flag, transaction.flagName) }}
-                </td>
+              <tr *ngFor="let transaction of requestTransactions;" class="table-row">
+                <td>{{ transaction.curLevel }}</td>
+                <td class="status-cell">{{ transaction.status }}</td>
                 <td>{{ transaction.updatedByEmpName }}</td>
                 <td>{{ transaction.replyDate | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td>{{ transaction.note || '-' }}</td>
@@ -117,9 +114,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let roadMap of filteredRoadMap; trackBy: trackByRoadMapId" class="table-row">
-                <td>{{ roadMap.curl_Level }}</td>
-                <td>{{ roadMap.curLevelName }}</td>
+              <tr *ngFor="let roadMap of filteredRoadMap;" class="table-row">
+                <td>{{ roadMap.curLevel }}</td>
+                <td>{{ roadMap.levelName }}</td>
                 <td>{{ roadMap.mgrName }}</td>
               </tr>
               <tr *ngIf="filteredRoadMap.length === 0" class="no-data">

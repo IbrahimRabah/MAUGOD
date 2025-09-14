@@ -40,13 +40,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let attachment of attachments; trackBy: trackByAttachmentId; let i = index" class="table-row">
-              <td>{{ attachment.req_ID }}</td>
+            <tr *ngFor="let attachment of attachments; let i = index" class="table-row">
+              <td>{{ attachment.attchId }}</td>
               <td>{{ i + 1 + (currentPage - 1) * pageSize }}</td>
               <td>
                 <div class="attachment-info">
                   <i class="fas fa-file-alt attachment-icon"></i>
-                  <span class="file-name">{{ attachment.fileName }}</span>
+                  <span class="file-name">{{ attachment.fileType }}</span>
                 </div>
               </td>
               <td>{{ attachment.note || '-' }}</td>

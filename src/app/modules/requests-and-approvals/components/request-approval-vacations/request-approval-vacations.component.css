@@ -168,7 +168,6 @@
   text-align: center !important;
   border: 1px solid #ddd !important;
   font-size: 14px;
-  white-space: nowrap;
 }
 
 /* Table Body */
@@ -222,14 +221,6 @@
   color: white;
 }
 
-.delete-btn {
-  color: #dc3545;
-}
-
-.delete-btn:hover {
-  background-color: #dc3545;
-  color: white;
-}
 
 .number-btn {
   color: #28a745;
@@ -254,7 +245,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  padding: 15px 10px;
   border-top: 1px solid #ddd;
   background-color: white;
   flex-wrap: wrap;
@@ -580,12 +571,6 @@
   .add-btn {
     width: 100%;
     justify-content: center;
-  }
-  
-  .custom-table thead tr.table-header th,
-  .custom-table tbody tr.table-row td {
-    padding: 8px 6px !important;
-    font-size: 12px;
   }
   
   .action-btn {

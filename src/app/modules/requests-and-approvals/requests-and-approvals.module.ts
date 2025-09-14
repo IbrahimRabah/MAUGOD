@@ -22,6 +22,8 @@ import { CreatePostRequestModalComponent } from './components/create-post-reques
 import { PostRequestAttachmentsModalComponent } from './components/post-request-attachments-modal/post-request-attachments-modal.component';
 import { CreateRequestApprovalRouteModalComponent } from './components/create-request-approval-route-modal/create-request-approval-route-modal.component';
 import { CreateTimeTransactionApprovalComponent } from './components/create-time-transaction-approval/create-time-transaction-approval.component';
+import { ApprovalLeaveDetailsModalComponent } from './components/approval-leave-details-modal/approval-leave-details-modal.component';
+import { ApprovalLeaveAttachmentsModalComponent } from './components/approval-leave-attachments-modal/approval-leave-attachments-modal.component';
 
 
 @NgModule({
@@ -38,7 +40,9 @@ import { CreateTimeTransactionApprovalComponent } from './components/create-time
     CreatePostRequestModalComponent,
     PostRequestAttachmentsModalComponent,
     CreateRequestApprovalRouteModalComponent,
-    CreateTimeTransactionApprovalComponent
+    CreateTimeTransactionApprovalComponent,
+    ApprovalLeaveDetailsModalComponent,
+    ApprovalLeaveAttachmentsModalComponent
   ],
   imports: [
     CommonModule,

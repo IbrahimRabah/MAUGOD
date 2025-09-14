@@ -3,39 +3,50 @@ export interface RequestApprovalVacationTimeTransactionApprovalResponse {
   message: string;
   isSuccess: boolean;
   data: {
-    timeTransactionApprovalRequests: TimeTransactionApproval[];
+    approvalLeaveandAssignments: TimeTransactionApproval[];
     totalCount: number;
   };
 }
 
 export interface TimeTransactionApproval {
+  recId: number;
   reqId: number;
   empId: number;
   empName: string;
-  requestByEmpId: number;
-  requestByEmpName: string;
-  signDate: string;
-  hsDate: string;
-  in: string;
-  out: string;
-  reqSts: number;
-  reqStsName: string;
-  note: string;
+  stsId: number;
+  stsLabel: string;
+  part: number;
+  partLabel: string;
+  startDate: string;
+  startDateHijri: string;
+  endDate: string;
+  endDateHijri: string;
+  curLevel: number;
+  currentLevelLabel: string;
   routeId: number | null;
-  det: string;
-  graph: string;
-  attch: string;
-  del: string;
+  requestByEmpId: number;
+  requestByName: string;
+  note: string;
 }
 
 export interface TimeTransactionApprovalRequest {
   empId: number;
-  sDate: string | null;
-  eDate: string | null;
+  sDate: string;
+  eDate: string;
   pageNumber: number;
   pageSize: number;
   searchColumn: string | null;
   searchText: string | null;
+}
+
+export interface AcceptApprovalRequestQuery{
+  ApprovalRequest: UpdateApprovalReqResult
+}
+
+export interface UpdateApprovalReqResult{
+  TranId : number;
+  EmpId : number
+  Note : string
 }
 
 
@@ -65,12 +76,13 @@ export interface AttendanceAdjustment {
   requestByName: string;
   note: string;
   currentLevelLabel: string;
+
 }
 
 export interface AttendanceAdjustmentRequest {
   empId: number;
-  sDate: string | null;
-  eDate: string | null;
+  sDate: string;
+  eDate: string;
   pageNumber: number;
   pageSize: number;
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse, CreateTimeTransactionApprovalRequestPayload, CreateTimeTransactionApprovalRequestResponse, RequestRoadMapForAttendanceTimeChangeRequestDetailsData, RequestTransactionsForAttendanceTimeChangeRequestDetailsData, TimeTransactionApprovalData, TimeTransactionApprovalRequestAttachmentsData, TimeTransactionApprovalRequestBody, TimeTransactionApprovalRequestCreateDto, UploadTimeTransactionApprovalRequestAttachmentBody } from '../../../core/models/TimeTransactionApprovalData';
+import { ApiResponse, CreateTimeTransactionApprovalRequestPayload, CreateTimeTransactionApprovalRequestResponse, HandleApprovalAttachmentsData, HandleApprovalRoadMapData, HandleApprovalTransactionsData, RequestRoadMapForAttendanceTimeChangeRequestDetailsData, RequestTransactionsForAttendanceTimeChangeRequestDetailsData, TimeTransactionApprovalData, TimeTransactionApprovalRequestAttachmentsData, TimeTransactionApprovalRequestBody, TimeTransactionApprovalRequestCreateDto, UploadTimeTransactionApprovalRequestAttachmentBody } from '../../../core/models/TimeTransactionApprovalData';
 
 @Injectable({
   providedIn: 'root'
@@ -188,6 +188,67 @@ DeleteTimeTransactionApprovalRequestAttachment(
     }
     return input;
   }
+
+getHandleApprovalTransactions(
+  lang: number,
+  reqId: number,
+  pageNumber: number,
+  pageSize: number
+): Observable<ApiResponse<HandleApprovalTransactionsData>> {
+  const url = `${this.apiUrl}/GetHandleApprovalTransactions`;
+
+  const headers = new HttpHeaders({
+    accept: '*/*',
+    lang: lang.toString(),
+    ReqId: reqId.toString(),
+    pageNumer: pageNumber.toString(),
+    pageSize: pageSize.toString(),
+  });
+
+  return this.http.get<ApiResponse<HandleApprovalTransactionsData>>(url, { headers });
+}
+
+
+getHandleApprovalRoadmap(
+  lang: number,
+  reqId: number,
+  pageNumber: number,
+  pageSize: number
+): Observable<ApiResponse<HandleApprovalRoadMapData>> {
+  const url = `${this.apiUrl}/GetHandleApprovalRoadmap`;
+
+  const headers = new HttpHeaders({
+    accept: '*/*',
+    lang: lang.toString(),
+    ReqId: reqId.toString(),
+    pageNumer: pageNumber.toString(), // note: API uses 'pageNumer' (one 'm')
+    pageSize: pageSize.toString(),
+  });
+
+  return this.http.get<ApiResponse<HandleApprovalRoadMapData>>(url, { headers });
+}
+
+
+getHandleApprovalAttachments(
+  lang: number,
+  reqId: number,
+  pageNumber: number,
+  pageSize: number
+): Observable<ApiResponse<HandleApprovalAttachmentsData>> {
+  const url = `${this.apiUrl}/GetHandleApprovalAttachments`;
+
+  const headers = new HttpHeaders({
+    accept: '*/*',
+    lang: lang.toString(),
+    reqId: reqId.toString(),
+    pageNumer: pageNumber.toString(),
+    pageSize: pageSize.toString(),
+  });
+
+  return this.http.get<ApiResponse<HandleApprovalAttachmentsData>>(url, { headers });
+}
+
+
 
 /*
 
