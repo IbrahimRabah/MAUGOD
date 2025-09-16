@@ -173,7 +173,7 @@ DeleteTimeTransactionApprovalRequestAttachment(
     };
 
     return this.http.post<CreateTimeTransactionApprovalRequestResponse>(
-      `${this.apiUrl}/CreateTimeTransactionApproval` ,
+      `${this.apiUrl}/CreateTimeTransactionApprovalRequest` ,
       body,
       { headers }
     );
