@@ -1,1 +1,307 @@
-<p>role-chart-rights works!</p>
+<div class="role-chart-rights-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'ROLE_CHART_RIGHTS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="openCreateModal()" [title]="'ROLE_CHART_RIGHTS.ADD_NEW_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'ROLE_CHART_RIGHTS.ADD_NEW' | translate }}
+      </button>
+      <button class="delete-selected-btn" 
+              (click)="deleteSelected()" 
+              [disabled]="selectedItems.length === 0"
+              [title]="'ROLE_CHART_RIGHTS.DELETE_SELECTED_TITLE' | translate">
+        <i class="fas fa-trash"></i>
+        {{ 'ROLE_CHART_RIGHTS.DELETE_SELECTED' | translate }} ({{ selectedItems.length }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="checkbox-column">
+            <input 
+              type="checkbox" 
+              [checked]="isAllSelected" 
+              [indeterminate]="isPartiallySelected"
+              (change)="toggleSelectAll()"
+              [title]="'ROLE_CHART_RIGHTS.SELECT_ALL' | translate">
+          </th>
+          <th class="text-center">{{ 'ROLE_CHART_RIGHTS.ROLE' | translate }}</th>
+          <th class="text-center">{{ 'ROLE_CHART_RIGHTS.CHART' | translate }}</th>
+          <th class="text-center">{{ 'ROLE_CHART_RIGHTS.DELEGATE' | translate }}</th>
+          <th class="actions-column">{{ 'ROLE_CHART_RIGHTS.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of roleChartRights" class="table-row">
+          <td class="checkbox-column">
+            <input 
+              type="checkbox" 
+              [checked]="isItemSelected(item)" 
+              (change)="toggleItemSelection(item)">
+          </td>
+          <td>{{ getRoleName(item) }}</td>
+          <td>{{ getChartName(item) }}</td>
+          <td>
+            <span *ngIf="getDelegateName(item) === 'ROLE_CHART_RIGHTS.NO_DELEGATE'; else delegateTemplate">
+              {{ 'ROLE_CHART_RIGHTS.NO_DELEGATE' | translate }}
+            </span>
+            <ng-template #delegateTemplate>
+              {{ getDelegateName(item) }}
+            </ng-template>
+          </td>
+          <td class="actions-column">
+            <button 
+              class="action-btn delete-btn" 
+              (click)="deleteRoleChartRight(item)"
+              [title]="'ROLE_CHART_RIGHTS.DELETE_TITLE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="roleChartRights.length === 0" class="empty-row">
+          <td colspan="5" class="empty-message">
+            {{ 'ROLE_CHART_RIGHTS.NO_DATA' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'ROLE_CHART_RIGHTS.SHOWING' | translate }} {{ currentPageStart }} {{ 'ROLE_CHART_RIGHTS.TO' | translate }} {{ currentPageEnd }} {{ 'ROLE_CHART_RIGHTS.OF' | translate }} {{ totalRecords }} {{ 'ROLE_CHART_RIGHTS.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'ROLE_CHART_RIGHTS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'ROLE_CHART_RIGHTS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <span class="page-info">{{ 'ROLE_CHART_RIGHTS.PAGE' | translate }} {{ currentPage }} {{ 'ROLE_CHART_RIGHTS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'ROLE_CHART_RIGHTS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'ROLE_CHART_RIGHTS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(1)" 
+          [disabled]="currentPage === 1"
+          [title]="'ROLE_CHART_RIGHTS.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'ROLE_CHART_RIGHTS.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'ROLE_CHART_RIGHTS.PAGE' | translate }} {{ currentPage }} {{ 'ROLE_CHART_RIGHTS.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'ROLE_CHART_RIGHTS.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPage(totalPages)" 
+          [disabled]="currentPage === totalPages"
+          [title]="'ROLE_CHART_RIGHTS.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'ROLE_CHART_RIGHTS.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create Role Chart Rights Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'ROLE_CHART_RIGHTS.CREATE_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeCreateModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
+        
+        <!-- Role Selection -->
+        <div class="form-section">
+          <div class="form-group full-width">
+            <label class="required">{{ 'ROLE_CHART_RIGHTS.SELECT_ROLE' | translate }}</label>
+            <div class="role-dropdown">
+              <select 
+                class="form-select" 
+                [class.error]="roleError"
+                (change)="onRoleSelect($event)"
+                [disabled]="loadingRoles">
+                <option value="">{{ 'ROLE_CHART_RIGHTS.SELECT_ROLE_PLACEHOLDER' | translate }}</option>
+                <option *ngFor="let role of roles" [value]="role.roleId">
+                  {{ role.label }}
+                </option>
+              </select>
+              <div *ngIf="loadingRoles" class="loading-text">
+                {{ 'ROLE_CHART_RIGHTS.LOADING_ROLES' | translate }}
+              </div>
+            </div>
+            <div *ngIf="roleError" class="error-message">
+              {{ roleError | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Multi-Select (Only shown when role is selected) -->
+        <div *ngIf="selectedRole" class="form-section">
+          <div class="form-group full-width">
+            <label class="required">{{ 'ROLE_CHART_RIGHTS.SELECT_CHARTS' | translate }}</label>
+            
+            <div *ngIf="loadingCharts" class="loading-text">
+              {{ 'ROLE_CHART_RIGHTS.LOADING_CHARTS' | translate }}
+            </div>
+            
+            <div *ngIf="!loadingCharts && charts.length === 0" class="no-data-text">
+              {{ 'ROLE_CHART_RIGHTS.NO_CHARTS_AVAILABLE' | translate }}
+            </div>
+            
+            <div *ngIf="!loadingCharts && charts.length > 0" class="multi-select-container">
+              <!-- Search and Controls -->
+              <div class="multi-select-controls">
+                <input 
+                  type="text" 
+                  [(ngModel)]="multiSelectState.searchTerm" 
+                  [ngModelOptions]="{standalone: true}"
+                  class="search-input" 
+                  [placeholder]="'ROLE_CHART_RIGHTS.SEARCH_CHARTS' | translate">
+                
+                <div class="control-buttons">
+                  <button type="button" class="control-btn" (click)="selectAllCharts()">
+                    {{ 'EMPLOYEE_BALANCE.SELECT_ALL' | translate }}
+                  </button>
+                  <button type="button" class="control-btn" (click)="clearAllCharts()">
+                    {{ 'EMPLOYEE_BALANCE.CLEAR_ALL' | translate }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Multi-Select Lists -->
+              <div class="multi-select-lists">
+                <!-- Available Charts -->
+                <div class="list-container">
+                  <h4>{{ 'ROLE_CHART_RIGHTS.AVAILABLE_CHARTS' | translate }}</h4>
+                  <div class="item-list">
+                    <div 
+                      *ngFor="let chart of getFilteredCharts()" 
+                      class="item" 
+                      [class.selected]="isChartSelected(chart)"
+                      (click)="toggleChartSelection(chart)">
+                      <span>{{ chart.label }}</span>
+                      <i *ngIf="!isChartSelected(chart)" class="fas fa-plus"></i>
+                      <i *ngIf="isChartSelected(chart)" class="fas fa-check"></i>
+                    </div>
+                    <div *ngIf="getFilteredCharts().length === 0" class="empty-list">
+                      {{ 'EMPLOYEE_BALANCE.NO_ITEMS_FOUND' | translate }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Selected Charts -->
+                <div class="list-container">
+                  <h4>{{ 'ROLE_CHART_RIGHTS.SELECTED_CHARTS' | translate }}</h4>
+                  <div class="item-list">
+                    <div 
+                      *ngFor="let chart of multiSelectState.selected" 
+                      class="item selected"
+                      (click)="toggleChartSelection(chart)">
+                      <span>{{ chart.label }}</span>
+                      <i class="fas fa-times"></i>
+                    </div>
+                    <div *ngIf="multiSelectState.selected.length === 0" class="empty-list">
+                      {{ 'EMPLOYEE_BALANCE.NO_ITEMS_SELECTED' | translate }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div *ngIf="chartsError" class="error-message">
+              {{ chartsError | translate }}
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="cancel-btn" (click)="closeCreateModal()">
+        {{ 'ROLE_CHART_RIGHTS.CANCEL' | translate }}
+      </button>
+      <button 
+        type="button" 
+        class="submit-btn" 
+        (click)="submitCreate()"
+        [disabled]="!isCreateFormValid">
+        {{ 'ROLE_CHART_RIGHTS.SAVE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
