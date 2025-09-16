@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 // PrimeNG Modules
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToggleButtonModule } from 'primeng/togglebutton';
@@ -60,6 +61,7 @@ import { PermissionsDelegationsComponent } from './components/permissions-delega
     TranslateModule.forChild(),
     ToastModule,
     ConfirmDialogModule,
+    DialogModule,
     MultiSelectModule,
     DropdownModule,
     ToggleButtonModule

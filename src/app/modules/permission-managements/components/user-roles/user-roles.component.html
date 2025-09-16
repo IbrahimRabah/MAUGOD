@@ -1,1 +1,263 @@
-<p>user-roles works!</p>
+<div class="user-roles-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="page-title">
+      <h2>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.TITLE' | translate }}</h2>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn create-btn" 
+              (click)="openCreateDialog()" 
+              [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.CREATE_NEW_ROLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.CREATE' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="edit-column">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.EDIT' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ROLE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ARABIC_NAME' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ENGLISH_NAME' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.VIRTUAL_ROLE' | translate }}</th>
+          <th>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.NOTE' | translate }}</th>
+          <th class="delete-column">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.DELETE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let role of userRoles" class="table-row">
+          <td class="edit-column">
+            <button class="action-btn edit-btn" 
+                    (click)="editRole(role)" 
+                    [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.EDIT' | translate">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>
+            <span class="role-id">{{ role.roleId }}</span>
+          </td>
+          <td>
+            <span class="arabic-name">{{ role.ar || '-' }}</span>
+          </td>
+          <td>
+            <span class="english-name">{{ role.en || '-' }}</span>
+          </td>
+          <td>
+            <span class="boolean-badge" [class.yes]="role.isVirtual" [class.no]="!role.isVirtual">
+              {{ role.isVirtual ? ('MENU.PERMISSION_MANAGEMENT.USER_ROLES.YES' | translate) : ('MENU.PERMISSION_MANAGEMENT.USER_ROLES.NO' | translate) }}
+            </span>
+          </td>
+          <td>
+            <span class="note">{{ role.note || '-' }}</span>
+          </td>
+          <td class="delete-column">
+            <button class="action-btn delete-btn" 
+                    (click)="deleteRole(role)" 
+                    [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.DELETE' | translate">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="userRoles.length === 0" class="empty-row">
+          <td colspan="7" class="empty-message">
+            {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.NO_DATA' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper" 
+       [class.rtl]="langService.getCurrentLang() === 'ar'" 
+       [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.OF' | translate }} {{ totalRecords }} {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToLastPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.LAST' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToNextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.NEXT' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.PAGE' | translate }} {{ currentPage }} {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPreviousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.PREVIOUS' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToFirstPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FIRST' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button 
+          class="pagination-btn" 
+          (click)="goToFirstPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FIRST' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToPreviousPage()" 
+          [disabled]="currentPage === 1"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.PREVIOUS' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.PAGE' | translate }} {{ currentPage }} {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <button 
+          class="pagination-btn" 
+          (click)="goToNextPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.NEXT' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button 
+          class="pagination-btn" 
+          (click)="goToLastPage()" 
+          [disabled]="currentPage === totalPages"
+          [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.LAST' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" class="page-size-select">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create/Edit Dialog -->
+  <p-dialog [header]="dialogTitle" 
+            [(visible)]="showDialog" 
+            [style]="{width: '500px'}" 
+            [modal]="true"
+            [closable]="true"
+            styleClass="custom-dialog">
+    
+    <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Arabic Name -->
+      <div class="form-group">
+        <label for="arabicName">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FORM_ARABIC_NAME' | translate }} *</label>
+        <input type="text" 
+               id="arabicName"
+               formControlName="ar" 
+               class="form-control"
+               [class.error]="roleForm.get('ar')?.invalid && roleForm.get('ar')?.touched"
+               [placeholder]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FORM_ARABIC_NAME' | translate">
+        <div class="error-message" *ngIf="roleForm.get('ar')?.invalid && roleForm.get('ar')?.touched">
+          {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ARABIC_NAME_REQUIRED' | translate }}
+        </div>
+      </div>
+
+      <!-- English Name -->
+      <div class="form-group">
+        <label for="englishName">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FORM_ENGLISH_NAME' | translate }} *</label>
+        <input type="text" 
+               id="englishName"
+               formControlName="en" 
+               class="form-control"
+               [class.error]="roleForm.get('en')?.invalid && roleForm.get('en')?.touched"
+               [placeholder]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FORM_ENGLISH_NAME' | translate">
+        <div class="error-message" *ngIf="roleForm.get('en')?.invalid && roleForm.get('en')?.touched">
+          {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ENGLISH_NAME_REQUIRED' | translate }}
+        </div>
+      </div>
+
+      <!-- Role Type (isVirtual) -->
+      <div class="form-group">
+        <label>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FORM_VIRTUAL_ROLE' | translate }} *</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" 
+                   id="real" 
+                   formControlName="isVirtual" 
+                   [value]="false">
+            <label for="real">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.REAL' | translate }}</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" 
+                   id="virtual" 
+                   formControlName="isVirtual" 
+                   [value]="true">
+            <label for="virtual">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.VIRTUAL' | translate }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Note -->
+      <div class="form-group">
+        <label for="note">{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FORM_NOTE' | translate }}</label>
+        <textarea id="note"
+                  formControlName="note" 
+                  class="form-control"
+                  rows="3"
+                  [placeholder]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.FORM_NOTE' | translate">
+        </textarea>
+      </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <button type="button" 
+                class="action-btn cancel-btn" 
+                (click)="closeDialog()">
+          {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.CANCEL' | translate }}
+        </button>
+        <button type="button" 
+                class="action-btn save-btn" 
+                (click)="onSubmit()"
+                [disabled]="roleForm.invalid || isSubmitting">
+          <i class="fas fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+          {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.SAVE' | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>
