@@ -24,6 +24,7 @@ import { CreateRequestApprovalRouteModalComponent } from './components/create-re
 import { CreateTimeTransactionApprovalComponent } from './components/create-time-transaction-approval/create-time-transaction-approval.component';
 import { ApprovalLeaveDetailsModalComponent } from './components/approval-leave-details-modal/approval-leave-details-modal.component';
 import { ApprovalLeaveAttachmentsModalComponent } from './components/approval-leave-attachments-modal/approval-leave-attachments-modal.component';
+import { ApprovalRoadmapDiagramComponent } from './components/approval-roadmap-diagram/approval-roadmap-diagram.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { ApprovalLeaveAttachmentsModalComponent } from './components/approval-le
     CreateRequestApprovalRouteModalComponent,
     CreateTimeTransactionApprovalComponent,
     ApprovalLeaveDetailsModalComponent,
-    ApprovalLeaveAttachmentsModalComponent
+    ApprovalLeaveAttachmentsModalComponent,
+    ApprovalRoadmapDiagramComponent
   ],
   imports: [
     CommonModule,

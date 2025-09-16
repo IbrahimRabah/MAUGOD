@@ -6,6 +6,8 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { AcceptApprovalRequestQuery, AttendanceAdjustment, AttendanceAdjustmentRequest, RequestApprovalVacationAttendanceAdjustmentResponse, RequestApprovalVacationTimeTransactionApprovalResponse, TimeTransactionApproval, TimeTransactionApprovalRequest } from '../../../../core/models/requestApprovalVacations';
 import { RequestApprovalVacationsService } from '../../services/request-approval-vacations.service';
 import { ApiResponse } from '../../../../core/models/TimtranLock';
+import { AttendanceTimeService } from '../../services/attendance-time.service';
+import { RoadMap } from '../../../../core/models/TimeTransactionApprovalData';
 
 @Component({
   selector: 'app-request-approval-vacations',
@@ -33,7 +35,10 @@ export class RequestApprovalVacationsComponent {
   timtranRequestAttachment : number = 0;
   showtimtranRequestAttachment : boolean = false;
 
-
+  roadmapNodes: any[] = [];
+  isDiagramVisible = false;
+  requestRoadMap: RoadMap[] = [];
+  roadMapTotalRecords:number = 0;
   
   ApprovalLeavelDetails : number = 0;
   showApprovalLeavelDetails : boolean = false;
@@ -117,6 +122,7 @@ private formatDate(date: Date): string {
     private requestApprovalVacationsService: RequestApprovalVacationsService,
     public langService: LanguageService,
     private messageService: MessageService,
+    private attendanceTimeService: AttendanceTimeService,
     private translate: TranslateService
   ) {
     
@@ -298,6 +304,7 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
     }
 
     this.TimeTransactionloading = true;
+    this.TimeTransactionApprovalRequest.empId = 0;
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
     this.requestApprovalVacationsService.getTimeTransactionApprovalRequests(this.TimeTransactionApprovalRequest, this.langService.getLangValue()).subscribe({
       next: (response: RequestApprovalVacationTimeTransactionApprovalResponse) => {
@@ -624,15 +631,23 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
   }
 
   ViewTimtranRequestGraph(item: TimeTransactionApproval){
-    if(this.langService.getLangValue() == 1)
-    {
-      this.showInfoMessage('Graph functionality is not yet implemented');
-    }
-    else{
-      this.showInfoMessage('تحت التطوير');
-    }
+    this.roadmapNodes = [
+  { key: 'level1', name: 'المستوى الاول' },
+  { key: 213, name: 'مصعب عمر عبدالله مصعب (213)', parent: 'level1' },
+  { key: 'level2', name: 'المستوى الثاني', parent: 'level1' },
+  { key: 215, name: 'مالك عبدالله مصعب عبدالله (215)', parent: 'level2' },
+  { key: 'end', name: 'النهاية', parent: 'level2' }
+];
+
+this.isDiagramVisible = true;
+
+    
   }
 
+
+  onCloseTimtranRequestGraphModal() {
+    this.isDiagramVisible = false;
+  }
 
   private showInfoMessage(message: string) {
     this.messageService.add({
@@ -674,5 +689,35 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
       this.showInfoMessage('تحت التطوير');
     }
   }
+
+
+
+
+
+
+
+ loadRequestRoadMap(requestId : number) {
+    
+    this.attendanceTimeService.getHandleApprovalRoadmap(
+      this.langService.getLangValue(),
+      requestId,
+      1,
+      1000
+    ).subscribe({
+      next: (response) => {
+        if (response.isSuccess) {
+          this.requestRoadMap = response.data.roadmaps;
+          this.roadMapTotalRecords = response.data.totalCount;
+        } else {
+        }
+      },
+      error: (error) => {
+        console.error('Error loading request road map:', error);
+      }
+    });
+  }
+
+
+
 
 }

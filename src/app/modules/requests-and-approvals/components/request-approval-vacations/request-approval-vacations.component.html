@@ -290,7 +290,11 @@
   </app-approval-leave-attachments-modal>
 
 
-
+  <app-approval-roadmap-diagram 
+    [nodes]="roadmapNodes"
+    [showDiagram]="isDiagramVisible"
+    (closeModal)="onCloseTimtranRequestGraphModal()">
+  </app-approval-roadmap-diagram>
 
 
 <!-- <p>-------------------------------------------------------------------------------</p> -->
