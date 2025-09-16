@@ -1,1 +1,382 @@
-<p>permissions-delegations works!</p>
+<div class="permissions-delegations-container">
+  <!-- Toast Messages with enhanced configuration -->
+  <p-toast position="top-right" [baseZIndex]="10001" [preventOpenDuplicates]="true" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'PERMISSIONS_DELEGATIONS.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="create-btn" 
+              (click)="createDelegation()">
+        <i class="fa fa-plus"></i>
+        {{ 'PERMISSIONS_DELEGATIONS.CREATE_DELEGATION' | translate }}
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <div class="input-group" style="padding-left: 5px; padding-right: 5px;">
+        <!-- Search Input -->
+        <input type="text" class="form-control"
+               [placeholder]="'PERMISSIONS_DELEGATIONS.SEARCH_PLACEHOLDER' | translate"
+               [(ngModel)]="searchTerm" 
+               (input)="applyFilter()"
+               [title]="'PERMISSIONS_DELEGATIONS.SEARCH_TITLE' | translate" 
+               [ngClass]="{
+                 'order-0': langService.getCurrentLang() === 'en', 
+                 'order-1': langService.getCurrentLang() === 'ar'
+               }">
+      </div>
+      <button class="btn" type="button" (click)="applyFilter()" 
+              style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper" title="{{ 'PERMISSIONS_DELEGATIONS.SCROLL_HINT' | translate }}">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th>{{ 'PERMISSIONS_DELEGATIONS.EDIT' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.DELEGATE_FROM' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.DELEGATE_TO' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.START_DATE' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.END_DATE' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.DELEGATE_STATUS' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.SOURCE_TYPE' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.RECORD_DATE' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.NOTE' | translate }}</th>
+          <th>{{ 'PERMISSIONS_DELEGATIONS.CANCEL' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let delegation of filteredDelegations; trackBy: trackByDelegationId; let i = index" 
+            class="table-row">
+          
+          <!-- Edit Icon -->
+          <td class="text-center action-column">
+            <button class="action-btn details-btn" 
+                    (click)="editDelegation(delegation)"
+                    [title]="'PERMISSIONS_DELEGATIONS.EDIT_DELEGATION' | translate">
+              <i class="fa fa-edit"></i>
+            </button>
+          </td>
+
+          <!-- Delegate From Employee -->
+          <td [title]="delegation.dFromEmpName">
+            {{ delegation.dFromEmpName }}
+          </td>
+
+          <!-- Delegate To Employee -->
+          <td [title]="delegation.dToEmpName">
+            {{ delegation.dToEmpName }}
+          </td>
+
+          <!-- Start Date -->
+          <td class="text-center">
+            <span [title]="delegation.hsDate">
+              {{ delegation.sDate }}
+            </span>
+          </td>
+
+          <!-- End Date -->
+          <td class="text-center">
+            <span [title]="delegation.heDate">
+              {{ delegation.eDate }}
+            </span>
+          </td>
+
+          <!-- Delegate Status -->
+          <td class="text-center">
+            <span class="status-badge" 
+                  [ngClass]="{'status-active': delegation.dSts, 'status-inactive': !delegation.dSts}">
+              <i [class]="getStatusIcon(delegation.dSts)"></i>
+              {{ getStatusDisplayText(delegation.dSts) | translate }}
+            </span>
+          </td>
+
+          <!-- Source Type -->
+          <td class="text-center">
+            <span class="source-type-badge"
+                  [ngClass]="{'source-internal': delegation.sourceTyp, 'source-external': !delegation.sourceTyp}">
+              {{ getSourceTypeDisplayText(delegation.sourceTyp) | translate }}
+            </span>
+          </td>
+
+          <!-- Record Date -->
+          <td class="text-center">
+            {{ delegation.recDate }}
+          </td>
+
+          <!-- Note -->
+          <td [title]="delegation.note">
+            <span class="note-text">{{ delegation.note || '-' }}</span>
+          </td>
+
+          <!-- Cancel Icon -->
+          <td class="text-center action-column">
+            <button class="action-btn delete-btn" 
+                    (click)="cancelDelegation(delegation)"
+                    [title]="'PERMISSIONS_DELEGATIONS.CANCEL_DELEGATION' | translate">
+              <i class="fa fa-times"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Empty State -->
+        <tr *ngIf="filteredDelegations.length === 0" class="empty-row">
+          <td colspan="10" class="empty-message text-center">
+            <i class="fa fa-inbox"></i>
+            <p>{{ 'PERMISSIONS_DELEGATIONS.NO_DATA' | translate }}</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && filteredDelegations.length > 0" class="pagination-wrapper" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'PERMISSIONS_DELEGATIONS.SHOWING' | translate }} {{ currentPageStart }} {{ 'PERMISSIONS_DELEGATIONS.TO' | translate }} {{ currentPageEnd }} {{ 'PERMISSIONS_DELEGATIONS.OF' | translate }} {{ totalRecords }} {{ 'PERMISSIONS_DELEGATIONS.ITEMS' | translate }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- Arabic RTL Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button class="pagination-btn first-last-btn" 
+                (click)="goToLastPage()" 
+                [disabled]="!canGoNext"
+                [title]="'PERMISSIONS_DELEGATIONS.LAST_PAGE' | translate">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+        
+        <button class="pagination-btn" 
+                (click)="nextPage()" 
+                [disabled]="!canGoNext"
+                [title]="'PERMISSIONS_DELEGATIONS.NEXT_PAGE' | translate">
+          <i class="fa fa-angle-left"></i>
+        </button>
+        
+        <div class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">{{ 'PERMISSIONS_DELEGATIONS.OF' | translate }}</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </div>
+        
+        <button class="pagination-btn" 
+                (click)="previousPage()" 
+                [disabled]="!canGoPrevious"
+                [title]="'PERMISSIONS_DELEGATIONS.PREVIOUS_PAGE' | translate">
+          <i class="fa fa-angle-right"></i>
+        </button>
+        
+        <button class="pagination-btn first-last-btn" 
+                (click)="goToFirstPage()" 
+                [disabled]="!canGoPrevious"
+                [title]="'PERMISSIONS_DELEGATIONS.FIRST_PAGE' | translate">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+      
+      <!-- English LTR Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button class="pagination-btn first-last-btn" 
+                (click)="goToFirstPage()" 
+                [disabled]="!canGoPrevious"
+                [title]="'PERMISSIONS_DELEGATIONS.FIRST_PAGE' | translate">
+          <i class="fa fa-angle-double-left"></i>
+        </button>
+        
+        <button class="pagination-btn" 
+                (click)="previousPage()" 
+                [disabled]="!canGoPrevious"
+                [title]="'PERMISSIONS_DELEGATIONS.PREVIOUS_PAGE' | translate">
+          <i class="fa fa-angle-left"></i>
+        </button>
+        
+        <div class="page-info-enhanced">
+          <span class="page-number">{{ currentPage }}</span>
+          <span class="page-separator">{{ 'PERMISSIONS_DELEGATIONS.OF' | translate }}</span>
+          <span class="total-pages">{{ totalPages }}</span>
+        </div>
+        
+        <button class="pagination-btn" 
+                (click)="nextPage()" 
+                [disabled]="!canGoNext"
+                [title]="'PERMISSIONS_DELEGATIONS.NEXT_PAGE' | translate">
+          <i class="fa fa-angle-right"></i>
+        </button>
+        
+        <button class="pagination-btn first-last-btn" 
+                (click)="goToLastPage()" 
+                [disabled]="!canGoNext"
+                [title]="'PERMISSIONS_DELEGATIONS.LAST_PAGE' | translate">
+          <i class="fa fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'PERMISSIONS_DELEGATIONS.ITEMS_PER_PAGE' | translate }}</label>
+      <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Create Delegation Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'PERMISSIONS_DELEGATIONS.CREATE_DELEGATION_MODAL_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="delegationForm" (ngSubmit)="submitDelegation()">
+        
+        <!-- Employee Multi-Select -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'PERMISSIONS_DELEGATIONS.DELEGATE_TO_EMPLOYEES' | translate }}</h4>
+          
+          <div class="picklist-section">
+            <div class="picklist-label">
+              {{ 'PERMISSIONS_DELEGATIONS.SELECT_EMPLOYEES' | translate }}
+              <span class="required">*</span>
+            </div>
+            
+            <div class="custom-multiselect-container">
+              <div class="multiselect-header">
+                <span>{{ 'PERMISSIONS_DELEGATIONS.EMPLOYEES' | translate }}</span>
+                <span class="selected-count">{{ getSelectedEmployeeCount() }} {{ 'PERMISSIONS_DELEGATIONS.SELECTED' | translate }}</span>
+              </div>
+              
+              <div class="multiselect-search">
+                <div class="search-container" [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+                  <input type="text" 
+                         class="search-input" 
+                         [placeholder]="'PERMISSIONS_DELEGATIONS.SEARCH_EMPLOYEES' | translate"
+                         [(ngModel)]="employeeMultiSelectState.searchTerm">
+                  <i class="fas fa-search search-icon"></i>
+                </div>
+              </div>
+              
+              <div class="multiselect-items" *ngIf="!loadingEmployees">
+                <div class="multiselect-item" 
+                     *ngFor="let employee of getFilteredEmployees()"
+                     [class.selected]="isEmployeeSelected(employee)"
+                     (click)="toggleEmployeeSelection(employee)">
+                  <div class="item-checkbox">
+                    <i [class]="isEmployeeSelected(employee) ? 'fas fa-check-square' : 'far fa-square'"></i>
+                  </div>
+                  <div class="item-content">
+                    <i class="fas fa-user item-icon"></i>
+                    <span>{{ employee.name }}</span>
+                  </div>
+                </div>
+                
+                <div *ngIf="getFilteredEmployees().length === 0" class="multiselect-item">
+                  <div class="item-content">
+                    <span>{{ 'PERMISSIONS_DELEGATIONS.NO_EMPLOYEES_FOUND' | translate }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="loadingEmployees" class="multiselect-items">
+                <div class="multiselect-item">
+                  <div class="item-content">
+                    <span>{{ 'PERMISSIONS_DELEGATIONS.LOADING_EMPLOYEES' | translate }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="multiselect-footer" *ngIf="hasSelectableEmployees()">
+                <button type="button" 
+                        class="clear-btn" 
+                        (click)="clearEmployeeSelection()"
+                        *ngIf="getSelectedEmployeeCount() > 0">
+                  {{ 'PERMISSIONS_DELEGATIONS.CLEAR_SELECTION' | translate }}
+                </button>
+                <button type="button" 
+                        class="clear-btn" 
+                        (click)="selectAllEmployees()"
+                        *ngIf="!areAllEmployeesSelected()">
+                  {{ 'PERMISSIONS_DELEGATIONS.SELECT_ALL' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Fields -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'PERMISSIONS_DELEGATIONS.DELEGATION_PERIOD' | translate }}</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">{{ 'PERMISSIONS_DELEGATIONS.START_DATE' | translate }}</label>
+              <input type="date" 
+                     class="form-input" 
+                     formControlName="sDate"
+                     [class.error]="delegationForm.get('sDate')?.invalid && delegationForm.get('sDate')?.touched">
+              <div *ngIf="delegationForm.get('sDate')?.invalid && delegationForm.get('sDate')?.touched" 
+                   class="error-message">
+                {{ 'PERMISSIONS_DELEGATIONS.START_DATE_REQUIRED' | translate }}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="required">{{ 'PERMISSIONS_DELEGATIONS.END_DATE' | translate }}</label>
+              <input type="date" 
+                     class="form-input" 
+                     formControlName="eDate"
+                     [class.error]="delegationForm.get('eDate')?.invalid && delegationForm.get('eDate')?.touched">
+              <div *ngIf="delegationForm.get('eDate')?.invalid && delegationForm.get('eDate')?.touched" 
+                   class="error-message">
+                {{ 'PERMISSIONS_DELEGATIONS.END_DATE_REQUIRED' | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note Field -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'PERMISSIONS_DELEGATIONS.NOTES_SECTION' | translate }}</h4>
+          <div class="form-group full-width">
+            <label>{{ 'PERMISSIONS_DELEGATIONS.NOTE' | translate }}</label>
+            <textarea class="form-textarea" 
+                      formControlName="note"
+                      rows="3"
+                      [placeholder]="'PERMISSIONS_DELEGATIONS.NOTE_PLACEHOLDER' | translate">
+            </textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeModal()">
+            {{ 'PERMISSIONS_DELEGATIONS.CANCEL' | translate }}
+          </button>
+          <button type="submit" 
+                  class="submit-btn"
+                  [disabled]="!isDelegationFormValid">
+            {{ 'PERMISSIONS_DELEGATIONS.CREATE_DELEGATION' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

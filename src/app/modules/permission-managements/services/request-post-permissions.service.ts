@@ -12,7 +12,7 @@ interface DeleteSelectedPayload {
   providedIn: 'root'
 })
 export class RequestPostPermissionsService {
-  private apiUrl = `${environment.apiUrl}/api`;
+    private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) { }
 
