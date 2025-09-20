@@ -30,6 +30,8 @@ export class RoleChartRightsComponent implements OnInit, OnDestroy {
   loadingRoles = false;
   loadingCharts = false;
   selectedRole: RoleDropdownData | null = null;
+    searchTerm: string = '';
+
 
   // Multi-select state for charts
   multiSelectState = {
@@ -41,11 +43,23 @@ export class RoleChartRightsComponent implements OnInit, OnDestroy {
   // Reactive Forms
   searchForm!: FormGroup;
 
+  
+    searchColumns = [
+  { column: 'allFields', label: 'All Columns' }, // all columns option
+  { column: 'roleName', label: 'ROLE_CHART_RIGHTS.ROLE' },
+  { column: 'chartName', label: 'ROLE_CHART_RIGHTS.CHART' },
+  { column: 'delegateName', label: 'ROLE_CHART_RIGHTS.DELEGATE' },
+];
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  selectedColumn: string = this.searchColumns[0].column;
+
   // Pagination
   paginationRequest = {
     pageNumber: 1,
     pageSize: 10,
-    lang: 2
+    lang: 2,
+    searchColumn: this.selectedColumn, 
+    searchText:this.searchTerm 
   };
 
   constructor(
@@ -95,7 +109,9 @@ export class RoleChartRightsComponent implements OnInit, OnDestroy {
     this.roleChartsService.getRoleChartRights(
       this.paginationRequest.pageSize,
       this.paginationRequest.pageNumber,
-      lang
+      lang,
+      this.paginationRequest.searchColumn,
+      this.paginationRequest.searchText
     ).subscribe({
       next: (response: RoleChartRightsResponse) => {
         if (response.isSuccess) {
@@ -173,6 +189,18 @@ export class RoleChartRightsComponent implements OnInit, OnDestroy {
     this.loadRoleChartRights();
   }
 
+  onSearch() {
+    this.currentPage = 1;
+    this.paginationRequest.pageNumber = 1;
+    this.paginationRequest.searchColumn=this.selectedColumn;
+    this.paginationRequest.searchText=this.searchTerm;
+    this.loadRoleChartRights();
+  }
+
+selectColumn(col: any) {
+  this.selectedColumn = col.column;
+  this.selectedColumnLabel = col.label;
+}
   // Selection methods
   toggleSelectAll() {
     if (this.isAllSelected) {
