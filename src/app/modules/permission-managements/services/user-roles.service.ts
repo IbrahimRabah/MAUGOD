@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { createUserRoleRequest, RoleResponse, UpdateUserRoleRequest } from '../../../core/models/userRoels';
 
@@ -10,11 +10,13 @@ import { createUserRoleRequest, RoleResponse, UpdateUserRoleRequest } from '../.
 export class UserRolesService {
   private apiUrl = `${environment.apiUrl}/UserRoles`;
   constructor(private http: HttpClient) { }
-  getAllUserRoles(lang:number,pageSize:number,pageIndex:number):Observable<RoleResponse>{
-   const params = {
-      pageSize: pageSize.toString(),
-      pageIndex: pageIndex.toString() 
-  }
+  getAllUserRoles(lang:number,pageSize:number,pageIndex:number, colunmSearchName : string | null, colunmSearchValue : string|null):Observable<RoleResponse>{
+   let params = new HttpParams()
+                         .set('pageSize', pageSize.toString())
+                         .set('pageIndex', pageIndex.toString());
+       if(colunmSearchName && colunmSearchValue){
+           params = params.set(colunmSearchName, colunmSearchValue);
+         }
     const headers = new HttpHeaders({
       'Accept': 'text/plain',
       'lang': lang.toString()

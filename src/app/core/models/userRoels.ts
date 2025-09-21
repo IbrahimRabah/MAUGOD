@@ -13,7 +13,8 @@ export interface RoleData {
   ar: string;          // Arabic description
   en: string;          // English description
   isVirtual: boolean;  // Whether the role is virtual
-  note?: string | null; // Optional note
+  note?: string | null;
+  isVirtualLabel:string; 
 }
 export interface createUserRoleRequest {
   ar: string;          // Arabic description

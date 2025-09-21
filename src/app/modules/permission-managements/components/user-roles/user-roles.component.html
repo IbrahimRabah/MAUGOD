@@ -12,19 +12,54 @@
   </div>
 
   <!-- Table Header -->
+    <!-- Table Header Actions -->
   <div *ngIf="!loading" class="table-header-actions">
-    <div class="page-title">
-      <h2>{{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.TITLE' | translate }}</h2>
-    </div>
-    <div class="header-actions">
-      <button class="action-btn create-btn" 
-              (click)="openCreateDialog()" 
-              [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.CREATE_NEW_ROLE' | translate">
+    <div class="left-actions">
+      <button class="add-btn" (click)="openCreateDialog()" [title]="'MENU.PERMISSION_MANAGEMENT.USER_ROLES.CREATE_NEW_ROLE' | translate">
         <i class="fas fa-plus"></i>
         {{ 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.CREATE' | translate }}
       </button>
     </div>
+      <div class="right-actions">
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;
+               height: -webkit-fill-available;">
+            <i class="fas fa-search"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
+    </div>
   </div>
+
 
   <!-- Custom Table -->
   <div *ngIf="!loading" class="table-wrapper">
@@ -59,8 +94,8 @@
             <span class="english-name">{{ role.en || '-' }}</span>
           </td>
           <td>
-            <span class="boolean-badge" [class.yes]="role.isVirtual" [class.no]="!role.isVirtual">
-              {{ role.isVirtual ? ('MENU.PERMISSION_MANAGEMENT.USER_ROLES.YES' | translate) : ('MENU.PERMISSION_MANAGEMENT.USER_ROLES.NO' | translate) }}
+            <span class="boolean-badge" ><!--[class.yes]="role.isVirtual" [class.no]="!role.isVirtual"-->
+              {{ role.isVirtualLabel }}
             </span>
           </td>
           <td>

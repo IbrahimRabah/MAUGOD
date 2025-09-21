@@ -32,8 +32,10 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  padding: 10px 0;
-  border-bottom: 2px solid #e9ecef;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .page-title h2 {
@@ -505,4 +507,60 @@
   background: #e9ecef;
   color: #6c757d;
   cursor: not-allowed;
+}
+
+.left-actions {
+  display: flex;
+  gap: 10px;
+}
+.right-actions {
+  display: flex;
+  gap: 10px;
+}
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .table-header-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .left-actions,
+  .right-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+/* Add Button */
+.add-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.add-btn:hover {
+  background: linear-gradient(135deg, #218838 0%, #1abc9c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.add-btn i {
+  font-size: 12px;
+}
+.input-group > .form-control, .input-group > .form-floating, .input-group > .form-select {
+    /* position: relative; */
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
 }

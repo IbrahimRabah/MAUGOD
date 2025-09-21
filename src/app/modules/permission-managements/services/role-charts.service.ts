@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ChartDropdownResponse, DeleteMultipleRoleChartRightsRequest, RoleChartRightsRequest, RoleChartRightsResponse, Roles } from '../../../core/models/roleCharts';
 import { Observable } from 'rxjs';
 
@@ -20,8 +20,13 @@ private apiUrl = `${environment.apiUrl}/RoleChartRights`  ;
     const headers = new HttpHeaders({ 'Accept': 'text/plain', 'lang': lang.toString() });
     return this.http.get<Roles>(`${this.apiUrl}/roles-dropdown`, { headers });
   }
-  getRoleChartRights(pageSize: number, pageIndex: number, lang: number): Observable<RoleChartRightsResponse> {
-    const params = { pageSize: pageSize.toString(), pageIndex: pageIndex.toString() };
+  getRoleChartRights(pageSize: number, pageIndex: number, lang: number, colunmSearchName : string | null, colunmSearchValue : string|null ): Observable<RoleChartRightsResponse> {
+    let params = new HttpParams()
+                      .set('pageSize', pageSize.toString())
+                      .set('pageIndex', pageIndex.toString());
+    if(colunmSearchName && colunmSearchValue){
+        params = params.set(colunmSearchName, colunmSearchValue);
+      }
     const headers = new HttpHeaders({ 'Accept': 'text/plain', 'lang': lang.toString() });
     return this.http.get<RoleChartRightsResponse>(`${this.apiUrl}`, { headers, params });
   }

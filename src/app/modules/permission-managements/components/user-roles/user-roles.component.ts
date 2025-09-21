@@ -39,6 +39,19 @@ export class UserRolesComponent implements OnInit, OnDestroy {
   private isLoadingInProgress = false; // Prevent multiple simultaneous calls
   public currentLang = 2; // Default to Arabic (2) - made public for template access
 
+      searchColumns = [
+  { column: 'allFields', label: 'All Columns' }, // all columns option
+  { column: 'roleId', label: 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ROLE' },
+  { column: 'ar', label: 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ARABIC_NAME' },
+  { column: 'en', label: 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.ENGLISH_NAME' },
+  { column: 'isVirtual', label: 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.VIRTUAL_ROLE' },
+  { column: 'note', label: 'MENU.PERMISSION_MANAGEMENT.USER_ROLES.NOTE' }
+];
+  selectedColumnLabel: string = this.searchColumns[0].label;
+  selectedColumn: string = this.searchColumns[0].column;
+      searchTerm: string = '';
+
+
   constructor(
     private userRolesService: UserRolesService,
     public langService: LanguageService,
@@ -150,6 +163,15 @@ export class UserRolesComponent implements OnInit, OnDestroy {
     }
   }
 
+  onSearch() {
+    this.currentPage = 1;
+    this.loadUserRoles();
+  }
+
+selectColumn(col: any) {
+  this.selectedColumn = col.column;
+  this.selectedColumnLabel = col.label;
+}
   private createUserRole() {
     const formValue = this.roleForm.value;
     const request: createUserRoleRequest = {
@@ -232,7 +254,7 @@ export class UserRolesComponent implements OnInit, OnDestroy {
     const lang = this.currentLang;
     
     // Use pageIndex starting from 1, not 0
-    this.userRolesService.getAllUserRoles(lang, this.pageSize, this.currentPage)
+    this.userRolesService.getAllUserRoles(lang, this.pageSize, this.currentPage,this.selectedColumn,this.searchTerm)
       .subscribe({
         next: (response: RoleResponse) => {
           this.userRoles = response.data || [];
