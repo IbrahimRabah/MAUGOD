@@ -1,1 +1,501 @@
-<p>days-handle works!</p>
+<div class="shifts-assign-container">
+  <!-- Toast Messages -->
+  <p-toast position="top-right" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog [style]="{width: '500px'}" [baseZIndex]="10000"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>{{ 'SHIFTS_ASSIGN.LOADING' | translate }}</p>
+  </div>
+
+  <!-- Filter Section -->
+  <div *ngIf="!loading" class="filter-section" [class.rtl]="langService.getCurrentLang() === 'ar'"
+    [class.ltr]="langService.getCurrentLang() === 'en'">
+
+    <form [formGroup]="filterForm" class="filter-form">
+
+      <!-- Wrap both pickers in one row -->
+      <div class="filter-row">
+
+        <!-- Start Date -->
+        <div class="filter-group">
+          <label for="startDate">{{ 'SHIFTS_ASSIGN.START_DATE' | translate }}</label>
+          <input type="date" id="startDate" formControlName="startDate" class="form-input"
+            [title]="'SHIFTS_ASSIGN.START_DATE' | translate" (change)="onDateChange($event, 'startDate', true)">
+          <div>
+            <label *ngIf="hijriDates['startDate']" class="hijri-date">
+              {{ hijriDates['startDate'] }}
+            </label>
+          </div>
+        </div>
+
+        <!-- End Date -->
+        <div class="filter-group">
+          <label for="endDate">{{ 'SHIFTS_ASSIGN.END_DATE' | translate }}</label>
+          <input type="date" id="endDate" formControlName="endDate" class="form-input"
+            [title]="'SHIFTS_ASSIGN.END_DATE' | translate" (change)="onDateChange($event, 'endDate', true)">
+          <div>
+            <label *ngIf="hijriDates['endDate']" class="hijri-date">
+              {{ hijriDates['endDate'] }}
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+
+
+  <!-- Table Header Actions -->
+  <div *ngIf="!loading" class="table-header-actions">
+    <div class="left-actions">
+      <button class="add-btn" (click)="openCreateModal()" [title]="'SHIFTS_ASSIGN.CREATE_TITLE' | translate">
+        <i class="fas fa-plus"></i>
+        {{ 'SHIFTS_ASSIGN.CREATE' | translate }}
+      </button>
+
+      <button class="delete-selected-btn bg-danger" (click)="deleteSelected()" [disabled]="selectedItems.length === 0">
+        <i class="fas fa-trash"></i>
+        {{ 'SHIFTS_ASSIGN.DELETE_SELECTED' | translate }}
+        <span *ngIf="selectedItems.length > 0" class="selection-count">({{ selectedItems.length }})</span>
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <div class="input-group search-container">
+
+        <!-- Dropdown Button -->
+        <div class="input-group-prepend" [ngClass]="{
+        'order-0': langService.getCurrentLang() === 'en', 
+        'order-1': langService.getCurrentLang() === 'ar'}">
+
+          <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="    background-color: white;
+              border-bottom-right-radius: unset;
+              border-top-right-radius: unset;
+              border: 1px solid #e8e3e3;">
+            <i class="fas fa-search"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li *ngFor="let col of searchColumns">
+              <a class="dropdown-item" (click)="selectColumn(col)">
+                {{ col.label | translate }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Search Input -->
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
+          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+             'order-1': langService.getCurrentLang() === 'en',
+             'order-0': langService.getCurrentLang() === 'ar'
+           }">
+
+
+      </div>
+      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;">
+        {{ 'SEARCH' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom Table -->
+  <div *ngIf="!loading" class="table-wrapper">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header">
+          <th class="actions-column">{{ 'DAYS_HANDLE.EDIT' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.EMPLOYEE' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.DEPARTMENT' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.STATUS' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.PART' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.START_DATE' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.END_DATE' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.DAYS_COUNT' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.CREATED_BY' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.REQUEST' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.REQUEST_DATE' | translate }}</th>
+          <th>{{ 'DAYS_HANDLE.NOTE' | translate }}</th>
+          <th class="actions-column">{{ 'DAYS_HANDLE.DELETE' | translate }}</th>
+          <th class="checkbox-column">
+            <input type="checkbox" [(ngModel)]="selectAll" (change)="onSelectAll()" [title]="'DAYS_HANDLE.SELECT_ALL' | translate">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dayHandle of daysHandle" class="table-row">
+          
+          <td>
+            <button class="action-btn" (click)="editShift(dayHandle)">
+              <i class="text-info fs-4 fas fa-edit"></i>
+            </button>
+          </td>
+          <td>{{ dayHandle.empName }}</td>
+          <td>{{ dayHandle.deptName }}</td>
+          <td>{{ dayHandle.stsName }}</td>
+          <td>{{ dayHandle.part }}</td>
+          <td style="white-space:nowrap;">{{ dayHandle.sDate | date:'yyyy-MM-dd' }}</td>
+          <td style="white-space:nowrap;">{{ dayHandle.eDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ dayHandle.daysCount }}</td>
+          <td>{{ dayHandle.createdByName }}</td>
+          <td>{{ dayHandle.recId }}</td>
+          <td style="white-space:nowrap;">{{ dayHandle.recDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ dayHandle.note }}</td>
+          
+
+          <td class="actions-column">
+            <button class="action-btn" (click)="deleteDayHandle(dayHandle.recId)">
+              <i class="text-danger fs-4 fas fa-trash"></i>
+            </button>
+          </td>
+
+
+          <td class="checkbox-column">
+
+            <input type="checkbox" [(ngModel)]="dayHandle.sel" (change)="onItemSelect(dayHandle)">
+          </td>
+
+        </tr>
+
+        <tr *ngIf="daysHandle.length === 0" class="empty-row">
+          <td colspan="6" class="empty-message">
+            <i class="fas fa-info-circle"></i>
+            {{ 'SHIFTS_ASSIGN.NO_DATA_AVAILABLE' | translate }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Custom Pagination -->
+  <div *ngIf="!loading && daysHandle.length > 0" class="pagination-wrapper"
+    [class.rtl]="langService.getCurrentLang() === 'ar'" [class.ltr]="langService.getCurrentLang() === 'en'">
+    <div class="pagination-info">
+      <span>{{ 'SHIFTS_ASSIGN.SHOWING' | translate }} {{ currentPageStart }} {{ 'SHIFTS_ASSIGN.TO' | translate }} {{
+        currentPageEnd }} {{ 'SHIFTS_ASSIGN.OF' | translate }} {{ totalRecords }} {{ 'SHIFTS_ASSIGN.ITEMS' | translate
+        }}</span>
+    </div>
+
+    <div class="pagination-controls">
+      <!-- RTL (Arabic) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
+        <button class="pagination-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"
+          [title]="'SHIFTS_ASSIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="!canGoNext"
+          [title]="'SHIFTS_ASSIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SHIFTS_ASSIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{
+            'SHIFTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button class="pagination-btn" (click)="previousPage()" [disabled]="!canGoPrevious"
+          [title]="'SHIFTS_ASSIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button class="pagination-btn" (click)="goToPage(1)" [disabled]="currentPage === 1"
+          [title]="'SHIFTS_ASSIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+
+      <!-- LTR (English) Layout -->
+      <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
+        <button class="pagination-btn" (click)="goToPage(1)" [disabled]="currentPage === 1"
+          [title]="'SHIFTS_ASSIGN.FIRST_PAGE' | translate">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button class="pagination-btn" (click)="previousPage()" [disabled]="!canGoPrevious"
+          [title]="'SHIFTS_ASSIGN.PREVIOUS_PAGE' | translate">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <span class="page-info">{{ 'SHIFTS_ASSIGN.PAGE' | translate }} {{ currentPage }} <span *ngIf="totalPages > 0">{{
+            'SHIFTS_ASSIGN.PAGE_OF' | translate }} {{ totalPages }}</span></span>
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="!canGoNext"
+          [title]="'SHIFTS_ASSIGN.NEXT_PAGE' | translate">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button class="pagination-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"
+          [title]="'SHIFTS_ASSIGN.LAST_PAGE' | translate">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="page-size-selector">
+      <label>{{ 'SHIFTS_ASSIGN.ITEMS_PER_PAGE' | translate }}</label>
+      <form [formGroup]="searchForm">
+        <select formControlName="pageSize" (change)="onPageSizeChange()">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create Shifts Assign Modal -->
+<div *ngIf="showCreateModal" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 *ngIf="!isEditMode">{{ 'DAYS_HANDLE.CREATE_MODAL_TITLE' | translate }}</h3>
+      <h3 *ngIf="isEditMode">{{ 'DAYS_HANDLE.EDIT_TITLE' | translate }}</h3>
+      <button class="close-btn" (click)="closeCreateModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body" [class.rtl]="langService.getCurrentLang() === 'ar'"
+      [class.ltr]="langService.getCurrentLang() === 'en'">
+      <form [formGroup]="createForm" (ngSubmit)="submitCreate()">
+
+        <!-- Assignment Type Section -->
+        <div *ngIf="!isEditMode" class="form-section">
+          <h4>{{ 'SHIFTS_ASSIGN.ASSIGNMENT_TYPE' | translate }}</h4>
+          <div class="radio-group">
+            <div *ngFor="let option of assignmentTypeOptions" class="radio-item">
+              <input type="radio" [id]="'assignmentType_' + option.id" [value]="+option.id"
+                formControlName="assignmentType">
+              <label [for]="'assignmentType_' + option.id">
+                {{ langService.getCurrentLang() === 'ar' ? option.nameAr : option.name }}
+              </label>
+            </div>
+          </div>
+          <div *ngIf="isFieldInvalid('assignmentType')" class="error-message">
+            {{ getFieldError('assignmentType') }}
+          </div>
+        </div>
+
+        <!-- Employees Selection Section -->
+        <div *ngIf="!isEditMode && createForm.get('assignmentType')?.value === 1" class="form-section">
+          <h4>{{ 'DAYS_HANDLE.EMPLOYEE' | translate }}</h4>
+          <div class="form-group">
+            <p-multiSelect formControlName="empId" [options]="employees"
+              optionLabel="name" optionValue="id"
+              [filter]="true" [filterBy]="'name'" [showToggleAll]="true"
+              class="w-100" [maxSelectedLabels]="3" [virtualScroll]="true" 
+              [itemSize]="38" scrollHeight="200px">
+
+              <ng-template let-option pTemplate="item">
+                <div class="multiselect-item">
+                  <span>{{ option.name }}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+
+            <div *ngIf="loadingEmployees"
+              class="loading-message">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'SHIFTS_ASSIGN.LOADING_OPTIONS' | translate }}
+            </div>
+
+            <div *ngIf="isFieldInvalid('empId')" class="error-message">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.REQUIRED_FIELD' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Show emp name on edidt mode -->
+        <div *ngIf="isEditMode" class="form-section">
+          <h4>{{ 'DAYS_HANDLE.EMPLOYEE' | translate }}</h4>
+          <div class="form-group">
+            {{currentEditingShift?.empName}}
+          </div>
+        </div>
+
+        <!-- Departments Selection Section -->
+        <div *ngIf="!isEditMode && createForm.get('assignmentType')?.value === 2" class="form-section">
+          <h4>{{ 'DAYS_HANDLE.DEPARTMENT' | translate }}</h4>
+          <div class="form-group">
+            <p-multiSelect formControlName="deptId" [options]="departments"
+              optionLabel="name" optionValue="id"
+              [filter]="true" [filterBy]="'name'" [showToggleAll]="true"
+              class="w-100" [maxSelectedLabels]="3" [virtualScroll]="true" 
+              [itemSize]="38" scrollHeight="200px">
+
+              <ng-template let-option pTemplate="item">
+                <div class="multiselect-item">
+                  <span>{{ option.name }}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+
+            <div *ngIf="loadingDepartments"
+              class="loading-message">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'SHIFTS_ASSIGN.LOADING_OPTIONS' | translate }}
+            </div>
+
+            <div *ngIf="isFieldInvalid('empId')" class="error-message">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.REQUIRED_FIELD' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Branches Selection Section -->
+        <div *ngIf="!isEditMode && createForm.get('assignmentType')?.value === 3" class="form-section">
+          <h4>{{ 'DAYS_HANDLE.BRANCHE' | translate }}</h4>
+          <div class="form-group">
+            <p-multiSelect formControlName="branchId" [options]="branches"
+              optionLabel="name" optionValue="id"
+              [filter]="true" [filterBy]="'name'" [showToggleAll]="true"
+              class="w-100" [maxSelectedLabels]="3" [virtualScroll]="true" 
+              [itemSize]="38" scrollHeight="200px">
+
+              <ng-template let-option pTemplate="item">
+                <div class="multiselect-item">
+                  <span>{{ option.name }}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+
+            <div *ngIf="loadingBranches"
+              class="loading-message">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'SHIFTS_ASSIGN.LOADING_OPTIONS' | translate }}
+            </div>
+
+            <div *ngIf="isFieldInvalid('empId')" class="error-message">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.REQUIRED_FIELD' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- roles Selection Section -->
+        <div *ngIf="!isEditMode && createForm.get('assignmentType')?.value === 4" class="form-section">
+          <h4>{{ 'DAYS_HANDLE.ROLE' | translate }}</h4>
+          <div class="form-group">
+            <p-multiSelect formControlName="roleId" [options]="roles"
+              optionLabel="name" optionValue="id"
+              [filter]="true" [filterBy]="'name'" [showToggleAll]="true"
+              class="w-100" [maxSelectedLabels]="3" [virtualScroll]="true" 
+              [itemSize]="38" scrollHeight="200px">
+
+              <ng-template let-option pTemplate="item">
+                <div class="multiselect-item">
+                  <span>{{ option.name }}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+
+            <div *ngIf="loadingRoles"
+              class="loading-message">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'SHIFTS_ASSIGN.LOADING_OPTIONS' | translate }}
+            </div>
+
+            <div *ngIf="isFieldInvalid('empId')" class="error-message">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.REQUIRED_FIELD' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- status Selection Section -->
+        <div class="form-section">
+          <h4>{{ 'DAYS_HANDLE.STATUS' | translate }}</h4>
+          <div class="form-group">
+            <p-dropdown formControlName="stsId" [options]="status" optionLabel="name" optionValue="id"
+              [filter]="true" [filterBy]="'name'"
+              [showClear]="true" [loading]="loadingEmployees"
+              [class.error]="isFieldInvalid('stsId')" class="w-100">
+            </p-dropdown>
+            <div *ngIf="isFieldInvalid('stsId')" class="error-message">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.REQUIRED_FIELD' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- parts Selection Section -->
+        <div class="form-section">
+          <h4>{{ 'DAYS_HANDLE.PART' | translate }}</h4>
+          <div class="form-group">
+            <p-dropdown formControlName="part" [options]="parts" optionLabel="name" optionValue="id"
+              [filter]="true" [filterBy]="'name'"
+              [showClear]="true" [loading]="loadingEmployees"
+              [class.error]="isFieldInvalid('part')" class="w-100">
+            </p-dropdown>
+            <div *ngIf="isFieldInvalid('part')" class="error-message">
+              {{ 'SALARY_ADD_ONS_DEDUCTS.REQUIRED_FIELD' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Range Section -->
+        <div class="form-section">
+          <h4>{{ 'SHIFTS_ASSIGN.DATE_RANGE' | translate }}</h4>
+          <div class="date-row">
+
+            <!-- Start Date -->
+            <div class="form-group">
+              <label for="sDate">
+                {{ 'DAYS_HANDLE.START_DATE' | translate }} <span class="required">*</span>
+              </label>
+              <input type="date" id="sDate" formControlName="sDate" class="form-input w-100"
+                [class.error]="isFieldInvalid('sDate')" [title]="'SHIFTS_ASSIGN.START_DATE' | translate"
+                (change)="onDateChange($event, 'hsDate', false)">
+
+              <div *ngIf="isFieldInvalid('sDate')" class="error-message">
+                {{ 'SHIFTS_ASSIGN.START_DATE_REQUIRED' | translate }}
+              </div>
+
+              <div>
+                <label *ngIf="hijriDates['hsDate']" class="hijri-date">
+                  {{ hijriDates['hsDate'] }}
+                </label>
+              </div>
+            </div>
+
+            <!-- End Date -->
+            <div class="form-group">
+              <label for="eDate">
+                {{ 'DAYS_HANDLE.END_DATE' | translate }} <span class="required">*</span>
+              </label>
+              <input type="date" id="eDate" formControlName="eDate" class="form-input w-100"
+                [class.error]="isFieldInvalid('eDate')" [title]="'SHIFTS_ASSIGN.END_DATE' | translate"
+                (change)="onDateChange($event, 'heDate', false)">
+
+              <div *ngIf="isFieldInvalid('eDate')" class="error-message">
+                {{ 'SHIFTS_ASSIGN.END_DATE_REQUIRED' | translate }}
+              </div>
+
+              <div>
+                <label *ngIf="hijriDates['heDate']" class="hijri-date">
+                  {{ hijriDates['heDate'] }}
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4 class="section-title">{{ 'MOBILE_SIGN_LOCATION_ASSIGN.NOTE_SECTION' | translate }}</h4>
+          <div class="form-group full-width">
+            <label>{{ 'MOBILE_SIGN_LOCATION_ASSIGN.NOTE' | translate }}</label>
+            <textarea formControlName="note" 
+                      class="form-textarea"
+                      rows="3"
+                      [placeholder]="'MOBILE_SIGN_LOCATION_ASSIGN.ENTER_NOTE' | translate"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-btn" (click)="closeCreateModal()">
+            {{ 'SHIFTS_ASSIGN.CANCEL' | translate }}
+          </button>
+          <button type="submit" class="submit-btn" [disabled]="!isFormValid">
+            {{ (!isEditMode ? 'MOBILE_SIGN_LOCATION_ASSIGN.CREATE' : 'MOBILE_SIGN_LOCATION_ASSIGN.UPDATE') | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

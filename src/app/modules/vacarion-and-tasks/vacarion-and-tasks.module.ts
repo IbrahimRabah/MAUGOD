@@ -15,6 +15,8 @@ import { HandleStatusesPriorityComponent } from './components/handle-statuses-pr
 import { DaysHandleComponent } from './components/days-handle/days-handle.component';
 import { HandleStatusesEmployeeBalanceComponent } from './components/handle-statuses-employee-balance/handle-statuses-employee-balance.component';
 import { MyBalanceComponent } from './components/my-balance/my-balance.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 
 @NgModule({
@@ -34,6 +36,8 @@ import { MyBalanceComponent } from './components/my-balance/my-balance.component
     TranslateModule,
     ToastModule,
     ConfirmDialogModule,
+    DropdownModule,
+    MultiSelectModule,
     VacarionAndTasksRoutingModule
   ]
 })
