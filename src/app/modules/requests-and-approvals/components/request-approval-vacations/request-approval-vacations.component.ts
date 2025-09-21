@@ -45,9 +45,12 @@ export class RequestApprovalVacationsComponent {
 
   loading: boolean = false;
   TimeTransactionloading: boolean = false;
-  totalRecords: number = 0;
-  currentPage: number = 1;
-  searchTerm: string = '';
+  totalRecordsTimTranRequest: number = 0;
+  currentPageTimTranRequest: number = 1;
+  totalRecordsHandleRequest: number = 0;
+  currentPageHandleRequest: number = 1;
+  searchTermTimTranRequest: string = '';
+  searchTermHandleRequest: string = '';
   deletingPunchTransactionId: number | null = null;
   hijriDates: { [key: string]: string | null } = {};
 
@@ -55,26 +58,59 @@ export class RequestApprovalVacationsComponent {
   startDate: string | null=null;
   endDate: string | null=null;
 
+  private isInitializedTimTranRequest = false; // Prevent double API calls on init
+  private isInitializedHandleRequest = false; // Prevent double API calls on init
 
-  searchColumns = [
+  searchColumnsTimTranRequest = [
     { column: '', label: 'All Columns' }, // all columns option
-    { column: 'emp_name', label: 'Attendance.RESULTS_TABLE.EMPLOYEE_HEADER' },
-    { column: 'sign_date', label: 'Attendance.RESULTS_TABLE.DATE_SIGN' },
-    { column: 'rec_date', label: 'Attendance.RESULTS_TABLE.RECORD_DATE' },
-    { column: 'data_source_label', label: 'Attendance.RESULTS_TABLE.DATA_SOURCE' }
+    { column: 'rec_id', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REC_ID' },
+    { column: 'req_id', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REQ_ID' },
+    { column: 'emp_name', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.EMP_NAME' },
+    { column: 'request_by_name', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REQUEST_BY_EMPLOYEE' },
+    { column: 'sign_date', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.SIGN_DATE' },
+    { column: 'in1', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.IN' },
+    { column: 'out1', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.OUT' },
+    { column: 'cur_level_label', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.CURENT_LEVEL' },
+    { column: 'req_note', label: 'REQUEST_APPROVAL_VACATIONS.TIMTRAN_REQUEST.REQUEST_BY_NOTE' },
   ];
 
-  selectedColumn: string = '';
-  selectedColumnLabel: string = this.searchColumns[0].label;
+  searchColumnsHandleRequest = [
+    { column: '', label: 'All Columns' }, // all columns option
+    { column: 'req_id', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REQUEST_NO' },
+    { column: 'emp_label', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.EMP_NAME' },
+    { column: 'request_by_label', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REQUEST_BY_EMPLOYEE' },
+    { column: 'sts_label', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.STATUS' },
+    { column: 'part_label', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.PART' },
+    { column: 'sdate', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.START_DATE' },
+    { column: 'edate', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.END_DATE' },
+    { column: 'cur_level_label', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.CURENT_LEVEL' },
+    { column: 'req_note', label: 'REQUEST_APPROVAL_VACATIONS.HANDLE_REQUEST.REQUEST_BY_NOTE' },
+  ];
 
-  paginationRequest: PaginationPunchTransactionsRequest = {
+  selectedColumnTimTranRequest: string = '';
+  selectedColumnLabelTimTranRequest: string = this.searchColumnsTimTranRequest[0].label;
+
+  selectedColumnHandleRequest: string = '';
+  selectedColumnLabelHandleRequest: string = this.searchColumnsHandleRequest[0].label;
+
+  paginationRequestTimTranRequest: PaginationPunchTransactionsRequest = {
     pageNumber: 1,
     pageSize: 10,
     empId: this.getStoredEmpId(),
     startDate:this.startDate,
     endDate:this.endDate,
-    searchColumn: this.selectedColumn, 
-    searchText:this.searchTerm 
+    searchColumn: this.selectedColumnTimTranRequest, 
+    searchText:this.searchTermTimTranRequest 
+  };
+
+  paginationRequestHandleRequest: PaginationPunchTransactionsRequest = {
+    pageNumber: 1,
+    pageSize: 10,
+    empId: this.getStoredEmpId(),
+    startDate:this.startDate,
+    endDate:this.endDate,
+    searchColumn: this.selectedColumnHandleRequest, 
+    searchText:this.searchTermHandleRequest 
   };
 
   attendanceAdjustmentRequest: AttendanceAdjustmentRequest = {
@@ -82,7 +118,9 @@ export class RequestApprovalVacationsComponent {
     sDate: this.formatDate(this.getDateMonthsAgo(10)),
     eDate: this.formatDate(new Date()),
     pageNumber: 1,
-    pageSize: 10
+    pageSize: 10,
+    searchColumn: this.paginationRequestTimTranRequest.searchColumn,
+    searchText: this.paginationRequestTimTranRequest.searchText
   }
 
   TimeTransactionApprovalRequest: TimeTransactionApprovalRequest = {
@@ -91,8 +129,8 @@ export class RequestApprovalVacationsComponent {
     eDate: this.formatDate(new Date()),
     pageNumber: 1,
     pageSize: 10,
-    searchColumn: null,
-    searchText: null
+    searchColumn: this.paginationRequestHandleRequest.searchColumn,
+    searchText: this.paginationRequestHandleRequest.searchText
   }
 
 // helper function
@@ -127,12 +165,24 @@ private formatDate(date: Date): string {
     this.endDate = formattedDate;
 
     // Initialize paginationRequest here
-    this.paginationRequest = {
+    this.paginationRequestTimTranRequest = {
       pageNumber: 1,
       pageSize: 10,
       empId: this.getStoredEmpId(),
       startDate: this.startDate,
-      endDate: this.endDate
+      endDate: this.endDate,
+      searchColumn: this.paginationRequestTimTranRequest.searchColumn,
+      searchText: this.paginationRequestTimTranRequest.searchText
+    };
+
+    this.paginationRequestHandleRequest = {
+      pageNumber: 1,
+      pageSize: 10,
+      empId: this.getStoredEmpId(),
+      startDate: this.startDate,
+      endDate: this.endDate,
+      searchColumn: this.paginationRequestHandleRequest.searchColumn,
+      searchText: this.paginationRequestHandleRequest.searchText
     };
 
     this.attendanceAdjustmentRequest ={
@@ -140,7 +190,9 @@ private formatDate(date: Date): string {
       sDate: this.formatDate(this.getDateMonthsAgo(10)),
       eDate: this.formatDate(new Date()),
       pageNumber: 1,
-      pageSize: 10
+      pageSize: 10,
+      searchColumn: this.selectedColumnTimTranRequest,
+      searchText: this.searchTermTimTranRequest
     }
 
     this.TimeTransactionApprovalRequest = {
@@ -149,8 +201,8 @@ private formatDate(date: Date): string {
       eDate: this.formatDate(new Date()),
       pageNumber: 1,
       pageSize: 10,
-      searchColumn: null,
-      searchText: null
+      searchColumn: this.selectedColumnHandleRequest,
+      searchText: this.searchTermHandleRequest
     }
 
     
@@ -158,7 +210,7 @@ private formatDate(date: Date): string {
     this.hijriDates['TimeTransactionEndDate'] = this.toObservedHijri(this.TimeTransactionApprovalRequest.eDate);
 
     this.hijriDates['AttendanceStartDate'] = this.toObservedHijri(this.attendanceAdjustmentRequest.sDate);
-    this.hijriDates['AttendanceEndDate'] = this.toObservedHijri(this.attendanceAdjustmentRequest.sDate);
+    this.hijriDates['AttendanceEndDate'] = this.toObservedHijri(this.attendanceAdjustmentRequest.eDate);
 
 
     // Set the language for the pagination request based on the current language setting
@@ -180,9 +232,16 @@ private formatDate(date: Date): string {
     this.attendanceAdjustmentRecords();
   }
 
-  selectColumn(col: any) {
-    this.selectedColumn = col.column;
-    this.selectedColumnLabel = col.label;
+  selectColumnTimTranRequest(col: any) {
+    this.selectedColumnTimTranRequest = col.column;
+    this.paginationRequestTimTranRequest.searchColumn = col.column;
+    this.selectedColumnLabelTimTranRequest = col.label;
+  }
+
+  selectColumnHandleRequest(col: any) {
+    this.selectedColumnHandleRequest = col.column;
+    this.paginationRequestHandleRequest.searchColumn = col.column;
+    this.selectedColumnLabelHandleRequest = col.label;
   }
 
  onDateChange(event: Event, controlName: string) {
@@ -195,8 +254,11 @@ private formatDate(date: Date): string {
     this.hijriDates[controlName] = '';
   }
 
-  this.paginationRequest.startDate = this.startDate;
-  this.paginationRequest.endDate = this.endDate;
+  this.paginationRequestTimTranRequest.startDate = this.startDate;
+  this.paginationRequestTimTranRequest.endDate = this.endDate;
+
+  this.paginationRequestHandleRequest.startDate = this.startDate;
+  this.paginationRequestHandleRequest.endDate = this.endDate;
   
   if(controlName == "TimeTransactionStartDate" || controlName == "TimeTransactionEndDate" )
   {
@@ -237,57 +299,107 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
   }
 
   // Custom pagination methods
-  get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
+  get totalPagesTimTranRequest(): number {
+    return Math.ceil(this.totalRecordsTimTranRequest / this.paginationRequestTimTranRequest.pageSize);
   }
 
-  get currentPageStart(): number {
-    return (this.currentPage - 1) * this.paginationRequest.pageSize + 1;
+  get currentPageStartTimTranRequest(): number {
+    return (this.currentPageTimTranRequest - 1) * this.paginationRequestTimTranRequest.pageSize + 1;
   }
 
-  get currentPageEnd(): number {
-    const end = this.currentPage * this.paginationRequest.pageSize;
-    return end > this.totalRecords ? this.totalRecords : end;
+  get currentPageEndTimTranRequest(): number {
+    const end = this.currentPageTimTranRequest * this.paginationRequestTimTranRequest.pageSize;
+    return end > this.totalRecordsTimTranRequest ? this.totalRecordsTimTranRequest : end;
   }
 
-  goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.paginationRequest.pageNumber = page;
-      this.TimeTransactionApprovalRecords();
+  get totalPagesHandleRequest(): number {
+    return Math.ceil(this.totalRecordsHandleRequest / this.paginationRequestHandleRequest.pageSize);
+  }
+
+  get currentPageStartHandleRequest(): number {
+    return (this.currentPageHandleRequest - 1) * this.paginationRequestHandleRequest.pageSize + 1;
+  }
+
+  get currentPageEndHandleRequest(): number {
+    const end = this.currentPageHandleRequest * this.paginationRequestHandleRequest.pageSize;
+    return end > this.totalRecordsHandleRequest ? this.totalRecordsHandleRequest : end;
+  }
+
+  goToPageTimTranRequest(page: number) {
+    if (page >= 1 && page <= this.totalPagesTimTranRequest) {
+      this.currentPageTimTranRequest = page;
+      this.paginationRequestTimTranRequest.pageNumber = page;
       this.attendanceAdjustmentRecords();
     }
   }
 
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.goToPage(this.currentPage + 1);
+  nextPageTimTranRequest() {
+    if (this.currentPageTimTranRequest < this.totalPagesTimTranRequest) {
+      this.paginationRequestTimTranRequest.pageNumber = this.currentPageTimTranRequest;
+      this.goToPageTimTranRequest(this.currentPageTimTranRequest + 1);
     }
   }
 
-  previousPage() {
-    if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
+  previousPageTimTranRequest() {
+    if (this.currentPageTimTranRequest > 1) {
+      this.paginationRequestTimTranRequest.pageNumber = this.currentPageTimTranRequest;
+      this.goToPageTimTranRequest(this.currentPageTimTranRequest - 1);
     }
   }
 
-  onPageSizeChange() {
-    this.currentPage = 1;
-    this.paginationRequest.pageNumber = 1;
-    this.TimeTransactionApprovalRecords();
+  onPageSizeChangeTimTranRequest() {
+    this.currentPageTimTranRequest = 1;
+    this.paginationRequestTimTranRequest.pageNumber = 1;
     this.attendanceAdjustmentRecords();
   }
 
-  onSearch() {
-    this.currentPage = 1;
-    this.paginationRequest.pageNumber = 1;
-    this.paginationRequest.searchColumn=this.selectedColumn;
-    this.paginationRequest.searchText=this.searchTerm;
+  goToPageHandleRequest(page: number) {
+    if (page >= 1 && page <= this.totalPagesHandleRequest) {
+      this.currentPageHandleRequest = page;
+      this.paginationRequestHandleRequest.pageNumber = page;
+      this.TimeTransactionApprovalRecords();
+    }
+  }
+
+  nextPageHandleRequest() {
+    if (this.currentPageTimTranRequest < this.totalPagesHandleRequest) {
+      this.paginationRequestHandleRequest.pageNumber = this.currentPageHandleRequest;
+      this.goToPageHandleRequest(this.currentPageHandleRequest + 1);
+    }
+  }
+
+  previousPageHandleRequest() {
+    if (this.currentPageHandleRequest > 1) {
+      this.paginationRequestHandleRequest.pageNumber = this.currentPageHandleRequest;
+      this.goToPageHandleRequest(this.currentPageHandleRequest - 1);
+    }
+  }
+
+  onPageSizeChangeHandleRequest() {
+    this.currentPageHandleRequest = 1;
+    this.paginationRequestHandleRequest.pageNumber = 1;
     this.TimeTransactionApprovalRecords();
+  }
+
+  onSearchTimTranRequest() {
+    this.currentPageTimTranRequest = 1;
+    this.paginationRequestTimTranRequest.pageNumber = 1;
+    this.paginationRequestTimTranRequest.searchColumn=this.selectedColumnTimTranRequest;
+    this.paginationRequestTimTranRequest.searchText=this.searchTermTimTranRequest;
+    this.attendanceAdjustmentRequest.searchColumn = this.selectedColumnTimTranRequest;
+    this.attendanceAdjustmentRequest.searchText = this.searchTermTimTranRequest;
     this.attendanceAdjustmentRecords();
   }
 
-
+   onSearchHandleRequest() {
+    this.currentPageHandleRequest = 1;
+    this.paginationRequestHandleRequest.pageNumber = 1;
+    this.paginationRequestHandleRequest.searchColumn=this.selectedColumnHandleRequest;
+    this.paginationRequestHandleRequest.searchText=this.searchTermHandleRequest;
+    this.TimeTransactionApprovalRequest.searchColumn = this.selectedColumnHandleRequest;
+    this.TimeTransactionApprovalRequest.searchText = this.searchTermHandleRequest;
+    this.TimeTransactionApprovalRecords();
+  }
 
 
   TimeTransactionApprovalRecords() {
@@ -303,7 +415,7 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
       next: (response: RequestApprovalVacationTimeTransactionApprovalResponse) => {
          if (response.isSuccess) {
         this.timeTransactionApprovals = response.data.approvalLeaveandAssignments;
-        this.totalRecords = response.data.totalCount;
+        this.totalRecordsHandleRequest = response.data.totalCount;
       } else {
         this.messageService.add({
           severity: 'error',
@@ -464,7 +576,7 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
       next: (response: RequestApprovalVacationAttendanceAdjustmentResponse) => {
          if (response.isSuccess) {
         this.attendanceAdjustments = response.data.approveAttendanceAdjustment;
-        this.totalRecords = response.data.totalCount;
+        this.totalRecordsTimTranRequest = response.data.totalCount;
       } else {
         this.messageService.add({
           severity: 'error',
@@ -553,7 +665,7 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
   RejectTimetranRequest(recId: number) {
     this.TimeTransactionloading = true;
     const currentLang = this.langService.getCurrentLang() === 'ar' ? 2 : 1;
-    const note = this.acceptHandleApprovalRequestnotes[recId] || '';
+    const note = this.attendanceAdjustmentnotes[recId] || '';
     this.PrepareAcceptHandelApprovalRequest(note, recId);
 
     console.log(this.acceptApprovalRequestQuery);

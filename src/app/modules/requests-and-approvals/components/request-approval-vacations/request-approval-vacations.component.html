@@ -72,8 +72,8 @@
             <i class="fas fa-search"></i>
           </button>
           <ul class="dropdown-menu">
-            <li *ngFor="let col of searchColumns">
-              <a class="dropdown-item" (click)="selectColumn(col)">
+            <li *ngFor="let col of searchColumnsHandleRequest">
+              <a class="dropdown-item" (click)="selectColumnHandleRequest(col)">
                 {{ col.label | translate }}
               </a>
             </li>
@@ -81,15 +81,15 @@
         </div>
 
         <!-- Search Input -->
-        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
-          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabelHandleRequest | translate)"
+          [(ngModel)]="searchTermHandleRequest" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
              'order-1': langService.getCurrentLang() === 'en',
              'order-0': langService.getCurrentLang() === 'ar'
            }">
 
 
       </div>
-      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      <button class="btn " type="button" (click)="onSearchHandleRequest()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;">
         {{ 'SEARCH' | translate }}
       </button>
@@ -190,39 +190,39 @@
   </div>
 
   <!-- Custom Pagination -->
-  <div *ngIf="!TimeTransactionloading && totalRecords > 0" class="pagination-wrapper">
+  <div *ngIf="!TimeTransactionloading && totalRecordsHandleRequest > 0" class="pagination-wrapper">
     <div class="pagination-info">
-      <span>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS' | translate }}</span>
+      <span>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.SHOWING' | translate }} {{ currentPageStartHandleRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.TO' | translate }} {{ currentPageEndHandleRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.OF' | translate }} {{ totalRecordsHandleRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS' | translate }}</span>
     </div>
     <div class="pagination-controls">
       <!-- RTL (Arabic) Layout -->
       <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="goToPage(1)"
+          [disabled]="currentPageHandleRequest === 1"
+          (click)="goToPageHandleRequest(1)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="previousPage()"
+          [disabled]="currentPageHandleRequest === 1"
+          (click)="previousPageHandleRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
-        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPageHandleRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPagesHandleRequest }}</span>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="nextPage()"
+          [disabled]="currentPageHandleRequest === totalPagesHandleRequest"
+          (click)="nextPageHandleRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="goToPage(totalPages)"
+          [disabled]="currentPageHandleRequest === totalPagesHandleRequest"
+          (click)="goToPageHandleRequest(totalPagesHandleRequest)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
@@ -232,30 +232,30 @@
       <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="goToPage(1)"
+          [disabled]="currentPageHandleRequest === 1"
+          (click)="goToPageHandleRequest(1)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="previousPage()"
+          [disabled]="currentPageHandleRequest === 1"
+          (click)="previousPageHandleRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
-        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPageHandleRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPagesHandleRequest }}</span>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="nextPage()"
+          [disabled]="currentPageHandleRequest === totalPagesHandleRequest"
+          (click)="nextPageHandleRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="goToPage(totalPages)"
+          [disabled]="currentPageHandleRequest === totalPagesHandleRequest"
+          (click)="goToPageHandleRequest(totalPagesHandleRequest)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
@@ -263,7 +263,7 @@
     </div>
     <div class="page-size-selector">
       <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
-      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()">
+      <select [(ngModel)]="paginationRequestHandleRequest.pageSize" (change)="onPageSizeChangeHandleRequest()">
         <option value="5">5</option>
         <option value="10">10</option>
         <option value="20">20</option>
@@ -369,8 +369,8 @@
             <i class="fas fa-search"></i>
           </button>
           <ul class="dropdown-menu">
-            <li *ngFor="let col of searchColumns">
-              <a class="dropdown-item" (click)="selectColumn(col)">
+            <li *ngFor="let col of searchColumnsTimTranRequest">
+              <a class="dropdown-item" (click)="selectColumnTimTranRequest(col)">
                 {{ col.label | translate }}
               </a>
             </li>
@@ -378,15 +378,15 @@
         </div>
 
         <!-- Search Input -->
-        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabel | translate)"
-          [(ngModel)]="searchTerm" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
+        <input type="text" class="form-control" [placeholder]="'Search: '+(selectedColumnLabelTimTranRequest | translate)"
+          [(ngModel)]="searchTermTimTranRequest" [title]="'MENU.GENERAL_DATA.EMPLOYEES_ACTIONS.SEARCH_TITLE' | translate" [ngClass]="{
              'order-1': langService.getCurrentLang() === 'en',
              'order-0': langService.getCurrentLang() === 'ar'
            }">
 
 
       </div>
-      <button class="btn " type="button" (click)="onSearch()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      <button class="btn " type="button" (click)="onSearchTimTranRequest()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;">
         {{ 'SEARCH' | translate }}
       </button>
@@ -486,39 +486,39 @@
   </div>
 
   <!-- Custom Pagination -->
-  <div *ngIf="!loading && totalRecords > 0" class="pagination-wrapper">
+  <div *ngIf="!loading && totalRecordsTimTranRequest > 0" class="pagination-wrapper">
     <div class="pagination-info">
-      <span>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.SHOWING' | translate }} {{ currentPageStart }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.TO' | translate }} {{ currentPageEnd }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.OF' | translate }} {{ totalRecords }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS' | translate }}</span>
+      <span>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.SHOWING' | translate }} {{ currentPageStartTimTranRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.TO' | translate }} {{ currentPageEndTimTranRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.OF' | translate }} {{ totalRecordsTimTranRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS' | translate }}</span>
     </div>
     <div class="pagination-controls">
       <!-- RTL (Arabic) Layout -->
       <ng-container *ngIf="(langService.getCurrentLang() === 'ar')">
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="goToPage(1)"
+          [disabled]="currentPageTimTranRequest === 1"
+          (click)="goToPageTimTranRequest(1)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="previousPage()"
+          [disabled]="currentPageTimTranRequest === 1"
+          (click)="previousPageTimTranRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
-        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPageTimTranRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPagesTimTranRequest }}</span>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="nextPage()"
+          [disabled]="currentPageTimTranRequest === totalPagesTimTranRequest"
+          (click)="nextPageTimTranRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="goToPage(totalPages)"
+          [disabled]="currentPageTimTranRequest === totalPagesTimTranRequest"
+          (click)="goToPageTimTranRequest(totalPagesTimTranRequest)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
@@ -528,30 +528,30 @@
       <ng-container *ngIf="(langService.getCurrentLang() === 'en')">
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="goToPage(1)"
+          [disabled]="currentPageTimTranRequest === 1"
+          (click)="goToPageTimTranRequest(1)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.FIRST_PAGE' | translate">
           <i class="fas fa-angle-double-left"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === 1"
-          (click)="previousPage()"
+          [disabled]="currentPageTimTranRequest === 1"
+          (click)="previousPageTimTranRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PREVIOUS_PAGE' | translate">
           <i class="fas fa-angle-left"></i>
         </button>
-        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPage }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPages }}</span>
+        <span class="page-info">{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE' | translate }} {{ currentPageTimTranRequest }} {{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.PAGE_OF' | translate }} {{ totalPagesTimTranRequest }}</span>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="nextPage()"
+          [disabled]="currentPageTimTranRequest === totalPagesTimTranRequest"
+          (click)="nextPageTimTranRequest()"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.NEXT_PAGE' | translate">
           <i class="fas fa-angle-right"></i>
         </button>
         <button 
           class="pagination-btn" 
-          [disabled]="currentPage === totalPages"
-          (click)="goToPage(totalPages)"
+          [disabled]="currentPageTimTranRequest === totalPagesTimTranRequest"
+          (click)="goToPageTimTranRequest(totalPagesTimTranRequest)"
           [title]="'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.LAST_PAGE' | translate">
           <i class="fas fa-angle-double-right"></i>
         </button>
@@ -559,7 +559,7 @@
     </div>
     <div class="page-size-selector">
       <label>{{ 'MENU.GENERAL_DATA.EMPLOYEES_PAGINATION.ITEMS_PER_PAGE' | translate }}</label>
-      <select [(ngModel)]="attendanceAdjustmentRequest.pageSize" (change)="onPageSizeChange()">
+      <select [(ngModel)]="attendanceAdjustmentRequest.pageSize" (change)="onPageSizeChangeTimTranRequest()">
         <option value="5">5</option>
         <option value="10">10</option>
         <option value="20">20</option>
