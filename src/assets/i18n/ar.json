@@ -1221,6 +1221,26 @@
     "SELECTED": "محدد",
     "CLEAR_ALL": "مسح الكل"
   },
+  "DAYS_HANDLE": {
+    "CREATE_MODAL_TITLE": "انشاء اجازه او مهمه",
+    "EDIT_TITLE": "تعديل اجازه او مهمه",
+    "SELECT_ALL": "تحديد الكل",
+    "EDIT": "تعديل",
+    "EMPLOYEE": "الموظف",
+    "DEPARTMENT": "القسم",
+    "BRANCHE": "الفرع",
+    "ROLE": "الدور",
+    "STATUS": "الحالة",
+    "PART": "الفترة",
+    "START_DATE": "تاريخ البداية",
+    "END_DATE": "تاريخ النهاية",
+    "DAYS_COUNT": "عدد الأيام",
+    "CREATED_BY": "إنشئ بواسطة",
+    "REQUEST": "رقم الطلب",
+    "REQUEST_DATE": "تاريخ الطلب",
+    "NOTE": "ملاحظات",
+    "DELETE": "حذف"
+  },
   "SALARY_ADD_ONS_DEDUCTS": {
     "LOADING": "جارٍ التحميل...",
     "ADD_ADDON": "إضافة بدل/استقطاع",

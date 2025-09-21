@@ -1220,6 +1220,26 @@
     "SELECTED": "selected",
     "CLEAR_ALL": "Clear All"
   },
+  "DAYS_HANDLE": {
+    "CREATE_MODAL_TITLE": "Create DayHandle",
+    "EDIT_TITLE": "Edit DayHandle",
+    "SELECT_ALL": "Select All",
+    "EDIT": "Edit",
+    "EMPLOYEE": "Employee",
+    "DEPARTMENT": "Department",
+    "BRANCHE": "Branches",
+    "ROLE": "Role",
+    "STATUS": "Status",
+    "PART": "Part",
+    "START_DATE": "Start date",
+    "END_DATE": "End date",
+    "DAYS_COUNT": "Days count",
+    "CREATED_BY": "Created by",
+    "REQUEST": "Request",
+    "REQUEST_DATE": "Request date",
+    "NOTE": "Note",
+    "DELETE": "Delete"
+  },
   "SALARY_ADD_ONS_DEDUCTS": {
     "LOADING": "Loading...",
     "ADD_ADDON": "Add Add-on/Deduction",

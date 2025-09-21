@@ -322,5 +322,27 @@ getGetRequestStatsDropdownList(lang: number): Observable<any> {
     );
   }
 
+  getStatusDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    return this.http.get<any>(
+      `${this.apiUrl}/DaysHandle/Status/Dropdown`,
+      { headers }
+    );
+  }
+
+  getPartsDropdownList(lang: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'lang': lang.toString()
+    });
+
+    return this.http.get<any>(
+      `${this.apiUrl}/DaysHandle/Parts/Dropdown`,
+      { headers }
+    );
+  }
+
 }
 
