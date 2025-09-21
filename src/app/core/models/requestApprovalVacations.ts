@@ -35,8 +35,8 @@ export interface TimeTransactionApprovalRequest {
   eDate: string;
   pageNumber: number;
   pageSize: number;
-  searchColumn: string | null;
-  searchText: string | null;
+  searchColumn?: string;
+  searchText?: string;
 }
 
 export interface AcceptApprovalRequestQuery{
@@ -85,4 +85,6 @@ export interface AttendanceAdjustmentRequest {
   eDate: string;
   pageNumber: number;
   pageSize: number;
+  searchColumn?: string;
+  searchText?: string;
 }

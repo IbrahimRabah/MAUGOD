@@ -54,6 +54,7 @@ export class PostRequestComponent implements OnInit, OnDestroy {
     selectedColumnLabel: string = this.searchColumns[0].label;
   
     selectColumn(col: any) {
+      this.selectedColumn = col.column;
       this.paginationRequest.searchColumn = col.column;
       this.selectedColumnLabel = col.label;
     }
