@@ -5,6 +5,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { LoginResponse } from '../../../../core/models/account';
 import { jwtDecode } from 'jwt-decode';
 import { LanguageService } from '../../../../core/services/language.service';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginComponent {
   showPassword: boolean = false;
   rememberMe: boolean = false;
   @ViewChild('container') containerDiv!: ElementRef;
-  constructor(private authenticationService: AuthenticationService, private router: Router,private LanguageService:LanguageService) { }
+  constructor(private authenticationService: AuthenticationService, private router: Router, private LanguageService: LanguageService, private permissionsService: PermissionsService) { }
   ngOnInit(): void {
     this.initialization();
   }
@@ -72,6 +73,10 @@ export class LoginComponent {
       localStorage.setItem('loginId', response.data.loginId || '');
     }
      localStorage.setItem('menuList', JSON.stringify(response.data.menuList));
+     
+     // Set user permissions in the permissions service
+     this.permissionsService.setMenuPermissions(response.data.menuList);
+     
      switch (response.data.lang) {
       case 2:
         this.LanguageService.setLanguage('ar');
