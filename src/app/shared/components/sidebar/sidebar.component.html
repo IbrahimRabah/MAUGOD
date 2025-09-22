@@ -2,14 +2,14 @@
   <div class="sidebar-content">
     <ul class="nav flex-column main-menu">
       <!-- 1. الرئيسية -->
-      <li class="nav-item">
+      <li class="nav-item" id="1">
         <a class="nav-link" [routerLink]="['/home']" routerLinkActive="active">
           <i class="fas fa-home"></i>
           <span>{{ 'HOME.TITLE' | translate }}</span>
         </a>
       </li>
 
-      <li class="nav-item">
+      <li class="nav-item" id="100">
         <a class="nav-link" [routerLink]="['/dashboard']" routerLinkActive="active">
           <i class="fa fa-dashboard"></i>
           <span>{{ 'MENU.DASHBOARD' | translate }}</span>
@@ -17,7 +17,7 @@
       </li>
 
       <!-- 2. مشاهدة الحضور -->
-      <li class="nav-item">
+      <li class="nav-item" id="35">
         <a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active">
           <i class="fas fa-table-list"></i>
           <span>{{ 'MENU.ATTENDANCE' | translate }}</span>
@@ -25,7 +25,7 @@
       </li>
 
       <!-- 3. تطبيق موجود -->
-      <li class="nav-item">
+      <li class="nav-item" id="2">
         <a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">
           <i class="fa fa-mobile-alt"></i>
           <span>{{ 'MENU.MAWJOOD_APP' | translate }}</span>
@@ -33,7 +33,7 @@
       </li>
 
       <!-- 4. التقارير -->
-      <li class="nav-item">
+      <li class="nav-item" id="99">
         <a class="nav-link" [routerLink]="['/reports']" routerLinkActive="active">
           <i class="fa fa fa-print"></i>
           <span>{{ 'MENU.REPORTS' | translate }}</span>
@@ -41,7 +41,7 @@
       </li>
 
       <!-- 5. بيانات الحضور -->
-      <li class="nav-item" routerLinkActive="active">
+      <li class="nav-item" routerLinkActive="active" id="72">
         <div [routerLink]="['/attendance']">
           <a class="nav-link" (click)="toggleSubmenu('attendance')" [class.expanded]="isSubmenuOpen('attendance')">
             <i class="fa-regular fa-check-square"></i>
@@ -51,17 +51,17 @@
         </div>
 
         <ul class="nav flex-column submenu ps-3" [class.show]="isSubmenuOpen('attendance')">
-          <li><a class="nav-link" [routerLink]="['/attendance/punch-in-transactions']"
+          <li id="33"><a class="nav-link" [routerLink]="['/attendance/punch-in-transactions']"
               routerLinkActive="active"><span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.PUNCH_TRANSACTION' | translate }}</span></a></li>
-          <li><a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active">
+          <li id="70"><a class="nav-link" [routerLink]="['/attendance/view-attendance']" routerLinkActive="active">
             <span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.ATTENDANCE' | translate }}</span></a></li>
-          <li><a class="nav-link" [routerLink]="['/attendance/change-attendance-time']"
+          <li id="111"><a class="nav-link" [routerLink]="['/attendance/change-attendance-time']"
               routerLinkActive="active"><span>{{ 'MENU.ATTENDANCE_DATA_SECTIONS.CHANGE_ATTENDANCE_TIME' | translate }}</span></a></li>
         </ul>
       </li> 
 
       <!-- 6. فترات الدوام -->
-      <li class="nav-item">
+      <li class="nav-item" id="21">
         <div [routerLink]="['/shifts-section']">
           <a class="nav-link" (click)="toggleSubmenu('shifts')" [class.expanded]="isSubmenuOpen('shifts')">
             <i class="fa-regular fa-calendar-days"></i>
@@ -70,24 +70,24 @@
           </a>
         </div>
         <ul class="nav flex-column submenu ps-3" [class.show]="isSubmenuOpen('shifts')">
-          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts']" routerLinkActive="active">{{ 'MENU.SHIFTS_SECTIONS.SHIFTS' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/automatic-sign']" routerLinkActive="active">
+          <li id="78"><a class="nav-link" [routerLink]="['/shifts-section/shifts']" routerLinkActive="active">{{ 'MENU.SHIFTS_SECTIONS.SHIFTS' | translate }}</a></li>
+          <li id="39"><a class="nav-link" [routerLink]="['/shifts-section/automatic-sign']" routerLinkActive="active">
             {{ 'MENU.SHIFTS_SECTIONS.AUTOMATIC_SIGN' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/shifts-assign']" routerLinkActive="active">
+          <li id="23"><a class="nav-link" [routerLink]="['/shifts-section/shifts-assign']" routerLinkActive="active">
             {{ 'MENU.SHIFTS_SECTIONS.SHIFTS_ASSIGN' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/missing-days']" routerLinkActive="active">
+          <li id="121"><a class="nav-link" [routerLink]="['/shifts-section/missing-days']" routerLinkActive="active">
             {{ 'MENU.SHIFTS_SECTIONS.MISSING_DAYS' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/shifts-section/timtran-lock']" routerLinkActive="active">
+          <li id="259"><a class="nav-link" [routerLink]="['/shifts-section/timtran-lock']" routerLinkActive="active">
             {{ 'MENU.SHIFTS_SECTIONS.TIMTRAN_LOCK' | translate }}
           </a></li>
         </ul>
       </li>
 
       <!-- 7. الاجازات والمهام -->
-      <li class="nav-item">
+      <li class="nav-item" id="74">
         <div [routerLink]="['/vacation-tasks']">
 
           <a class="nav-link" (click)="toggleSubmenu('leaves')" [class.expanded]="isSubmenuOpen('leaves')">
@@ -97,27 +97,27 @@
           </a>
         </div>
         <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('leaves')">
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-status-classifications']"
+          <li id="113"><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-status-classifications']"
               routerLinkActive="active">{{ 'MENU.VACATION_TASKS_SECTIONS.ATTENDANCE_STATUS_CLASSIFICATION' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-statuses']" routerLinkActive="active">
+          <li id="11"><a class="nav-link" [routerLink]="['/vacation-tasks/attendance-statuses']" routerLinkActive="active">
             {{ 'MENU.VACATION_TASKS_SECTIONS.ATTENDANCE_STATUSES' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-priority']" routerLinkActive="active">
+          <li id="43"><a class="nav-link" [routerLink]="['/vangcation-tasks/handle-statuses-priority']" routerLinkActive="active">
             {{ 'MENU.VACATION_TASKS_SECTIONS.STATUS_PRIORITY_ORDER' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/days-handle']" routerLinkActive="active">
+          <li id="65"><a class="nav-link" [routerLink]="['/vacation-tasks/days-handle']" routerLinkActive="active">
             {{ 'MENU.VACATION_TASKS_SECTIONS.DAYS_HANDLE' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-employee-balance']"
+          <li id="117"><a class="nav-link" [routerLink]="['/vacation-tasks/handle-statuses-employee-balance']"
               routerLinkActive="active">{{ 'MENU.VACATION_TASKS_SECTIONS.EMPLOYEE_BALANCES' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/vacation-tasks/my-balance']" routerLinkActive="active">
+          <li id="205"><a class="nav-link" [routerLink]="['/vacation-tasks/my-balance']" routerLinkActive="active">
             {{ 'MENU.VACATION_TASKS_SECTIONS.MY_BALANCE' | translate }}
           </a></li>
         </ul>
       </li>
 
       <!-- 8. الطلبات و الموافقات -->
-      <li class="nav-item">
+      <li class="nav-item" id="69">
         <div [routerLink]="['/requests-and-approvals']">
           <a class="nav-link" (click)="toggleSubmenu('requests')" [class.expanded]="isSubmenuOpen('requests')">
             <i class="fas fa-check-square"></i>
@@ -126,23 +126,23 @@
           </a>
         </div>
         <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('requests')">
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" routerLinkActive="active">
+          <li id="41"><a class="nav-link" [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" routerLinkActive="active">
             {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.TIME_CHANGE_APPROVAL_STEPS' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/attendance-time-change-request']" routerLinkActive="active">
+          <li id="51"><a class="nav-link" [routerLink]="['/requests-and-approvals/attendance-time-change-request']" routerLinkActive="active">
             {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.ATTENDANCE_TIME_CHANGE_REQUEST' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/post-request']" routerLinkActive="active">
+          <li id="132"><a class="nav-link" [routerLink]="['/requests-and-approvals/post-request']" routerLinkActive="active">
             {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.POST_REQUEST' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-route']" routerLinkActive="active">
+          <li id="97"><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-route']" routerLinkActive="active">
             {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.REQUEST_APPROVAL_ROUTE' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-vacations']" routerLinkActive="active">
+          <li id="102"><a class="nav-link" [routerLink]="['/requests-and-approvals/request-approval-vacations']" routerLinkActive="active">
             {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.REQUESTS_APPROVAL_VACATIONS' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/requests-and-approvals/delete-completed-request']" routerLinkActive="active">
+          <li id="108"><a class="nav-link" [routerLink]="['/requests-and-approvals/delete-completed-request']" routerLinkActive="active">
             {{ 'MENU.REQUESTS_APPROVALS_SECTIONS.DELETE_COMPLETED_REQUESTS' | translate }}</a></li>
         </ul>
       </li>     
       
       <!-- 9. تتبع المواقع -->
-      <li class="nav-item">
+      <li class="nav-item" id="141">
         <div [routerLink]="['/tracking-locations']">
           <a class="nav-link" (click)="toggleSubmenu('locations')" [class.expanded]="isSubmenuOpen('locations')">
             <i class="fa-solid fa-location-arrow"></i>
@@ -151,15 +151,15 @@
           </a>
         </div>
         <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('locations')">
-          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-details']" routerLinkActive="active">
+          <li id="145"><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-details']" routerLinkActive="active">
             {{ 'MENU.TRACKING_LOCATIONS_SECTIONS.LOCATION_TRACKING_DETAILS' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-transactions']" routerLinkActive="active">
+          <li id="146"><a class="nav-link" [routerLink]="['/tracking-locations/location-tracking-transactions']" routerLinkActive="active">
             {{ 'MENU.TRACKING_LOCATIONS_SECTIONS.LOCATION_TRACKING_TRANSACTIONS' | translate }}</a></li>
         </ul>
       </li>      
       
       <!-- 10. الجوال و التطبيق -->
-      <li class="nav-item">
+      <li class="nav-item" id="84">
         <div [routerLink]="['/mobile-and-app']">
           <a class="nav-link" (click)="toggleSubmenu('mobile')" [class.expanded]="isSubmenuOpen('mobile')">
             <i class="fas fa-mobile-alt"></i>
@@ -168,23 +168,23 @@
           </a>
         </div>
         <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('mobile')">
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">
+          <li id="133"><a class="nav-link" [routerLink]="['/mobile-and-app/mawjood-app']" routerLinkActive="active">
             {{ 'MENU.MOBILE_APP_SECTIONS.MAWJOOD_APP' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/send-app-qr-code']" routerLinkActive="active">
+          <li id="13"><a class="nav-link" [routerLink]="['/mobile-and-app/send-app-qr-code']" routerLinkActive="active">
             {{ 'MENU.MOBILE_APP_SECTIONS.SEND_APP_QR_CODE' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/app-devices']" routerLinkActive="active">
+          <li id="29"><a class="nav-link" [routerLink]="['/mobile-and-app/app-devices']" routerLinkActive="active">
             {{ 'MENU.MOBILE_APP_SECTIONS.APP_DEVICES' | translate }}</a></li>   
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-location-assign']" routerLinkActive="active">
+          <li id="122"><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-location-assign']" routerLinkActive="active">
             {{ 'MENU.MOBILE_APP_SECTIONS.MOBILE_SIGN_LOCATION_ASSIGN' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-transaction']" routerLinkActive="active">
+          <li id="130"><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-transaction']" routerLinkActive="active">
             {{ 'MENU.MOBILE_APP_SECTIONS.MOBILE_SIGN_TRANSACTION' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-locations']" routerLinkActive="active">
+          <li id="96"><a class="nav-link" [routerLink]="['/mobile-and-app/mobile-sign-locations']" routerLinkActive="active">
             {{ 'MENU.MOBILE_APP_SECTIONS.MOBILE_SIGN_LOCATIONS' | translate }}</a></li>
         </ul>
       </li>     
       
       <!-- 11. الرواتب -->
-      <li class="nav-item">
+      <li class="nav-item" id="86">
         <div [routerLink]="['/salaries']">
           <a class="nav-link" (click)="toggleSubmenu('salaries')" [class.expanded]="isSubmenuOpen('salaries')">
             <i class="fas fa-money-bill-alt"></i>
@@ -193,20 +193,20 @@
           </a>
         </div>
         <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('salaries')">
-          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-deducts']" routerLinkActive="active">
+          <li id="103"><a class="nav-link" [routerLink]="['/salaries/salary-add-deducts']" routerLinkActive="active">
             {{ 'MENU.SALARIES_SECTIONS.SALARY_ADDONS_DEDUCTS_ASSIGN' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/salary-add-ons-deducts']" routerLinkActive="active">
+          <li id="105"><a class="nav-link" [routerLink]="['/salaries/salary-add-ons-deducts']" routerLinkActive="active">
             {{ 'MENU.SALARIES_SECTIONS.SALARY_ADDONS_DEDUCTS' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/salaries-calculation']" routerLinkActive="active">
+          <li id="119"><a class="nav-link" [routerLink]="['/salaries/salaries-calculation']" routerLinkActive="active">
             {{ 'MENU.SALARIES_SECTIONS.SALARIES_CALCULATION' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/my-salary']" routerLinkActive="active">
+          <li id="131"><a class="nav-link" [routerLink]="['/salaries/my-salary']" routerLinkActive="active">
             {{ 'MENU.SALARIES_SECTIONS.MY_SALARY' | translate }}</a></li>
-          <li><a class="nav-link" [routerLink]="['/salaries/salaries-details']" routerLinkActive="active">
+          <li id="120"><a class="nav-link" [routerLink]="['/salaries/salaries-details']" routerLinkActive="active">
             {{ 'MENU.SALARIES_SECTIONS.SALARIES_DETAILS' | translate }}</a></li>
         </ul>
       </li>
       <!-- 12. البيانات الاساسية -->
-      <li class="nav-item">
+      <li class="nav-item" id="80">
         <div [routerLink]="['/primary-data']">
         <a class="nav-link" (click)="toggleSubmenu('basicData')" [class.expanded]="isSubmenuOpen('basicData')">
           <i class="fas fa-info"></i>
@@ -216,7 +216,7 @@
         </div>
         <ul class="ps-3 nav flex-column submenu" [class.show]="isSubmenuOpen('basicData')">
           <!-- 12.1 البيانات العامه -->
-          <li>
+          <li id="183">
             <div [routerLink]="['/primary-data/general-data']" routerLinkActive="active">
             <a class="pe-3 nav-link" (click)="toggleSubmenu('generalData')" [class.expanded]="isSubmenuOpen('generalData')">
               <i class="fas fa-database"></i>
@@ -225,18 +225,18 @@
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('generalData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/branches']" routerLinkActive="active"><i class="fas fa-building"></i><span>{{ 'MENU.GENERAL_DATA.BRANCHES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/departments']" routerLinkActive="active"><i class="fas fa-sitemap"></i><span>{{ 'MENU.GENERAL_DATA.DEPARTMENTS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/employees']" routerLinkActive="active"><i class="fas fa-users"></i><span>{{ 'MENU.GENERAL_DATA.EMPLOYEES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/nationalities']" routerLinkActive="active"><i class="fas fa-flag"></i><span>{{ 'MENU.GENERAL_DATA.NATIONALITIES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/banks']" routerLinkActive="active"><i class="fas fa-university"></i><span>{{ 'MENU.GENERAL_DATA.BANKS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/cities']" routerLinkActive="active"><i class="fas fa-city"></i><span>{{ 'MENU.GENERAL_DATA.CITIES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/organization']" routerLinkActive="active"><i class="fas fa-user-graduate"></i><span>{{ 'MENU.GENERAL_DATA.ORGANIZATION' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/province']" routerLinkActive="active"><i class="fas fa-map-marker-alt"></i><span>{{ 'MENU.GENERAL_DATA.PROVINCE' | translate }}</span></a></li>
+              <li id="53"><a class="nav-link" [routerLink]="['/primary-data/branches']" routerLinkActive="active"><i class="fas fa-building"></i><span>{{ 'MENU.GENERAL_DATA.BRANCHES' | translate }}</span></a></li>
+              <li id="75"><a class="nav-link" [routerLink]="['/primary-data/departments']" routerLinkActive="active"><i class="fas fa-sitemap"></i><span>{{ 'MENU.GENERAL_DATA.DEPARTMENTS' | translate }}</span></a></li>
+              <li id="83"><a class="nav-link" [routerLink]="['/primary-data/employees']" routerLinkActive="active"><i class="fas fa-users"></i><span>{{ 'MENU.GENERAL_DATA.EMPLOYEES' | translate }}</span></a></li>
+              <li id="128"><a class="nav-link" [routerLink]="['/primary-data/nationalities']" routerLinkActive="active"><i class="fas fa-flag"></i><span>{{ 'MENU.GENERAL_DATA.NATIONALITIES' | translate }}</span></a></li>
+              <li id="106"><a class="nav-link" [routerLink]="['/primary-data/banks']" routerLinkActive="active"><i class="fas fa-university"></i><span>{{ 'MENU.GENERAL_DATA.BANKS' | translate }}</span></a></li>
+              <li id="156"><a class="nav-link" [routerLink]="['/primary-data/cities']" routerLinkActive="active"><i class="fas fa-city"></i><span>{{ 'MENU.GENERAL_DATA.CITIES' | translate }}</span></a></li>
+              <li id="160"><a class="nav-link" [routerLink]="['/primary-data/organization']" routerLinkActive="active"><i class="fas fa-user-graduate"></i><span>{{ 'MENU.GENERAL_DATA.ORGANIZATION' | translate }}</span></a></li>
+              <li id="164"><a class="nav-link" [routerLink]="['/primary-data/province']" routerLinkActive="active"><i class="fas fa-map-marker-alt"></i><span>{{ 'MENU.GENERAL_DATA.PROVINCE' | translate }}</span></a></li>
             </ul>
           </li>
           <!-- 12.2 بيانات موجود -->
-          <li>
+          <li id="184">
           <div [routerLink]="['/primary-data/mawjood-data']">
             <a class="pe-3 nav-link" (click)="toggleSubmenu('mawjoodData')" [class.expanded]="isSubmenuOpen('mawjoodData')">
               <i class="fas fa-file-alt"></i>
@@ -245,13 +245,13 @@
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('mawjoodData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/employees-statuses']"><i class="fas fa-user-check"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_STATUSES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/jobs']"><i class="fas fa-briefcase"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.JOBS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/employees-documents']"><i class="fas fa-file-signature"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_DOCUMENTS' | translate }}</span></a></li>
+              <li id="95"><a class="nav-link" [routerLink]="['/primary-data/employees-statuses']"><i class="fas fa-user-check"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_STATUSES' | translate }}</span></a></li>
+              <li id="104"><a class="nav-link" [routerLink]="['/primary-data/jobs']"><i class="fas fa-briefcase"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.JOBS' | translate }}</span></a></li>
+              <li id="107"><a class="nav-link" [routerLink]="['/primary-data/employees-documents']"><i class="fas fa-file-signature"></i><span>{{ 'MENU.MAWJOOD_DATA_SECTIONS.EMPLOYEE_DOCUMENTS' | translate }}</span></a></li>
             </ul>
           </li>
           <!-- 12.3 بيانات الاتصالات الادارية -->
-          <li>
+          <li id="174">
             <div [routerLink]="['/primary-data/cts-data']">
               <a class="pe-3 nav-link" (click)="toggleSubmenu('ctsData')" [class.expanded]="isSubmenuOpen('ctsData')">
                 <i class="fas fa-exchange-alt"></i>
@@ -260,28 +260,28 @@
               </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('ctsData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/action']"><i class="fas fa-tasks"></i><span>{{ 'MENU.CTS_DATA.ACTION' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/position']"><i class="fas fa-id-badge"></i><span>{{ 'MENU.CTS_DATA.POSITION' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/my-list']"><i class="fas fa-list"></i><span>{{ 'MENU.CTS_DATA.MY_LIST' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/document-template']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_TEMPLATE' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/delivery-mode']"><i class="fas fa-truck"></i><span>{{ 'MENU.CTS_DATA.DELIVERY_MODE' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/document-type']"><i class="fas fa-file-contract"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_TYPE' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/keywords']"><i class="fas fa-key"></i><span>{{ 'MENU.CTS_DATA.KEYWORDS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/priority-level']"><i class="fas fa-exclamation"></i><span>{{ 'MENU.CTS_DATA.PRIORITY_LEVEL' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/security-level']"><i class="fas fa-shield-alt"></i><span>{{ 'MENU.CTS_DATA.SECURITY_LEVEL' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/subject-class']"><i class="fas fa-folder"></i><span>{{ 'MENU.CTS_DATA.SUBJECT_CLASS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/document-color']"><i class="fas fa-palette"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_COLOR' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/transaction-status']"><i class="fas fa-info-circle"></i><span>{{ 'MENU.CTS_DATA.TRANSACTION_STATUS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/urgency-level']"><i class="fas fa-bolt"></i><span>{{ 'MENU.CTS_DATA.URGENCY_LEVEL' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/approval-routes']"><i class="fas fa-route"></i><span>{{ 'MENU.CTS_DATA.APPROVAL_ROUTES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/all-data']"><i class="fas fa-search"></i><span>{{ 'MENU.CTS_DATA.ALL_DATA' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/parallel-document']"><i class="fas fa-random"></i><span>{{ 'MENU.CTS_DATA.PARALLEL_DOCUMENT' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/security-policy']"><i class="fas fa-lock"></i><span>{{ 'MENU.CTS_DATA.SECURITY_POLICY' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/masar-application']"><i class="fas fa-mobile-alt"></i><span>{{ 'MENU.CTS_DATA.MASAR_APPLICATION' | translate }}</span></a></li>
+              <li id="151"><a class="nav-link" [routerLink]="['/primary-data/action']"><i class="fas fa-tasks"></i><span>{{ 'MENU.CTS_DATA.ACTION' | translate }}</span></a></li>
+              <li id="153"><a class="nav-link" [routerLink]="['/primary-data/position']"><i class="fas fa-id-badge"></i><span>{{ 'MENU.CTS_DATA.POSITION' | translate }}</span></a></li>
+              <li id="155"><a class="nav-link" [routerLink]="['/primary-data/my-list']"><i class="fas fa-list"></i><span>{{ 'MENU.CTS_DATA.MY_LIST' | translate }}</span></a></li>
+              <li id="157"><a class="nav-link" [routerLink]="['/primary-data/document-template']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_TEMPLATE' | translate }}</span></a></li>
+              <li id="158"><a class="nav-link" [routerLink]="['/primary-data/delivery-mode']"><i class="fas fa-truck"></i><span>{{ 'MENU.CTS_DATA.DELIVERY_MODE' | translate }}</span></a></li>
+              <li id="159"><a class="nav-link" [routerLink]="['/primary-data/document-type']"><i class="fas fa-file-contract"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_TYPE' | translate }}</span></a></li>
+              <li id="161"><a class="nav-link" [routerLink]="['/primary-data/keywords']"><i class="fas fa-key"></i><span>{{ 'MENU.CTS_DATA.KEYWORDS' | translate }}</span></a></li>
+              <li id="163"><a class="nav-link" [routerLink]="['/primary-data/priority-level']"><i class="fas fa-exclamation"></i><span>{{ 'MENU.CTS_DATA.PRIORITY_LEVEL' | translate }}</span></a></li>
+              <li id="165"><a class="nav-link" [routerLink]="['/primary-data/security-level']"><i class="fas fa-shield-alt"></i><span>{{ 'MENU.CTS_DATA.SECURITY_LEVEL' | translate }}</span></a></li>
+              <li id="166"><a class="nav-link" [routerLink]="['/primary-data/subject-class']"><i class="fas fa-folder"></i><span>{{ 'MENU.CTS_DATA.SUBJECT_CLASS' | translate }}</span></a></li>
+              <li id="167"><a class="nav-link" [routerLink]="['/primary-data/document-color']"><i class="fas fa-palette"></i><span>{{ 'MENU.CTS_DATA.DOCUMENT_COLOR' | translate }}</span></a></li>
+              <li id="168"><a class="nav-link" [routerLink]="['/primary-data/transaction-status']"><i class="fas fa-info-circle"></i><span>{{ 'MENU.CTS_DATA.TRANSACTION_STATUS' | translate }}</span></a></li>
+              <li id="169"><a class="nav-link" [routerLink]="['/primary-data/urgency-level']"><i class="fas fa-bolt"></i><span>{{ 'MENU.CTS_DATA.URGENCY_LEVEL' | translate }}</span></a></li>
+              <li id="170"><a class="nav-link" [routerLink]="['/primary-data/approval-routes']"><i class="fas fa-route"></i><span>{{ 'MENU.CTS_DATA.APPROVAL_ROUTES' | translate }}</span></a></li>
+              <li id="253"><a class="nav-link" [routerLink]="['/primary-data/all-data']"><i class="fas fa-search"></i><span>{{ 'MENU.CTS_DATA.ALL_DATA' | translate }}</span></a></li>
+              <li id="263"><a class="nav-link" [routerLink]="['/primary-data/parallel-document']"><i class="fas fa-random"></i><span>{{ 'MENU.CTS_DATA.PARALLEL_DOCUMENT' | translate }}</span></a></li>
+              <li id="269"><a class="nav-link" [routerLink]="['/primary-data/security-policy']"><i class="fas fa-lock"></i><span>{{ 'MENU.CTS_DATA.SECURITY_POLICY' | translate }}</span></a></li>
+              <li id="279"><a class="nav-link" [routerLink]="['/primary-data/masar-application']"><i class="fas fa-mobile-alt"></i><span>{{ 'MENU.CTS_DATA.MASAR_APPLICATION' | translate }}</span></a></li>
             </ul>
           </li>
           <!-- 12.4 بيانات المجالس و اللجان -->
-          <li>
+          <li id="185">
             <div [routerLink]="['/primary-data/committees-data']">
               <a class="pe-3 nav-link" (click)="toggleSubmenu('committeesData')" [class.expanded]="isSubmenuOpen('committeesData')">
                 <i class="fas fa-users-cog"></i>
@@ -290,20 +290,20 @@
               </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('committeesData')">
-              <li><a class="nav-link" [routerLink]="['/primary-data/committees']"><i class="fas fa-chalkboard-teacher"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-members']"><i class="fas fa-user-friends"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_MEMBERS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-invitations']"><i class="fas fa-envelope-open-text"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_INVITATIONS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-route']"><i class="fas fa-route"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_ROUTE' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/committee-subject-classes']"><i class="fas fa-clipboard-list"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_SUBJECT_CLASSES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/voting-types']"><i class="fas fa-vote-yea"></i><span>{{ 'MENU.COMMITTEES_DATA.VOTING_TYPES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/primary-data/meeting-and-subjects']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.COMMITTEES_DATA.MEETING_AND_SUBJECTS' | translate }}</span></a></li>
+              <li id="188"><a class="nav-link" [routerLink]="['/primary-data/committees']"><i class="fas fa-chalkboard-teacher"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEES' | translate }}</span></a></li>
+              <li id="195"><a class="nav-link" [routerLink]="['/primary-data/committee-members']"><i class="fas fa-user-friends"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_MEMBERS' | translate }}</span></a></li>
+              <li id="187"><a class="nav-link" [routerLink]="['/primary-data/committee-invitations']"><i class="fas fa-envelope-open-text"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_INVITATIONS' | translate }}</span></a></li>
+              <li id="196"><a class="nav-link" [routerLink]="['/primary-data/committee-route']"><i class="fas fa-route"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_ROUTE' | translate }}</span></a></li>
+              <li id="197"><a class="nav-link" [routerLink]="['/primary-data/committee-subject-classes']"><i class="fas fa-clipboard-list"></i><span>{{ 'MENU.COMMITTEES_DATA.COMMITTEE_SUBJECT_CLASSES' | translate }}</span></a></li>
+              <li id="198"><a class="nav-link" [routerLink]="['/primary-data/voting-types']"><i class="fas fa-vote-yea"></i><span>{{ 'MENU.COMMITTEES_DATA.VOTING_TYPES' | translate }}</span></a></li>
+              <li id="211"><a class="nav-link" [routerLink]="['/primary-data/meeting-and-subjects']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.COMMITTEES_DATA.MEETING_AND_SUBJECTS' | translate }}</span></a></li>
             </ul>
           </li>
         </ul>
       </li>      
       
       <!-- 13. الرسائل والاشعارات -->
-      <li class="nav-item">
+      <li class="nav-item" id="71">
         <div [routerLink]="['/messages-and-notifications']">
           <a class="nav-link" (click)="toggleSubmenu('notifications')" [class.expanded]="isSubmenuOpen('notifications')">
             <i class="fas fa-envelope"></i>
@@ -312,23 +312,23 @@
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('notifications')">
-          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/system-messages']" routerLinkActive="active">
+          <li id="27"><a class="nav-link" [routerLink]="['/messages-and-notifications/system-messages']" routerLinkActive="active">
             <i class="fas fa-message"></i>
             {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.SYSTEM_MESSAGES' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-text']" routerLinkActive="active">
+          <li id="101"><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-text']" routerLinkActive="active">
             <i class="fas fa-bell-concierge"></i>
             {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NOTIFICATIONS_TEXTS' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/news']" routerLinkActive="active">
+          <li id="124"><a class="nav-link" [routerLink]="['/messages-and-notifications/news']" routerLinkActive="active">
             <i class="fas fa-newspaper"></i>
             {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NEWS' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/send-notifications']" routerLinkActive="active">
+          <li id="98"><a class="nav-link" [routerLink]="['/messages-and-notifications/send-notifications']" routerLinkActive="active">
             <i class="fas fa-paper-plane"></i>
             {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.SEND_NOTIFICATIONS' | translate }}
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-settings']" routerLinkActive="active">
+          <li id="126"><a class="nav-link" [routerLink]="['/messages-and-notifications/notifications-settings']" routerLinkActive="active">
             <i class="fas fa-gear"></i>
             {{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NOTIFICATIONS_SETTINGS' | translate }}
           </a></li>
@@ -336,7 +336,7 @@
       </li>
 
       <!-- 14. ادارة الصلاحيات -->
-      <li class="nav-item">
+      <li class="nav-item" id="79">
         <div [routerLink]="['/permission-managements']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('permissions')" [class.expanded]="isSubmenuOpen('permissions')">
           <i class="fa-solid fa-users"></i>
@@ -346,7 +346,7 @@
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('permissions')">
           <!-- 14.1 الصلاحيات علي النظام -->
-          <li>
+          <li id="127">
             <div [routerLink]="['/permission-managements/premissions-on-system']" routerLinkActive="active">
             <a class="pe-3 nav-link" (click)="toggleSubmenu('systemPermissions')"
               [class.expanded]="isSubmenuOpen('systemPermissions')">
@@ -356,16 +356,16 @@
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemPermissions')">
-              <li><a class="nav-link" [routerLink]="['/permission-managements/user-roles']"><i class="fas fa-user-tag"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLES' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/user-role-assignment']"><i class="fas fa-user-shield"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLE_ASSIGNMENTS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/role-chart-rights']"><i class="fas fa-chart-line"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_CHART_RIGHTS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/role-module-rights']"><i class="fas fa-key"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_MODULE_RIGHTS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/role-report-rights']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_REPORT_RIGHTS' | translate }}</span></a>
+              <li id="77"><a class="nav-link" [routerLink]="['/permission-managements/user-roles']"><i class="fas fa-user-tag"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLES' | translate }}</span></a></li>
+              <li id="81"><a class="nav-link" [routerLink]="['/permission-managements/user-role-assignment']"><i class="fas fa-user-shield"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.USER_ROLE_ASSIGNMENTS' | translate }}</span></a></li>
+              <li id="85"><a class="nav-link" [routerLink]="['/permission-managements/role-chart-rights']"><i class="fas fa-chart-line"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_CHART_RIGHTS' | translate }}</span></a></li>
+              <li id="89"><a class="nav-link" [routerLink]="['/permission-managements/role-module-rights']"><i class="fas fa-key"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_MODULE_RIGHTS' | translate }}</span></a></li>
+              <li id="91"><a class="nav-link" [routerLink]="['/permission-managements/role-report-rights']"><i class="fas fa-file-alt"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.SYSTEM_PERMISSIONS.ROLE_REPORT_RIGHTS' | translate }}</span></a>
               </li>
             </ul>
           </li>
           <!-- 14.2 عناصر النظام الاساسي -->
-          <li>
+          <li id="129">
             <div [routerLink]="['/permission-managements/basic-system-items']" routerLinkActive="active">
             <a class="pe-3 nav-link" (click)="toggleSubmenu('systemElements')"
               [class.expanded]="isSubmenuOpen('systemElements')">
@@ -375,14 +375,14 @@
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('systemElements')">
-              <li><a class="nav-link" [routerLink]="['/permission-managements/charts-list']"><i class="fas fa-chart-line"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.CHARTS_LIST' | translate }}</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/report-list']"><i class="fas fa-file-alt"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.REPORTS_LIST' | translate }}</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/system-menus']"><i class="fas fa-list"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.SYSTEM_MENUS' | translate }}</a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/system-modules']"><i class="fas fa-th"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.SYSTEM_MODULES' | translate }}</a></li>
+              <li id="59"><a class="nav-link" [routerLink]="['/permission-managements/charts-list']"><i class="fas fa-chart-line"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.CHARTS_LIST' | translate }}</a></li>
+              <li id="73"><a class="nav-link" [routerLink]="['/permission-managements/report-list']"><i class="fas fa-file-alt"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.REPORTS_LIST' | translate }}</a></li>
+              <li id="92"><a class="nav-link" [routerLink]="['/permission-managements/system-menus']"><i class="fas fa-list"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.SYSTEM_MENUS' | translate }}</a></li>
+              <li id="93"><a class="nav-link" [routerLink]="['/permission-managements/system-modules']"><i class="fas fa-th"></i>{{ 'MENU.PERMISSION_MANAGEMENT.BASIC_SYSTEM.SYSTEM_MODULES' | translate }}</a></li>
             </ul>
           </li>
           <!-- 14.3 الصلاحيات علي البيانات -->
-          <li>
+          <li id="82">
             <div [routerLink]="['/permission-managements/permission-on-data']" routerLinkActive="active">
             <a class="pe-3 nav-link" (click)="toggleSubmenu('dataPermissions')"
               [class.expanded]="isSubmenuOpen('dataPermissions')">
@@ -392,17 +392,17 @@
             </a>
             </div>
             <ul class="nav flex-column nested-submenu" [class.show]="isSubmenuOpen('dataPermissions')">
-              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions']"><i class="fas fa-key"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/access-permissions-summary']"><i class="fas fa-clipboard-list"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_SUMMARY' | translate }}</span></a></li>
-              <li><a class="nav-link" [routerLink]="['/permission-managements/request-post-premisions']"><i class="fas fa-paper-plane"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.REQUEST_POST_PERMISSIONS' | translate }}</span></a></li>
-              <li><a class="nav-link"  [routerLink]="['/permission-managements/permissions-delegations']"><i class="fas fa-user-friends"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.PERMISSIONS_DELEGATIONS' | translate }}</span></a></li>
+              <li id="3"><a class="nav-link" [routerLink]="['/permission-managements/access-permissions']"><i class="fas fa-key"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS' | translate }}</span></a></li>
+              <li id="5"><a class="nav-link" [routerLink]="['/permission-managements/access-permissions-summary']"><i class="fas fa-clipboard-list"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_SUMMARY' | translate }}</span></a></li>
+              <li id="37"><a class="nav-link" [routerLink]="['/permission-managements/request-post-premisions']"><i class="fas fa-paper-plane"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.REQUEST_POST_PERMISSIONS' | translate }}</span></a></li>
+              <li id="136"><a class="nav-link"  [routerLink]="['/permission-managements/permissions-delegations']"><i class="fas fa-user-friends"></i><span>{{ 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.PERMISSIONS_DELEGATIONS' | translate }}</span></a></li>
             </ul>
           </li>
         </ul>
       </li>     
       
       <!-- 15. التدقيق و المتابعة -->
-      <li class="nav-item">
+      <li class="nav-item" id="76">
         <div [routerLink]="['/audit-and-tracing']" routerLinkActive="active">
         <a class="nav-link" (click)="toggleSubmenu('audit')" [class.expanded]="isSubmenuOpen('audit')">
           <i class="fa-regular fa-rectangle-list"></i>
@@ -411,43 +411,27 @@
         </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('audit')">
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/track-changes']" routerLinkActive="active">
+          <li id="115"><a class="nav-link" [routerLink]="['/audit-and-tracing/track-changes']" routerLinkActive="active">
             <i class="fas fa-history"></i>
             <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_OPEN_DOCUMENT' | translate }}</span>
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/login-trace']" routerLinkActive="active">
+          <li id="63"><a class="nav-link" [routerLink]="['/audit-and-tracing/login-trace']" routerLinkActive="active">
             <i class="fas fa-sign-in-alt"></i>
             <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_OPEN_DOCUMENT_TRANSACTION' | translate }}</span>
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/error-logs']" routerLinkActive="active">
+          <li id="114"><a class="nav-link" [routerLink]="['/audit-and-tracing/error-logs']" routerLinkActive="active">
             <i class="fas fa-exclamation-triangle"></i>
-            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_CHANGES' | translate }}</span>
-          </a></li>
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
-            <i class="fas fa-table"></i>
-            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.LOGIN_TRACE' | translate }}</span>
-          </a></li>
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
-            <i class="fas fa-table"></i>
             <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.ERROR_LOGS' | translate }}</span>
           </a></li>
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
+          <li id="109"><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
             <i class="fas fa-table"></i>
-            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TABLES_TRACE_SETTINGS' | translate }}</span>
-          </a></li>
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
-            <i class="fas fa-table"></i>
-            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.WATERMARK_TRACING' | translate }}</span>
-          </a></li>
-          <li><a class="nav-link" [routerLink]="['/audit-and-tracing/tables-trace-settings']" routerLinkActive="active">
-            <i class="fas fa-table"></i>
-            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACE_PARALLEL_DOCUMENT' | translate }}</span>
+            <span>{{ 'MENU.AUDIT_TRACING_SECTIONS.LOGIN_TRACE' | translate }}</span>
           </a></li>
         </ul>
       </li>
 
       <!-- 16. ادارة النظام -->
-      <li class="nav-item">
+      <li class="nav-item" id="87">
         <div [routerLink]="['/system-management']">
           <a class="nav-link" (click)="toggleSubmenu('systemManagement')" [class.expanded]="isSubmenuOpen('systemManagement')">
             <i class="fas fa-cogs"></i>
@@ -456,31 +440,31 @@
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('systemManagement')">
-          <li>
+          <li id="19">
             <a class="nav-link" [routerLink]="['/system-management/system-setup']" routerLinkActive="active">
               <i class="fas fa-sliders-h"></i>
               <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.SYSTEM_SETUP' | translate }}</span>
             </a>
           </li>
-          <li>
+          <li id="49">
             <a class="nav-link" [routerLink]="['/system-management/hijri-data']" routerLinkActive="active">
               <i class="fas fa-calendar-alt"></i>
               <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.HIJRI_DATE_DATA' | translate }}</span>
             </a>
           </li>
-          <li>
+          <li id="55">
             <a class="nav-link" [routerLink]="['/system-management/language-data']" routerLinkActive="active">
               <i class="fas fa-language"></i>
               <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.LANGUAGE_DATA' | translate }}</span>
             </a>
           </li>
-          <li>
+          <li id="125">
             <a class="nav-link" [routerLink]="['/system-management/user-profile']" routerLinkActive="active">
               <i class="fas fa-user-circle"></i>
               <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.USER_PROFILE' | translate }}</span>
             </a>
           </li>
-          <li>
+          <li id="123">
             <a class="nav-link" [routerLink]="['/system-management/sessions-management']" routerLinkActive="active">
               <i class="fas fa-clock"></i>
               <span>{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.SESSIONS_MANAGEMENT' | translate }}</span>
@@ -490,7 +474,7 @@
       </li>
 
       <!-- 17. الرقابه -->
-      <li class="nav-item">
+      <li class="nav-item" id="234">
         <div [routerLink]="['/consorship']">
           <a class="nav-link" (click)="toggleSubmenu('supervision')" [class.expanded]="isSubmenuOpen('supervision')">
             <i class="fas fa-shield-alt"></i>
@@ -499,19 +483,19 @@
           </a>
         </div>
         <ul class="nav flex-column submenu" [class.show]="isSubmenuOpen('supervision')">
-          <li>
+          <li id="230">
             <a class="nav-link" [routerLink]="['/consorship/tour-available']" routerLinkActive="active">
               <i class="fas fa-check-circle"></i>
               <span>{{ 'MENU.CONSORSHIP_SECTIONS.CENSORSHIP_TOUR' | translate }}</span>
             </a>
           </li>
-          <li>
+          <li id="232">
             <a class="nav-link" [routerLink]="['/consorship/tour-unavailable']" routerLinkActive="active">
               <i class="fas fa-times-circle"></i>
               <span>{{ 'MENU.CONSORSHIP_SECTIONS.CENSORSHIP_TOUR' | translate }}</span>
             </a>
           </li>
-          <li>
+          <li id="233">
             <a class="nav-link" [routerLink]="['/consorship/alarms']" routerLinkActive="active">
               <i class="fas fa-bell"></i>
               <span>{{ 'MENU.CONSORSHIP_SECTIONS.ALARMS' | translate }}</span>
