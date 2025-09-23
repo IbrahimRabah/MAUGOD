@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AcceptApprovalRequestQuery, AttendanceAdjustmentRequest, RequestApprovalVacationAttendanceAdjustmentResponse, RequestApprovalVacationTimeTransactionApprovalResponse, TimeTransactionApprovalRequest } from '../../../core/models/requestApprovalVacations';
+import { AcceptApprovalRequestQuery, AttendanceAdjustmentRequest, RequestApprovalVacationAttendanceAdjustmentResponse, RequestApprovalVacationTimeTransactionApprovalResponse, TimeTransactionApprovalRequest, TimtranApprovalRoadmapVacationsDetailsData, TimtranApprovalTransactionsVacationsDetailsData } from '../../../core/models/requestApprovalVacations';
 import { ApiResponse } from '../../../core/models/TimtranLock';
 
 @Injectable({
@@ -28,6 +28,44 @@ export class RequestApprovalVacationsService {
       request,
       { headers }
     );
+  }
+
+  GetTimtranApprovalTransactionsForRequestVacationsDetailsByReqId(
+    lang: number,
+    reqId: number,
+    pageNumber: number,
+    pageSize: number
+  ): Observable<ApiResponse<TimtranApprovalTransactionsVacationsDetailsData>> {
+    const url = `${this.apiUrl}/GetTimtranApprovalTransactions`;
+  
+    const headers = new HttpHeaders({
+      accept: '*/*',
+      lang: lang.toString(),
+      ReqId: reqId.toString(),
+      pageNumer: pageNumber.toString(), // note: API uses 'pageNumer' (one 'm')
+      pageSize: pageSize.toString(),
+    });
+  
+    return this.http.get<ApiResponse<TimtranApprovalTransactionsVacationsDetailsData>>(url, { headers });
+  }
+
+   GetTimtranApprovalRoadmapForRequestVacationsDetailsByReqId(
+    lang: number,
+    reqId: number,
+    pageNumber: number,
+    pageSize: number
+  ): Observable<ApiResponse<TimtranApprovalRoadmapVacationsDetailsData>> {
+    const url = `${this.apiUrl}/GetTimtranApprovalRoadmap`;
+  
+    const headers = new HttpHeaders({
+      accept: '*/*',
+      lang: lang.toString(),
+      ReqId: reqId.toString(),
+      pageNumer: pageNumber.toString(), // note: API uses 'pageNumer' (one 'm')
+      pageSize: pageSize.toString(),
+    });
+  
+    return this.http.get<ApiResponse<TimtranApprovalRoadmapVacationsDetailsData>>(url, { headers });
   }
 
   acceptHandleApproval(request: AcceptApprovalRequestQuery, lang: number): Observable<ApiResponse<boolean>> {

@@ -32,7 +32,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let transaction of requestTransactions;" class="table-row">
-                <td>{{ transaction.curLevel }}</td>
+                <td>{{ transaction.curlLevel }}</td>
                 <td class="status-cell">{{ transaction.status }}</td>
                 <td>{{ transaction.updatedByEmpName }}</td>
                 <td>{{ transaction.replyDate | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -115,8 +115,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let roadMap of filteredRoadMap;" class="table-row">
-                <td>{{ roadMap.curLevel }}</td>
-                <td>{{ roadMap.levelName }}</td>
+                <td>{{ roadMap.curl_Level }}</td>
+                <td>{{ roadMap.curLevelName }}</td>
                 <td>{{ roadMap.mgrName }}</td>
               </tr>
               <tr *ngIf="filteredRoadMap.length === 0" class="no-data">

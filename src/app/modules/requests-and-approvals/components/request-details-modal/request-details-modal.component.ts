@@ -10,6 +10,10 @@ import {
   RequestTransactionForAttendanceTimeChangeRequestDetail,
   RequestRoadMapForAttendanceTimeChangeRequestDetail 
 } from '../../../../core/models/TimeTransactionApprovalData';
+import { PostRequestService } from '../../services/post-request.service';
+import { RequestRoadMapDetail, RequestTransactionDetails } from '../../../../core/models/postRequest';
+import { TimtranApprovalRoadmapVacationsDetail, TimtranApprovalTransactionsVacationsDetail } from '../../../../core/models/requestApprovalVacations';
+import { RequestApprovalVacationsService } from '../../services/request-approval-vacations.service';
 
 @Component({
   selector: 'app-request-details-modal',
@@ -19,12 +23,17 @@ import {
 export class RequestDetailsModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() showModal = false;
   @Input() requestId: number = 0;
+  @Input() pageId: string = '';
   @Output() closeModal = new EventEmitter<void>();
 
-  // Data arrays
-  requestTransactions: RequestTransactionForAttendanceTimeChangeRequestDetail[] = [];
-  requestRoadMap: RequestRoadMapForAttendanceTimeChangeRequestDetail[] = [];
-  filteredRoadMap: RequestRoadMapForAttendanceTimeChangeRequestDetail[] = [];
+  // Data arrays for attendanceTimeChangeRequest
+  requestTransactions: (
+    RequestTransactionForAttendanceTimeChangeRequestDetail |
+    RequestTransactionDetails |
+    TimtranApprovalTransactionsVacationsDetail
+  )[] = [];
+  requestRoadMap: RequestRoadMapForAttendanceTimeChangeRequestDetail[] | RequestRoadMapDetail[] | TimtranApprovalRoadmapVacationsDetail[]  = [];
+  filteredRoadMap: RequestRoadMapForAttendanceTimeChangeRequestDetail[] | RequestRoadMapDetail[] | TimtranApprovalRoadmapVacationsDetail[]  = [];
 
   // Loading states
   loadingTransactions = false;
@@ -46,6 +55,8 @@ export class RequestDetailsModalComponent implements OnInit, OnDestroy, OnChange
 
   constructor(
     private attendanceTimeService: AttendanceTimeService,
+    private postRequestService: PostRequestService,
+    private requestApprovalVacationsService: RequestApprovalVacationsService,
     public langService: LanguageService,
     private messageService: MessageService,
     private translateService: TranslateService,
@@ -85,23 +96,23 @@ export class RequestDetailsModalComponent implements OnInit, OnDestroy, OnChange
         distinctUntilChanged()
       )
       .subscribe(() => {
-        this.applyRoadMapSearch();
+        this.applyRoadMapSearch(this.pageId);
       });
   }
 
-  private applyRoadMapSearch() {
+  private applyRoadMapSearch(pageId:string) {
     const searchTerm = this.roadMapSearchForm.get('searchTerm')?.value?.toLowerCase() || '';
     
     if (!searchTerm) {
-      this.filteredRoadMap = [...this.requestRoadMap];
+          this.filteredRoadMap = [...this.requestRoadMap];
     } else {
-      this.filteredRoadMap = this.requestRoadMap.filter(item =>
-        item.curLevelName.toLowerCase().includes(searchTerm) ||
-        item.mgrName.toLowerCase().includes(searchTerm) ||
-        item.curl_Level.toString().includes(searchTerm)
-      );
+        this.filteredRoadMap = this.requestRoadMap.filter(item =>
+          item.curLevelName.toLowerCase().includes(searchTerm) ||
+          item.mgrName.toLowerCase().includes(searchTerm) ||
+          item.curl_Level.toString().includes(searchTerm)
+        );
+      }
     }
-  }
 
   clearSearch() {
     this.roadMapSearchForm.get('searchTerm')?.setValue('');
@@ -113,56 +124,167 @@ export class RequestDetailsModalComponent implements OnInit, OnDestroy, OnChange
   }
 
   private loadRequestTransactions() {
+    console.log("page id : ", this.pageId);
     this.loadingTransactions = true;
+
+    if(this.pageId === 'postRequest')
+    {
+      const params = {
+      reqId: this.requestId,
+      pageNumber: this.transactionPage,
+      pageSize: this.transactionPageSize
+      };
+
+      this.postRequestService.getRequestTransactionsForPostRequestDetailsByReqId(params, this.currentLang)
+        .subscribe({
+          next: (response) => {
+            if (response.isSuccess) {
+            this.requestTransactions = response.data.requestTransactionsForPostRequestDetails;
+            this.transactionTotalRecords = response.data.totalCount;
+          } else {
+            this.showErrorMessage(response.message);
+          }
+          this.loadingTransactions = false;
+        },
+          error: (error) => {
+            console.error('Error loading request transactions:', error);
+            this.showErrorMessage('Error loading request transactions');
+          }
+        });
+    }
     
-    this.attendanceTimeService.GetRequestTransactionsForAttendanceTimeChangeRequestDetailsByReqId(
-      this.currentLang,
-      this.requestId,
-      this.transactionPage,
-      this.transactionPageSize
-    ).subscribe({
-      next: (response) => {
-        if (response.isSuccess) {
-          this.requestTransactions = response.data.requestTransactionsForAttendanceTimeChangeRequestDetails;
-          this.transactionTotalRecords = response.data.totalCount;
-        } else {
-          this.showErrorMessage(response.message);
+    else if(this.pageId === 'attendanceTimeChangeRequest')
+    {
+        this.attendanceTimeService.GetRequestTransactionsForAttendanceTimeChangeRequestDetailsByReqId(
+        this.currentLang,
+        this.requestId,
+        this.transactionPage,
+        this.transactionPageSize
+      ).subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.requestTransactions = response.data.requestTransactionsForAttendanceTimeChangeRequestDetails;
+            this.transactionTotalRecords = response.data.totalCount;
+          } else {
+            this.showErrorMessage(response.message);
+          }
+          this.loadingTransactions = false;
+        },
+        error: (error) => {
+          console.error('Error loading request transactions:', error);
+          this.showErrorMessage('REQUEST_DETAILS.LOAD_TRANSACTIONS_ERROR');
+          this.loadingTransactions = false;
         }
-        this.loadingTransactions = false;
-      },
-      error: (error) => {
-        console.error('Error loading request transactions:', error);
-        this.showErrorMessage('REQUEST_DETAILS.LOAD_TRANSACTIONS_ERROR');
-        this.loadingTransactions = false;
-      }
-    });
+      });
+    }
+
+    else if(this.pageId === 'RequestApprovalVacationsForTimtranApproval')
+    {
+      this.requestApprovalVacationsService.GetTimtranApprovalTransactionsForRequestVacationsDetailsByReqId(
+        this.currentLang,
+        this.requestId,
+        this.transactionPage,
+        this.transactionPageSize
+      ).subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.requestTransactions = response.data.transactions;
+            this.transactionTotalRecords = response.data.totalCount;
+          } else {
+            this.showErrorMessage(response.message);
+          }
+          this.loadingTransactions = false;
+        },
+        error: (error) => {
+          console.error('Error loading request transactions:', error);
+          this.showErrorMessage('REQUEST_DETAILS.LOAD_TRANSACTIONS_ERROR');
+          this.loadingTransactions = false;
+        }
+      });
+    }
   }
 
   private loadRequestRoadMap() {
+    console.log("page id : ", this.pageId);
     this.loadingRoadMap = true;
     
-    this.attendanceTimeService.GetRequestRoadMapForAttendanceTimeChangeRequestDetailsByReqId(
-      this.currentLang,
-      this.requestId,
-      this.roadMapPage,
-      this.roadMapPageSize
-    ).subscribe({
-      next: (response) => {
-        if (response.isSuccess) {
-          this.requestRoadMap = response.data.requestRoadMapForAttendanceTimeChangeRequestDetails;
-          this.roadMapTotalRecords = response.data.totalCount;
-          this.applyRoadMapSearch();
-        } else {
-          this.showErrorMessage(response.message);
+    if(this.pageId === 'postRequest')
+    {
+      const params = {
+      reqId: this.requestId,
+      pageNumber: this.roadMapPage,
+      pageSize: this.roadMapPageSize
+      }; 
+
+      this.postRequestService.getRequestRoadMapForPostRequestDetailsByReqId(params, this.currentLang)
+      .subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.requestRoadMap = response.data.requestRoadMapForPostRequestDetails;
+            this.roadMapTotalRecords = response.data.totalCount;
+            this.applyRoadMapSearch(this.pageId);
+          } else {
+            this.showErrorMessage(response.message);
+          }
+          this.loadingRoadMap = false;
+        },
+        error: (error) => {
+          console.error('Error loading request road map:', error);
+          this.showErrorMessage('Error loading request road map');
         }
-        this.loadingRoadMap = false;
-      },
-      error: (error) => {
-        console.error('Error loading request road map:', error);
-        this.showErrorMessage('REQUEST_DETAILS.LOAD_ROADMAP_ERROR');
-        this.loadingRoadMap = false;
-      }
-    });
+      });
+    }
+
+    else if(this.pageId === 'attendanceTimeChangeRequest')
+    {
+        this.attendanceTimeService.GetRequestRoadMapForAttendanceTimeChangeRequestDetailsByReqId(
+        this.currentLang,
+        this.requestId,
+        this.roadMapPage,
+        this.roadMapPageSize
+      ).subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.requestRoadMap = response.data.requestRoadMapForAttendanceTimeChangeRequestDetails;
+            this.roadMapTotalRecords = response.data.totalCount;
+            this.applyRoadMapSearch(this.pageId);
+          } else {
+            this.showErrorMessage(response.message);
+          }
+          this.loadingRoadMap = false;
+        },
+        error: (error) => {
+          console.error('Error loading request road map:', error);
+          this.showErrorMessage('REQUEST_DETAILS.LOAD_ROADMAP_ERROR');
+          this.loadingRoadMap = false;
+        }
+      });
+    }
+    else if(this.pageId === 'RequestApprovalVacationsForTimtranApproval')
+    {
+      this.requestApprovalVacationsService.GetTimtranApprovalRoadmapForRequestVacationsDetailsByReqId(
+        this.currentLang,
+        this.requestId,
+        this.roadMapPage,
+        this.roadMapPageSize
+      ).subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.requestRoadMap = response.data.roadmaps;
+            this.roadMapTotalRecords = response.data.totalCount;
+            this.applyRoadMapSearch(this.pageId);
+          } else {
+            this.showErrorMessage(response.message);
+          }
+          this.loadingRoadMap = false;
+        },
+        error: (error) => {
+          console.error('Error loading request road map:', error);
+          this.showErrorMessage('REQUEST_DETAILS.LOAD_ROADMAP_ERROR');
+          this.loadingRoadMap = false;
+        }
+      });
+    }
   }
 
   // Pagination methods for transactions
@@ -246,12 +368,20 @@ export class RequestDetailsModalComponent implements OnInit, OnDestroy, OnChange
     });
   }
 
-  // Track by functions for better performance
-  trackByTransactionId(index: number, item: RequestTransactionForAttendanceTimeChangeRequestDetail): number {
-    return item.rec_ID;
+  // Transactions trackBy
+  trackByTransactionId(
+    index: number,
+    item: RequestTransactionForAttendanceTimeChangeRequestDetail | RequestTransactionDetails | TimtranApprovalTransactionsVacationsDetail
+  ): number {
+    return (item as any).rec_ID ?? (item as any).recId ?? index;
   }
 
-  trackByRoadMapId(index: number, item: RequestRoadMapForAttendanceTimeChangeRequestDetail): number {
-    return item.recId;
+  // RoadMap trackBy
+  trackByRoadMapId(
+    index: number,
+    item: RequestRoadMapForAttendanceTimeChangeRequestDetail | RequestRoadMapDetail | TimtranApprovalRoadmapVacationsDetail
+  ): number {
+    return (item as any).recId ?? (item as any).rec_ID ?? index;
   }
+
 }

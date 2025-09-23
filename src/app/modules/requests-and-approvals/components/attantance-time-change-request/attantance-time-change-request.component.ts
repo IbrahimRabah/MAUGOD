@@ -19,6 +19,7 @@ import { PaginationRequest } from '../../../../core/models/pagination';
 export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   
   // Core component state
+  currentPageId: string = 'attendanceTimeChangeRequest';
   timeTransactionRequests: TimeTransactionApprovalRequest[] = [];
   searchTerm: string = '';
   loading = false;

@@ -167,7 +167,7 @@ export interface HandleApprovalTransactionsData {
   totalCount: number;
 }
 export interface Transaction {
-  curLevel: string;
+  curlLevel: string;
   flag: number;
   updatedByEmpId: number;
   updatedBy: string;
@@ -184,8 +184,8 @@ export interface HandleApprovalRoadMapData {
 
 // RoadMap item
 export interface RoadMap {
-  curLevel: number;
-  levelName: string;
+  curl_Level: number;
+  curLevelName: string;
   mgrId: number;
   mgrName: string;
 }

@@ -147,12 +147,12 @@ export interface RouteDetailsLevel {
 }
 
 export interface RequestApprovalRouteCreateDto {
-  empId: number;
-  mgrOfDeptId: number;
-  mgrOfBranchId: number;
-  deptId: number;
-  branchId: number;
-  roleId: number;
+  empId: number | null;
+  mgrOfDeptId: number | null;
+  mgrOfBranchId: number | null;
+  deptId: number | null;
+  branchId: number | null;
+  roleId: number | null;
   statusId: string;
   forEveryone: number;
   reqLevels: number;

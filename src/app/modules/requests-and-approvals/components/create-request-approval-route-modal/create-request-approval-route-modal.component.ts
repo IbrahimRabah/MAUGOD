@@ -164,9 +164,9 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     this.createForm = this.fb.group({
       forEveryone: [1, Validators.required],
       // Fields for both options
-      statusId: ['', Validators.required],
+      statusId: [''],
       reqLevels: [1, Validators.required],
-      note: ['', Validators.required],
+      note: [''],
       // Fields for "group" option
       empId: [''],
       mgrOfDeptId: [''],
@@ -428,9 +428,9 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     // Patch form values
     this.createForm.patchValue({
       forEveryone: routeData.forEveryoneId,
-      statusId: routeData.stsId || '',
+      statusId: routeData.stsId || null,
       reqLevels: routeData.reqLevelId,
-      note: routeData.note || '',
+      note: routeData.note || null,
       empId: routeData.empId || null,
       mgrOfDeptId: routeData.deptIdMgr || null,
       mgrOfBranchId: routeData.branchIdMgr || null,
@@ -449,37 +449,37 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     return this.createForm.get('levelDetails') as FormArray;
   }
 
-  // Event handlers
-  onForEveryoneChange() {
-    this.selectedForEveryone = this.createForm.get('forEveryone')?.value;
-    
-    // Update validators based on selection
-    if (this.selectedForEveryone === 0) {
-      // For group option - add required validators for group fields
-      this.createForm.get('empId')?.setValidators([Validators.required]);
-      this.createForm.get('mgrOfDeptId')?.setValidators([Validators.required]);
-      this.createForm.get('mgrOfBranchId')?.setValidators([Validators.required]);
-      this.createForm.get('deptId')?.setValidators([Validators.required]);
-      this.createForm.get('branchId')?.setValidators([Validators.required]);
-      this.createForm.get('roleId')?.setValidators([Validators.required]);
-    } else {
-      // For everyone option - remove validators from group fields
-      this.createForm.get('empId')?.clearValidators();
-      this.createForm.get('mgrOfDeptId')?.clearValidators();
-      this.createForm.get('mgrOfBranchId')?.clearValidators();
-      this.createForm.get('deptId')?.clearValidators();
-      this.createForm.get('branchId')?.clearValidators();
-      this.createForm.get('roleId')?.clearValidators();
-    }
-    
-    // Update validation status
-    this.createForm.get('empId')?.updateValueAndValidity();
-    this.createForm.get('mgrOfDeptId')?.updateValueAndValidity();
-    this.createForm.get('mgrOfBranchId')?.updateValueAndValidity();
-    this.createForm.get('deptId')?.updateValueAndValidity();
-    this.createForm.get('branchId')?.updateValueAndValidity();
-    this.createForm.get('roleId')?.updateValueAndValidity();
+// Event handlers
+onForEveryoneChange() {
+  this.selectedForEveryone = this.createForm.get('forEveryone')?.value;
+
+  if (this.selectedForEveryone === 0) {
+    // For group option → keep fields but make them optional
+    this.createForm.get('empId')?.clearValidators();
+    this.createForm.get('mgrOfDeptId')?.clearValidators();
+    this.createForm.get('mgrOfBranchId')?.clearValidators();
+    this.createForm.get('deptId')?.clearValidators();
+    this.createForm.get('branchId')?.clearValidators();
+    this.createForm.get('roleId')?.clearValidators();
+  } else {
+    // For everyone option → also optional
+    this.createForm.get('empId')?.clearValidators();
+    this.createForm.get('mgrOfDeptId')?.clearValidators();
+    this.createForm.get('mgrOfBranchId')?.clearValidators();
+    this.createForm.get('deptId')?.clearValidators();
+    this.createForm.get('branchId')?.clearValidators();
+    this.createForm.get('roleId')?.clearValidators();
   }
+
+  // Update validation status
+  this.createForm.get('empId')?.updateValueAndValidity();
+  this.createForm.get('mgrOfDeptId')?.updateValueAndValidity();
+  this.createForm.get('mgrOfBranchId')?.updateValueAndValidity();
+  this.createForm.get('deptId')?.updateValueAndValidity();
+  this.createForm.get('branchId')?.updateValueAndValidity();
+  this.createForm.get('roleId')?.updateValueAndValidity();
+}
+
 
   onRequestLevelsChange() {
     const levels = this.createForm.get('reqLevels')?.value || 1;
@@ -739,19 +739,26 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     this.submitting = true;
     const formValue = this.createForm.value;
     
+    function toNullableInt(value: any): number | null {
+      return value ? parseInt(value) : null;
+    }
+
     const createDto: RequestApprovalRouteCreateDto = {
-      empId: formValue.forEveryone === 0 ? parseInt(formValue.empId) || 0 : 0,
-      mgrOfDeptId: formValue.forEveryone === 0 ? parseInt(formValue.mgrOfDeptId) || 0 : 0,
-      mgrOfBranchId: formValue.forEveryone === 0 ? parseInt(formValue.mgrOfBranchId) || 0 : 0,
-      deptId: formValue.forEveryone === 0 ? parseInt(formValue.deptId) || 0 : 0,
-      branchId: formValue.forEveryone === 0 ? parseInt(formValue.branchId) || 0 : 0,
-      roleId: formValue.forEveryone === 0 ? parseInt(formValue.roleId) || 0 : 0,
-      statusId: formValue.statusId,
+      empId: formValue.forEveryone === 0 ? toNullableInt(formValue.empId) : null,
+      mgrOfDeptId: formValue.forEveryone === 0 ? toNullableInt(formValue.mgrOfDeptId) : null,
+      mgrOfBranchId: formValue.forEveryone === 0 ? toNullableInt(formValue.mgrOfBranchId) : null,
+      deptId: formValue.forEveryone === 0 ? toNullableInt(formValue.deptId) : null,
+      branchId: formValue.forEveryone === 0 ? toNullableInt(formValue.branchId) : null,
+      roleId: formValue.forEveryone === 0 ? toNullableInt(formValue.roleId) : null,
+      statusId: formValue.statusId && formValue.statusId.trim() !== "" 
+              ? formValue.statusId 
+              : null,
       forEveryone: formValue.forEveryone,
       reqLevels: formValue.reqLevels,
       isActive: true,
       note: formValue.note
     };
+
 
     // Add level details
     formValue.levelDetails.forEach((levelDetail: any, index: number) => {
@@ -817,11 +824,13 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
             this.showErrorMessage(response.message || 'CREATE_REQUEST_APPROVAL_ROUTE.ERROR_MESSAGE');
           }
           this.submitting = false;
+          this.onClose();
         },
         error: (error) => {
           console.error('Error with request approval route:', error);
           this.showErrorMessage(error.error?.message || 'CREATE_REQUEST_APPROVAL_ROUTE.ERROR_MESSAGE');
           this.submitting = false;
+          this.onClose();
         }
       });
   }

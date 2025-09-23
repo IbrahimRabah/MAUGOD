@@ -14,7 +14,8 @@ import { ApiResponse } from '../../../../core/models/TimtranLock';
   providers: [MessageService, ConfirmationService]
 })
 export class RequestApprovalVacationsComponent {
-
+ 
+  currentPageId: string = 'RequestApprovalVacationsForTimtranApproval';
   attendanceAdjustments: AttendanceAdjustment[] = [];
   timeTransactionApprovals: TimeTransactionApproval[] = [];
   acceptHandleApprovalRequestnotes: { [recId: number]: string } = {};

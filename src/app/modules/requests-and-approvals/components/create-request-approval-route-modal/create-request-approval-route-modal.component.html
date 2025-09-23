@@ -1,4 +1,4 @@
-﻿<!-- Modal Backdrop -->
+<!-- Modal Backdrop -->
 <div class="modal-backdrop" *ngIf="showModal" (click)="onClose()" [class.rtl]="isRTL" [class.ltr]="!isRTL">
   <div class="modal-content create-modal" (click)="$event.stopPropagation()">
     
@@ -51,7 +51,7 @@
             
             <!-- Status Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}</option>
@@ -87,7 +87,7 @@
 
             <!-- Note Input -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</label>
               <textarea 
                 formControlName="note" 
                 class="form-textarea" 
@@ -407,7 +407,7 @@
             
             <!-- Employee Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.EMPLOYEE' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.EMPLOYEE' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="empId" class="form-select" [class.error]="isFieldRequired('empId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_EMPLOYEE' | translate }}</option>
@@ -425,7 +425,7 @@
 
             <!-- Manager of Department Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="mgrOfDeptId" class="form-select" [class.error]="isFieldRequired('mgrOfDeptId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
@@ -443,7 +443,7 @@
 
             <!-- Manager of Branch Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="mgrOfBranchId" class="form-select" [class.error]="isFieldRequired('mgrOfBranchId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
@@ -461,7 +461,7 @@
 
             <!-- Department Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="deptId" class="form-select" [class.error]="isFieldRequired('deptId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}</option>
@@ -479,7 +479,7 @@
 
             <!-- Branch Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="branchId" class="form-select" [class.error]="isFieldRequired('branchId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}</option>
@@ -497,7 +497,7 @@
 
             <!-- Role Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="roleId" class="form-select" [class.error]="isFieldRequired('roleId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}</option>
@@ -515,7 +515,7 @@
 
             <!-- Status Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}</option>
@@ -533,7 +533,7 @@
 
             <!-- Request Levels Dropdown -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</label>
               <div class="dropdown-wrapper">
                 <select formControlName="reqLevels" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevels')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_REQUEST_LEVELS' | translate }}</option>
@@ -551,7 +551,7 @@
 
             <!-- Note Input -->
             <div class="form-group">
-              <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</label>
+              <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.NOTE' | translate }}</label>
               <textarea 
                 formControlName="note" 
                 class="form-textarea" 
