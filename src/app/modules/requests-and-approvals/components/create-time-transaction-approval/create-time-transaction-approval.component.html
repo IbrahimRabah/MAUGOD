@@ -80,7 +80,7 @@
 
         <!-- Is Active Section (only in edit mode) -->
         <div *ngIf="isEditMode" class="form-section">
-          <label class="section-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.IS_ACTIVE' | translate }}</label>
+          <label class="section-label">{{ 'MENU.REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</label>
           <div class="radio-group">
             <div class="radio-option">
               <input 
@@ -89,7 +89,7 @@
                 name="isActive" 
                 [value]="true"
                 formControlName="isActive">
-              <label for="isActive_true">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.ACTIVE' | translate }}</label>
+              <label for="isActive_true">{{ 'MENU.REQUEST_APPROVAL_ROUTE.ACTIVE' | translate }}</label>
             </div>
             <div class="radio-option">
               <input 
@@ -98,7 +98,7 @@
                 name="isActive" 
                 [value]="false"
                 formControlName="isActive">
-              <label for="isActive_false">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NOT_ACTIVE' | translate }}</label>
+              <label for="isActive_false">{{ 'MENU.REQUEST_APPROVAL_ROUTE.INACTIVE' | translate }}</label>
             </div>
           </div>
         </div>

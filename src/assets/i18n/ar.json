@@ -1668,6 +1668,8 @@
     "FRIDAY": "الجمعة",
     "SATURDAY": "السبت",
     "IS_ACTIVE": "نشط",
+    "ACTIVE": "نشط",
+    "NOT_ACTIVE": "غير نشط",
     "DETAILS": "التفاصيل",
     "DELETE": "حذف",
     "NO_DATA_AVAILABLE": "لا توجد بيانات متاحة",

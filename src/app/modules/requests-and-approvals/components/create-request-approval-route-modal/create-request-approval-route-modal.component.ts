@@ -170,6 +170,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
       statusId: [''],
       reqLevels: [1, Validators.required],
       note: [''],
+      isActive: [true], // Add isActive control with default true
       // Fields for "group" option
       empId: [''],
       mgrOfDeptId: [''],
@@ -438,7 +439,8 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
       mgrOfBranchId: routeData.branchIdMgr || null,
       deptId: routeData.deptId || null,
       branchId: routeData.branchId || null,
-      roleId: routeData.roleId || null
+      roleId: routeData.roleId || null,
+      isActive: routeData.isActive ?? true
     });
 
     // Set selected request levels and recreate level details
@@ -757,7 +759,7 @@ onForEveryoneChange() {
               : null,
       forEveryone: formValue.forEveryone,
       reqLevels: formValue.reqLevels,
-      isActive: true,
+      isActive: formValue.isActive ?? true,
       note: formValue.note
     };
 
@@ -866,7 +868,8 @@ onForEveryoneChange() {
       branchId: '',
       roleId: '',
       statusId: '',
-      note: ''
+      note: '',
+      isActive: true
     });
     this.selectedForEveryone = 1;
     this.selectedRequestLevels = 1;
