@@ -78,6 +78,31 @@
           </div>
         </div>
 
+        <!-- Is Active Section (only in edit mode) -->
+        <div *ngIf="isEditMode" class="form-section">
+          <label class="section-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.IS_ACTIVE' | translate }}</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input 
+                type="radio" 
+                id="isActive_true" 
+                name="isActive" 
+                [value]="true"
+                formControlName="isActive">
+              <label for="isActive_true">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.ACTIVE' | translate }}</label>
+            </div>
+            <div class="radio-option">
+              <input 
+                type="radio" 
+                id="isActive_false" 
+                name="isActive" 
+                [value]="false"
+                formControlName="isActive">
+              <label for="isActive_false">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NOT_ACTIVE' | translate }}</label>
+            </div>
+          </div>
+        </div>
+
         <!-- Group Selection Section (only shown when For Group is selected) -->
         <div *ngIf="selectedForEveryone === 0" class="group-selection-section">
           
@@ -91,6 +116,10 @@
               optionValue="value"
               [filter]="true"
               [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
               placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
               class="custom-dropdown w-100">
             </p-dropdown>
@@ -110,6 +139,10 @@
               optionValue="value"
               [filter]="true"
               [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
               placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
               class="custom-dropdown w-100">
             </p-dropdown>
@@ -129,6 +162,10 @@
               optionValue="value"
               [filter]="true"
               [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
               placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
               class="custom-dropdown w-100">
             </p-dropdown>
@@ -148,6 +185,10 @@
               optionValue="value"
               [filter]="true"
               [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
               placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
               class="custom-dropdown w-100 department-dropdown">
             </p-dropdown>
@@ -167,6 +208,10 @@
               optionValue="value"
               [filter]="true"
               [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
               placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
               class="custom-dropdown w-100 branch-dropdown">
             </p-dropdown>
@@ -186,6 +231,10 @@
               optionValue="value"
               [filter]="true"
               [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
               placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
               class="custom-dropdown w-100">
             </p-dropdown>
@@ -212,6 +261,10 @@
                 [options]="employees"
                 [showClear]="true"
                 [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'empId')"
@@ -231,6 +284,10 @@
                 [options]="departmentsOrMgr"
                 [showClear]="true"
                 [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'mgrOfDeptId')"
@@ -250,6 +307,10 @@
                 [options]="branchesOrMgr"
                 [showClear]="true"
                 [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'mgrOfBranchId')"
@@ -269,6 +330,10 @@
                 [options]="departmentsOrMgr"
                 [showClear]="true"
                 [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'deptId')"
@@ -288,6 +353,10 @@
                   [options]="branchesOrMgr"
                   [showClear]="true"
                   [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
                   optionLabel="label"
                   optionValue="value"
                   [ngModel]="getLevelFormValue(levelNumber, 'branchId')"
@@ -307,6 +376,10 @@
                 [options]="roles"
                 [showClear]="true"
                 [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'roleId')"
@@ -537,10 +610,14 @@
                   [disabled]="loadingManagers"
                   [showClear]="true"
                   [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrId')?.value && getLevelFormControl(levelNumber, 'mgrId')?.value > 0">
                 <label [for]="'mgrIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -549,7 +626,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'mgrIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrId')?.value && getLevelFormControl(levelNumber, 'mgrId')?.value > 0">
                 <label [for]="'mgrIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'mgrIdAfterLimitAction_' + levelNumber"
@@ -577,10 +654,14 @@
                   [disabled]="loadingDepartmentsOrMgr"
                   [showClear]="true"
                   [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_DEPARTMENT' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value && getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value > 0">
                 <label [for]="'mgrOfDeptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -589,7 +670,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'mgrOfDeptIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value && getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value > 0">
                 <label [for]="'mgrOfDeptIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'mgrOfDeptIdAfterLimitAction_' + levelNumber"
@@ -617,10 +698,14 @@
                   [disabled]="loadingBranchesOrMgr"
                   [showClear]="true"
                   [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_BRANCH' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value && getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value > 0">
                 <label [for]="'mgrOfBranchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -629,7 +714,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'mgrOfBranchIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value && getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value > 0">
                 <label [for]="'mgrOfBranchIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'mgrOfBranchIdAfterLimitAction_' + levelNumber"
@@ -657,10 +742,14 @@
                   [disabled]="loadingDepartmentsOrMgr"
                   [showClear]="true"
                   [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_DEPARTMENT' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'deptId')?.value && getLevelFormControl(levelNumber, 'deptId')?.value > 0">
                 <label [for]="'deptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -669,7 +758,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'deptIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'deptId')?.value && getLevelFormControl(levelNumber, 'deptId')?.value > 0">
                 <label [for]="'deptIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'deptIdAfterLimitAction_' + levelNumber"
@@ -697,10 +786,14 @@
                   [disabled]="loadingBranchesOrMgr"
                   [showClear]="true"
                   [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_BRANCH' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'branchId')?.value && getLevelFormControl(levelNumber, 'branchId')?.value > 0">
                 <label [for]="'branchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -709,7 +802,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'branchIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'branchId')?.value && getLevelFormControl(levelNumber, 'branchId')?.value > 0">
                 <label [for]="'branchIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'branchIdAfterLimitAction_' + levelNumber"
@@ -737,10 +830,14 @@
                 [disabled]="loadingRoles"
                 [showClear]="true"
                 [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
                 placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_ROLE' | translate }}">
               </p-dropdown>
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'roleId')?.value && getLevelFormControl(levelNumber, 'roleId')?.value > 0">
                 <label [for]="'roleIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -749,7 +846,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'roleIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'roleId')?.value && getLevelFormControl(levelNumber, 'roleId')?.value > 0">
                 <label [for]="'roleIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'roleIdAfterLimitAction_' + levelNumber"
