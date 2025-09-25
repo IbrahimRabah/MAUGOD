@@ -25,11 +25,77 @@
   100% { transform: rotate(360deg); }
 }
 
+/* 🔹 Make Employee & Department dropdowns match form-select/date style */
+:host ::ng-deep .custom-dropdown .p-dropdown {
+  width: 100% !important;
+  height: 40px; /* match date picker height */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  box-shadow: none !important;
+}
+
+/* Placeholder + text alignment */
+:host ::ng-deep .custom-dropdown .p-dropdown-label {
+  display: flex;
+  align-items: center;
+  padding-left: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Search input inside dropdown */
+:host ::ng-deep .custom-dropdown .p-dropdown-filter {
+  padding: 8px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+/* Match panel to input width */
+:host ::ng-deep .custom-dropdown .p-dropdown-panel {
+  min-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Department dropdown: allow wider panel for long names */
+:host ::ng-deep .department-dropdown .p-dropdown-panel {
+  min-width: 100% !important;
+  width: auto !important;
+  max-width: 450px;
+}
+
+/* Flex row for all filters */
+.filter-row {
+  display: flex;
+  align-items: flex-start; /* ⬅ baseline instead of flex-end */
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+
+/* Ensure each field has similar width */
+.custom-form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Date inputs a bit smaller */
+.form-input {
+  height: 40px;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+
 /* Table Header Actions */
 .table-header-actions {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 15px 20px;
   background-color: #F2F2F2;
   border: 1px solid #ddd;
@@ -40,13 +106,13 @@
 
 .left-actions {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
 }
 
 .right-actions {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
 }
 

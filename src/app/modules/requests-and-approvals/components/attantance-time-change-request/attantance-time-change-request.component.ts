@@ -192,7 +192,7 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
         if (response.isSuccess) {
           this.timeTransactionRequests = response.data.timeTransactionApprovalRequests;
           // Handle pagination information from API response if available
-          this.totalRecords = response.data.totalRecords || this.timeTransactionRequests.length;
+          this.totalRecords = response.data.totalCount;
         } else {
           this.showErrorMessage(response.message);
         }

@@ -23,5 +23,6 @@ export interface AppEmployeesResponse {
   isSuccess: boolean;
   data: {
     employees: AppEmployee[];
+    totalCount: number;
   };
 }

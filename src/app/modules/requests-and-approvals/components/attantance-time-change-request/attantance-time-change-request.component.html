@@ -230,7 +230,7 @@
 
     <div class="page-size-selector">
       <label>{{ 'ATTENDANCE_TIME_CHANGE.ITEMS_PER_PAGE' | translate }}</label>
-        <select [(ngModel)]="paginationRequest.pageSize" class="form-input">
+        <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChange()" class="form-input">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="25">25</option>

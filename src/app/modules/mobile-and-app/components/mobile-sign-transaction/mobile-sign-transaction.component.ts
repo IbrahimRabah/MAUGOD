@@ -187,7 +187,7 @@ export class MobileSignTransactionComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.isSuccess && response.data?.mobileSignTransactions) {
           this.mobileSignTransactions = response.data.mobileSignTransactions;
-          this.totalRecords = this.mobileSignTransactions.length; // Adjust if backend provides total count
+          this.totalRecords = response.data.totalCount; // Adjust if backend provides total count
         } else {
           this.mobileSignTransactions = [];
           this.totalRecords = 0;

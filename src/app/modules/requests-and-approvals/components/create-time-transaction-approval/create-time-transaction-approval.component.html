@@ -84,12 +84,16 @@
           <!-- Employee Dropdown -->
           <div class="form-group">
             <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
-            <select formControlName="empId" class="form-control">
-              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-              <option *ngFor="let employee of employees" [value]="employee.value">
-                {{ employee.label }}
-              </option>
-            </select>
+            <p-dropdown
+              formControlName="empId"
+              [options]="employees"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
+              class="custom-dropdown w-100">
+            </p-dropdown>
             <div *ngIf="loadingEmployees" class="loading-indicator">
               <i class="fas fa-spinner fa-spin"></i>
               {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -99,12 +103,16 @@
           <!-- Manager of Department Dropdown -->
           <div class="form-group">
             <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
-            <select formControlName="mgrOfDeptId" class="form-control">
-              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-              <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
-                {{ dept.label }}
-              </option>
-            </select>
+            <p-dropdown
+              formControlName="mgrOfDeptId"
+              [options]="departmentsOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
+              class="custom-dropdown w-100">
+            </p-dropdown>
             <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
               <i class="fas fa-spinner fa-spin"></i>
               {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -114,12 +122,16 @@
           <!-- Manager of Branch Dropdown -->
           <div class="form-group">
             <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
-            <select formControlName="mgrOfBranchId" class="form-control">
-              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-              <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
-                {{ branch.label }}
-              </option>
-            </select>
+            <p-dropdown
+              formControlName="mgrOfBranchId"
+              [options]="branchesOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
+              class="custom-dropdown w-100">
+            </p-dropdown>
             <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
               <i class="fas fa-spinner fa-spin"></i>
               {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -129,12 +141,16 @@
           <!-- Department Dropdown -->
           <div class="form-group">
             <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
-            <select formControlName="deptId" class="form-control">
-              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-              <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
-                {{ dept.label }}
-              </option>
-            </select>
+            <p-dropdown
+              formControlName="deptId"
+              [options]="departmentsOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
+              class="custom-dropdown w-100 department-dropdown">
+            </p-dropdown>
             <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
               <i class="fas fa-spinner fa-spin"></i>
               {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -144,12 +160,16 @@
           <!-- Branch Dropdown -->
           <div class="form-group">
             <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
-            <select formControlName="branchId" class="form-control">
-              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-              <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
-                {{ branch.label }}
-              </option>
-            </select>
+            <p-dropdown
+              formControlName="branchId"
+              [options]="branchesOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
+              class="custom-dropdown w-100 branch-dropdown">
+            </p-dropdown>
             <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
               <i class="fas fa-spinner fa-spin"></i>
               {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -159,12 +179,16 @@
           <!-- Role Dropdown -->
           <div class="form-group">
             <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
-            <select formControlName="roleId" class="form-control">
-              <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-              <option *ngFor="let role of roles" [value]="role.value">
-                {{ role.label }}
-              </option>
-            </select>
+            <p-dropdown
+              formControlName="roleId"
+              [options]="roles"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
+              class="custom-dropdown w-100">
+            </p-dropdown>
             <div *ngIf="loadingRoles" class="loading-indicator">
               <i class="fas fa-spinner fa-spin"></i>
               {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -184,12 +208,16 @@
             <!-- Employee Dropdown for this level -->
             <div class="form-group">
               <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
-              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'empId')" (change)="updateLevelFormValue(levelNumber, 'empId', $event)">
-                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-                <option *ngFor="let employee of employees" [value]="employee.value">
-                  {{ employee.label }}
-                </option>
-              </select>
+              <p-dropdown 
+                [options]="employees"
+                [showClear]="true"
+                [filter]="true"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="getLevelFormValue(levelNumber, 'empId')"
+                (onChange)="updateLevelFormValue(levelNumber, 'empId', $event.value)"
+                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+              </p-dropdown>
               <div *ngIf="loadingEmployees" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
                 {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -199,12 +227,16 @@
             <!-- Manager of Department Dropdown for this level -->
             <div class="form-group">
               <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
-              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'mgrOfDeptId')" (change)="updateLevelFormValue(levelNumber, 'mgrOfDeptId', $event)">
-                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-                <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
-                  {{ dept.label }}
-                </option>
-              </select>
+              <p-dropdown 
+                [options]="departmentsOrMgr"
+                [showClear]="true"
+                [filter]="true"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="getLevelFormValue(levelNumber, 'mgrOfDeptId')"
+                (onChange)="updateLevelFormValue(levelNumber, 'mgrOfDeptId', $event.value)"
+                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+              </p-dropdown>
               <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
                 {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -214,12 +246,16 @@
             <!-- Manager of Branch Dropdown for this level -->
             <div class="form-group">
               <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
-              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'mgrOfBranchId')" (change)="updateLevelFormValue(levelNumber, 'mgrOfBranchId', $event)">
-                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-                <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
-                  {{ branch.label }}
-                </option>
-              </select>
+              <p-dropdown 
+                [options]="branchesOrMgr"
+                [showClear]="true"
+                [filter]="true"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="getLevelFormValue(levelNumber, 'mgrOfBranchId')"
+                (onChange)="updateLevelFormValue(levelNumber, 'mgrOfBranchId', $event.value)"
+                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+              </p-dropdown>
               <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
                 {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -229,12 +265,16 @@
             <!-- Department Dropdown for this level -->
             <div class="form-group">
               <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
-              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'deptId')" (change)="updateLevelFormValue(levelNumber, 'deptId', $event)">
-                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-                <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
-                  {{ dept.label }}
-                </option>
-              </select>
+              <p-dropdown 
+                [options]="departmentsOrMgr"
+                [showClear]="true"
+                [filter]="true"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="getLevelFormValue(levelNumber, 'deptId')"
+                (onChange)="updateLevelFormValue(levelNumber, 'deptId', $event.value)"
+                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+              </p-dropdown>
               <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
                 {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -244,12 +284,16 @@
             <!-- Branch Dropdown for this level -->
             <div class="form-group">
               <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
-              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'branchId')" (change)="updateLevelFormValue(levelNumber, 'branchId', $event)">
-                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-                <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
-                  {{ branch.label }}
-                </option>
-              </select>
+               <p-dropdown 
+                  [options]="branchesOrMgr"
+                  [showClear]="true"
+                  [filter]="true"
+                  optionLabel="label"
+                  optionValue="value"
+                  [ngModel]="getLevelFormValue(levelNumber, 'branchId')"
+                  (onChange)="updateLevelFormValue(levelNumber, 'branchId', $event.value)"
+                  placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+                </p-dropdown>
               <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
                 {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -259,12 +303,16 @@
             <!-- Role Dropdown for this level -->
             <div class="form-group">
               <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
-              <select class="form-control" [value]="getLevelFormValue(levelNumber, 'roleId')" (change)="updateLevelFormValue(levelNumber, 'roleId', $event)">
-                <option value="">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}</option>
-                <option *ngFor="let role of roles" [value]="role.value">
-                  {{ role.label }}
-                </option>
-              </select>
+              <p-dropdown 
+                [options]="roles"
+                [showClear]="true"
+                [filter]="true"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="getLevelFormValue(levelNumber, 'roleId')"
+                (onChange)="updateLevelFormValue(levelNumber, 'roleId', $event.value)"
+                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+              </p-dropdown>
               <div *ngIf="loadingRoles" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
                 {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
@@ -480,16 +528,17 @@
             <div class="form-row">
               <div class="form-group">
                 <label [for]="'mgrId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.MANAGERS' | translate }}</label>
-                <select 
+                <p-dropdown
                   [id]="'mgrId_' + levelNumber"
-                  class="form-select"
+                  [options]="managers"
+                  optionLabel="label"
+                  optionValue="value"
                   [formControl]="getLevelFormControl(levelNumber, 'mgrId')"
-                  [disabled]="loadingManagers">
-                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER' | translate }}</option>
-                  <option *ngFor="let manager of managers" [value]="manager.value">
-                    {{ manager.label }}
-                  </option>
-                </select>
+                  [disabled]="loadingManagers"
+                  [showClear]="true"
+                  [filter]="true"
+                  placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER' | translate }}">
+                </p-dropdown>
               </div>
               <div class="form-group">
                 <label [for]="'mgrIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
@@ -519,16 +568,17 @@
             <div class="form-row">
               <div class="form-group">
                 <label [for]="'mgrOfDeptId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.MANAGER_OF_DEPARTMENT' | translate }}</label>
-                <select 
+                <p-dropdown
                   [id]="'mgrOfDeptId_' + levelNumber"
-                  class="form-select"
+                  [options]="departmentsOrMgr"
+                  optionLabel="label"
+                  optionValue="value"
                   [formControl]="getLevelFormControl(levelNumber, 'mgrOfDeptId')"
-                  [disabled]="loadingDepartmentsOrMgr">
-                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
-                  <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
-                    {{ dept.label }}
-                  </option>
-                </select>
+                  [disabled]="loadingDepartmentsOrMgr"
+                  [showClear]="true"
+                  [filter]="true"
+                  placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_DEPARTMENT' | translate }}">
+                </p-dropdown>
               </div>
               <div class="form-group">
                 <label [for]="'mgrOfDeptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
@@ -558,16 +608,17 @@
             <div class="form-row">
               <div class="form-group">
                 <label [for]="'mgrOfBranchId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.MANAGER_OF_BRANCH' | translate }}</label>
-                <select 
+                <p-dropdown
                   [id]="'mgrOfBranchId_' + levelNumber"
-                  class="form-select"
+                  [options]="branchesOrMgr"
+                  optionLabel="label"
+                  optionValue="value"
                   [formControl]="getLevelFormControl(levelNumber, 'mgrOfBranchId')"
-                  [disabled]="loadingBranchesOrMgr">
-                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
-                  <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
-                    {{ branch.label }}
-                  </option>
-                </select>
+                  [disabled]="loadingBranchesOrMgr"
+                  [showClear]="true"
+                  [filter]="true"
+                  placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_BRANCH' | translate }}">
+                </p-dropdown>
               </div>
               <div class="form-group">
                 <label [for]="'mgrOfBranchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
@@ -597,16 +648,17 @@
             <div class="form-row">
               <div class="form-group">
                 <label [for]="'deptId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DEPARTMENT' | translate }}</label>
-                <select 
+                <p-dropdown
                   [id]="'deptId_' + levelNumber"
-                  class="form-select"
+                  [options]="departmentsOrMgr"
+                  optionLabel="label"
+                  optionValue="value"
                   [formControl]="getLevelFormControl(levelNumber, 'deptId')"
-                  [disabled]="loadingDepartmentsOrMgr">
-                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_DEPARTMENT' | translate }}</option>
-                  <option *ngFor="let dept of departmentsOrMgr" [value]="dept.value">
-                    {{ dept.label }}
-                  </option>
-                </select>
+                  [disabled]="loadingDepartmentsOrMgr"
+                  [showClear]="true"
+                  [filter]="true"
+                  placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_DEPARTMENT' | translate }}">
+                </p-dropdown>
               </div>
               <div class="form-group">
                 <label [for]="'deptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
@@ -636,16 +688,17 @@
             <div class="form-row">
               <div class="form-group">
                 <label [for]="'branchId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.BRANCH' | translate }}</label>
-                <select 
+                <p-dropdown
                   [id]="'branchId_' + levelNumber"
-                  class="form-select"
+                  [options]="branchesOrMgr"
+                  optionLabel="label"
+                  optionValue="value"
                   [formControl]="getLevelFormControl(levelNumber, 'branchId')"
-                  [disabled]="loadingBranchesOrMgr">
-                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_BRANCH' | translate }}</option>
-                  <option *ngFor="let branch of branchesOrMgr" [value]="branch.value">
-                    {{ branch.label }}
-                  </option>
-                </select>
+                  [disabled]="loadingBranchesOrMgr"
+                  [showClear]="true"
+                  [filter]="true"
+                  placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_BRANCH' | translate }}">
+                </p-dropdown>
               </div>
               <div class="form-group">
                 <label [for]="'branchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
@@ -675,16 +728,17 @@
             <div class="form-row">
               <div class="form-group">
                 <label [for]="'roleId_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.ROLE' | translate }}</label>
-                <select 
-                  [id]="'roleId_' + levelNumber"
-                  class="form-select"
-                  [formControl]="getLevelFormControl(levelNumber, 'roleId')"
-                  [disabled]="loadingRoles">
-                  <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_ROLE' | translate }}</option>
-                  <option *ngFor="let role of roles" [value]="role.value">
-                    {{ role.label }}
-                  </option>
-                </select>
+                <p-dropdown
+                [id]="'roleId_' + levelNumber"
+                [options]="roles"
+                optionLabel="label"
+                optionValue="value"
+                [formControl]="getLevelFormControl(levelNumber, 'roleId')"
+                [disabled]="loadingRoles"
+                [showClear]="true"
+                [filter]="true"
+                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_ROLE' | translate }}">
+              </p-dropdown>
               </div>
               <div class="form-group">
                 <label [for]="'roleIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>

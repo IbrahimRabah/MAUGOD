@@ -21,6 +21,7 @@ export interface MobileSignTransactionResponse {
   isSuccess: boolean;
   data: {
     mobileSignTransactions: MobileSignTransaction[];
+    totalCount: number;
   };
 }
 export interface MobileSignTransactionRequest {
