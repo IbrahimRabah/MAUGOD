@@ -271,10 +271,22 @@
           <!-- Employee Selection -->
           <div class="form-group">
             <label for="empId">{{ 'ATTENDANCE_TIME_CHANGE.EMPLOYEE' | translate }} *</label>
-            <select id="empId" formControlName="empId" class="form-input" [disabled]="loadingEmployees">
-              <option value="">{{ 'ATTENDANCE_TIME_CHANGE.SELECT_EMPLOYEE' | translate }}</option>
-              <option *ngFor="let employee of employees" [value]="employee.value">{{ employee.label }}</option>
-            </select>
+
+            <p-dropdown
+              id="empId"
+              formControlName="empId"
+              [options]="employees"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="{{ 'ATTENDANCE_TIME_CHANGE.SELECT_EMPLOYEE' | translate }}"
+              [disabled]="loadingEmployees"
+              [filter]="true"
+              filterBy="label"
+              showClear="true"
+              appendTo="body"
+              styleClass="form-input"
+            ></p-dropdown>
+
             <div *ngIf="loadingEmployees" class="loading-text">
               {{ 'ATTENDANCE_TIME_CHANGE.LOADING_EMPLOYEES' | translate }}
             </div>

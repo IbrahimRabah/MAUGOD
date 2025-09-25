@@ -418,12 +418,12 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
               this.onCloseCreateRequestModal();
               this.loadTimeTransactionRequests();
             } else {
-              this.showErrorMessage('ATTENDANCE_TIME_CHANGE.CREATE_ERROR');
+              this.showErrorMessage(response.message);
             }
           },
           error: (error) => {
             console.error('Error creating request:', error);
-            this.showErrorMessage('ATTENDANCE_TIME_CHANGE.CREATE_ERROR');
+            this.showErrorMessage(error.error.message);
           }
         });
     } else {

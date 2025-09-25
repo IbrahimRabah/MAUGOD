@@ -110,12 +110,19 @@ export class CreatePostRequestModalComponent implements OnInit, OnDestroy, OnCha
     this.loadParts(empId);
   }
 
+  onEmployeeChange(event: any) {
+  const selectedEmpId = event.value; // dropdown value is empId
+  if (selectedEmpId) {
+    this.loadParts(selectedEmpId); // Load parts for selected employee
+  }
+}
+
+
   private loadEmployees(empId: number) {
     this.loadingEmployees = true;
     const payload: GetEmployeesDropdownListPayload = {
       apexEmpId: empId
     };
-
     this.postRequestService.getEmployeeDropdownListForPostRequest(payload, this.currentLang)
       .subscribe({
         next: (response: ApiResponse<dropdownResponseData>) => {
@@ -174,6 +181,10 @@ export class CreatePostRequestModalComponent implements OnInit, OnDestroy, OnCha
           this.loadingParts = false;
           if (response.isSuccess && response.data) {
             this.parts = response.data.dropdownListForPostRequest || [];
+            if (this.parts.length >= 1) {
+            // Auto-select only if single option
+            this.createForm.patchValue({ part: this.parts[0].value });
+            }
           } else {
             this.showErrorMessage('Error loading parts');
             this.parts = [];
@@ -267,7 +278,7 @@ export class CreatePostRequestModalComponent implements OnInit, OnDestroy, OnCha
           error: (error) => {
             this.submitting = false;
             console.error('Error creating post request:', error);
-            this.showErrorMessage('CREATE_POST_REQUEST.ERROR_MESSAGE');
+            this.showErrorMessage(error.error.message);
           }
         });
     } else {
