@@ -264,6 +264,7 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   onPageSizeChange() {
       this.currentPage = 1; // Reset to first page
       this.paginationRequest.pageNumber = 1;
+      this.pageSize = this.paginationRequest.pageSize
       this.loadPostRequests();
   }
 

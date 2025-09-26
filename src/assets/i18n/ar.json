@@ -213,6 +213,42 @@
           "CREATE_MODAL_TITLE": "إنشاء صلاحية وصول",
           "CANCEL": "إلغاء",
           "CREATE": "إنشاء",
+          "ACCESS_PERMISSIONS_SEARCH":{
+            "EMPLOYEE":"الموظف",
+            "DEPARTMENT_MGR":"مدير القسم",
+            "DEPARTMENT":"من القسم",
+            "BRANCH_MGR":"مدير الفرع",
+            "BRANCH":"الفرع",
+            "ROLE":"الدور",
+            "TO_EMPLOYEE":"إلى الموظف",
+            "TO_DEPARTMENT_MGR":"إلى مدير القسم",
+            "TO_DEPARTMENT":"إلى القسم",
+            "TO_BRANCH_MGR":"إلى مدير الفرع",
+            "TO_BRANCH":"إلى الفرع",
+            "TO_ROLE":"إلى الدور",
+            "CHANGE_DATA":"تغيير البيانات",
+            "START_DATE":"تاريخ البداية",
+            "END_DATE":"تاريخ النهاية",
+            "NOTE":"ملاحظات"
+          },
+          "DIRECT_MANAGERS_PERMISSIONS_SEARCH":{
+            "EMPLOYEE":"الإسم",
+            "DIRECT_MGR":"المدير المباشر",
+            "DIRECT_MGR_PERMISSION":"صلاحية المدير المباشر",
+            "ACCESS_EMPLOYEE_CHILDREN":"الوصول إلى الموظفين التابعين"
+          },
+          "DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH":{
+            "DEPARTMENT_NAME":"اسم القسم",
+            "MANAGER":"المدير",
+            "MANAGER_ACCESS_PERMISSIONS":"صلاحية المدير",
+            "ACCESS_DEPARTMENT_CHILDREN":"الوصول للأقسام التابعه"
+          },
+          "BRANCHES_MANAGERS_PERMISSIONS_SEARCH":{
+            "BRANCH_NAME":"اسم الفرع",
+            "MANAGER":"المدير",
+            "MANAGER_ACCESS_PERMISSIONS":"صلاحية المدير",
+            "ACCESS_BRANCH_CHILDREN":"الوصول للفروع التابعه"
+          },
           "FORM": {
             "FROM_SECTION_TITLE": "من (يمكن اختيار أكثر من مصدر)",
             "TO_TARGET_TYPE_TITLE": "الوصول الى",

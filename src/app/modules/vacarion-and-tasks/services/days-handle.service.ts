@@ -19,7 +19,7 @@ export class DaysHandleService {
                 pageSize: number,
                 pageIndex: number,
                 colunmSearchName : string | null,
-                colunmSearchValue : string|null,
+                colunmSearchValue : string | null,
                 startDate : string | null,
                 endDate : string | null): Observable<DaysHandleResponse> {
 
@@ -29,6 +29,7 @@ export class DaysHandleService {
                   .set('pageIndex', pageIndex.toString());
       
       if(colunmSearchName && colunmSearchValue){
+        console.log("adding columns" + colunmSearchName+ " " + colunmSearchValue)
         params = params.set(colunmSearchName, colunmSearchValue);
       }
 

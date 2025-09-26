@@ -623,7 +623,8 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
     console.log(this.acceptApprovalRequestQuery);
     this.requestApprovalVacationsService.acceptTimetranRequest(this.acceptApprovalRequestQuery, this.langService.getLangValue()).subscribe({
       next: (response: ApiResponse<boolean>) => {
-         if (response.isSuccess) {
+        console.log(response.isSuccess)
+        if (response.isSuccess) {
             this.messageService.add({
               severity: 'success',
               summary: this.translate.instant("SUCCESS"),
@@ -642,6 +643,7 @@ toObservedHijri(date: Date | string, adjustment: number = -1): string {
       },
 
       error: (error) => {
+        console.log(error)
         let errorMsg = currentLang === 2
         ? 'فشل تحميل البيانات، يرجى المحاولة مرة أخرى أو التواصل مع الدعم'
         : 'Failed to load data, please try again or contact support';

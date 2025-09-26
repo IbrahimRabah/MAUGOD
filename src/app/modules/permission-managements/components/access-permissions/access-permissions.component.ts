@@ -60,10 +60,33 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
   currentPage: number = 1;
   pageSize: number = 10;
   totalRecords: number = 0;
-  
-  // Search
-  searchTerm: string = '';
-  
+
+  searchColumnsHandleRequest = [
+    { column: 'allFields', label: 'All Columns' }, // all columns option
+    { column: 'fromEmployeeName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.EMPLOYEE' },
+    { column: 'fromManagerOfDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.DEPARTMENT_MGR' },
+    { column: 'fromDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.DEPARTMENT' },
+    { column: 'fromManagerOfBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.BRANCH_MGR' },
+    { column: 'fromBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.BRANCH' },
+    { column: 'fromRoleName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.ROLE' },
+    { column: 'toEmployeeName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_EMPLOYEE' },
+    { column: 'toManagerOfDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_DEPARTMENT_MGR' },
+    { column: 'toDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_DEPARTMENT' },
+    { column: 'toManagerOfBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_BRANCH_MGR' },
+    { column: 'toBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_BRANCH' },
+    { column: 'toRoleName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_ROLE' },
+    { column: 'changeData', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.CHANGE_DATA' },
+    { column: 'startDate', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.START_DATE' },
+    { column: 'endDate', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.END_DATE' },
+    { column: 'note', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.NOTE' },
+  ];
+
+  selectedColumnHandleRequest: string | null = null;
+  selectedColumnLabelHandleRequest: string = this.searchColumnsHandleRequest[0].label;
+  searchTerm:string | null = null;
+
+  currentPageHandleRequest: number = 1;
+
   // Selected items for bulk actions
   selectedItems: any[] = [];
   selectAll: boolean = false;
@@ -267,7 +290,18 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     this.selectedItems = [];
     this.selectAll = false;
     this.searchTerm = '';
+    this.selectedColumnHandleRequest = '';
     this.loadData();
+  }
+
+  onSearchHandleRequest() {
+    this.currentPageHandleRequest = 1;
+    this.currentPage = 1;
+    this.loadData();
+  }
+
+  selectColumnHandleRequest(col: any) {
+    this.selectedColumnHandleRequest = col.column;
   }
 
   // Data Loading Methods
@@ -276,15 +310,52 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     
     switch (this.selectedTable) {
       case 'access':
+          this.searchColumnsHandleRequest = [
+          { column: 'allFields', label: 'All Columns' }, // all columns option
+          { column: 'fromEmployeeName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.EMPLOYEE' },
+          { column: 'fromManagerOfDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.DEPARTMENT_MGR' },
+          { column: 'fromDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.DEPARTMENT' },
+          { column: 'fromManagerOfBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.BRANCH_MGR' },
+          { column: 'fromBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.BRANCH' },
+          { column: 'fromRoleName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.ROLE' },
+          { column: 'toEmployeeName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_EMPLOYEE' },
+          { column: 'toManagerOfDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_DEPARTMENT_MGR' },
+          { column: 'toDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_DEPARTMENT' },
+          { column: 'toManagerOfBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_BRANCH_MGR' },
+          { column: 'toBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_BRANCH' },
+          { column: 'toRoleName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.TO_ROLE' },
+          { column: 'changeData', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.CHANGE_DATA' },
+          { column: 'startDate', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.START_DATE' },
+          { column: 'endDate', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.END_DATE' },
+          { column: 'note', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.NOTE' },
+        ];
         this.loadAccessPermissions();
         break;
       case 'directManagers':
+        this.searchColumnsHandleRequest = [
+          { column: 'empName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DIRECT_MANAGERS_PERMISSIONS_SEARCH.EMPLOYEE' },
+          { column: 'directMgrLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DIRECT_MANAGERS_PERMISSIONS_SEARCH.DIRECT_MGR' },
+          { column: 'directMgrPermissionLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DIRECT_MANAGERS_PERMISSIONS_SEARCH.DIRECT_MGR_PERMISSION' },
+          { column: 'accessEmpChildrenLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DIRECT_MANAGERS_PERMISSIONS_SEARCH.ACCESS_EMPLOYEE_CHILDREN' }
+        ];
         this.loadDirectManagersPermissions();
         break;
       case 'departments':
+        this.searchColumnsHandleRequest = [
+          { column: 'deptName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH.DEPARTMENT_NAME' },
+          { column: 'mgrLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH.MANAGER' },
+          { column: 'mgrAccessPermissionLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH.MANAGER_ACCESS_PERMISSIONS' },
+          { column: 'accessDeptChildrenLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH.ACCESS_DEPARTMENT_CHILDREN' }
+        ];
         this.loadDepartmentsPermissions();
         break;
       case 'branches':
+        this.searchColumnsHandleRequest = [
+          { column: 'branchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.BRANCHES_MANAGERS_PERMISSIONS_SEARCH.BRANCH_NAME' },
+          { column: 'mgrLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.BRANCHES_MANAGERS_PERMISSIONS_SEARCH.MANAGER' },
+          { column: 'mgrAccessPermissionLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.BRANCHES_MANAGERS_PERMISSIONS_SEARCH.MANAGER_ACCESS_PERMISSIONS' },
+          { column: 'accessBranchChildrenLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.BRANCHES_MANAGERS_PERMISSIONS_SEARCH.ACCESS_BRANCH_CHILDREN' }
+        ];
         this.loadBranchesPermissions();
         break;
       default:
@@ -293,7 +364,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
   }
 
   loadAccessPermissions() {
-    this.accessPermissionsService.getPermissions(this.currentLang, this.currentPage - 1, this.pageSize)
+    this.accessPermissionsService.getPermissions(this.currentLang, this.currentPage, this.pageSize, this.selectedColumnHandleRequest, this.searchTerm)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data?.dataPermissions) {
@@ -325,7 +396,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
   }
 
   loadDirectManagersPermissions() {
-    this.accessPermissionsService.getDirectManagersPermissions(this.currentLang, this.currentPage - 1, this.pageSize)
+    this.accessPermissionsService.getDirectManagersPermissions(this.currentLang, this.currentPage, this.pageSize, this.selectedColumnHandleRequest, this.searchTerm)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data?.items) {
@@ -356,7 +427,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
   }
 
   loadDepartmentsPermissions() {
-    this.accessPermissionsService.getDepartmentsManagerPermissions(this.currentLang, this.currentPage - 1, this.pageSize)
+    this.accessPermissionsService.getDepartmentsManagerPermissions(this.currentLang, this.currentPage, this.pageSize, this.selectedColumnHandleRequest, this.searchTerm)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data?.items) {
@@ -387,7 +458,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
   }
 
   loadBranchesPermissions() {
-    this.accessPermissionsService.getBranchesManagerPermissions(this.currentLang, this.currentPage - 1, this.pageSize)
+    this.accessPermissionsService.getBranchesManagerPermissions(this.currentLang, this.currentPage, this.pageSize, this.selectedColumnHandleRequest, this.searchTerm)
       .subscribe({
         next: (response) => {
           if (response.isSuccess && response.data?.items) {
@@ -455,6 +526,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
 
   onPageSizeChange() {
     this.currentPage = 1;
+    this.searchTerm='';
     this.loadData();
   }
 
