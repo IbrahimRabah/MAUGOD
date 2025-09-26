@@ -451,7 +451,7 @@ export class MobileSignLocationAssignComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.isSuccess && response.data) {
           this.mobileSignLocationAssigns = response.data.mobileSignLocationsAssign || [];
-          this.totalRecords = this.mobileSignLocationAssigns.length;
+          this.totalRecords = response.data.totalCount;
         } else {
           this.mobileSignLocationAssigns = [];
           this.totalRecords = 0;

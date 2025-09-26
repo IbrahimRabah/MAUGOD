@@ -1704,6 +1704,8 @@
     "FRIDAY": "الجمعة",
     "SATURDAY": "السبت",
     "IS_ACTIVE": "نشط",
+    "ACTIVE": "نشط",
+    "NOT_ACTIVE": "غير نشط",
     "DETAILS": "التفاصيل",
     "DELETE": "حذف",
     "NO_DATA_AVAILABLE": "لا توجد بيانات متاحة",
@@ -2410,7 +2412,20 @@
     "CREATE_SUCCESS": "تم إنشاء الطلب بنجاح",
     "CREATE_ERROR": "خطأ في إنشاء الطلب",
     "INVALID_FORM": "يرجى ملء جميع الحقول المطلوبة",
-    "LOAD_EMPLOYEES_ERROR": "خطأ في تحميل الموظفين"
+    "LOAD_EMPLOYEES_ERROR": "خطأ في تحميل الموظفين",
+    "DEPARTMENT_ATTENDANCE_MODAL": {
+      "TITLE": "حضور الأقسام",
+      "DEPARTMENT": "القسم",
+      "MANAGER": "المدير",
+      "DATE": "التاريخ",
+      "STATUS": "الحالة",
+      "EMPLOYEE_COUNT": "عدد الموظفين",
+      "LOADING": "جاري تحميل حضور الأقسام...",
+      "NO_DATA": "لم يتم العثور على حضور الأقسام",
+      "SEARCH_PLACEHOLDER": "البحث في الأقسام...",
+      "CLOSE": "إغلاق",
+      "LOAD_ERROR": "خطأ في تحميل حضور الأقسام"
+    }
   },
   "REQUEST_DETAILS": {
     "TITLE": "تفاصيل الطلب",

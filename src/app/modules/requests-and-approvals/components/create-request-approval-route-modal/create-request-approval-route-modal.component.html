@@ -46,21 +46,55 @@
             </div>
           </div>
 
+          <!-- Is Active Section (only in edit mode) -->
+          <div *ngIf="editMode" class="form-group">
+            <label class="form-label">{{ 'MENU.REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  id="isActive_true" 
+                  name="isActive" 
+                  [value]="true"
+                  formControlName="isActive"
+                  class="radio-input">
+                <label for="isActive_true" class="radio-label">
+                  {{ 'MENU.REQUEST_APPROVAL_ROUTE.ACTIVE' | translate }}
+                </label>
+              </div>
+              <div class="radio-option">
+                <input 
+                  type="radio" 
+                  id="isActive_false" 
+                  name="isActive" 
+                  [value]="false"
+                  formControlName="isActive"
+                  class="radio-input">
+                <label for="isActive_false" class="radio-label">
+                  {{ 'MENU.REQUEST_APPROVAL_ROUTE.INACTIVE' | translate }}
+                </label>
+              </div>
+            </div>
+          </div>
+
           <!-- Show form only for "For Everyone" option -->
           <div *ngIf="selectedForEveryone === 1">
             
             <!-- Status Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}</option>
-                  <option *ngFor="let status of statuses" [value]="status.value">
-                    {{ status.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+              <p-dropdown 
+              [options]="statuses" 
+                optionLabel="label" 
+                optionValue="value" 
+                [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
+                formControlName="statusId"
+                placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}">
+            </p-dropdown>
               <div class="loading-text" *ngIf="loadingStatuses">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_STATUSES' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('statusId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS_REQUIRED' | translate }}
@@ -293,97 +327,261 @@
                 <div class="form-subsection">
                   <h6 class="subsection-title">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ASSIGNMENTS' | translate }}</h6>
                   
+                  <!-- Manager -->
                   <div class="form-row">
-                    <!-- Manager -->
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="mgrId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER' | translate }}</option>
-                          <option *ngFor="let manager of managers" [value]="manager.value">
-                            {{ manager.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <p-dropdown 
+                        [options]="managers" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="mgrId"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER' | translate }}">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_MANAGERS' | translate }}</div>
                     </div>
-
-                    <!-- Manager of Department -->
-                    <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="mgrOfDeptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
-                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
-                            {{ dept.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
-                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('mgrId')?.value && levelDetailsArray.at(i)?.get('mgrId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                      <input 
+                        type="number" 
+                        formControlName="mgrIdDaysLimits" 
+                        class="form-input"
+                        [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
                     </div>
-
-                    <!-- Manager of Branch -->
-                    <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="mgrOfBranchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
-                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
-                            {{ branch.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
-                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('mgrId')?.value && levelDetailsArray.at(i)?.get('mgrId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                      <p-dropdown 
+                        [options]="afterLimitActions" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="mgrIdAfterLimitAction"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}">
+                      </p-dropdown>
                     </div>
                   </div>
 
+                  <!-- Manager of Department -->
                   <div class="form-row">
-                    <!-- Department -->
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="deptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}</option>
-                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
-                            {{ dept.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
+                      <p-dropdown 
+                        [options]="departmentsOrManagers" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="mgrOfDeptId"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
                     </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('mgrOfDeptId')?.value && levelDetailsArray.at(i)?.get('mgrOfDeptId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                      <input 
+                        type="number" 
+                        formControlName="mgrOfDeptIdDaysLimits" 
+                        class="form-input"
+                        [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('mgrOfDeptId')?.value && levelDetailsArray.at(i)?.get('mgrOfDeptId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                      <p-dropdown 
+                        [options]="afterLimitActions" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="mgrOfDeptIdAfterLimitAction"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}">
+                      </p-dropdown>
+                    </div>
+                  </div>
 
-                    <!-- Branch -->
+                  <!-- Manager of Branch -->
+                  <div class="form-row">
                     <div class="form-group">
-                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="branchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}</option>
-                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
-                            {{ branch.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
+                      <p-dropdown 
+                        [options]="branchesOrManagers" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="mgrOfBranchId"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
                     </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('mgrOfBranchId')?.value && levelDetailsArray.at(i)?.get('mgrOfBranchId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                      <input 
+                        type="number" 
+                        formControlName="mgrOfBranchIdDaysLimits" 
+                        class="form-input"
+                        [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('mgrOfBranchId')?.value && levelDetailsArray.at(i)?.get('mgrOfBranchId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                      <p-dropdown 
+                        [options]="afterLimitActions" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="mgrOfBranchIdAfterLimitAction"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}">
+                      </p-dropdown>
+                    </div>
+                  </div>
 
-                    <!-- Role -->
+                  <!-- Department -->
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
+                      <p-dropdown 
+                        [options]="departmentsOrManagers" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="deptId"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}">
+                      </p-dropdown>
+                      <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('deptId')?.value && levelDetailsArray.at(i)?.get('deptId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                      <input 
+                        type="number" 
+                        formControlName="deptIdDaysLimits" 
+                        class="form-input"
+                        [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('deptId')?.value && levelDetailsArray.at(i)?.get('deptId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                      <p-dropdown 
+                        [options]="afterLimitActions" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="deptIdAfterLimitAction"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}">
+                      </p-dropdown>
+                    </div>
+                  </div>
+
+                  <!-- Branch -->
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
+                      <p-dropdown 
+                        [options]="branchesOrManagers" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="branchId"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}">
+                      </p-dropdown>
+                      <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('branchId')?.value && levelDetailsArray.at(i)?.get('branchId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                      <input 
+                        type="number" 
+                        formControlName="branchIdDaysLimits" 
+                        class="form-input"
+                        [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('branchId')?.value && levelDetailsArray.at(i)?.get('branchId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                      <p-dropdown 
+                        [options]="afterLimitActions" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="branchIdAfterLimitAction"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}">
+                      </p-dropdown>
+                    </div>
+                  </div>
+
+                  <!-- Role -->
+                  <div class="form-row">
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="roleId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}</option>
-                          <option *ngFor="let role of roles" [value]="role.value">
-                            {{ role.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <p-dropdown 
+                        [options]="roles" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="roleId"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingRoles">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_ROLES' | translate }}</div>
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('roleId')?.value && levelDetailsArray.at(i)?.get('roleId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS' | translate }}</label>
+                      <input 
+                        type="number" 
+                        formControlName="roleIdDaysLimits" 
+                        class="form-input"
+                        [placeholder]="'CREATE_REQUEST_APPROVAL_ROUTE.DAYS_LIMITS_PLACEHOLDER' | translate">
+                    </div>
+                    <div class="form-group" *ngIf="levelDetailsArray.at(i)?.get('roleId')?.value && levelDetailsArray.at(i)?.get('roleId')?.value > 0">
+                      <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.AFTER_LIMIT_ACTION' | translate }}</label>
+                      <p-dropdown 
+                        [options]="afterLimitActions" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        formControlName="roleIdAfterLimitAction"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ACTION' | translate }}">
+                      </p-dropdown>
                     </div>
                   </div>
 
@@ -408,15 +606,20 @@
             <!-- Employee Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.EMPLOYEE' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="empId" class="form-select" [class.error]="isFieldRequired('empId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_EMPLOYEE' | translate }}</option>
-                  <option *ngFor="let employee of employees" [value]="employee.value">
-                    {{ employee.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+             <p-dropdown 
+                formControlName="empId"
+                [options]="employees"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
+                placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_EMPLOYEE' | translate }}"
+                class="w-100"
+                [ngClass]="{ 'error': isFieldRequired('empId') }">
+              </p-dropdown>
               <div class="loading-text" *ngIf="loadingEmployees">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_EMPLOYEES' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('empId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.EMPLOYEE_REQUIRED' | translate }}
@@ -426,15 +629,20 @@
             <!-- Manager of Department Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="mgrOfDeptId" class="form-select" [class.error]="isFieldRequired('mgrOfDeptId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
-                  <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
-                    {{ dept.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+               <p-dropdown 
+                  formControlName="mgrOfDeptId"
+                  [options]="departmentsOrManagers"
+                  optionLabel="label"
+                  optionValue="value"
+                  [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
+                  placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}"
+                  class="w-100"
+                  [ngClass]="{ 'error': isFieldRequired('mgrOfDeptId') }">
+                </p-dropdown>
               <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('mgrOfDeptId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_DEPARTMENT_REQUIRED' | translate }}
@@ -444,15 +652,20 @@
             <!-- Manager of Branch Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="mgrOfBranchId" class="form-select" [class.error]="isFieldRequired('mgrOfBranchId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
-                  <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
-                    {{ branch.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+               <p-dropdown 
+                  formControlName="mgrOfBranchId"
+                  [options]="branchesOrManagers"
+                  optionLabel="label"
+                  optionValue="value"
+                  [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
+                  placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}"
+                  class="w-100"
+                  [ngClass]="{ 'error': isFieldRequired('mgrOfBranchId') }">
+                </p-dropdown>
               <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('mgrOfBranchId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_BRANCH_REQUIRED' | translate }}
@@ -462,15 +675,20 @@
             <!-- Department Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="deptId" class="form-select" [class.error]="isFieldRequired('deptId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}</option>
-                  <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
-                    {{ dept.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+               <p-dropdown 
+                  formControlName="deptId"
+                  [options]="departmentsOrManagers"
+                  optionLabel="label"
+                  optionValue="value"
+                  [filter]="true"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="38"
+                  [lazy]="false"
+                  appendTo="body"
+                  placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}"
+                  class="w-100"
+                  [ngClass]="{ 'error': isFieldRequired('deptId') }">
+                </p-dropdown>
               <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('deptId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT_REQUIRED' | translate }}
@@ -480,15 +698,20 @@
             <!-- Branch Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="branchId" class="form-select" [class.error]="isFieldRequired('branchId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}</option>
-                  <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
-                    {{ branch.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+              <p-dropdown 
+                formControlName="branchId"
+                [options]="branchesOrManagers"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
+                placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}"
+                class="w-100"
+                [ngClass]="{ 'error': isFieldRequired('branchId') }">
+              </p-dropdown>
               <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('branchId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH_REQUIRED' | translate }}
@@ -498,15 +721,20 @@
             <!-- Role Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="roleId" class="form-select" [class.error]="isFieldRequired('roleId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}</option>
-                  <option *ngFor="let role of roles" [value]="role.value">
-                    {{ role.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+              <p-dropdown 
+                formControlName="roleId"
+                [options]="roles"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
+                placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}"
+                class="w-100"
+                [ngClass]="{ 'error': isFieldRequired('roleId') }">
+              </p-dropdown>
               <div class="loading-text" *ngIf="loadingRoles">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_ROLES' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('roleId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE_REQUIRED' | translate }}
@@ -516,15 +744,20 @@
             <!-- Status Dropdown -->
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
-              <div class="dropdown-wrapper">
-                <select formControlName="statusId" class="form-select" [class.error]="isFieldRequired('statusId')">
-                  <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}</option>
-                  <option *ngFor="let status of statuses" [value]="status.value">
-                    {{ status.label }}
-                  </option>
-                </select>
-                <i class="fa fa-chevron-down dropdown-icon"></i>
-              </div>
+              <p-dropdown 
+                formControlName="statusId"
+                [options]="statuses"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="38"
+                [lazy]="false"
+                appendTo="body"
+                placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}"
+                class="w-100"
+                [ngClass]="{ 'error': isFieldRequired('statusId') }">
+              </p-dropdown>
               <div class="loading-text" *ngIf="loadingStatuses">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_STATUSES' | translate }}</div>
               <div class="error-message" *ngIf="isFieldRequired('statusId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS_REQUIRED' | translate }}
@@ -761,45 +994,57 @@
                     <!-- Manager -->
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="mgrId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER' | translate }}</option>
-                          <option *ngFor="let manager of managers" [value]="manager.value">
-                            {{ manager.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <p-dropdown
+                        formControlName="mgrId"
+                        [options]="managers"
+                        optionLabel="label"
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER' | translate }}"
+                        class="w-100">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_MANAGERS' | translate }}</div>
                     </div>
 
                     <!-- Manager of Department -->
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_DEPARTMENT' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="mgrOfDeptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}</option>
-                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
-                            {{ dept.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <p-dropdown
+                        formControlName="mgrOfDeptId"
+                        [options]="departmentsOrManagers"
+                        optionLabel="label"
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_DEPARTMENT' | translate }}"
+                        class="w-100">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
                     </div>
 
                     <!-- Manager of Branch -->
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.MANAGER_OF_BRANCH' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="mgrOfBranchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}</option>
-                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
-                            {{ branch.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                       <p-dropdown
+                          formControlName="mgrOfBranchId"
+                          [options]="branchesOrManagers"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="true"
+                          [virtualScroll]="true"
+                          [virtualScrollItemSize]="38"
+                          [lazy]="false"
+                          appendTo="body"
+                          placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_MANAGER_OF_BRANCH' | translate }}"
+                          class="w-100">
+                        </p-dropdown>
                       <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
                     </div>
                   </div>
@@ -808,45 +1053,56 @@
                     <!-- Department -->
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.DEPARTMENT' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="deptId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}</option>
-                          <option *ngFor="let dept of departmentsOrManagers" [value]="dept.value">
-                            {{ dept.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <p-dropdown
+                        formControlName="deptId"
+                        [options]="departmentsOrManagers"
+                        optionLabel="label"
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_DEPARTMENT' | translate }}"
+                        class="w-100">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingDepartmentsOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_DEPARTMENTS' | translate }}</div>
                     </div>
 
                     <!-- Branch -->
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.BRANCH' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="branchId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}</option>
-                          <option *ngFor="let branch of branchesOrManagers" [value]="branch.value">
-                            {{ branch.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                      <p-dropdown
+                        formControlName="branchId"
+                        [options]="branchesOrManagers"
+                        optionLabel="label"
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_BRANCH' | translate }}"
+                        class="w-100">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingBranchesOrManagers">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_BRANCHES' | translate }}</div>
                     </div>
 
                     <!-- Role -->
                     <div class="form-group">
                       <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.ROLE' | translate }}</label>
-                      <div class="dropdown-wrapper">
-                        <select formControlName="roleId" class="form-select">
-                          <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}</option>
-                          <option *ngFor="let role of roles" [value]="role.value">
-                            {{ role.label }}
-                          </option>
-                        </select>
-                        <i class="fa fa-chevron-down dropdown-icon"></i>
-                      </div>
+                       <p-dropdown
+                        formControlName="roleId"
+                        [options]="roles"
+                        optionLabel="label"
+                        optionValue="value"
+                        [filter]="true"
+                        [virtualScroll]="true"
+                        [virtualScrollItemSize]="38"
+                        [lazy]="false"
+                        appendTo="body"
+                        placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_ROLE' | translate }}">
+                      </p-dropdown>
                       <div class="loading-text" *ngIf="loadingRoles">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_ROLES' | translate }}</div>
                     </div>
                   </div>

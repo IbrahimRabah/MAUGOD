@@ -162,7 +162,7 @@ export class SendAppQrCodeComponent implements OnInit, OnDestroy {
         if (response.isSuccess && response.data) {
           this.employees = response.data.employees || [];
           // Note: API doesn't return totalRecords, so we'll estimate based on current page
-          this.totalRecords = this.employees.length < this.pageSize ?
+          this.totalRecords = response.data.totalCount < this.pageSize ?
             ((this.currentPage - 1) * this.pageSize) + this.employees.length :
             this.currentPage * this.pageSize + 1;
         } else {

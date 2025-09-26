@@ -27,7 +27,8 @@
               [filter]="true"
               [showClear]="true"
               class="form-input w-100"
-              [class.is-invalid]="isFieldRequired('employee')">
+              [class.is-invalid]="isFieldRequired('employee')"
+              (onChange)="onEmployeeChange($event)">
             </p-dropdown>
             <small *ngIf="isFieldRequired('employee')" class="error-message">
               {{ 'CREATE_POST_REQUEST.EMPLOYEE_REQUIRED' | translate }}
@@ -65,7 +66,7 @@
               [placeholder]="'CREATE_POST_REQUEST.SELECT_PART' | translate"
               [loading]="loadingParts"
               [filter]="true"
-              [showClear]="true"
+              aria-selected="true"
               class="form-input w-100">
             </p-dropdown>
           </div>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse, CreateTimeTransactionApprovalRequestPayload, CreateTimeTransactionApprovalRequestResponse, HandleApprovalAttachmentsData, HandleApprovalRoadMapData, HandleApprovalTransactionsData, RequestRoadMapForAttendanceTimeChangeRequestDetailsData, RequestTransactionsForAttendanceTimeChangeRequestDetailsData, TimeTransactionApprovalData, TimeTransactionApprovalRequestAttachmentsData, TimeTransactionApprovalRequestBody, TimeTransactionApprovalRequestCreateDto, UploadTimeTransactionApprovalRequestAttachmentBody } from '../../../core/models/TimeTransactionApprovalData';
+import { ApiResponse, CreateTimeTransactionApprovalRequestPayload, CreateTimeTransactionApprovalRequestResponse, DepartmentAttendancesResponse, DepartmentAttendancesRequest, HandleApprovalAttachmentsData, HandleApprovalRoadMapData, HandleApprovalTransactionsData, RequestRoadMapForAttendanceTimeChangeRequestDetailsData, RequestTransactionsForAttendanceTimeChangeRequestDetailsData, TimeTransactionApprovalData, TimeTransactionApprovalRequestAttachmentsData, TimeTransactionApprovalRequestBody, TimeTransactionApprovalRequestCreateDto, UploadTimeTransactionApprovalRequestAttachmentBody } from '../../../core/models/TimeTransactionApprovalData';
 
 @Injectable({
   providedIn: 'root'
@@ -246,6 +246,36 @@ getHandleApprovalAttachments(
   });
 
   return this.http.get<ApiResponse<HandleApprovalAttachmentsData>>(url, { headers });
+}
+getDepartmentAttendances(
+  lang: number,
+  pageNumber: number,
+  pageSize: number,
+  sDate?: string,
+  eDate?: string,
+): Observable<DepartmentAttendancesResponse> {
+  const url = `${this.apiUrl}/GetDepartmentAttendanceForAttendanceTimeChangeRequest`;
+
+  const headers = new HttpHeaders({
+    accept: '*/*',
+    lang: lang.toString(),
+    'Content-Type': 'application/json',
+  });
+
+  const body: DepartmentAttendancesRequest = {
+    pageNumber: pageNumber,
+    pageSize: pageSize
+  };
+
+  if (sDate) {
+    body.sDate = sDate;
+  }
+
+  if (eDate) {
+    body.eDate = eDate;
+  }
+
+  return this.http.post<DepartmentAttendancesResponse>(url, body, { headers });
 }
 
 

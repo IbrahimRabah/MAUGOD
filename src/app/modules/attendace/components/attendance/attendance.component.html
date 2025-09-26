@@ -1,56 +1,60 @@
 <div class="attendance-container">
   <!-- Table Header Actions -->
-  <div *ngIf="!loading" class="table-header-actions">
-    <div class="left-actions">
-      <!-- Start Date -->
-      <div class="custom-form-field">
-        <label>{{ 'Attendance.DATE_FILTER.START_DATE' | translate }}</label>
-        <input type="date" [(ngModel)]="startDate" (change)="onDateChange($event, 'startDate')"
-          class="form-input ">
-        <div *ngIf="hijriDates['startDate']" class="hijri-date">
-          <label>
-            {{ hijriDates['startDate'] }}
-          </label>
+  <div *ngIf="!loading" class="table-header-actions filter-row">
 
-        </div>
-
-      </div>
-
-      <!-- End Date -->
-      <div class="custom-form-field">
-        <label>{{ 'Attendance.DATE_FILTER.END_DATE' | translate }}</label>
-        <input type="date" [(ngModel)]="endDate" (change)="onDateChange($event, 'endDate')"
-          class="form-input ">
-        <div *ngIf="hijriDates['endDate']" class="hijri-date">
-          <label>
-            {{ hijriDates['endDate'] }}
-          </label>
-        </div>
+    <!-- Start Date -->
+    <div class="custom-form-field">
+      <label>{{ 'Attendance.DATE_FILTER.START_DATE' | translate }}</label>
+      <input type="date" [(ngModel)]="startDate" (change)="onDateChange($event, 'startDate')"
+        class="form-input">
+      <div *ngIf="hijriDates['startDate']" class="hijri-date">
+        <label>{{ hijriDates['startDate'] }}</label>
       </div>
     </div>
 
-
-    <div class="right-actions">
-      <!-- Employee -->
-      <div class="custom-form-field">
-        <label>{{ 'Attendance.DATE_FILTER.EMPLOYEE' | translate }}</label>
-        <select [(ngModel)]="selectedEmp" class="form-select" (change)="onFilterChange()">
-          <option value="null" disabled>{{ 'Attendance.DATE_FILTER.ALL_EMPLOYEES' | translate }}</option>
-          <option *ngFor="let emp of employees" [ngValue]="emp.value">{{ emp.label }}</option>
-        </select>
-      </div>
-
-      <!-- Department -->
-      <div class="custom-form-field">
-        <label>{{ 'Attendance.DATE_FILTER.DEPARTMENT' | translate }}</label>
-        <select [(ngModel)]="selectedDepartment" class="form-select" (change)="onFilterChange()">
-          <option value="null" disabled>{{ 'Attendance.DATE_FILTER.ALL_DEPARTMENTS' | translate }}</option>
-          <option *ngFor="let dept of departments" [ngValue]="dept.value">{{ dept.label }}</option>
-        </select>
+    <!-- End Date -->
+    <div class="custom-form-field">
+      <label>{{ 'Attendance.DATE_FILTER.END_DATE' | translate }}</label>
+      <input type="date" [(ngModel)]="endDate" (change)="onDateChange($event, 'endDate')"
+        class="form-input">
+      <div *ngIf="hijriDates['endDate']" class="hijri-date">
+        <label>{{ hijriDates['endDate'] }}</label>
       </div>
     </div>
+
+    <!-- Employee -->
+    <div class="custom-form-field">
+      <label>{{ 'Attendance.DATE_FILTER.EMPLOYEE' | translate }}</label>
+      <p-dropdown
+        [(ngModel)]="selectedEmp"
+        [options]="employees"
+        optionLabel="label"
+        optionValue="value"
+        [filter]="true"
+        placeholder="{{ 'Attendance.DATE_FILTER.ALL_EMPLOYEES' | translate }}"
+        (onChange)="onFilterChange()"
+        class="custom-dropdown w-100">
+      </p-dropdown>
+    </div>
+
+    <!-- Department -->
+    <div class="custom-form-field">
+      <label>{{ 'Attendance.DATE_FILTER.DEPARTMENT' | translate }}</label>
+      <p-dropdown
+        [(ngModel)]="selectedDepartment"
+        [options]="departments"
+        optionLabel="label"
+        optionValue="value"
+        [filter]="true"
+        placeholder="{{ 'Attendance.DATE_FILTER.ALL_DEPARTMENTS' | translate }}"
+        (onChange)="onFilterChange()"
+        class="custom-dropdown w-100 department-dropdown">
+      </p-dropdown>
+    </div>
+
   </div>
 </div>
+
 
 <!-- Details Modal -->
 <div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">

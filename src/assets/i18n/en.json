@@ -2411,7 +2411,20 @@
     "CREATE_SUCCESS": "Request created successfully",
     "CREATE_ERROR": "Error creating request",
     "INVALID_FORM": "Please fill in all required fields",
-    "LOAD_EMPLOYEES_ERROR": "Error loading employees"
+    "LOAD_EMPLOYEES_ERROR": "Error loading employees",
+    "DEPARTMENT_ATTENDANCE_MODAL": {
+      "TITLE": "Department Attendance",
+      "DEPARTMENT": "Department",
+      "MANAGER": "Manager",
+      "DATE": "Date",
+      "STATUS": "Status",
+      "EMPLOYEE_COUNT": "Employee Count",
+      "LOADING": "Loading department attendance...",
+      "NO_DATA": "No department attendance found",
+      "SEARCH_PLACEHOLDER": "Search departments...",
+      "CLOSE": "Close",
+      "LOAD_ERROR": "Error loading department attendance"
+    }
   },
   "REQUEST_DETAILS": {
     "TITLE": "Request Details",
