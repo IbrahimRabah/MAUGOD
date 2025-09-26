@@ -5,6 +5,35 @@ export interface ApiResponse<T> {
   isSuccess: boolean;
   data: T;
 }
+export interface DepartmentAttendance {
+  timId: number;
+  deptId: number;
+  deptName: string;
+  deptMgrId: number | null;
+  deptMgrName: string;
+  signDate: string;
+  hsDate: string;
+  stsId: string;
+  stsName: string;
+}
+
+export interface DepartmentAttendancesResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: {
+    departmentAttendances: DepartmentAttendance[];
+    totalCount: number;
+  };
+}
+
+export interface DepartmentAttendancesRequest {
+  pageNumber: number;
+  pageSize: number;
+  sDate?: string;
+  eDate?: string;
+}
+
 
 // Data wrapper with pagination
 export interface TimeTransactionApprovalData {

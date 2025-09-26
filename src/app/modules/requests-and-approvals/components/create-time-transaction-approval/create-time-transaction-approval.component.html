@@ -270,6 +270,7 @@
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'empId')"
+                [ngModelOptions]="{standalone: true}"
                 (onChange)="updateLevelFormValue(levelNumber, 'empId', $event.value)"
                 placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
               </p-dropdown>
@@ -293,6 +294,7 @@
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'mgrOfDeptId')"
+                [ngModelOptions]="{standalone: true}"
                 (onChange)="updateLevelFormValue(levelNumber, 'mgrOfDeptId', $event.value)"
                 placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
               </p-dropdown>
@@ -316,6 +318,7 @@
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'mgrOfBranchId')"
+                [ngModelOptions]="{standalone: true}"
                 (onChange)="updateLevelFormValue(levelNumber, 'mgrOfBranchId', $event.value)"
                 placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
               </p-dropdown>
@@ -339,6 +342,7 @@
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'deptId')"
+                [ngModelOptions]="{standalone: true}"
                 (onChange)="updateLevelFormValue(levelNumber, 'deptId', $event.value)"
                 placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
               </p-dropdown>
@@ -362,6 +366,7 @@
                   optionLabel="label"
                   optionValue="value"
                   [ngModel]="getLevelFormValue(levelNumber, 'branchId')"
+                  [ngModelOptions]="{standalone: true}"
                   (onChange)="updateLevelFormValue(levelNumber, 'branchId', $event.value)"
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
                 </p-dropdown>
@@ -385,6 +390,7 @@
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'roleId')"
+                [ngModelOptions]="{standalone: true}"
                 (onChange)="updateLevelFormValue(levelNumber, 'roleId', $event.value)"
                 placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
               </p-dropdown>

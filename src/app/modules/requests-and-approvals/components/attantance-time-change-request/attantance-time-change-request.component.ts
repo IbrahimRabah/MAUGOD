@@ -7,7 +7,7 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { AuthenticationService } from '../../../authentication/services/authentication.service';
 import { AttendanceTimeService } from '../../services/attendance-time.service';
 import { RequestRouteService } from '../../services/request-route.service';
-import { TimeTransactionApprovalRequest, TimeTransactionApprovalRequestCreateDto } from '../../../../core/models/TimeTransactionApprovalData';
+import { TimeTransactionApprovalRequest, TimeTransactionApprovalRequestCreateDto, DepartmentAttendance } from '../../../../core/models/TimeTransactionApprovalData';
 import { PaginationRequest } from '../../../../core/models/pagination';
 
 @Component({
@@ -42,6 +42,16 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   loadingEmployees = false;
   selectedFile: File | null = null;
   selectedFileBase64: string = '';
+
+  // Department attendance modal state
+  showDepartmentAttendanceModal = false;
+  departmentAttendances: DepartmentAttendance[] = [];
+  loadingDepartmentAttendances = false;
+  departmentAttendanceFilterForm!: FormGroup;
+  departmentAttendanceSearchTerm = '';
+  departmentAttendanceTotalRecords = 0;
+  departmentAttendanceCurrentPage = 1;
+  departmentAttendancePageSize = 10;
   
   private langSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic (2) - made public for template access
@@ -137,6 +147,11 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
       attachment: [null],
       attachmentNote: ['']
     });
+
+    this.departmentAttendanceFilterForm = this.fb.group({
+      startDate: [''],
+      endDate: ['']
+    });
   }
 
   // Initialize language settings
@@ -145,6 +160,11 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
     this.langSubscription = this.langService.currentLang$.subscribe(lang => {
       this.currentLang = this.langService.getLangValue();
       this.loadTimeTransactionRequests();
+      
+      // Reload department attendances if modal is open
+      if (this.showDepartmentAttendanceModal) {
+        this.loadDepartmentAttendances();
+      }
     });
   }
 
@@ -436,7 +456,128 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
   }
 
   attendanceByDepartment() {
-    this.showInfoMessage('ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_NOT_IMPLEMENTED');
+    this.showDepartmentAttendanceModal = true;
+    this.loadDepartmentAttendances();
+  }
+
+  // Department Attendance Modal Methods
+  loadDepartmentAttendances() {
+    this.loadingDepartmentAttendances = true;
+    
+    const formValue = this.departmentAttendanceFilterForm?.value || {};
+    let startDate = formValue.startDate || undefined;
+    let endDate = formValue.endDate || undefined;
+
+    // Format dates to YYYY-MM-DD if they exist
+    if (startDate) {
+      startDate = new Date(startDate).toISOString().split('T')[0];
+    }
+    if (endDate) {
+      endDate = new Date(endDate).toISOString().split('T')[0];
+    }
+
+    this.attendanceTimeService.getDepartmentAttendances(
+      this.currentLang,
+      this.departmentAttendanceCurrentPage,
+      this.departmentAttendancePageSize,
+      startDate,
+      endDate
+    ).subscribe({
+      next: (response) => {
+        if (response.isSuccess && response.data) {
+          this.departmentAttendances = response.data.departmentAttendances || [];
+          this.departmentAttendanceTotalRecords = response.data.totalCount || 0;
+        } else {
+          this.departmentAttendances = [];
+          this.departmentAttendanceTotalRecords = 0;
+          this.showErrorMessage('ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.LOAD_ERROR');
+        }
+      },
+      error: (error) => {
+        console.error('Error loading department attendances:', error);
+        this.departmentAttendances = [];
+        this.departmentAttendanceTotalRecords = 0;
+        this.showErrorMessage('ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.LOAD_ERROR');
+      },
+      complete: () => {
+        this.loadingDepartmentAttendances = false;
+      }
+    });
+  }
+
+  onCloseDepartmentAttendanceModal() {
+    this.showDepartmentAttendanceModal = false;
+    this.departmentAttendances = [];
+    this.departmentAttendanceTotalRecords = 0;
+    this.departmentAttendanceCurrentPage = 1;
+    this.departmentAttendanceSearchTerm = '';
+    this.departmentAttendanceFilterForm.reset();
+  }
+
+  applyDepartmentAttendanceFilter() {
+    this.departmentAttendanceCurrentPage = 1;
+    this.loadDepartmentAttendances();
+  }
+
+  resetDepartmentAttendanceFilter() {
+    this.departmentAttendanceFilterForm.reset();
+    this.departmentAttendanceCurrentPage = 1;
+    this.departmentAttendanceSearchTerm = '';
+    this.loadDepartmentAttendances();
+  }
+
+  onDepartmentAttendanceSearch() {
+    // Since we're using client-side filtering, we don't need to make an API call
+    // The filteredDepartmentAttendances getter will handle the search
+    // But if you want to do server-side search in the future, you can uncomment the lines below:
+    // this.departmentAttendanceCurrentPage = 1;
+    // this.loadDepartmentAttendances();
+  }
+
+  // Department Attendance Pagination
+  get departmentAttendanceCurrentPageStart(): number {
+    return (this.departmentAttendanceCurrentPage - 1) * this.departmentAttendancePageSize + 1;
+  }
+
+  get departmentAttendanceCurrentPageEnd(): number {
+    const end = this.departmentAttendanceCurrentPage * this.departmentAttendancePageSize;
+    return Math.min(end, this.departmentAttendanceTotalRecords);
+  }
+
+  get departmentAttendanceTotalPages(): number {
+    return Math.ceil(this.departmentAttendanceTotalRecords / this.departmentAttendancePageSize);
+  }
+
+  goToDepartmentAttendancePage(page: number) {
+    if (page >= 1 && page <= this.departmentAttendanceTotalPages && page !== this.departmentAttendanceCurrentPage) {
+      this.departmentAttendanceCurrentPage = page;
+      this.loadDepartmentAttendances();
+    }
+  }
+
+  onDepartmentAttendancePageSizeChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    this.departmentAttendancePageSize = parseInt(target.value, 10);
+    this.departmentAttendanceCurrentPage = 1;
+    this.loadDepartmentAttendances();
+  }
+
+  trackByDepartmentAttendanceId(index: number, item: DepartmentAttendance): number {
+    return item.timId;
+  }
+
+  // Get filtered department attendances for display
+  get filteredDepartmentAttendances(): DepartmentAttendance[] {
+    if (!this.departmentAttendanceSearchTerm.trim()) {
+      return this.departmentAttendances;
+    }
+
+    const searchTerm = this.departmentAttendanceSearchTerm.toLowerCase().trim();
+    return this.departmentAttendances.filter(attendance =>
+      attendance.deptName.toLowerCase().includes(searchTerm) ||
+      attendance.deptMgrName.toLowerCase().includes(searchTerm) ||
+      attendance.stsName.toLowerCase().includes(searchTerm)
+    );
   }
 
   // Message helper methods
