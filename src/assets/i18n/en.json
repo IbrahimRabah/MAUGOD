@@ -212,6 +212,42 @@
           "CREATE_MODAL_TITLE": "Create Access Permission",
           "CANCEL": "Cancel",
           "CREATE": "Create",
+          "ACCESS_PERMISSIONS_SEARCH":{
+            "EMPLOYEE":"From Employee",
+            "DEPARTMENT_MGR":"From Manager Of Department",
+            "DEPARTMENT":"From Department",
+            "BRANCH_MGR":"From Manager Of Branch",
+            "BRANCH":"From Branch",
+            "ROLE":"From Role",
+            "TO_EMPLOYEE":"To Employee",
+            "TO_DEPARTMENT_MGR":"To Manager Of Department",
+            "TO_DEPARTMENT":"To Department",
+            "TO_BRANCH_MGR":"To Manager Of Branch",
+            "TO_BRANCH":"To Branch",
+            "TO_ROLE":"To Role",
+            "CHANGE_DATA":"Change Data",
+            "START_DATE":"Start Date",
+            "END_DATE":"End Date",
+            "NOTE":"Note"
+          },
+          "DIRECT_MANAGERS_PERMISSIONS_SEARCH":{
+            "EMPLOYEE":"Employee name",
+            "DIRECT_MGR":"Direct manager",
+            "DIRECT_MGR_PERMISSION":"Direct Manager permission",
+            "ACCESS_EMPLOYEE_CHILDREN":"Access employee children"
+          },
+          "DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH":{
+            "DEPARTMENT_NAME":"Department name",
+            "MANAGER":"Manager",
+            "MANAGER_ACCESS_PERMISSIONS":"Manager access permission",
+            "ACCESS_DEPARTMENT_CHILDREN":"Access department children"
+          },
+          "BRANCHES_MANAGERS_PERMISSIONS_SEARCH":{
+            "BRANCH_NAME":"Branch name",
+            "MANAGER":"Manager",
+            "MANAGER_ACCESS_PERMISSIONS":"Manager access permission",
+            "ACCESS_BRANCH_CHILDREN":"Access branch children"
+          },
           "FORM": {
             "FROM_SECTION_TITLE": "From (You can select multiple sources)",
             "TO_TARGET_TYPE_TITLE": "Target Type",

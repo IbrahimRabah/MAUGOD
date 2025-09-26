@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { SalariesAssignResponse } from '../../../core/models/salariesAssign';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DataPermissionsResponse } from '../../../core/models/dataPermissions';
 import { EmployeesPermissionsResponse } from '../../../core/models/EmployeePermissions';
@@ -17,42 +16,98 @@ export class AccessPermissionsService {
 
   constructor(private http: HttpClient) { }
 
-  getPermissions(lang:number , pageIndex: number, pageSize: number): Observable<DataPermissionsResponse> {
-      const headers = {
-        'accept': 'text/plain',
-        'lang': lang.toString()
-      };
-      return this.http.get<DataPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetAccessPermission?pageIndex=${pageIndex}&pageSize=${pageSize}`, { headers });
+  getPermissions( lang:number, 
+                  pageIndex: number, 
+                  pageSize: number, 
+                  colunmSearchName: string | null,
+                  colunmSearchValue: string | null): Observable<DataPermissionsResponse> {
+      
+    let params = new HttpParams();
+
+    if(colunmSearchName && colunmSearchValue){
+      console.log("adding columns" + colunmSearchName+ " " + colunmSearchValue)
+      params = params.set(colunmSearchName, colunmSearchValue);
     }
-    getDirectManagersPermissions(lang:number , pageIndex: number, pageSize: number): Observable<EmployeesPermissionsResponse> {
-      const headers = {
-        'accept': 'text/plain',
-        'lang': lang.toString()
-      };
-      return this.http.get<EmployeesPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetDirectManagerPermissions?pageIndex=${pageIndex}&pageSize=${pageSize}`, { headers });
+
+    const headers = new HttpHeaders().set('lang', lang.toString())
+                    .set('pageSize', pageSize.toString())
+                    .set('pageNumber', pageIndex.toString());
+    
+    return this.http.get<DataPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetAccessPermission`, { headers, params });
+    
+  }
+
+  getDirectManagersPermissions( lang:number, 
+                  pageIndex: number, 
+                  pageSize: number, 
+                  colunmSearchName: string | null,
+                  colunmSearchValue: string | null): Observable<EmployeesPermissionsResponse> {
+
+    let params = new HttpParams();
+
+    if(colunmSearchName && colunmSearchValue){
+      console.log("adding columns" + colunmSearchName+ " " + colunmSearchValue)
+      params = params.set(colunmSearchName, colunmSearchValue);
     }
-    getDepartmentsManagerPermissions(lang:number , pageIndex: number, pageSize: number): Observable<DepartmentsPermissionsResponse> {
-      const headers = {
-        'accept': 'text/plain',
-        'lang': lang.toString()
-      };
-      return this.http.get<DepartmentsPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetDepartmentManagerPermissions?pageIndex=${pageIndex}&pageSize=${pageSize}`, { headers });
+
+    const headers = new HttpHeaders().set('lang', lang.toString())
+                    .set('pageSize', pageSize.toString())
+                    .set('pageNumber', pageIndex.toString());
+
+    return this.http.get<EmployeesPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetDirectManagerPermissions`, { headers, params });
+
+  }
+
+  getDepartmentsManagerPermissions( lang:number, 
+                  pageIndex: number, 
+                  pageSize: number, 
+                  colunmSearchName: string | null,
+                  colunmSearchValue: string | null): Observable<DepartmentsPermissionsResponse> {
+    let params = new HttpParams();
+      console.log("before adding columns" + colunmSearchName+ " " + colunmSearchValue)
+
+    if(colunmSearchName && colunmSearchValue){
+      console.log("adding columns" + colunmSearchName+ " " + colunmSearchValue)
+      params = params.set(colunmSearchName, colunmSearchValue);
     }
-    getBranchesManagerPermissions(lang:number , pageIndex: number, pageSize: number): Observable<BranchesPermissionsResponse> {
-      const headers = {
-        'accept': 'text/plain',
-        'lang': lang.toString()
-      };
-      return this.http.get<BranchesPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetBranchManagerPermissions?pageIndex=${pageIndex}&pageSize=${pageSize}`, { headers });
+
+    const headers = new HttpHeaders().set('lang', lang.toString())
+                    .set('pageSize', pageSize.toString())
+                    .set('pageNumber', pageIndex.toString());
+
+    return this.http.get<DepartmentsPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetDepartmentManagerPermissions`, { headers, params });
+
+  }
+
+  getBranchesManagerPermissions( lang:number, 
+                  pageIndex: number, 
+                  pageSize: number, 
+                  colunmSearchName: string | null,
+                  colunmSearchValue: string | null): Observable<BranchesPermissionsResponse> {
+      let params = new HttpParams();
+      console.log("before adding columns" + colunmSearchName+ " " + colunmSearchValue)
+
+    if(colunmSearchName && colunmSearchValue){
+      console.log("adding columns" + colunmSearchName+ " " + colunmSearchValue)
+      params = params.set(colunmSearchName, colunmSearchValue);
     }
-    deleteAccessPermission(permissionId : number, lang: number): Observable<any> {
+
+    const headers = new HttpHeaders().set('lang', lang.toString())
+                    .set('pageSize', pageSize.toString())
+                    .set('pageNumber', pageIndex.toString());
+
+    return this.http.get<BranchesPermissionsResponse>(`${this.apiUrl}/DataPermissions/GetBranchManagerPermissions`, { headers, params });
+
+  }
+
+  deleteAccessPermission(permissionId : number, lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
       };
       return this.http.delete(`${this.apiUrl}/AccessPermissions/DeleteAccessPermission/${permissionId}`, { headers });
     }
-    deleteSelectedAccessPermissions(permissionIds: number[], lang: number): Observable<any> {
+  deleteSelectedAccessPermissions(permissionIds: number[], lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
@@ -60,42 +115,42 @@ export class AccessPermissionsService {
       const selectedPermissions = { "permissionIds": permissionIds };
       return this.http.delete(`${this.apiUrl}/AccessPermissions/DeleteMultipleAccessPermissions`, { headers, body: selectedPermissions });
     }
-    processPermissionsToEmployees(permissions: DataPermissionRequestToEmployee[], lang: number): Observable<any> {
+  processPermissionsToEmployees(permissions: DataPermissionRequestToEmployee[], lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
       };
       return this.http.post(`${this.apiUrl}/AccessPermissionsInputForm/ProcessPermissionsToEmployee`, permissions, { headers });
     }
-    processPermissionsToDepartmentManagers(permissions: DepartmentManagerPermissionRequest[], lang: number): Observable<any> {
+  processPermissionsToDepartmentManagers(permissions: DepartmentManagerPermissionRequest[], lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
       };
       return this.http.post(`${this.apiUrl}/AccessPermissionsInputForm/ProcessPermissionsToDeptMgr`, permissions, { headers });
     }
-    processPermissionsToDepartments(permissions: DepartmentPermissionRequest[], lang: number): Observable<any> {
+  processPermissionsToDepartments(permissions: DepartmentPermissionRequest[], lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
       };
       return this.http.post(`${this.apiUrl}/AccessPermissionsInputForm/ProcessPermissionsToDepartment`, permissions, { headers });
     }
-    processPermissionsToBranchManagers(permissions: BranchManagerPermissionRequest[], lang: number): Observable<any> {
+  processPermissionsToBranchManagers(permissions: BranchManagerPermissionRequest[], lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
       };
       return this.http.post(`${this.apiUrl}/AccessPermissionsInputForm/ProcessPermissionsToBranchMgr`, permissions, { headers });
     }
-    processPermissionsToBranches(permissions: BranchPermissionRequest[], lang: number): Observable<any> {
+  processPermissionsToBranches(permissions: BranchPermissionRequest[], lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
       };
       return this.http.post(`${this.apiUrl}/AccessPermissionsInputForm/ProcessPermissionsToBranch`, permissions, { headers });
     }
-    processPermissionsToRoles(permissions: RolePermissionRequest[], lang: number): Observable<any> {
+  processPermissionsToRoles(permissions: RolePermissionRequest[], lang: number): Observable<any> {
       const headers = {
         'accept': 'text/plain',
         'lang': lang.toString()
@@ -103,7 +158,7 @@ export class AccessPermissionsService {
       return this.http.post(`${this.apiUrl}/AccessPermissionsInputForm/ProcessPermissionsToRole`, permissions, { headers });
     }
     
-    saveEmployeeManagerPermissions(permissions: SaveEmployeeManagerPermissionsRequest, lang: number): Observable<any> {
+  saveEmployeeManagerPermissions(permissions: SaveEmployeeManagerPermissionsRequest, lang: number): Observable<any> {
       const headers = {
         'accept': '*/*',
         'lang': lang.toString(),
@@ -112,7 +167,7 @@ export class AccessPermissionsService {
       return this.http.post(`${this.apiUrl}/AccessPermissions/SaveEmployeeManagerPermissions`, permissions, { headers });
     }
     
-    saveDepartmentManagerPermissions(permissions: SaveDepartmentManagerPermissionsRequest, lang: number): Observable<any> {
+  saveDepartmentManagerPermissions(permissions: SaveDepartmentManagerPermissionsRequest, lang: number): Observable<any> {
       const headers = {
         'accept': '*/*',
         'lang': lang.toString(),
@@ -121,7 +176,7 @@ export class AccessPermissionsService {
       return this.http.post(`${this.apiUrl}/AccessPermissions/SaveDepartmentManagerPermissions`, permissions, { headers });
     }
     
-    saveBranchManagerPermissions(permissions: SaveBranchManagerPermissionsRequest, lang: number): Observable<any> {
+  saveBranchManagerPermissions(permissions: SaveBranchManagerPermissionsRequest, lang: number): Observable<any> {
       const headers = {
         'accept': '*/*',
         'lang': lang.toString(),

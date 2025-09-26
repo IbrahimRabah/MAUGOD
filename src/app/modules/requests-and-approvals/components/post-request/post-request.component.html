@@ -299,7 +299,7 @@
 
     <div class="page-size-selector">
       <label>{{ 'POST_REQUEST.ITEMS_PER_PAGE' | translate }}</label>
-        <select [(ngModel)]="paginationRequest.pageSize" class="form-input">
+        <select [(ngModel)]="paginationRequest.pageSize" class="form-input" (change)="onPageSizeChange()">
           <option value="10">10</option>
           <option value="25">25</option>
           <option value="50">50</option>
