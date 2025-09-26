@@ -12,7 +12,8 @@ import {
   GetTimeTransactionApprovalByIdResponse,
   TimeTransactionApprovalCreateDto,
   ApprovalLevelDetails,
-  CreateTimeTransactionApprovalResponse 
+  CreateTimeTransactionApprovalResponse, 
+  TimeTransactionApprovalUpdateDto
 } from '../../../../core/models/steps';
 
 import { 
@@ -83,17 +84,16 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
     private requestRouteService: RequestRouteService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.isEditMode = this.routeId > 0;
     this.initializeLanguage();
     this.initializeForm();
     
-    // Load dropdown data first, then load existing data if in edit mode
-    this.loadDropdownData().then(() => {
-      if (this.isEditMode) {
-        this.loadExistingData();
-      }
-    });
+    await this.loadDropdownData();   // ✅ wait for dropdown options
+
+    if (this.isEditMode) {
+      this.loadExistingData();
+    }
   }
 
   ngOnDestroy() {
@@ -113,9 +113,9 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
   private initializeForm() {
     this.createForm = this.fb.group({
       forEveryone: [1, Validators.required],
-      note: ['', Validators.required],
+      note: [''],
       requestLevel: [0, Validators.required],
-      isActive: [true]
+      isActive: [true, Validators.required]
     });
 
     // Set initial state
@@ -134,6 +134,8 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       }
     });
 
+    this.selectedRequestLevel = 0;
+
     // Watch for changes in request level
     this.createForm.get('requestLevel')?.valueChanges.subscribe(value => {
       this.selectedRequestLevel = value;
@@ -142,13 +144,13 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
   }
 
   private addGroupControls() {
-    this.createForm.addControl('empId', this.fb.control(0, [Validators.required, Validators.min(1)]));
+    this.createForm.addControl('empId', this.fb.control(0));
     this.createForm.addControl('managerId', this.fb.control(0));
-    this.createForm.addControl('mgrOfDeptId', this.fb.control(0, [Validators.required, Validators.min(1)]));
-    this.createForm.addControl('mgrOfBranchId', this.fb.control(0, [Validators.required, Validators.min(1)]));
-    this.createForm.addControl('deptId', this.fb.control(0, [Validators.required, Validators.min(1)]));
-    this.createForm.addControl('branchId', this.fb.control(0, [Validators.required, Validators.min(1)]));
-    this.createForm.addControl('roleId', this.fb.control(0, [Validators.required, Validators.min(1)]));
+    this.createForm.addControl('mgrOfDeptId', this.fb.control(0));
+    this.createForm.addControl('mgrOfBranchId', this.fb.control(0));
+    this.createForm.addControl('deptId', this.fb.control(0));
+    this.createForm.addControl('branchId', this.fb.control(0));
+    this.createForm.addControl('roleId', this.fb.control(0));
   }
 
   private removeGroupControls() {
@@ -366,15 +368,13 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       if (response?.isSuccess && response.data?.timeTransactionApprovals?.length > 0) {
         const approvalData = response.data.timeTransactionApprovals[0];
         
-        // Wait a bit to ensure dropdown options are rendered
-        setTimeout(() => {
           // Patch main form values
           this.createForm.patchValue({
             forEveryone: approvalData.forEveryoneId,
             note: approvalData.note,
             requestLevel: approvalData.reqLevelId,
-            isActive: approvalData.isActive
-          });
+            isActive: approvalData.isActive});
+
 
           // Set selected values
           this.selectedForEveryone = approvalData.forEveryoneId;
@@ -385,21 +385,19 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
             this.addGroupControls();
             
             // Wait a bit more for group controls to be added, then patch their values
-            setTimeout(() => {
               this.createForm.patchValue({
-                empId: approvalData.empId || 0,
-                mgrOfDeptId: approvalData.deptIdMgr || 0,
-                mgrOfBranchId: approvalData.branchIdMgr || 0,
-                deptId: approvalData.deptId || 0,
-                branchId: approvalData.branchId || 0,
-                roleId: approvalData.roleId || 0
+                empId: approvalData.empId ? approvalData.empId.toString() : null,
+                mgrOfDeptId: approvalData.deptIdMgr ? approvalData.deptIdMgr.toString() : null,
+                mgrOfBranchId: approvalData.branchIdMgr ? approvalData.branchIdMgr.toString() : null,
+                deptId: approvalData.deptId ? approvalData.deptId.toString() : null,
+                branchId: approvalData.branchId ? approvalData.branchId.toString() : null,
+                roleId: approvalData.roleId ? approvalData.roleId.toString() : null
               });
-            }, 100);
+            
           }
 
           // Update active levels to create level forms
           this.updateActiveLevels();
-        }, 200);
 
         // Note: Level-specific data mapping would need additional API response structure
         // that includes the detailed level configurations
@@ -435,7 +433,7 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       const formValue = this.createForm.value;
       
       // Determine empId based on forEveryone selection
-      let empId: number;
+      let empId: number | null;
       if (formValue.forEveryone === 0) {
         // For group option - use selected employee
         empId = parseInt(formValue.empId) || 0;
@@ -444,22 +442,16 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
           return;
         }
       } else {
-        // For everyone option - use current user's employee ID
-        const currentEmpId = this.authService.getEmpIdAsNumber();
-        if (!currentEmpId) {
-          this.showErrorMessage('Employee ID not found');
-          return;
-        }
-        empId = currentEmpId;
+        empId = null;
       }
 
-      const dto: TimeTransactionApprovalCreateDto = {
+      const dto: TimeTransactionApprovalCreateDto | TimeTransactionApprovalUpdateDto= {
         empId: empId,
-        mgrOfDeptId: formValue.forEveryone === 0 ? (parseInt(formValue.mgrOfDeptId) || 0) : 0,
-        mgrOfBranchId: formValue.forEveryone === 0 ? (parseInt(formValue.mgrOfBranchId) || 0) : 0,
-        deptId: formValue.forEveryone === 0 ? (parseInt(formValue.deptId) || 0) : 0,
-        branchId: formValue.forEveryone === 0 ? (parseInt(formValue.branchId) || 0) : 0,
-        roleId: formValue.forEveryone === 0 ? (parseInt(formValue.roleId) || 0) : 0,
+        mgrOfDeptId: formValue.forEveryone === 0 ? (parseInt(formValue.mgrOfDeptId) || null) : null,
+        mgrOfBranchId: formValue.forEveryone === 0 ? (parseInt(formValue.mgrOfBranchId) || null) : null,
+        deptId: formValue.forEveryone === 0 ? (parseInt(formValue.deptId) || null) : null,
+        branchId: formValue.forEveryone === 0 ? (parseInt(formValue.branchId) || null) : null,
+        roleId: formValue.forEveryone === 0 ? (parseInt(formValue.roleId) || null) : null,
         forEveryone: formValue.forEveryone,
         reqLevels: formValue.requestLevel,
         isActive: formValue.isActive,

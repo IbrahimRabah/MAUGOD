@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CreateTimeTransactionApprovalRequest, CreateTimeTransactionApprovalResponse, GetRequestRoadMapDetailsForRequestApprovalRouteResponse, GetTimeTransactionApprovalByIdResponse, GetTimeTransactionApprovals, GetTimeTransactionApprovalsResponse, TimeTransactionApprovalCreateDto } from '../../../core/models/steps';
+import { CreateTimeTransactionApprovalRequest, CreateTimeTransactionApprovalResponse, GetRequestRoadMapDetailsForRequestApprovalRouteResponse, GetTimeTransactionApprovalByIdResponse, GetTimeTransactionApprovals, GetTimeTransactionApprovalsResponse, TimeTransactionApprovalCreateDto, TimeTransactionApprovalUpdateDto } from '../../../core/models/steps';
 import { Observable } from 'rxjs';
 import { DeleteRequestApprovalRouteResponse } from '../../../core/models/requestRoute';
 
@@ -99,7 +99,7 @@ export class StepsService {
   }
 
     updateTimeTransactionApproval(
-    dto: TimeTransactionApprovalCreateDto,
+    dto: TimeTransactionApprovalUpdateDto,
     lang: number
   ): Observable<CreateTimeTransactionApprovalResponse> {
     const headers = new HttpHeaders({

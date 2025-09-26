@@ -31,24 +31,24 @@
               <div class="radio-option" *ngFor="let option of forEveryoneOptions">
                 <input 
                   type="radio" 
-                  [id]="'forEveryone_' + option.value" 
+                  [id]="'forEveryoneId_' + option.value" 
                   [value]="option.value" 
-                  formControlName="forEveryone"
+                  formControlName="forEveryoneId"
                   (change)="onForEveryoneChange()"
                   class="radio-input">
-                <label [for]="'forEveryone_' + option.value" class="radio-label">
+                <label [for]="'forEveryoneId_' + option.value" class="radio-label">
                   {{ option.label | translate }}
                 </label>
               </div>
             </div>
-            <div class="error-message" *ngIf="isFieldRequired('forEveryone')">
+            <div class="error-message" *ngIf="isFieldRequired('forEveryoneId')">
               {{ 'CREATE_REQUEST_APPROVAL_ROUTE.FIELD_REQUIRED' | translate }}
             </div>
           </div>
 
           <!-- Is Active Section (only in edit mode) -->
           <div *ngIf="editMode" class="form-group">
-            <label class="form-label">{{ 'MENU.REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</label>
+            <label class="form-label required">{{ 'MENU.REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</label>
             <div class="radio-group">
               <div class="radio-option">
                 <input 
@@ -87,16 +87,17 @@
               [options]="statuses" 
                 optionLabel="label" 
                 optionValue="value" 
+                [showClear]="true"
                 [filter]="true"
                 [virtualScroll]="true"
                 [virtualScrollItemSize]="38"
                 [lazy]="false"
                 appendTo="body"
-                formControlName="statusId"
+                formControlName="stsId"
                 placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}">
             </p-dropdown>
               <div class="loading-text" *ngIf="loadingStatuses">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_STATUSES' | translate }}</div>
-              <div class="error-message" *ngIf="isFieldRequired('statusId')">
+              <div class="error-message" *ngIf="isFieldRequired('stsId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS_REQUIRED' | translate }}
               </div>
             </div>
@@ -105,7 +106,7 @@
             <div class="form-group">
               <label class="form-label required">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</label>
               <div class="dropdown-wrapper">
-                <select formControlName="reqLevels" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevels')">
+                <select formControlName="reqLevelId" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevelId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_REQUEST_LEVELS' | translate }}</option>
                   <option *ngFor="let level of requestLevels" [value]="level.value">
                     {{ level.label }}
@@ -114,7 +115,7 @@
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
               <div class="loading-text" *ngIf="loadingRequestLevels">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_REQUEST_LEVELS' | translate }}</div>
-              <div class="error-message" *ngIf="isFieldRequired('reqLevels')">
+              <div class="error-message" *ngIf="isFieldRequired('reqLevelId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS_REQUIRED' | translate }}
               </div>
             </div>
@@ -335,6 +336,7 @@
                         [options]="managers" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -378,6 +380,7 @@
                         [options]="departmentsOrManagers" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -402,6 +405,7 @@
                         [options]="afterLimitActions" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -421,6 +425,7 @@
                         [options]="branchesOrManagers" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -445,6 +450,7 @@
                         [options]="afterLimitActions" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -464,6 +470,7 @@
                         [options]="departmentsOrManagers" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -488,6 +495,7 @@
                         [options]="afterLimitActions" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -507,6 +515,7 @@
                         [options]="branchesOrManagers" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -531,6 +540,7 @@
                         [options]="afterLimitActions" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -550,6 +560,7 @@
                         [options]="roles" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -574,6 +585,7 @@
                         [options]="afterLimitActions" 
                         optionLabel="label" 
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -611,6 +623,7 @@
                 [options]="employees"
                 optionLabel="label"
                 optionValue="value"
+                [showClear]="true"
                 [filter]="true"
                 [virtualScroll]="true"
                 [virtualScrollItemSize]="38"
@@ -634,6 +647,7 @@
                   [options]="departmentsOrManagers"
                   optionLabel="label"
                   optionValue="value"
+                  [showClear]="true"
                   [filter]="true"
                   [virtualScroll]="true"
                   [virtualScrollItemSize]="38"
@@ -657,6 +671,7 @@
                   [options]="branchesOrManagers"
                   optionLabel="label"
                   optionValue="value"
+                  [showClear]="true"
                   [filter]="true"
                   [virtualScroll]="true"
                   [virtualScrollItemSize]="38"
@@ -680,6 +695,7 @@
                   [options]="departmentsOrManagers"
                   optionLabel="label"
                   optionValue="value"
+                  [showClear]="true"
                   [filter]="true"
                   [virtualScroll]="true"
                   [virtualScrollItemSize]="38"
@@ -703,6 +719,7 @@
                 [options]="branchesOrManagers"
                 optionLabel="label"
                 optionValue="value"
+                [showClear]="true"
                 [filter]="true"
                 [virtualScroll]="true"
                 [virtualScrollItemSize]="38"
@@ -726,6 +743,7 @@
                 [options]="roles"
                 optionLabel="label"
                 optionValue="value"
+                [showClear]="true"
                 [filter]="true"
                 [virtualScroll]="true"
                 [virtualScrollItemSize]="38"
@@ -745,10 +763,11 @@
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS' | translate }}</label>
               <p-dropdown 
-                formControlName="statusId"
+                formControlName="stsId"
                 [options]="statuses"
                 optionLabel="label"
                 optionValue="value"
+                [showClear]="true"
                 [filter]="true"
                 [virtualScroll]="true"
                 [virtualScrollItemSize]="38"
@@ -756,10 +775,10 @@
                 appendTo="body"
                 placeholder="{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_STATUS' | translate }}"
                 class="w-100"
-                [ngClass]="{ 'error': isFieldRequired('statusId') }">
+                [ngClass]="{ 'error': isFieldRequired('stsId') }">
               </p-dropdown>
               <div class="loading-text" *ngIf="loadingStatuses">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_STATUSES' | translate }}</div>
-              <div class="error-message" *ngIf="isFieldRequired('statusId')">
+              <div class="error-message" *ngIf="isFieldRequired('stsId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.STATUS_REQUIRED' | translate }}
               </div>
             </div>
@@ -768,7 +787,7 @@
             <div class="form-group">
               <label class="form-label">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS' | translate }}</label>
               <div class="dropdown-wrapper">
-                <select formControlName="reqLevels" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevels')">
+                <select formControlName="reqLevelId" class="form-select" (change)="onRequestLevelsChange()" [class.error]="isFieldRequired('reqLevelId')">
                   <option value="">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.SELECT_REQUEST_LEVELS' | translate }}</option>
                   <option *ngFor="let level of requestLevels" [value]="level.value">
                     {{ level.label }}
@@ -777,7 +796,7 @@
                 <i class="fa fa-chevron-down dropdown-icon"></i>
               </div>
               <div class="loading-text" *ngIf="loadingRequestLevels">{{ 'CREATE_REQUEST_APPROVAL_ROUTE.LOADING_REQUEST_LEVELS' | translate }}</div>
-              <div class="error-message" *ngIf="isFieldRequired('reqLevels')">
+              <div class="error-message" *ngIf="isFieldRequired('reqLevelId')">
                 {{ 'CREATE_REQUEST_APPROVAL_ROUTE.REQUEST_LEVELS_REQUIRED' | translate }}
               </div>
             </div>
@@ -999,6 +1018,7 @@
                         [options]="managers"
                         optionLabel="label"
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -1018,6 +1038,7 @@
                         [options]="departmentsOrManagers"
                         optionLabel="label"
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -1037,6 +1058,7 @@
                           [options]="branchesOrManagers"
                           optionLabel="label"
                           optionValue="value"
+                          [showClear]="true"
                           [filter]="true"
                           [virtualScroll]="true"
                           [virtualScrollItemSize]="38"
@@ -1058,6 +1080,7 @@
                         [options]="departmentsOrManagers"
                         optionLabel="label"
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -1077,6 +1100,7 @@
                         [options]="branchesOrManagers"
                         optionLabel="label"
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
@@ -1096,6 +1120,7 @@
                         [options]="roles"
                         optionLabel="label"
                         optionValue="value"
+                        [showClear]="true"
                         [filter]="true"
                         [virtualScroll]="true"
                         [virtualScrollItemSize]="38"
