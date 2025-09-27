@@ -686,3 +686,25 @@
   left: 16px;
   right: auto;
 }
+
+/* Fix for RTL dropdown icons (PrimeNG p-dropdown) */
+:host ::ng-deep .rtl .p-dropdown .p-dropdown-clear-icon {
+  right: auto !important;
+  left: 2.5rem !important; /* push clear icon a bit right so arrow can sit next to it */
+}
+
+:host ::ng-deep .rtl .p-dropdown .p-dropdown-trigger {
+  right: auto !important;
+  left: 0.5rem !important; /* dropdown arrow stays just at the edge */
+}
+
+/* Keep LTR as default */
+:host ::ng-deep .ltr .p-dropdown .p-dropdown-clear-icon {
+  left: auto !important;
+  right: 2.5rem !important;
+}
+
+:host ::ng-deep .ltr .p-dropdown .p-dropdown-trigger {
+  left: auto !important;
+  right: 0.5rem !important;
+}

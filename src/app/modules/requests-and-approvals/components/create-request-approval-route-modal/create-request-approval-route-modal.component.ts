@@ -11,7 +11,9 @@ import {
   CreateRequestApprovalRouteRequest,
   RequestApprovalRouteCreateDto,
   RouteDetailsLevel,
-  RequestApprovalRouteItem
+  RequestApprovalRouteItem,
+  UpdateRequestApprovalRouteRequest,
+  RequestApprovalRouteUpdateDto
 } from '../../../../core/models/requestRoute';
 
 @Component({
@@ -103,7 +105,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   
   // Selected values
   selectedForEveryone = 1; // Default to "For Everyone"
-  selectedRequestLevels = 1; // Default to 1 level
+  selectedRequestLevels = 0; // Default to 0 level
   
   private langSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic
@@ -150,8 +152,11 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
       if (changes['showModal'].currentValue) {
         console.log('Modal opened, loading dropdown data...');
         this.loadDropdownData();
-        this.resetForm();
-        
+
+        if (!this.editMode) {
+            this.resetForm();
+          } 
+                
         // If in edit mode and editRouteId is provided, load the route data
         if (this.editMode && this.editRouteId) {
           this.loadRouteForEdit();
@@ -165,12 +170,12 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
 
   private initializeForm() {
     this.createForm = this.fb.group({
-      forEveryone: [1, Validators.required],
+      forEveryoneId: [1, Validators.required],
       // Fields for both options
-      statusId: [''],
-      reqLevels: [1, Validators.required],
+      stsId: [''],
+      reqLevelId: [0, Validators.required],
       note: [''],
-      isActive: [true], // Add isActive control with default true
+      isActive: [true, Validators.required], // Add isActive control with default true
       // Fields for "group" option
       empId: [''],
       mgrOfDeptId: [''],
@@ -236,7 +241,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
           if (response.isSuccess) {
             this.requestLevels = ((response.data as any)['dropdownListsForTimeTransactionApprovals'] || []) as DropdownItem[];
             this.filteredRequestLevels = [...this.requestLevels];
-            console.log('Request levels loaded:', this.requestLevels);
+            console.log('Request levels loaded:', this.requestLevels);        
           }
           this.loadingRequestLevels = false;
         },
@@ -430,9 +435,9 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     
     // Patch form values
     this.createForm.patchValue({
-      forEveryone: routeData.forEveryoneId,
-      statusId: routeData.stsId || null,
-      reqLevels: routeData.reqLevelId,
+      forEveryoneId: routeData.forEveryoneId,
+      stsId: routeData.stsId || null,
+      reqLevelId: routeData.reqLevelId,
       note: routeData.note || null,
       empId: routeData.empId || null,
       mgrOfDeptId: routeData.deptIdMgr || null,
@@ -442,6 +447,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
       roleId: routeData.roleId || null,
       isActive: routeData.isActive ?? true
     });
+
 
     // Set selected request levels and recreate level details
     this.selectedRequestLevels = routeData.reqLevelId;
@@ -455,7 +461,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
 
 // Event handlers
 onForEveryoneChange() {
-  this.selectedForEveryone = this.createForm.get('forEveryone')?.value;
+  this.selectedForEveryone = this.createForm.get('forEveryoneId')?.value;
 
   if (this.selectedForEveryone === 0) {
     // For group option → keep fields but make them optional
@@ -486,7 +492,7 @@ onForEveryoneChange() {
 
 
   onRequestLevelsChange() {
-    const levels = this.createForm.get('reqLevels')?.value || 1;
+    const levels = this.createForm.get('reqLevelId')?.value || 0;
     this.selectedRequestLevels = levels;
     
     // Clear existing level details
@@ -618,13 +624,13 @@ onForEveryoneChange() {
 
   // Methods to select options and close dropdowns
   selectStatus(status: DropdownItem) {
-    this.createForm.patchValue({ statusId: status.value });
+    this.createForm.patchValue({ stsId: status.value });
     this.statusDropdownOpen = false;
     this.statusSearchTerm = '';
   }
 
   selectRequestLevel(level: DropdownItem) {
-    this.createForm.patchValue({ reqLevels: level.value });
+    this.createForm.patchValue({ reqLevelId: level.value });
     this.requestLevelsDropdownOpen = false;
     this.requestLevelsSearchTerm = '';
     this.onRequestLevelsChange();
@@ -681,12 +687,12 @@ onForEveryoneChange() {
 
   // Get selected option label
   getSelectedStatusLabel(): string {
-    const selectedValue = this.createForm.get('statusId')?.value;
+    const selectedValue = this.createForm.get('stsId')?.value;
     return this.statuses.find(s => s.value === selectedValue)?.label || 'Select Status';
   }
 
   getSelectedRequestLevelLabel(): string {
-    const selectedValue = this.createForm.get('reqLevels')?.value;
+    const selectedValue = this.createForm.get('reqLevelId')?.value;
     return this.requestLevels.find(l => l.value === selectedValue)?.label || 'Select Request Level';
   }
 
@@ -748,17 +754,33 @@ onForEveryoneChange() {
     }
 
     const createDto: RequestApprovalRouteCreateDto = {
-      empId: formValue.forEveryone === 0 ? toNullableInt(formValue.empId) : null,
-      mgrOfDeptId: formValue.forEveryone === 0 ? toNullableInt(formValue.mgrOfDeptId) : null,
-      mgrOfBranchId: formValue.forEveryone === 0 ? toNullableInt(formValue.mgrOfBranchId) : null,
-      deptId: formValue.forEveryone === 0 ? toNullableInt(formValue.deptId) : null,
-      branchId: formValue.forEveryone === 0 ? toNullableInt(formValue.branchId) : null,
-      roleId: formValue.forEveryone === 0 ? toNullableInt(formValue.roleId) : null,
-      statusId: formValue.statusId && formValue.statusId.trim() !== "" 
-              ? formValue.statusId 
+      empId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.empId) : null,
+      mgrOfDeptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfDeptId) : null,
+      mgrOfBranchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfBranchId) : null,
+      deptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.deptId) : null,
+      branchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.branchId) : null,
+      roleId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.roleId) : null,
+      stsId: formValue.stsId && formValue.stsId.trim() !== "" 
+              ? formValue.stsId 
               : null,
-      forEveryone: formValue.forEveryone,
-      reqLevels: formValue.reqLevels,
+      forEveryoneId: formValue.forEveryoneId,
+      reqLevelId: formValue.reqLevelId,
+      isActive: formValue.isActive ?? true,
+      note: formValue.note
+    };
+
+    const updateDto: RequestApprovalRouteUpdateDto = {
+      empId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.empId) : null,
+      mgrOfDeptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfDeptId) : null,
+      mgrOfBranchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfBranchId) : null,
+      deptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.deptId) : null,
+      branchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.branchId) : null,
+      roleId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.roleId) : null,
+      stsId: formValue.stsId && formValue.stsId.trim() !== "" 
+              ? formValue.stsId 
+              : null,
+      forEveryoneId: formValue.forEveryoneId,
+      reqLevelId: formValue.reqLevelId,
       isActive: formValue.isActive ?? true,
       note: formValue.note
     };
@@ -802,8 +824,50 @@ onForEveryoneChange() {
       } as RouteDetailsLevel;
     });
 
-    const request: CreateRequestApprovalRouteRequest = {
+     // Add level details
+    formValue.levelDetails.forEach((levelDetail: any, index: number) => {
+      const levelKey = `detailsLevel${index + 1}` as keyof RequestApprovalRouteUpdateDto;
+      (updateDto as any)[levelKey] = {
+        dynDirectMgr: levelDetail.dynDirectMgr || 0,
+        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) || 0,
+        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) || 0,
+        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction) || 0,
+        dynMgrOfDept: levelDetail.dynMgrOfDept || 0,
+        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel) || 0,
+        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits) || 0,
+        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction) || 0,
+        dynMgrOfBranch: levelDetail.dynMgrOfBranch || 0,
+        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel) || 0,
+        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits) || 0,
+        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction) || 0,
+        mgrId: parseInt(levelDetail.mgrId) || 0,
+        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits) || 0,
+        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction) || 0,
+        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId) || 0,
+        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits) || 0,
+        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction) || 0,
+        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId) || 0,
+        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits) || 0,
+        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction) || 0,
+        deptId: parseInt(levelDetail.deptId) || 0,
+        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits) || 0,
+        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction) || 0,
+        branchId: parseInt(levelDetail.branchId) || 0,
+        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits) || 0,
+        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction) || 0,
+        roleId: parseInt(levelDetail.roleId) || 0,
+        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits) || 0,
+        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction) || 0,
+        noteDetails: levelDetail.noteDetails || ''
+      } as RouteDetailsLevel;
+    });
+
+    const createRequest: CreateRequestApprovalRouteRequest = {
       requestApprovalRouteCreateDto: createDto
+    };
+
+    const updateRequest: UpdateRequestApprovalRouteRequest = {
+      requestApprovalRouteUpdateDto: createDto
     };
 
     // Add routeId for update operation
@@ -812,8 +876,8 @@ onForEveryoneChange() {
     }
 
     const serviceCall = this.editMode ? 
-      this.requestRouteService.updateRequestApprovalRoute(request, this.currentLang) :
-      this.requestRouteService.createRequestApprovalRoute(request, this.currentLang);
+      this.requestRouteService.updateRequestApprovalRoute(updateRequest, this.currentLang) :
+      this.requestRouteService.createRequestApprovalRoute(createRequest, this.currentLang);
 
     serviceCall.subscribe({
         next: (response) => {
@@ -859,20 +923,20 @@ onForEveryoneChange() {
   private resetForm() {
     this.createForm.reset();
     this.createForm.patchValue({
-      forEveryone: 1,
-      reqLevels: 1,
+      forEveryoneId: 1,
+      reqLevelId: 0,
       empId: '',
       mgrOfDeptId: '',
       mgrOfBranchId: '',
       deptId: '',
       branchId: '',
       roleId: '',
-      statusId: '',
+      stsId: '',
       note: '',
       isActive: true
     });
     this.selectedForEveryone = 1;
-    this.selectedRequestLevels = 1;
+    this.selectedRequestLevels = 0;
     this.onForEveryoneChange(); // Update validators
     this.onRequestLevelsChange();
   }

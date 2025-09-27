@@ -1658,6 +1658,12 @@
     }
   },
   "Attendance": {
+    "DETAILS_TITLE":"تفاصيل الحضور",
+    "FINGER_PRINTS":"البصمة",
+    "MOBILE_SIGN":"بصمة الجوال",
+    "DAYS_HANDLE":"الإجازات والمهام",
+    "SHIFT_INFORMATION":"تفاصيل الوردية",
+    "CHANGED_TIMES": "الأوقات المعدلة",
     "DATE_FILTER": {
       "TITLE": "البحث بالتاريخ",
       "START_DATE": "تاريخ البداية",
@@ -2602,7 +2608,7 @@
     "MAIN_CONFIGURATION": "الإعداد الرئيسي",
     "TARGET_AUDIENCE": "الجمهور المستهدف",
     "FOR_EVERYONE": "للجميع",
-    "FOR_GROUP": "لمجموعة محددة من الموظفين",
+    "FOR_GROUP": "مخصصة لمجموعة محدده",
     "STATUS": "الحالة",
     "SELECT_STATUS": "اختر الحالة",
     "STATUS_REQUIRED": "يرجى اختيار الحالة",
@@ -2755,7 +2761,7 @@
     "EDIT_TITLE": "تعديل موافقة حركة الوقت",
     "FOR_EVERYONE": "للجميع",
     "FOR_EVERYONE_OPTION": "للجميع",
-    "FOR_GROUP_OPTION": "لمجموعة معينة من الموظفين",
+    "FOR_GROUP_OPTION": "مخصصة لمجموعة محدده",
     "NOTE": "ملاحظة",
     "NOTE_PLACEHOLDER": "أدخل ملاحظتك هنا...",
     "REQUEST_LEVELS": "مستويات الطلب",

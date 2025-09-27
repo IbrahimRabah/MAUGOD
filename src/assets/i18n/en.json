@@ -1657,6 +1657,12 @@
     }
   },
   "Attendance": {
+    "DETAILS_TITLE":"Attendance details",
+    "FINGER_PRINTS":"Finger prints",
+    "MOBILE_SIGN":"Mobile sign",
+    "DAYS_HANDLE":"Days handle",
+    "SHIFT_INFORMATION":"Shift information",
+    "CHANGED_TIMES": "Changed Times",
     "DATE_FILTER": {
       "TITLE": "Filter by date",
       "START_DATE": "Start date",
@@ -2601,7 +2607,7 @@
     "MAIN_CONFIGURATION": "Main Configuration",
     "TARGET_AUDIENCE": "Target Audience",
     "FOR_EVERYONE": "For Everyone",
-    "FOR_GROUP": "For a given group of employees",
+    "FOR_GROUP": "For a given group of Employees",
     "STATUS": "Status",
     "SELECT_STATUS": "Select Status",
     "STATUS_REQUIRED": "Please select a status",

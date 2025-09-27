@@ -124,12 +124,12 @@ export interface ApprovalLevelDetails {
 
 export interface TimeTransactionApprovalCreateDto {
   routeId?: number; // optional for create, required for update
-  empId: number;
-  mgrOfDeptId: number;
-  mgrOfBranchId: number;
-  deptId: number;
-  branchId: number;
-  roleId: number;
+  empId: number | null;
+  mgrOfDeptId: number | null;
+  mgrOfBranchId?: number | null;
+  deptId?: number | null;
+  branchId?: number | null;
+  roleId?: number | null;
   forEveryone: number;
   reqLevels: number;
   isActive: boolean;
@@ -148,6 +148,34 @@ export interface TimeTransactionApprovalCreateDto {
 
 export interface CreateTimeTransactionApprovalRequest {
   timeTransactionApprovalCreateDto: TimeTransactionApprovalCreateDto;
+}
+
+export interface TimeTransactionApprovalUpdateDto {
+  routeId?: number; // optional for create, required for update
+  empId: number | null;
+  mgrOfDeptId: number | null;
+  mgrOfBranchId?: number | null;
+  deptId?: number | null;
+  branchId?: number | null;
+  roleId?: number | null;
+  forEveryone: number;
+  reqLevels: number;
+  isActive: boolean;
+  note: string;
+
+  detailsLevel1?: ApprovalLevelDetails;
+  detailsLevel2?: ApprovalLevelDetails;
+  detailsLevel3?: ApprovalLevelDetails;
+  detailsLevel4?: ApprovalLevelDetails;
+  detailsLevel5?: ApprovalLevelDetails;
+  detailsLevel6?: ApprovalLevelDetails;
+  detailsLevel7?: ApprovalLevelDetails;
+  detailsLevel8?: ApprovalLevelDetails;
+  detailsLevel9?: ApprovalLevelDetails;
+}
+
+export interface UpdateTimeTransactionApprovalRequest {
+  timeTransactionApprovalUpdateDto: TimeTransactionApprovalUpdateDto;
 }
 
 

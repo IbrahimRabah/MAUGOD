@@ -20,7 +20,7 @@
         
         <!-- For Everyone Section -->
         <div class="form-section">
-          <label class="section-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.FOR_EVERYONE' | translate }}</label>
+          <label class="section-label required">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.FOR_EVERYONE' | translate }}</label>
           <div class="radio-group">
             <div class="radio-option">
               <input 
@@ -49,7 +49,7 @@
 
         <!-- Is Active Section (only in edit mode) -->
         <div *ngIf="isEditMode" class="form-section">
-          <label class="section-label">{{ 'MENU.REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</label>
+          <label class="section-label required">{{ 'MENU.REQUEST_APPROVAL_ROUTE.IS_ACTIVE' | translate }}</label>
           <div class="radio-group">
             <div class="radio-option">
               <input 
@@ -72,6 +72,162 @@
           </div>
         </div>
 
+        <!-- Group Selection Section (only shown when For Group is selected) -->
+        <div *ngIf="selectedForEveryone === 0" class="group-selection-section">
+          
+          <!-- Employee Dropdown -->
+          <div class="form-group">
+            <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
+            <p-dropdown
+              formControlName="empId"
+              [options]="employees"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
+              class="custom-dropdown w-100">
+            </p-dropdown>
+            <div *ngIf="loadingEmployees" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Manager of Department Dropdown -->
+          <div class="form-group">
+            <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
+            <p-dropdown
+              formControlName="mgrOfDeptId"
+              [options]="departmentsOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
+              class="custom-dropdown w-100">
+            </p-dropdown>
+            <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Manager of Branch Dropdown -->
+          <div class="form-group">
+            <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
+            <p-dropdown
+              formControlName="mgrOfBranchId"
+              [options]="branchesOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
+              class="custom-dropdown w-100">
+            </p-dropdown>
+            <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Department Dropdown -->
+          <div class="form-group">
+            <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
+            <p-dropdown
+              formControlName="deptId"
+              [options]="departmentsOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
+              class="custom-dropdown w-100 department-dropdown">
+            </p-dropdown>
+            <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Branch Dropdown -->
+          <div class="form-group">
+            <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
+            <p-dropdown
+              formControlName="branchId"
+              [options]="branchesOrMgr"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
+              class="custom-dropdown w-100 branch-dropdown">
+            </p-dropdown>
+            <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+          <!-- Role Dropdown -->
+          <div class="form-group">
+            <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
+            <p-dropdown
+              formControlName="roleId"
+              [options]="roles"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
+              class="custom-dropdown w-100">
+            </p-dropdown>
+            <div *ngIf="loadingRoles" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+
+        </div>
+
+
+                <!-- Request Levels Section -->
+        <div class="form-section">
+          <label for="requestLevel" class="field-label required">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.REQUEST_LEVELS' | translate }}</label>
+          <select 
+            id="requestLevel"
+            formControlName="requestLevel"
+            class="form-select"
+            [disabled]="loadingRequestLevels">
+            <option *ngFor="let level of requestLevels" [value]="level.value">
+              {{ level.label }}
+            </option>
+          </select>
+          <div *ngIf="loadingRequestLevels" class="loading-indicator">
+            <i class="fas fa-spinner fa-spin"></i>
+            {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+          </div>
+        </div>
+
         <!-- Note Section -->
         <div class="form-section">
           <label for="note" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.NOTE' | translate }}</label>
@@ -84,170 +240,6 @@
           </textarea>
         </div>
 
-        <!-- Request Levels Section -->
-        <div class="form-section">
-          <label for="requestLevel" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.REQUEST_LEVELS' | translate }}</label>
-          <select 
-            id="requestLevel"
-            formControlName="requestLevel"
-            class="form-select"
-            [disabled]="loadingRequestLevels">
-            <option value="0">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_REQUEST_LEVEL' | translate }}</option>
-            <option *ngFor="let level of requestLevels" [value]="level.value">
-              {{ level.label }}
-            </option>
-          </select>
-          <div *ngIf="loadingRequestLevels" class="loading-indicator">
-            <i class="fas fa-spinner fa-spin"></i>
-            {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
-          </div>
-        </div>
-
-
-
-        <!-- Group Selection Section (only shown when For Group is selected) -->
-        <div *ngIf="selectedForEveryone === 0" class="group-selection-section">
-          
-          <!-- Employee Dropdown -->
-          <div class="form-group">
-            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
-            <p-dropdown
-              formControlName="empId"
-              [options]="employees"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [showClear]="true"
-              [virtualScroll]="true"
-              [virtualScrollItemSize]="38"
-              [lazy]="false"
-              appendTo="body"
-              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
-              class="custom-dropdown w-100">
-            </p-dropdown>
-            <div *ngIf="loadingEmployees" class="loading-indicator">
-              <i class="fas fa-spinner fa-spin"></i>
-              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
-            </div>
-          </div>
-
-          <!-- Manager of Department Dropdown -->
-          <div class="form-group">
-            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
-            <p-dropdown
-              formControlName="mgrOfDeptId"
-              [options]="departmentsOrMgr"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [showClear]="true"
-              [virtualScroll]="true"
-              [virtualScrollItemSize]="38"
-              [lazy]="false"
-              appendTo="body"
-              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
-              class="custom-dropdown w-100">
-            </p-dropdown>
-            <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
-              <i class="fas fa-spinner fa-spin"></i>
-              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
-            </div>
-          </div>
-
-          <!-- Manager of Branch Dropdown -->
-          <div class="form-group">
-            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
-            <p-dropdown
-              formControlName="mgrOfBranchId"
-              [options]="branchesOrMgr"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [showClear]="true"
-              [virtualScroll]="true"
-              [virtualScrollItemSize]="38"
-              [lazy]="false"
-              appendTo="body"
-              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
-              class="custom-dropdown w-100">
-            </p-dropdown>
-            <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
-              <i class="fas fa-spinner fa-spin"></i>
-              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
-            </div>
-          </div>
-
-          <!-- Department Dropdown -->
-          <div class="form-group">
-            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
-            <p-dropdown
-              formControlName="deptId"
-              [options]="departmentsOrMgr"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [showClear]="true"
-              [virtualScroll]="true"
-              [virtualScrollItemSize]="38"
-              [lazy]="false"
-              appendTo="body"
-              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
-              class="custom-dropdown w-100 department-dropdown">
-            </p-dropdown>
-            <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
-              <i class="fas fa-spinner fa-spin"></i>
-              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
-            </div>
-          </div>
-
-          <!-- Branch Dropdown -->
-          <div class="form-group">
-            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
-            <p-dropdown
-              formControlName="branchId"
-              [options]="branchesOrMgr"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [showClear]="true"
-              [virtualScroll]="true"
-              [virtualScrollItemSize]="38"
-              [lazy]="false"
-              appendTo="body"
-              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
-              class="custom-dropdown w-100 branch-dropdown">
-            </p-dropdown>
-            <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
-              <i class="fas fa-spinner fa-spin"></i>
-              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
-            </div>
-          </div>
-
-          <!-- Role Dropdown -->
-          <div class="form-group">
-            <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
-            <p-dropdown
-              formControlName="roleId"
-              [options]="roles"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [showClear]="true"
-              [virtualScroll]="true"
-              [virtualScrollItemSize]="38"
-              [lazy]="false"
-              appendTo="body"
-              placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}"
-              class="custom-dropdown w-100">
-            </p-dropdown>
-            <div *ngIf="loadingRoles" class="loading-indicator">
-              <i class="fas fa-spinner fa-spin"></i>
-              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
-            </div>
-          </div>
-
-        </div>
-
         <!-- Level Configuration Sections -->
         <div *ngFor="let levelNumber of activeLevels" class="level-section">
           <h4 class="level-title">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.LEVEL' | translate }} {{ levelNumber }}</h4>
@@ -258,7 +250,7 @@
             
             <!-- Employee Dropdown for this level -->
             <div class="form-group">
-              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
+              <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
               <p-dropdown 
                 [options]="employees"
                 [showClear]="true"
@@ -271,8 +263,7 @@
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'empId')"
                 [ngModelOptions]="{standalone: true}"
-                (onChange)="updateLevelFormValue(levelNumber, 'empId', $event.value)"
-                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+                (onChange)="updateLevelFormValue(levelNumber, 'empId', $event.value)">
               </p-dropdown>
               <div *ngIf="loadingEmployees" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -282,7 +273,7 @@
 
             <!-- Manager of Department Dropdown for this level -->
             <div class="form-group">
-              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
+              <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_DEPARTMENT' | translate }}</label>
               <p-dropdown 
                 [options]="departmentsOrMgr"
                 [showClear]="true"
@@ -295,8 +286,7 @@
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'mgrOfDeptId')"
                 [ngModelOptions]="{standalone: true}"
-                (onChange)="updateLevelFormValue(levelNumber, 'mgrOfDeptId', $event.value)"
-                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+                (onChange)="updateLevelFormValue(levelNumber, 'mgrOfDeptId', $event.value)">
               </p-dropdown>
               <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -306,7 +296,7 @@
 
             <!-- Manager of Branch Dropdown for this level -->
             <div class="form-group">
-              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
+              <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.MANAGER_OF_BRANCH' | translate }}</label>
               <p-dropdown 
                 [options]="branchesOrMgr"
                 [showClear]="true"
@@ -319,8 +309,7 @@
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'mgrOfBranchId')"
                 [ngModelOptions]="{standalone: true}"
-                (onChange)="updateLevelFormValue(levelNumber, 'mgrOfBranchId', $event.value)"
-                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+                (onChange)="updateLevelFormValue(levelNumber, 'mgrOfBranchId', $event.value)">
               </p-dropdown>
               <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -330,7 +319,7 @@
 
             <!-- Department Dropdown for this level -->
             <div class="form-group">
-              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
+              <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.DEPARTMENT' | translate }}</label>
               <p-dropdown 
                 [options]="departmentsOrMgr"
                 [showClear]="true"
@@ -343,8 +332,7 @@
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'deptId')"
                 [ngModelOptions]="{standalone: true}"
-                (onChange)="updateLevelFormValue(levelNumber, 'deptId', $event.value)"
-                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+                (onChange)="updateLevelFormValue(levelNumber, 'deptId', $event.value)">
               </p-dropdown>
               <div *ngIf="loadingDepartmentsOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -354,7 +342,7 @@
 
             <!-- Branch Dropdown for this level -->
             <div class="form-group">
-              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
+              <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.BRANCH' | translate }}</label>
                <p-dropdown 
                   [options]="branchesOrMgr"
                   [showClear]="true"
@@ -367,8 +355,7 @@
                   optionValue="value"
                   [ngModel]="getLevelFormValue(levelNumber, 'branchId')"
                   [ngModelOptions]="{standalone: true}"
-                  (onChange)="updateLevelFormValue(levelNumber, 'branchId', $event.value)"
-                  placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+                  (onChange)="updateLevelFormValue(levelNumber, 'branchId', $event.value)">
                 </p-dropdown>
               <div *ngIf="loadingBranchesOrMgr" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -378,7 +365,7 @@
 
             <!-- Role Dropdown for this level -->
             <div class="form-group">
-              <label class="form-label required">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
+              <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.ASSIGN_ROLE' | translate }}</label>
               <p-dropdown 
                 [options]="roles"
                 [showClear]="true"
@@ -391,8 +378,7 @@
                 optionValue="value"
                 [ngModel]="getLevelFormValue(levelNumber, 'roleId')"
                 [ngModelOptions]="{standalone: true}"
-                (onChange)="updateLevelFormValue(levelNumber, 'roleId', $event.value)"
-                placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_OPTION' | translate }}">
+                (onChange)="updateLevelFormValue(levelNumber, 'roleId', $event.value)">
               </p-dropdown>
               <div *ngIf="loadingRoles" class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
