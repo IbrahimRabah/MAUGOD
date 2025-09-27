@@ -1663,6 +1663,23 @@
     "MOBILE_SIGN":"بصمة الجوال",
     "DAYS_HANDLE":"الإجازات والمهام",
     "SHIFT_INFORMATION":"تفاصيل الوردية",
+    "DETAILS_TABLE": {
+      "NAME":"الإسم",
+      "PART":"الفترة",
+      "OPEN_SHIFT":"دوام مفتوح",
+      "EARLY_IN":"الدخول المبكر",
+      "IN":"الدخول",
+      "IN_ALLOW":"سماحية الدخول",
+      "MAX_IN":"أقصى وقت الدخول",
+      "MAKEUP_IN":"وقت الدخول الإضافي",
+      "EARLY_OUT":"الخروج المبكر",
+      "OUT":"الخروج",
+      "OUT_ALLOW":"سماحية الخروج",
+      "MAX_OUT":"أقصى وقت للخروج",
+      "MAKEUP_OUT":"وقت الخروج الإضافي",
+      "TWO_DAYS":"دوام يومين",
+      "PER_ACTUAL_WORK":"لكل عمل فعلي"
+    },
     "CHANGED_TIMES": "الأوقات المعدلة",
     "DATE_FILTER": {
       "TITLE": "البحث بالتاريخ",
