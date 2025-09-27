@@ -1657,6 +1657,12 @@
     }
   },
   "Attendance": {
+    "DETAILS_TITLE":"Attendance details",
+    "FINGER_PRINTS":"Finger prints",
+    "MOBILE_SIGN":"Mobile sign",
+    "DAYS_HANDLE":"Days handle",
+    "SHIFT_INFORMATION":"Shift information",
+    "CHANGED_TIMES": "Changed Times",
     "DATE_FILTER": {
       "TITLE": "Filter by date",
       "START_DATE": "Start date",

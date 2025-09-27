@@ -190,11 +190,11 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       outRandomAftr: [0],
       sts: [1],
       sat: [0],
-      sun: [0],
-      mon: [0],
-      tue: [0],
-      wed: [0],
-      thu: [0],
+      sun: [1],
+      mon: [1],
+      tue: [1],
+      wed: [1],
+      thu: [1],
       fri: [0],
       note: ['']
     }, { 
@@ -401,11 +401,11 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       autoOut: 0,
       sts: 1,
       sat: 0,
-      sun: 0,
-      mon: 0,
-      tue: 0,
-      wed: 0,
-      thu: 0,
+      sun: 1,
+      mon: 1,
+      tue: 1,
+      wed: 1,
+      thu: 1,
       fri: 0,
       inRandomBfor: 0,
       inRandomAftr: 0,
@@ -606,12 +606,12 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       });
       
       const autoSignRequest: AutoSignRequest = {
-        empId: formValue.empId || 0, // Use 0 as default for optional fields
-        deptId: formValue.deptId || 0,
-        mgrOfDeptId: formValue.mgrOfDeptId || 0,
-        branchId: formValue.branchId || 0,
-        mgrOfBranchId: formValue.mgrOfBranchId || 0,
-        roleId: formValue.roleId || 0,
+        empId: formValue.empId || null, // Use 0 as default for optional fields
+        deptId: formValue.deptId || null,
+        mgrOfDeptId: formValue.mgrOfDeptId || null,
+        branchId: formValue.branchId || null,
+        mgrOfBranchId: formValue.mgrOfBranchId || null,
+        roleId: formValue.roleId || null,
         sDate: this.formatDateForApi(formValue.sDate),
         eDate: this.formatDateForApi(formValue.eDate),
         shiftPart: formValue.shiftPart,

@@ -60,7 +60,7 @@
 <div *ngIf="showAddModal" class="modal-overlay" (click)="closeModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>{{ 'MENU.GENERAL_DATA.DEPARTMENTS_MODALS.ADD_DEPARTMENT_MODAL.TITLE' | translate }}</h3>
+      <h3>{{ 'Attendance.DETAILS_TITLE' | translate }}</h3>
 
       <button class="close-btn" (click)="closeModal()">
         <i class="fas fa-times"></i>
@@ -77,7 +77,7 @@
 
       <!-- Fingerprints -->
       <div *ngIf="!loadingInfo && Fingerprints.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Fingerprints</h2>
+        <h5 class="py-2">{{ 'Attendance.FINGER_PRINTS' | translate }}</h5>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
@@ -91,7 +91,7 @@
             <tr *ngFor="let Fingerprint of Fingerprints" class="table-row">
               <td>{{ Fingerprint.recId }}</td>
               <td>{{ Fingerprint.empName }}</td>
-              <td>{{ Fingerprint.signDate }}</td>
+              <td>{{ Fingerprint.signDate| date:'yyyy-MM-dd HH:mm:ss'}}</td>
               <td>{{ Fingerprint.dataSourceName}}</td>
             </tr>
           </tbody>
@@ -101,7 +101,7 @@
 
       <!-- Mobile sign -->
       <div *ngIf="!loadingInfo && MobileSigns.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Mobile sign</h2>
+        <h5 class="py-2">{{ 'Attendance.MOBILE_SIGN' | translate }}</h5>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
@@ -116,7 +116,7 @@
             <tr *ngFor="let MobileSign of MobileSigns" class="table-row">
               <td>{{ MobileSign.mobTranId }}</td>
               <td>{{ MobileSign.empName }}</td>
-              <td>{{ MobileSign.signDate }}</td>
+              <td>{{ MobileSign.signDate |date:'yyyy-MM-dd HH:mm:ss'}}</td>
               <td>{{ MobileSign.stsName}}</td>
               <td>{{ MobileSign.fpTypName }}</td>
             </tr>
@@ -127,7 +127,7 @@
 
       <!-- Days handle -->
       <div *ngIf="!loadingInfo && DaysHandle.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Days handle</h2>
+        <h5 class="py-2">{{ 'Attendance.DAYS_HANDLE' | translate }}</h5>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
@@ -146,8 +146,8 @@
               <td>{{ DayHandle.empName }}</td>
               <td>{{ DayHandle.stsName }}</td>
               <td>{{ DayHandle.partName}}</td>
-              <td>{{ DayHandle.sDate }}</td>
-              <td>{{ DayHandle.eDate }}</td>
+              <td>{{ DayHandle.sDate | date:'yyyy-MM-dd'  }}</td>
+              <td>{{ DayHandle.eDate | date:'yyyy-MM-dd'  }}</td>
               <td>{{ DayHandle.note }}</td>
             </tr>
           </tbody>
@@ -157,7 +157,7 @@
 
       <!-- Changed Times -->
       <div *ngIf="!loadingInfo && ChangedTimes.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Days handle</h2>
+        <h5 class="py-2">{{ 'Attendance.CHANGED_TIMES' | translate }}</h5>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
@@ -173,8 +173,8 @@
             <tr *ngFor="let ChangedTime of ChangedTimes" class="table-row">
               <td>{{ ChangedTime.timId }}</td>
               <td>{{ ChangedTime.txt }}</td>
-              <td>{{ ChangedTime.oldDate }}</td>
-              <td>{{ ChangedTime.editDateTime}}</td>
+              <td>{{ ChangedTime.oldDate |date:'yyyy-MM-dd'}}</td>
+              <td>{{ ChangedTime.editDateTime |date:'yyyy-MM-dd HH:mm:ss'}}</td>
               <td>{{ ChangedTime.changedByEmp }}</td>
               <td>{{ ChangedTime.changedByEmpName }}</td>
             </tr>
@@ -185,7 +185,7 @@
 
       <!-- Shift information -->
       <div *ngIf="!loadingInfo && shifts.length > 0" class="table-wrapper px-3">
-        <h2 class="py-2">Shift information</h2>
+        <h5 class="py-2">{{ 'Attendance.SHIFT_INFORMATION' | translate }}</h5>
         <table class="custom-table">
           <thead>
             <tr class="table-header">
@@ -338,7 +338,8 @@
           <td>
             <button class="action-btn password-btn" (click)="showInfo(attendance.timId)"
               [title]="'Attendance.RESULTS_TABLE.DETAILS_HEADER' | translate">
-              <i class="text-primary fs-4 fas fa-info"></i>
+              <i class="text-primary fs-4 fas fa-info
+              "></i>
             </button>
           </td>
           <td>

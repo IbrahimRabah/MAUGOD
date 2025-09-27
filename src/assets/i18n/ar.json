@@ -1658,6 +1658,12 @@
     }
   },
   "Attendance": {
+    "DETAILS_TITLE":"تفاصيل الحضور",
+    "FINGER_PRINTS":"البصمة",
+    "MOBILE_SIGN":"بصمة الجوال",
+    "DAYS_HANDLE":"الإجازات والمهام",
+    "SHIFT_INFORMATION":"تفاصيل الوردية",
+    "CHANGED_TIMES": "الأوقات المعدلة",
     "DATE_FILTER": {
       "TITLE": "البحث بالتاريخ",
       "START_DATE": "تاريخ البداية",
