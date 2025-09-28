@@ -432,7 +432,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     
     // Update selectedForEveryone based on route data
     this.selectedForEveryone = routeData.forEveryoneId;
-    
+
     // Patch form values
     this.createForm.patchValue({
       forEveryoneId: routeData.forEveryoneId,
@@ -790,36 +790,36 @@ onForEveryoneChange() {
     formValue.levelDetails.forEach((levelDetail: any, index: number) => {
       const levelKey = `detailsLevel${index + 1}` as keyof RequestApprovalRouteCreateDto;
       (createDto as any)[levelKey] = {
-        dynDirectMgr: levelDetail.dynDirectMgr || 0,
-        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) || 0,
-        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) || 0,
-        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction) || 0,
-        dynMgrOfDept: levelDetail.dynMgrOfDept || 0,
-        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel) || 0,
-        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits) || 0,
-        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction) || 0,
-        dynMgrOfBranch: levelDetail.dynMgrOfBranch || 0,
-        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel) || 0,
-        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits) || 0,
-        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction) || 0,
-        mgrId: parseInt(levelDetail.mgrId) || 0,
-        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits) || 0,
-        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction) || 0,
-        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId) || 0,
-        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits) || 0,
-        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction) || 0,
-        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId) || 0,
-        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits) || 0,
-        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction) || 0,
-        deptId: parseInt(levelDetail.deptId) || 0,
-        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits) || 0,
-        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction) || 0,
-        branchId: parseInt(levelDetail.branchId) || 0,
-        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits) || 0,
-        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction) || 0,
-        roleId: parseInt(levelDetail.roleId) || 0,
-        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits) || 0,
-        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction) || 0,
+        dynDirectMgr: levelDetail.dynDirectMgr || null,
+        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) || null,
+        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) || null,
+        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction) || null,
+        dynMgrOfDept: levelDetail.dynMgrOfDept || null,
+        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel) || null,
+        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits) || null,
+        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction) || null,
+        dynMgrOfBranch: levelDetail.dynMgrOfBranch || null,
+        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel) || null,
+        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits) || null,
+        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction) || null,
+        mgrId: parseInt(levelDetail.mgrId) || null,
+        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits) || null,
+        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction) || null,
+        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId) || null,
+        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits) || null,
+        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction) || null,
+        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId) || null,
+        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits) || null,
+        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction) || null,
+        deptId: parseInt(levelDetail.deptId) || null,
+        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits) || null,
+        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction) || null,
+        branchId: parseInt(levelDetail.branchId) || null,
+        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits) || null,
+        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction) || null,
+        roleId: parseInt(levelDetail.roleId) || null,
+        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits) || null,
+        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction) || null,
         noteDetails: levelDetail.noteDetails || ''
       } as RouteDetailsLevel;
     });
