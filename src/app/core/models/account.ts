@@ -3,6 +3,7 @@ export interface Account {
   password: string;
 }
 export interface MenuItem {
+  id: number;
   levelValue: number;
   labelValue: string;
   targetValue: string;

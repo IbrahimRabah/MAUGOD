@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Account, LoginResponse } from '../../../core/models/account';
 import { Router } from '@angular/router';
+import { PermissionsService } from '../../../core/services/permissions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthenticationService {
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasValidToken());
   public authStatus$ = this.authStatusSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private permissionsService: PermissionsService) {}
 
   login(account: Account): Observable<any> {
     return this.http.post(`${this.apiUrl}/Login`, account);
@@ -25,6 +26,7 @@ export class AuthenticationService {
 
   logout(): void {
     localStorage.clear();
+    this.permissionsService.clearPermissions();
     this.authStatusSubject.next(false);
     this.router.navigate(['/auth/login']);
   }
