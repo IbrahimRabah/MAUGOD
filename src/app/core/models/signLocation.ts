@@ -16,6 +16,7 @@ export interface MobileSignLocationsResponse {
   isSuccess: boolean;
   data: {
     mobileSignLocations: MobileSignLocation[];
+    totalCount: number;
   };
 }
 export interface MobileSignLocationCreateDto {

@@ -212,6 +212,42 @@
           "CREATE_MODAL_TITLE": "Create Access Permission",
           "CANCEL": "Cancel",
           "CREATE": "Create",
+          "ACCESS_PERMISSIONS_SEARCH":{
+            "EMPLOYEE":"From Employee",
+            "DEPARTMENT_MGR":"From Manager Of Department",
+            "DEPARTMENT":"From Department",
+            "BRANCH_MGR":"From Manager Of Branch",
+            "BRANCH":"From Branch",
+            "ROLE":"From Role",
+            "TO_EMPLOYEE":"To Employee",
+            "TO_DEPARTMENT_MGR":"To Manager Of Department",
+            "TO_DEPARTMENT":"To Department",
+            "TO_BRANCH_MGR":"To Manager Of Branch",
+            "TO_BRANCH":"To Branch",
+            "TO_ROLE":"To Role",
+            "CHANGE_DATA":"Change Data",
+            "START_DATE":"Start Date",
+            "END_DATE":"End Date",
+            "NOTE":"Note"
+          },
+          "DIRECT_MANAGERS_PERMISSIONS_SEARCH":{
+            "EMPLOYEE":"Employee name",
+            "DIRECT_MGR":"Direct manager",
+            "DIRECT_MGR_PERMISSION":"Direct Manager permission",
+            "ACCESS_EMPLOYEE_CHILDREN":"Access employee children"
+          },
+          "DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH":{
+            "DEPARTMENT_NAME":"Department name",
+            "MANAGER":"Manager",
+            "MANAGER_ACCESS_PERMISSIONS":"Manager access permission",
+            "ACCESS_DEPARTMENT_CHILDREN":"Access department children"
+          },
+          "BRANCHES_MANAGERS_PERMISSIONS_SEARCH":{
+            "BRANCH_NAME":"Branch name",
+            "MANAGER":"Manager",
+            "MANAGER_ACCESS_PERMISSIONS":"Manager access permission",
+            "ACCESS_BRANCH_CHILDREN":"Access branch children"
+          },
           "FORM": {
             "FROM_SECTION_TITLE": "From (You can select multiple sources)",
             "TO_TARGET_TYPE_TITLE": "Target Type",
@@ -1621,6 +1657,29 @@
     }
   },
   "Attendance": {
+    "DETAILS_TITLE":"Attendance details",
+    "FINGER_PRINTS":"Finger prints",
+    "MOBILE_SIGN":"Mobile sign",
+    "DAYS_HANDLE":"Days handle",
+    "SHIFT_INFORMATION":"Shift information",
+    "DETAILS_TABLE": {
+      "NAME":"Shift Name",
+      "PART":"Part",
+      "OPEN_SHIFT":"Open shift",
+      "EARLY_IN":"Early In",
+      "IN":"In",
+      "IN_ALLOW":"In Allow",
+      "MAX_IN":"Max In",
+      "MAKEUP_IN":"Makeup In",
+      "EARLY_OUT":"Early Out",
+      "OUT":"Out",
+      "OUT_ALLOW":"Out Allow",
+      "MAX_OUT":"Max Out",
+      "MAKEUP_OUT":"Makeup Out",
+      "TWO_DAYS":"Two Days",
+      "PER_ACTUAL_WORK":"Per Actual Work"
+    },
+    "CHANGED_TIMES": "Changed Times",
     "DATE_FILTER": {
       "TITLE": "Filter by date",
       "START_DATE": "Start date",
@@ -2375,7 +2434,20 @@
     "CREATE_SUCCESS": "Request created successfully",
     "CREATE_ERROR": "Error creating request",
     "INVALID_FORM": "Please fill in all required fields",
-    "LOAD_EMPLOYEES_ERROR": "Error loading employees"
+    "LOAD_EMPLOYEES_ERROR": "Error loading employees",
+    "DEPARTMENT_ATTENDANCE_MODAL": {
+      "TITLE": "Department Attendance",
+      "DEPARTMENT": "Department",
+      "MANAGER": "Manager",
+      "DATE": "Date",
+      "STATUS": "Status",
+      "EMPLOYEE_COUNT": "Employee Count",
+      "LOADING": "Loading department attendance...",
+      "NO_DATA": "No department attendance found",
+      "SEARCH_PLACEHOLDER": "Search departments...",
+      "CLOSE": "Close",
+      "LOAD_ERROR": "Error loading department attendance"
+    }
   },
   "REQUEST_DETAILS": {
     "TITLE": "Request Details",
@@ -2448,6 +2520,7 @@
     "DETAILS": "Details",
     "GRAPH": "Graph",
     "ATTACHMENTS": "Attachments",
+    "ATTACHMENT":"Attachment",
     "DELETE": "Delete",
     "ACTIONS": "Actions",
     "SHOWING": "Showing",
@@ -2551,7 +2624,7 @@
     "MAIN_CONFIGURATION": "Main Configuration",
     "TARGET_AUDIENCE": "Target Audience",
     "FOR_EVERYONE": "For Everyone",
-    "FOR_GROUP": "For a given group of employees",
+    "FOR_GROUP": "For a given group of Employees",
     "STATUS": "Status",
     "SELECT_STATUS": "Select Status",
     "STATUS_REQUIRED": "Please select a status",
@@ -2687,9 +2760,9 @@
     "NEXT_PAGE": "Next Page",
     "PREVIOUS_PAGE": "Previous Page",
     "NOT_IMPLEMENTED": "This feature is not implemented yet",
-    "DELETE_CONFIRMATION_MESSAGE": "Are you sure you want to delete this approval route?",
-    "DELETE_SUCCESS": "Approval route deleted successfully",
-    "DELETE_ERROR": "Error deleting approval route",
+    "DELETE_CONFIRMATION_MESSAGE": "Are you sure you want to delete this route?",
+    "DELETE_SUCCESS": "Route deleted successfully",
+    "DELETE_ERROR": "Error deleting route",
     "LOAD_ERROR": "Error loading approval routes",
     "ROADMAP_DETAILS": "Road Map Details",
     "ROADMAP_LOAD_ERROR": "Error loading road map details",

@@ -20,7 +20,8 @@ import {
   LevelsDropdownData,
   ManagersDropdownData,
   GetRequestApprovalRouteByIdResponse,
-  GetRequestApprovalRouteByIdRequest
+  GetRequestApprovalRouteByIdRequest,
+  UpdateRequestApprovalRouteRequest
 } from '../../../core/models/requestRoute';
 
 @Injectable({
@@ -109,7 +110,7 @@ getRoadMapDetailsForRequestApprovalRoute(
   }
   
   updateRequestApprovalRoute(
-  body: CreateRequestApprovalRouteRequest,
+  body: UpdateRequestApprovalRouteRequest,
   lang: number
 ) {
   return this.http.post<CreateRequestApprovalRouteResponse>(

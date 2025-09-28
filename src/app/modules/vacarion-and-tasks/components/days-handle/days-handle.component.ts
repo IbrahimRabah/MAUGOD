@@ -265,7 +265,7 @@ export class DaysHandleComponent {
     const startDate = this.filterForm.get('startDate')?.value;
     const endDate = this.filterForm.get('endDate')?.value;
     
-    console.log(startDate + " " +endDate);
+    console.log(this.searchTerm  + " " + this.selectedColumn);
 
     this.daysHandleService.getDaysHandle(
       this.langService.getLangValue(),

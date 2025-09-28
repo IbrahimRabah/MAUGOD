@@ -147,15 +147,15 @@ export interface RouteDetailsLevel {
 }
 
 export interface RequestApprovalRouteCreateDto {
-  empId: number;
-  mgrOfDeptId: number;
-  mgrOfBranchId: number;
-  deptId: number;
-  branchId: number;
-  roleId: number;
-  statusId: string;
-  forEveryone: number;
-  reqLevels: number;
+  empId: number | null;
+  mgrOfDeptId: number | null;
+  mgrOfBranchId: number | null;
+  deptId: number | null;
+  branchId: number | null;
+  roleId: number | null;
+  stsId: string | null;
+  forEveryoneId: number;
+  reqLevelId: number;
   isActive: boolean;
   note: string;
   detailsLevel1?: RouteDetailsLevel;
@@ -171,6 +171,33 @@ export interface RequestApprovalRouteCreateDto {
 
 export interface CreateRequestApprovalRouteRequest {
   requestApprovalRouteCreateDto: RequestApprovalRouteCreateDto;
+}
+
+export interface RequestApprovalRouteUpdateDto {
+  empId: number | null;
+  mgrOfDeptId: number | null;
+  mgrOfBranchId: number | null;
+  deptId: number | null;
+  branchId: number | null;
+  roleId: number | null;
+  stsId: string | null;
+  forEveryoneId: number;
+  reqLevelId: number;
+  isActive: boolean;
+  note: string;
+  detailsLevel1?: RouteDetailsLevel;
+  detailsLevel2?: RouteDetailsLevel;
+  detailsLevel3?: RouteDetailsLevel;
+  detailsLevel4?: RouteDetailsLevel;
+  detailsLevel5?: RouteDetailsLevel;
+  detailsLevel6?: RouteDetailsLevel;
+  detailsLevel7?: RouteDetailsLevel;
+  detailsLevel8?: RouteDetailsLevel;
+  detailsLevel9?: RouteDetailsLevel;
+}
+
+export interface UpdateRequestApprovalRouteRequest {
+  requestApprovalRouteUpdateDto: RequestApprovalRouteUpdateDto;
 }
 
 export interface CreateRequestApprovalRouteResponse {

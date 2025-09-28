@@ -114,7 +114,7 @@ export class AttendanceService {
     });
     
     return this.http.get<DaysHandleIformation>(
-      `${this.apiUrl}/GetMobileSigns`,
+      `${this.apiUrl}/GetDaysHandle`,
       { headers }
     );
   }

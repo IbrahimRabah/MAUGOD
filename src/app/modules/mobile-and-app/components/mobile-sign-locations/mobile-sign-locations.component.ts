@@ -129,7 +129,7 @@ export class MobileSignLocationsComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.isSuccess) {
           this.mobileSignLocations = response.data.mobileSignLocations || [];
-          this.totalRecords = this.mobileSignLocations.length; // Update this if API provides total count
+          this.totalRecords = response.data.totalCount; // Update this if API provides total count
         } else {
           this.messageService.add({
             severity: 'error',

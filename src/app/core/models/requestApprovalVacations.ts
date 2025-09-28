@@ -88,3 +88,34 @@ export interface AttendanceAdjustmentRequest {
   searchColumn?: string;
   searchText?: string;
 }
+
+
+// Response wrapper
+export interface TimtranApprovalTransactionsVacationsDetailsData {
+  transactions: TimtranApprovalTransactionsVacationsDetail[];
+  totalCount: number;
+}
+
+// Item shape
+export interface TimtranApprovalTransactionsVacationsDetail {
+  curlLevel: string;
+  flag: number;
+  flagName: string;
+  updatedByEmpId: number;
+  updatedByEmpName: string;
+  replyDate: string; // ISO date string, e.g. "2021-12-07"
+  note: string;
+}
+// RoadMap response wrapper
+export interface TimtranApprovalRoadmapVacationsDetailsData {
+  roadmaps: TimtranApprovalRoadmapVacationsDetail[];
+  totalCount: number;
+}
+
+// RoadMap item
+export interface TimtranApprovalRoadmapVacationsDetail {
+  curl_Level: number;   // keeping API casing as-is
+  curLevelName: string;
+  mgrId: number;
+  mgrName: string;
+}

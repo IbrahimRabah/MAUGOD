@@ -230,7 +230,7 @@
 
     <div class="page-size-selector">
       <label>{{ 'ATTENDANCE_TIME_CHANGE.ITEMS_PER_PAGE' | translate }}</label>
-        <select [(ngModel)]="paginationRequest.pageSize" class="form-input">
+        <select [(ngModel)]="paginationRequest.pageSize" class="form-input" (change)="onPageSizeChange()">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="25">25</option>
@@ -244,6 +244,7 @@
   <app-request-details-modal
     [showModal]="showRequestDetailsModal"
     [requestId]="selectedRequestId"
+    [pageId]="currentPageId"
     (closeModal)="onCloseModal()">
   </app-request-details-modal>
   
@@ -270,10 +271,22 @@
           <!-- Employee Selection -->
           <div class="form-group">
             <label for="empId">{{ 'ATTENDANCE_TIME_CHANGE.EMPLOYEE' | translate }} *</label>
-            <select id="empId" formControlName="empId" class="form-input" [disabled]="loadingEmployees">
-              <option value="">{{ 'ATTENDANCE_TIME_CHANGE.SELECT_EMPLOYEE' | translate }}</option>
-              <option *ngFor="let employee of employees" [value]="employee.value">{{ employee.label }}</option>
-            </select>
+
+            <p-dropdown
+              id="empId"
+              formControlName="empId"
+              [options]="employees"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="{{ 'ATTENDANCE_TIME_CHANGE.SELECT_EMPLOYEE' | translate }}"
+              [disabled]="loadingEmployees"
+              [filter]="true"
+              filterBy="label"
+              showClear="true"
+              appendTo="body"
+              styleClass="form-input"
+            ></p-dropdown>
+
             <div *ngIf="loadingEmployees" class="loading-text">
               {{ 'ATTENDANCE_TIME_CHANGE.LOADING_EMPLOYEES' | translate }}
             </div>
@@ -343,6 +356,165 @@
         <button type="submit" class="submit-btn" [disabled]="!createRequestForm.valid" (click)="onSubmitCreateRequest()">
           {{ 'ATTENDANCE_TIME_CHANGE.SUBMIT' | translate }}
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Department Attendance Modal -->
+  <div *ngIf="showDepartmentAttendanceModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 1200px; width: 90vw;">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h3>{{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.TITLE' | translate }}</h3>
+        <button class="close-btn" (click)="onCloseDepartmentAttendanceModal()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+        
+        <!-- Loading Spinner -->
+        <div *ngIf="loadingDepartmentAttendances" class="loading-spinner">
+          <div class="spinner"></div>
+          <p>{{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.LOADING' | translate }}</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div *ngIf="!loadingDepartmentAttendances" class="filter-section" 
+             [class.rtl]="langService.getCurrentLang() === 'ar'" 
+             [class.ltr]="langService.getCurrentLang() === 'en'">
+          <form [formGroup]="departmentAttendanceFilterForm" class="filter-form">
+            <div class="filter-row">
+              <div class="filter-group">
+                <label for="deptStartDate">{{ 'ATTENDANCE_TIME_CHANGE.START_DATE' | translate }}</label>
+                <input type="date" 
+                       id="deptStartDate" 
+                       formControlName="startDate" 
+                       class="form-input"
+                       [placeholder]="'ATTENDANCE_TIME_CHANGE.START_DATE_PLACEHOLDER' | translate">
+              </div>
+
+              <div class="filter-group">
+                <label for="deptEndDate">{{ 'ATTENDANCE_TIME_CHANGE.END_DATE' | translate }}</label>
+                <input type="date" 
+                       id="deptEndDate" 
+                       formControlName="endDate" 
+                       class="form-input"
+                       [placeholder]="'ATTENDANCE_TIME_CHANGE.END_DATE_PLACEHOLDER' | translate">
+              </div>
+
+              <div class="filter-actions">
+                <button type="button" 
+                        class="filter-btn apply-btn" 
+                        (click)="applyDepartmentAttendanceFilter()">
+                  <i class="fa fa-search"></i>
+                  {{ 'ATTENDANCE_TIME_CHANGE.APPLY_FILTER' | translate }}
+                </button>
+                
+                <button type="button" 
+                        class="filter-btn reset-btn" 
+                        (click)="resetDepartmentAttendanceFilter()">
+                  <i class="fa fa-refresh"></i>
+                  {{ 'ATTENDANCE_TIME_CHANGE.RESET_FILTER' | translate }}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Search Section -->
+        <div *ngIf="!loadingDepartmentAttendances" class="table-header-actions">
+          <div class="right-actions">
+            <div class="search-container" 
+                 [class.rtl]="langService.getCurrentLang() === 'ar'" 
+                 [class.ltr]="langService.getCurrentLang() === 'en'">
+              <input type="text" 
+                     class="search-input form-input" 
+                     [(ngModel)]="departmentAttendanceSearchTerm"
+                     [placeholder]="'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.SEARCH_PLACEHOLDER' | translate"
+                     (input)="onDepartmentAttendanceSearch()">
+              <i class="fa fa-search search-icon"></i>
+            </div>
+            <button class="btn apply-btn" 
+                    type="button" 
+                    (click)="onDepartmentAttendanceSearch()">
+              {{ 'SEARCH' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Department Attendance Table -->
+        <div *ngIf="!loadingDepartmentAttendances" class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr class="table-header">
+                <th>{{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.DEPARTMENT' | translate }}</th>
+                <th>{{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.MANAGER' | translate }}</th>
+                <th>{{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.DATE' | translate }}</th>
+                <th>{{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.STATUS' | translate }}</th>
+                <th>{{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.EMPLOYEE_COUNT' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let attendance of filteredDepartmentAttendances; trackBy: trackByDepartmentAttendanceId" class="table-row">
+                <td>{{ attendance.deptName || '-' }}</td>
+                <td>{{ attendance.deptMgrName || '-' }}</td>
+                <td>{{ attendance.signDate || '-' }}</td>
+                <td>{{ attendance.stsName || '-' }}</td>
+                <td class="text-center">1</td>
+              </tr>
+
+              <!-- Empty state row -->
+              <tr *ngIf="filteredDepartmentAttendances.length === 0" class="empty-row">
+                <td colspan="5" class="empty-message text-center">
+                  <i class="fa fa-inbox"></i>
+                  <br>
+                  {{ 'ATTENDANCE_TIME_CHANGE.DEPARTMENT_ATTENDANCE_MODAL.NO_DATA' | translate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Department Attendance Pagination -->
+        <div *ngIf="!loadingDepartmentAttendances && filteredDepartmentAttendances.length > 0" 
+             class="pagination-wrapper" 
+             [class.rtl]="langService.getCurrentLang() === 'ar'" 
+             [class.ltr]="langService.getCurrentLang() === 'en'">
+          <div class="pagination-info">
+            <span>{{ 'ATTENDANCE_TIME_CHANGE.SHOWING' | translate }} {{ departmentAttendanceCurrentPageStart }} {{ 'ATTENDANCE_TIME_CHANGE.TO' | translate }} {{ departmentAttendanceCurrentPageEnd }} {{ 'ATTENDANCE_TIME_CHANGE.OF' | translate }} {{ departmentAttendanceTotalRecords }} {{ 'ATTENDANCE_TIME_CHANGE.ITEMS' | translate }}</span>
+          </div>
+
+          <div class="pagination-controls">
+            <button class="pagination-btn" 
+                    (click)="goToDepartmentAttendancePage(departmentAttendanceCurrentPage - 1)"
+                    [disabled]="departmentAttendanceCurrentPage <= 1">
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            
+            <span class="page-info">
+              {{ 'ATTENDANCE_TIME_CHANGE.PAGE' | translate }} {{ departmentAttendanceCurrentPage }} {{ 'ATTENDANCE_TIME_CHANGE.OF' | translate }} {{ departmentAttendanceTotalPages }}
+            </span>
+            
+            <button class="pagination-btn" 
+                    (click)="goToDepartmentAttendancePage(departmentAttendanceCurrentPage + 1)"
+                    [disabled]="departmentAttendanceCurrentPage >= departmentAttendanceTotalPages">
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="page-size-selector">
+            <label>{{ 'ATTENDANCE_TIME_CHANGE.ITEMS_PER_PAGE' | translate }}</label>
+            <select (change)="onDepartmentAttendancePageSizeChange($event)" [value]="departmentAttendancePageSize">
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

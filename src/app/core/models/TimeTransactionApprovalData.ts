@@ -5,12 +5,41 @@ export interface ApiResponse<T> {
   isSuccess: boolean;
   data: T;
 }
+export interface DepartmentAttendance {
+  timId: number;
+  deptId: number;
+  deptName: string;
+  deptMgrId: number | null;
+  deptMgrName: string;
+  signDate: string;
+  hsDate: string;
+  stsId: string;
+  stsName: string;
+}
+
+export interface DepartmentAttendancesResponse {
+  statusCode: number;
+  message: string;
+  isSuccess: boolean;
+  data: {
+    departmentAttendances: DepartmentAttendance[];
+    totalCount: number;
+  };
+}
+
+export interface DepartmentAttendancesRequest {
+  pageNumber: number;
+  pageSize: number;
+  sDate?: string;
+  eDate?: string;
+}
+
 
 // Data wrapper with pagination
 export interface TimeTransactionApprovalData {
   timeTransactionApprovalRequests: TimeTransactionApprovalRequest[];
   totalRecords?: number;
-  totalCount?: number; // Added to match actual API response
+  totalCount: number; // Added to match actual API response
   currentPage?: number;
   pageSize?: number;
   totalPages?: number;
@@ -167,7 +196,7 @@ export interface HandleApprovalTransactionsData {
   totalCount: number;
 }
 export interface Transaction {
-  curLevel: string;
+  curlLevel: string;
   flag: number;
   updatedByEmpId: number;
   updatedBy: string;
@@ -184,8 +213,8 @@ export interface HandleApprovalRoadMapData {
 
 // RoadMap item
 export interface RoadMap {
-  curLevel: number;
-  levelName: string;
+  curl_Level: number;
+  curLevelName: string;
   mgrId: number;
   mgrName: string;
 }

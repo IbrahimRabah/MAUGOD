@@ -11,7 +11,9 @@ import {
   CreateRequestApprovalRouteRequest,
   RequestApprovalRouteCreateDto,
   RouteDetailsLevel,
-  RequestApprovalRouteItem
+  RequestApprovalRouteItem,
+  UpdateRequestApprovalRouteRequest,
+  RequestApprovalRouteUpdateDto
 } from '../../../../core/models/requestRoute';
 
 @Component({
@@ -103,7 +105,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   
   // Selected values
   selectedForEveryone = 1; // Default to "For Everyone"
-  selectedRequestLevels = 1; // Default to 1 level
+  selectedRequestLevels = 0; // Default to 0 level
   
   private langSubscription: Subscription = new Subscription();
   public currentLang = 2; // Default to Arabic
@@ -150,8 +152,11 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
       if (changes['showModal'].currentValue) {
         console.log('Modal opened, loading dropdown data...');
         this.loadDropdownData();
-        this.resetForm();
-        
+
+        if (!this.editMode) {
+            this.resetForm();
+          } 
+                
         // If in edit mode and editRouteId is provided, load the route data
         if (this.editMode && this.editRouteId) {
           this.loadRouteForEdit();
@@ -160,13 +165,17 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     }
   }
 
+  // request-details-modal.component.ts
+
+
   private initializeForm() {
     this.createForm = this.fb.group({
-      forEveryone: [1, Validators.required],
+      forEveryoneId: [1, Validators.required],
       // Fields for both options
-      statusId: ['', Validators.required],
-      reqLevels: [1, Validators.required],
-      note: ['', Validators.required],
+      stsId: [''],
+      reqLevelId: [0, Validators.required],
+      note: [''],
+      isActive: [true, Validators.required], // Add isActive control with default true
       // Fields for "group" option
       empId: [''],
       mgrOfDeptId: [''],
@@ -232,7 +241,7 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
           if (response.isSuccess) {
             this.requestLevels = ((response.data as any)['dropdownListsForTimeTransactionApprovals'] || []) as DropdownItem[];
             this.filteredRequestLevels = [...this.requestLevels];
-            console.log('Request levels loaded:', this.requestLevels);
+            console.log('Request levels loaded:', this.requestLevels);        
           }
           this.loadingRequestLevels = false;
         },
@@ -284,7 +293,6 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
         }
       });
   }
-
 
   private loadEmployees() {
     this.loadingEmployees = true;
@@ -424,20 +432,22 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     
     // Update selectedForEveryone based on route data
     this.selectedForEveryone = routeData.forEveryoneId;
-    
+
     // Patch form values
     this.createForm.patchValue({
-      forEveryone: routeData.forEveryoneId,
-      statusId: routeData.stsId || '',
-      reqLevels: routeData.reqLevelId,
-      note: routeData.note || '',
+      forEveryoneId: routeData.forEveryoneId,
+      stsId: routeData.stsId || null,
+      reqLevelId: routeData.reqLevelId,
+      note: routeData.note || null,
       empId: routeData.empId || null,
       mgrOfDeptId: routeData.deptIdMgr || null,
       mgrOfBranchId: routeData.branchIdMgr || null,
       deptId: routeData.deptId || null,
       branchId: routeData.branchId || null,
-      roleId: routeData.roleId || null
+      roleId: routeData.roleId || null,
+      isActive: routeData.isActive ?? true
     });
+
 
     // Set selected request levels and recreate level details
     this.selectedRequestLevels = routeData.reqLevelId;
@@ -449,40 +459,40 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     return this.createForm.get('levelDetails') as FormArray;
   }
 
-  // Event handlers
-  onForEveryoneChange() {
-    this.selectedForEveryone = this.createForm.get('forEveryone')?.value;
-    
-    // Update validators based on selection
-    if (this.selectedForEveryone === 0) {
-      // For group option - add required validators for group fields
-      this.createForm.get('empId')?.setValidators([Validators.required]);
-      this.createForm.get('mgrOfDeptId')?.setValidators([Validators.required]);
-      this.createForm.get('mgrOfBranchId')?.setValidators([Validators.required]);
-      this.createForm.get('deptId')?.setValidators([Validators.required]);
-      this.createForm.get('branchId')?.setValidators([Validators.required]);
-      this.createForm.get('roleId')?.setValidators([Validators.required]);
-    } else {
-      // For everyone option - remove validators from group fields
-      this.createForm.get('empId')?.clearValidators();
-      this.createForm.get('mgrOfDeptId')?.clearValidators();
-      this.createForm.get('mgrOfBranchId')?.clearValidators();
-      this.createForm.get('deptId')?.clearValidators();
-      this.createForm.get('branchId')?.clearValidators();
-      this.createForm.get('roleId')?.clearValidators();
-    }
-    
-    // Update validation status
-    this.createForm.get('empId')?.updateValueAndValidity();
-    this.createForm.get('mgrOfDeptId')?.updateValueAndValidity();
-    this.createForm.get('mgrOfBranchId')?.updateValueAndValidity();
-    this.createForm.get('deptId')?.updateValueAndValidity();
-    this.createForm.get('branchId')?.updateValueAndValidity();
-    this.createForm.get('roleId')?.updateValueAndValidity();
+// Event handlers
+onForEveryoneChange() {
+  this.selectedForEveryone = this.createForm.get('forEveryoneId')?.value;
+
+  if (this.selectedForEveryone === 0) {
+    // For group option → keep fields but make them optional
+    this.createForm.get('empId')?.clearValidators();
+    this.createForm.get('mgrOfDeptId')?.clearValidators();
+    this.createForm.get('mgrOfBranchId')?.clearValidators();
+    this.createForm.get('deptId')?.clearValidators();
+    this.createForm.get('branchId')?.clearValidators();
+    this.createForm.get('roleId')?.clearValidators();
+  } else {
+    // For everyone option → also optional
+    this.createForm.get('empId')?.clearValidators();
+    this.createForm.get('mgrOfDeptId')?.clearValidators();
+    this.createForm.get('mgrOfBranchId')?.clearValidators();
+    this.createForm.get('deptId')?.clearValidators();
+    this.createForm.get('branchId')?.clearValidators();
+    this.createForm.get('roleId')?.clearValidators();
   }
 
+  // Update validation status
+  this.createForm.get('empId')?.updateValueAndValidity();
+  this.createForm.get('mgrOfDeptId')?.updateValueAndValidity();
+  this.createForm.get('mgrOfBranchId')?.updateValueAndValidity();
+  this.createForm.get('deptId')?.updateValueAndValidity();
+  this.createForm.get('branchId')?.updateValueAndValidity();
+  this.createForm.get('roleId')?.updateValueAndValidity();
+}
+
+
   onRequestLevelsChange() {
-    const levels = this.createForm.get('reqLevels')?.value || 1;
+    const levels = this.createForm.get('reqLevelId')?.value || 0;
     this.selectedRequestLevels = levels;
     
     // Clear existing level details
@@ -614,13 +624,13 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
 
   // Methods to select options and close dropdowns
   selectStatus(status: DropdownItem) {
-    this.createForm.patchValue({ statusId: status.value });
+    this.createForm.patchValue({ stsId: status.value });
     this.statusDropdownOpen = false;
     this.statusSearchTerm = '';
   }
 
   selectRequestLevel(level: DropdownItem) {
-    this.createForm.patchValue({ reqLevels: level.value });
+    this.createForm.patchValue({ reqLevelId: level.value });
     this.requestLevelsDropdownOpen = false;
     this.requestLevelsSearchTerm = '';
     this.onRequestLevelsChange();
@@ -677,12 +687,12 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
 
   // Get selected option label
   getSelectedStatusLabel(): string {
-    const selectedValue = this.createForm.get('statusId')?.value;
+    const selectedValue = this.createForm.get('stsId')?.value;
     return this.statuses.find(s => s.value === selectedValue)?.label || 'Select Status';
   }
 
   getSelectedRequestLevelLabel(): string {
-    const selectedValue = this.createForm.get('reqLevels')?.value;
+    const selectedValue = this.createForm.get('reqLevelId')?.value;
     return this.requestLevels.find(l => l.value === selectedValue)?.label || 'Select Request Level';
   }
 
@@ -739,24 +749,85 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     this.submitting = true;
     const formValue = this.createForm.value;
     
+    function toNullableInt(value: any): number | null {
+      return value ? parseInt(value) : null;
+    }
+
     const createDto: RequestApprovalRouteCreateDto = {
-      empId: formValue.forEveryone === 0 ? parseInt(formValue.empId) || 0 : 0,
-      mgrOfDeptId: formValue.forEveryone === 0 ? parseInt(formValue.mgrOfDeptId) || 0 : 0,
-      mgrOfBranchId: formValue.forEveryone === 0 ? parseInt(formValue.mgrOfBranchId) || 0 : 0,
-      deptId: formValue.forEveryone === 0 ? parseInt(formValue.deptId) || 0 : 0,
-      branchId: formValue.forEveryone === 0 ? parseInt(formValue.branchId) || 0 : 0,
-      roleId: formValue.forEveryone === 0 ? parseInt(formValue.roleId) || 0 : 0,
-      statusId: formValue.statusId,
-      forEveryone: formValue.forEveryone,
-      reqLevels: formValue.reqLevels,
-      isActive: true,
+      empId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.empId) : null,
+      mgrOfDeptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfDeptId) : null,
+      mgrOfBranchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfBranchId) : null,
+      deptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.deptId) : null,
+      branchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.branchId) : null,
+      roleId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.roleId) : null,
+      stsId: formValue.stsId && formValue.stsId.trim() !== "" 
+              ? formValue.stsId 
+              : null,
+      forEveryoneId: formValue.forEveryoneId,
+      reqLevelId: formValue.reqLevelId,
+      isActive: formValue.isActive ?? true,
       note: formValue.note
     };
+
+    const updateDto: RequestApprovalRouteUpdateDto = {
+      empId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.empId) : null,
+      mgrOfDeptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfDeptId) : null,
+      mgrOfBranchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.mgrOfBranchId) : null,
+      deptId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.deptId) : null,
+      branchId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.branchId) : null,
+      roleId: formValue.forEveryoneId === 0 ? toNullableInt(formValue.roleId) : null,
+      stsId: formValue.stsId && formValue.stsId.trim() !== "" 
+              ? formValue.stsId 
+              : null,
+      forEveryoneId: formValue.forEveryoneId,
+      reqLevelId: formValue.reqLevelId,
+      isActive: formValue.isActive ?? true,
+      note: formValue.note
+    };
+
 
     // Add level details
     formValue.levelDetails.forEach((levelDetail: any, index: number) => {
       const levelKey = `detailsLevel${index + 1}` as keyof RequestApprovalRouteCreateDto;
       (createDto as any)[levelKey] = {
+        dynDirectMgr: levelDetail.dynDirectMgr || null,
+        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) || null,
+        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) || null,
+        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction) || null,
+        dynMgrOfDept: levelDetail.dynMgrOfDept || null,
+        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel) || null,
+        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits) || null,
+        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction) || null,
+        dynMgrOfBranch: levelDetail.dynMgrOfBranch || null,
+        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel) || null,
+        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits) || null,
+        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction) || null,
+        mgrId: parseInt(levelDetail.mgrId) || null,
+        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits) || null,
+        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction) || null,
+        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId) || null,
+        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits) || null,
+        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction) || null,
+        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId) || null,
+        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits) || null,
+        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction) || null,
+        deptId: parseInt(levelDetail.deptId) || null,
+        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits) || null,
+        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction) || null,
+        branchId: parseInt(levelDetail.branchId) || null,
+        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits) || null,
+        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction) || null,
+        roleId: parseInt(levelDetail.roleId) || null,
+        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits) || null,
+        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction) || null,
+        noteDetails: levelDetail.noteDetails || ''
+      } as RouteDetailsLevel;
+    });
+
+     // Add level details
+    formValue.levelDetails.forEach((levelDetail: any, index: number) => {
+      const levelKey = `detailsLevel${index + 1}` as keyof RequestApprovalRouteUpdateDto;
+      (updateDto as any)[levelKey] = {
         dynDirectMgr: levelDetail.dynDirectMgr || 0,
         dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) || 0,
         dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) || 0,
@@ -791,8 +862,12 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
       } as RouteDetailsLevel;
     });
 
-    const request: CreateRequestApprovalRouteRequest = {
+    const createRequest: CreateRequestApprovalRouteRequest = {
       requestApprovalRouteCreateDto: createDto
+    };
+
+    const updateRequest: UpdateRequestApprovalRouteRequest = {
+      requestApprovalRouteUpdateDto: createDto
     };
 
     // Add routeId for update operation
@@ -801,8 +876,8 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     }
 
     const serviceCall = this.editMode ? 
-      this.requestRouteService.updateRequestApprovalRoute(request, this.currentLang) :
-      this.requestRouteService.createRequestApprovalRoute(request, this.currentLang);
+      this.requestRouteService.updateRequestApprovalRoute(updateRequest, this.currentLang) :
+      this.requestRouteService.createRequestApprovalRoute(createRequest, this.currentLang);
 
     serviceCall.subscribe({
         next: (response) => {
@@ -817,11 +892,13 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
             this.showErrorMessage(response.message || 'CREATE_REQUEST_APPROVAL_ROUTE.ERROR_MESSAGE');
           }
           this.submitting = false;
+          this.onClose();
         },
         error: (error) => {
           console.error('Error with request approval route:', error);
           this.showErrorMessage(error.error?.message || 'CREATE_REQUEST_APPROVAL_ROUTE.ERROR_MESSAGE');
           this.submitting = false;
+          this.onClose();
         }
       });
   }
@@ -846,19 +923,20 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   private resetForm() {
     this.createForm.reset();
     this.createForm.patchValue({
-      forEveryone: 1,
-      reqLevels: 1,
+      forEveryoneId: 1,
+      reqLevelId: 0,
       empId: '',
       mgrOfDeptId: '',
       mgrOfBranchId: '',
       deptId: '',
       branchId: '',
       roleId: '',
-      statusId: '',
-      note: ''
+      stsId: '',
+      note: '',
+      isActive: true
     });
     this.selectedForEveryone = 1;
-    this.selectedRequestLevels = 1;
+    this.selectedRequestLevels = 0;
     this.onForEveryoneChange(); // Update validators
     this.onRequestLevelsChange();
   }

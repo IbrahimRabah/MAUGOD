@@ -16,6 +16,51 @@
   pointer-events: auto;
 }
 
+/*PrimeNG dropdown search input */
+:host ::ng-deep .p-dropdown .p-dropdown-filter {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* 🔹 General dropdown style to match your inputs */
+:host ::ng-deep .p-dropdown {
+  width: 100% !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 6px !important;
+  min-height: 38px !important;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+/* 🔹 Ensure the selected item text looks like normal input text */
+:host ::ng-deep .p-dropdown-label {
+  padding: 6px 10px !important;
+  color: #495057 !important;
+  font-size: 14px;
+}
+
+/* 🔹 Dropdown filter (search input) */
+:host ::ng-deep .p-dropdown .p-dropdown-filter {
+  padding: 6px 10px !important;
+  font-size: 14px;
+  border: 1px solid #ced4da !important;
+  border-radius: 6px !important;
+}
+
+/* 🔹 Dropdown panel (options list) */
+:host ::ng-deep .p-dropdown-panel .p-dropdown-items {
+  font-size: 14px;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-item {
+  padding: 8px 10px;
+}
+
+
 /* Ensure modal doesn't interfere when hidden */
 :host {
   pointer-events: none;
@@ -640,4 +685,26 @@
 .rtl .dropdown-icon {
   left: 16px;
   right: auto;
+}
+
+/* Fix for RTL dropdown icons (PrimeNG p-dropdown) */
+:host ::ng-deep .rtl .p-dropdown .p-dropdown-clear-icon {
+  right: auto !important;
+  left: 2.5rem !important; /* push clear icon a bit right so arrow can sit next to it */
+}
+
+:host ::ng-deep .rtl .p-dropdown .p-dropdown-trigger {
+  right: auto !important;
+  left: 0.5rem !important; /* dropdown arrow stays just at the edge */
+}
+
+/* Keep LTR as default */
+:host ::ng-deep .ltr .p-dropdown .p-dropdown-clear-icon {
+  left: auto !important;
+  right: 2.5rem !important;
+}
+
+:host ::ng-deep .ltr .p-dropdown .p-dropdown-trigger {
+  left: auto !important;
+  right: 0.5rem !important;
 }

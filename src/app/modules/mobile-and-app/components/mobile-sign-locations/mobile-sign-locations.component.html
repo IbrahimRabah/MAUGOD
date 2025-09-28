@@ -194,7 +194,7 @@
 
     <div class="page-size-selector">
       <label>{{ 'MOBILE_SIGN_LOCATIONS.ITEMS_PER_PAGE' | translate }}</label>
-      <select [value]="pageSize" (change)="onPageSizeChangeEvent($event)">
+      <select [(ngModel)]="paginationRequest.pageSize" (change)="onPageSizeChangeEvent($event)">
         <option value="5">5</option>
         <option value="10">10</option>
         <option value="25">25</option>

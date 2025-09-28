@@ -28,6 +28,7 @@ import {
 export class PostRequestComponent implements OnInit, OnDestroy {
   
   // Core component state
+  currentPageId: string = "postRequest";
   postRequests: PostRequest[] = [];
   filteredPostRequests: PostRequest[] = [];
   searchTerm: string = '';
@@ -263,6 +264,7 @@ export class PostRequestComponent implements OnInit, OnDestroy {
   onPageSizeChange() {
       this.currentPage = 1; // Reset to first page
       this.paginationRequest.pageNumber = 1;
+      this.pageSize = this.paginationRequest.pageSize
       this.loadPostRequests();
   }
 
@@ -357,6 +359,7 @@ export class PostRequestComponent implements OnInit, OnDestroy {
     this.selectedRequestId = item.reqId;
     this.showRequestDetailsModal = true;
     this.loadRequestTransactions(item.reqId);
+    this.loadRequestRoadMap(item.reqId);
   }
 
   private loadRequestTransactions(requestId: number) {
@@ -399,7 +402,7 @@ export class PostRequestComponent implements OnInit, OnDestroy {
       reqId: requestId,
       pageNumber: 1,
       pageSize: 100
-    };
+    };    
 
     this.postRequestService.getRequestRoadMapForPostRequestDetailsByReqId(params, this.currentLang)
       .subscribe({

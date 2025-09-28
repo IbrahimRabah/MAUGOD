@@ -92,9 +92,9 @@ export class ApprovalLeaveDetailsModalComponent implements OnInit, OnDestroy, On
       this.filteredRoadMap = [...this.requestRoadMap];
     } else {
       this.filteredRoadMap = this.requestRoadMap.filter(item =>
-        item.levelName.toLowerCase().includes(searchTerm) ||
+        item.curLevelName.toLowerCase().includes(searchTerm) ||
         item.mgrName.toLowerCase().includes(searchTerm) ||
-        item.curLevel.toString().includes(searchTerm)
+        item.curl_Level.toString().includes(searchTerm)
       );
     }
   }
