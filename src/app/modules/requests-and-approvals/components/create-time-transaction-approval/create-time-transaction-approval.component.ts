@@ -435,12 +435,14 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       // Determine empId based on forEveryone selection
       let empId: number | null;
       if (formValue.forEveryone === 0) {
-        // For group option - use selected employee
-        empId = parseInt(formValue.empId) || 0;
-        if (empId === 0) {
+
+        if (formValue.empId === null ) {
           this.showErrorMessage('Please select an employee');
           return;
         }
+        // For group option - use selected employee
+        empId = parseInt(formValue.empId) || 0;
+        
       } else {
         empId = null;
       }

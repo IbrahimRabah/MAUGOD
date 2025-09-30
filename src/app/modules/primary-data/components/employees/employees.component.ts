@@ -336,7 +336,7 @@ export class EmployeesComponent implements OnInit {
           empEnName: employeeDetails.en_Name || '',
           deptId: employeeDetails.deptId || '',
           // Normalize API numeric flag (1/0) to boolean for the form control
-          activeFlag: employeeDetails.activeFlag === 1,
+          activeFlag: employeeDetails.activeFlag,
           statusId: employeeDetails.statusId || 1,
           fingerPrint: employeeDetails.fpid || '',
           natId: employeeDetails.natId || 0,
