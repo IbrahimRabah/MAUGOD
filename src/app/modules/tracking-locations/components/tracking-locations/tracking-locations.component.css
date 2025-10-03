@@ -1,0 +1,114 @@
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container i {
+  font-size: 2rem;
+  color: white;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  color: #333;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+/* Card specific colors */
+.location-tracking-details .icon-container {
+  background-color: #009688;
+}
+
+.location-tracking-transactions .icon-container {
+  background-color: #FF5722;
+}
+
+/* Hover effects */
+.location-tracking-details:hover {
+  background-color: rgba(0, 150, 136, 0.1);
+}
+
+.location-tracking-transactions:hover {
+  background-color: rgba(255, 87, 34, 0.1);
+}
+
+.location-tracking-details:hover .card-title {
+  color: #009688;
+}
+
+.location-tracking-transactions:hover .card-title {
+  color: #FF5722;
+}
+
+.visit-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.visit-indicator i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.visit-indicator span {
+  font-size: 0.9rem;
+  color: inherit;
+}
+
+.card:hover .visit-indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover .visit-indicator i {
+  transform: translateX(5px);
+}
+
+/* Card specific colors for visit indicator */
+.location-tracking-details:hover .visit-indicator {
+  color: #009688;
+}
+
+.location-tracking-transactions:hover .visit-indicator {
+  color: #FF5722;
+}

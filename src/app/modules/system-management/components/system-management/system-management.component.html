@@ -1,1 +1,61 @@
-<p>system-management works!</p>
+<div class="cards-container">
+  <!-- System Setup Card -->
+  <a [routerLink]="['/system-management/system-setup']" class="card system-setup">
+    <div class="icon-container">
+      <i class="fas fa-sliders-h"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.SYSTEM_SETUP' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Hijri Data Card -->
+  <a [routerLink]="['/system-management/hijri-data']" class="card hijri-data">
+    <div class="icon-container">
+      <i class="fas fa-calendar-alt"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.HIJRI_DATE_DATA' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Language Data Card -->
+  <a [routerLink]="['/system-management/language-data']" class="card language-data">
+    <div class="icon-container">
+      <i class="fas fa-language"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.LANGUAGE_DATA' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- User Profile Card -->
+  <a [routerLink]="['/system-management/user-profile']" class="card user-profile">
+    <div class="icon-container">
+      <i class="fas fa-user-circle"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.USER_PROFILE' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Sessions Management Card -->
+  <a [routerLink]="['/system-management/sessions-management']" class="card sessions-management">
+    <div class="icon-container">
+      <i class="fas fa-clock"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.SYSTEM_MANAGEMENT_SECTIONS.SESSIONS_MANAGEMENT' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+</div>

@@ -1,1 +1,61 @@
-<p>masseages-and-notifications works!</p>
+<div class="cards-container">
+  <!-- System Messages Card -->
+  <a [routerLink]="['/messages-and-notifications/system-messages']" class="card system-messages">
+    <div class="icon-container">
+      <i class="fas fa-message"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.SYSTEM_MESSAGES' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Notifications Text Card -->
+  <a [routerLink]="['/messages-and-notifications/notifications-text']" class="card notifications-text">
+    <div class="icon-container">
+      <i class="fas fa-bell-concierge"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NOTIFICATIONS_TEXTS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- News Card -->
+  <a [routerLink]="['/messages-and-notifications/news']" class="card news">
+    <div class="icon-container">
+      <i class="fas fa-newspaper"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NEWS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Send Notifications Card -->
+  <a [routerLink]="['/messages-and-notifications/send-notifications']" class="card send-notifications">
+    <div class="icon-container">
+      <i class="fas fa-paper-plane"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.SEND_NOTIFICATIONS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Notifications Settings Card -->
+  <a [routerLink]="['/messages-and-notifications/notifications-settings']" class="card notifications-settings">
+    <div class="icon-container">
+      <i class="fas fa-gear"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.MESSAGES_NOTIFICATIONS_SECTIONS.NOTIFICATIONS_SETTINGS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+</div>

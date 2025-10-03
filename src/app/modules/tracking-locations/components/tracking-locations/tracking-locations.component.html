@@ -1,2 +1,26 @@
 
-<p>tracking-locations works!</p>
+<div class="cards-container">
+  <!-- Location Tracking Details Card -->
+  <a [routerLink]="['/tracking-locations/location-tracking-details']" class="card location-tracking-details">
+    <div class="icon-container">
+      <i class="fas fa-map-marked-alt"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.TRACKING_LOCATIONS_SECTIONS.LOCATION_TRACKING_DETAILS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Location Tracking Transactions Card -->
+  <a [routerLink]="['/tracking-locations/location-tracking-transactions']" class="card location-tracking-transactions">
+    <div class="icon-container">
+      <i class="fas fa-route"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.TRACKING_LOCATIONS_SECTIONS.LOCATION_TRACKING_TRANSACTIONS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+</div>

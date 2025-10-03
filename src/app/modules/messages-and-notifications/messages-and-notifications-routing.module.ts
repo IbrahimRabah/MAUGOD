@@ -10,6 +10,11 @@ import { NotificationsSettingsComponent } from './components/notifications-setti
 const routes: Routes = [
   {
     path: '',
+    redirectTo: 'messages-and-notifications',
+    pathMatch: 'full'
+  },
+  {
+    path: 'messages-and-notifications',
     component: MasseagesAndNotificationsComponent
   },
   {

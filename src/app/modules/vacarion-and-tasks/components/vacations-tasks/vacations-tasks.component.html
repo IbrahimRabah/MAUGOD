@@ -1,1 +1,73 @@
-<p>vacations-tasks works!</p>
+<div class="cards-container">
+  <!-- Attendance Status Classifications Card -->
+  <a [routerLink]="['/vacation-tasks/attendance-status-classifications']" class="card attendance-status-classifications">
+    <div class="icon-container">
+      <i class="fas fa-list-ul"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.VACATION_TASKS_SECTIONS.ATTENDANCE_STATUS_CLASSIFICATION' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Attendance Statuses Card -->
+  <a [routerLink]="['/vacation-tasks/attendance-statuses']" class="card attendance-statuses">
+    <div class="icon-container">
+      <i class="fas fa-user-clock"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.VACATION_TASKS_SECTIONS.ATTENDANCE_STATUSES' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Status Priority Order Card -->
+  <a [routerLink]="['/vacation-tasks/handle-statuses-priority']" class="card status-priority">
+    <div class="icon-container">
+      <i class="fas fa-sort-amount-up"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.VACATION_TASKS_SECTIONS.STATUS_PRIORITY_ORDER' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Days Handle Card -->
+  <a [routerLink]="['/vacation-tasks/days-handle']" class="card days-handle">
+    <div class="icon-container">
+      <i class="fas fa-calendar-check"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.VACATION_TASKS_SECTIONS.DAYS_HANDLE' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Employee Balances Card -->
+  <a [routerLink]="['/vacation-tasks/handle-statuses-employee-balance']" class="card employee-balances">
+    <div class="icon-container">
+      <i class="fas fa-balance-scale"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.VACATION_TASKS_SECTIONS.EMPLOYEE_BALANCES' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- My Balance Card -->
+  <a [routerLink]="['/vacation-tasks/my-balance']" class="card my-balance">
+    <div class="icon-container">
+      <i class="fas fa-user-check"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.VACATION_TASKS_SECTIONS.MY_BALANCE' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+</div>
