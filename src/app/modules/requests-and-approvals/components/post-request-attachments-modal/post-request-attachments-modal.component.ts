@@ -253,18 +253,31 @@ export class PostRequestAttachmentsModalComponent implements OnChanges {
 
   viewAttachment(attachment: PostRequestAttachment) {
     if (attachment.m_File) {
-      const byteCharacters = atob(attachment.m_File);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      if (attachment.m_File_Type === 'txt') {
+        const decodedText = this.base64ToUtf8(attachment.m_File);
+        alert(decodedText); // Or bind to a component property
+      } else {
+        const byteCharacters = atob(attachment.m_File);
+        const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], { type: this.getMimeType(attachment.m_File_Type) });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
       }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: this.getMimeType(attachment.m_File_Type) });
-      
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, '_blank');
     }
   }
+
+  base64ToUtf8(base64: string): string {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const decoder = new TextDecoder('utf-8');
+    return decoder.decode(bytes);
+  }
+
 
   private getMimeType(fileType: string): string {
     const mimeTypes: { [key: string]: string } = {

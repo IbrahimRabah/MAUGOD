@@ -1117,6 +1117,8 @@
     "BRANCH_MANAGERS": "Branch Managers",
     "ASSIGN_ROLE": "Assign Role",
     "ROLES": "Roles",
+    "ROLENOTE": "Role will be assigned to those who have this role(s)",
+    "WANTEDROLENOTE": "Assigned roles",
     "START_DATE": "Start Date",
     "END_DATE": "End Date",
     "DATE_RANGE": "Date Range",

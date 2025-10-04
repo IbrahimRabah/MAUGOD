@@ -59,6 +59,7 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
     employees: { available: [], selected: [], searchTerm: '' },
     departments: { available: [], selected: [], searchTerm: '' },
     branches: { available: [], selected: [], searchTerm: '' },
+    wantedRoles: { available: [], selected: [], searchTerm: '' },
     roles: { available: [], selected: [], searchTerm: '' },
     departmentManagers: { available: [], selected: [], searchTerm: '' },
     branchManagers: { available: [], selected: [], searchTerm: '' }
@@ -95,6 +96,7 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
   selectedDepartmentIds: number[] = [];
   selectedBranchIds: number[] = [];
   selectedRoleIds: number[] = [];
+  wantedRoleIds: number[] = [];
   selectedDepartmentManagerIds: number[] = [];
   selectedBranchManagerIds: number[] = [];
 
@@ -379,7 +381,7 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
       
       // Prepare the payload according to AssignUserRolesRequest interface
       const payload: AssignUserRolesRequest = {
-        assignedRoles: this.selectedRoleIds,
+        assignedRoles: this.wantedRoleIds,
         empIds: this.selectedEmployeeIds,
         mgrOfDeptIds: this.selectedDepartmentManagerIds,
         deptIds: this.selectedDepartmentIds,
@@ -591,6 +593,7 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
                 id: role.value,
                 name: role.label
               }));
+              this.multiSelectStates['wantedRoles'].available = this.multiSelectStates['roles'].available;
               this.dropdownDataLoaded.roles = true;
               console.log('Roles loaded:', this.roles.length);
             } else {
@@ -860,6 +863,24 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
     this.updateSelectedIds(type);
   }
 
+  addAllWantedRoles(type: string) {
+    const state = this.multiSelectStates[type];
+    const filteredItems = this.filterAvailableItems(type, state.searchTerm);
+    filteredItems.forEach(item => {
+      if (!state.selected.some(selected => selected.id === item.id)) {
+        state.selected.push(item);
+      }
+    });
+    this.updateAllWantedRoles(type);
+  }
+
+  private updateAllWantedRoles(type: string) {
+    const state = this.multiSelectStates[type];
+    const selectedIds = state.selected.map(item => Number(item.id));
+    this.wantedRoleIds = selectedIds;
+  }
+
+
   removeAllFromSelected(type: string) {
     const state = this.multiSelectStates[type];
     state.selected = [];
@@ -882,6 +903,9 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
         break;
       case 'roles':
         this.selectedRoleIds = selectedIds;
+        break;
+      case 'wantedRoles':
+        this.wantedRoleIds = selectedIds;
         break;
       case 'departmentManagers':
         this.selectedDepartmentManagerIds = selectedIds;

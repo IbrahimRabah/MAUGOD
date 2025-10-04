@@ -486,7 +486,7 @@
 
         <!-- Roles Section -->
         <div class="form-section" *ngIf="sectionVisibility['roles']">
-          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.ROLES' | translate }}</h4>
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.ROLES' | translate }}<small class="text-muted" style="font-size: 10px;">{{ 'USER_ROLE_ASSIGNMENT.ROLENOTE' | translate }}*</small></h4>
           <div class="picklist-container">
             <div class="picklist-section">
               <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_ROLES' | translate }}</div>
@@ -523,6 +523,53 @@
                 <div *ngFor="let item of multiSelectStates['roles'].selected" 
                      class="picklist-item" 
                      (click)="removeFromSelected('roles', item)">
+                  <input type="checkbox" [checked]="true" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- wanted roles  -->
+        <div class="form-section">
+          <h4 class="section-title">{{ 'USER_ROLE_ASSIGNMENT.ROLES' | translate }}<small class="text-muted" style="font-size: 10px;">{{ 'USER_ROLE_ASSIGNMENT.WANTEDROLENOTE' | translate }}*</small></h4>
+          <div class="picklist-container">
+            <div class="picklist-section">
+              <div class="picklist-label">{{ 'USER_ROLE_ASSIGNMENT.AVAILABLE_ROLES' | translate }}</div>
+              <div class="picklist-search">
+                <input type="text" 
+                       [(ngModel)]="multiSelectStates['wantedRoles'].searchTerm" 
+                       [ngModelOptions]="{standalone: true}"
+                       [placeholder]="'USER_ROLE_ASSIGNMENT.SEARCH_ROLES' | translate">
+                <button type="button" (click)="addAllWantedRoles('wantedRoles')" [disabled]="getAvailableCount('wantedRoles') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.ADD_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of filterAvailableItems('wantedRoles', multiSelectStates['wantedRoles'].searchTerm)" 
+                     class="picklist-item" 
+                     (click)="addToSelected('wantedRoles', item)">
+                  <input type="checkbox" [checked]="false" readonly>
+                  <span>{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="picklist-section">
+              <div class="picklist-label">
+                {{ 'USER_ROLE_ASSIGNMENT.SELECTED_ROLES' | translate }} 
+                <span class="selected-count">({{ getSelectedCount('wantedRoles') }})</span>
+              </div>
+              <div class="picklist-search">
+                <button type="button" (click)="removeAllFromSelected('wantedRoles')" [disabled]="getSelectedCount('wantedRoles') === 0">
+                  {{ 'USER_ROLE_ASSIGNMENT.REMOVE_ALL' | translate }}
+                </button>
+              </div>
+              <div class="picklist-items">
+                <div *ngFor="let item of multiSelectStates['wantedRoles'].selected" 
+                     class="picklist-item" 
+                     (click)="removeFromSelected('wantedRoles', item)">
                   <input type="checkbox" [checked]="true" readonly>
                   <span>{{ item.name }}</span>
                 </div>
