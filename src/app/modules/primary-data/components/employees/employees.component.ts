@@ -223,14 +223,6 @@ export class EmployeesComponent implements OnInit {
     return empId ? parseInt(empId, 10) : undefined;
   }
 
-  isRequired(fieldName: string): boolean {
-    const control = this.employeeForm.get(fieldName);
-    if (!control || !control.validator) {
-      return false;
-    }
-    const validator = control.validator({} as any);
-    return validator && validator['required'] ? true : false;
-  }
   // Custom pagination methods
   get totalPages(): number {
     return Math.ceil(this.totalRecords / this.paginationRequest.pageSize);
@@ -310,7 +302,7 @@ export class EmployeesComponent implements OnInit {
 
         const convertedEmployee = {
           rowId: employeeDetails.rowID,
-          empId: employeeDetails.empId === -1 ? null : employeeDetails.empId,
+          empId: employeeDetails.empId,
           empName: currentLang === 1 ? employeeDetails.en_Name : employeeDetails.ar_Name,// Or combine ar_Name & en_Name if needed
           directMgrName: '', // Will be filled from dropdown or API
           deptName: '',      // Will be filled from dropdown or API
@@ -344,7 +336,7 @@ export class EmployeesComponent implements OnInit {
           empEnName: employeeDetails.en_Name || '',
           deptId: employeeDetails.deptId || '',
           // Normalize API numeric flag (1/0) to boolean for the form control
-          activeFlag: employeeDetails.activeFlag === 1,
+          activeFlag: employeeDetails.activeFlag,
           statusId: employeeDetails.statusId || 1,
           fingerPrint: employeeDetails.fpid || '',
           natId: employeeDetails.natId || 0,

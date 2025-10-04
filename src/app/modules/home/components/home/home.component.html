@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- Dashboard Card -->
-  <a [routerLink]="['/dashboard']" class="card dashboard">
+  <a [routerLink]="['/dashboard']" class="card dashboard" *ngIf="hasPermission(100)">
     <div class="icon-container">
       <i class="fa fa-dashboard"></i>
     </div>
@@ -12,7 +12,7 @@
   </a>
 
   <!-- Attendance Card -->
-  <a [routerLink]="['/attendance/view-attendance']" class="card attendance-view">
+  <a [routerLink]="['/attendance/view-attendance']" class="card attendance-view" *ngIf="hasPermission(35)">
     <div class="icon-container">
       <i class="fas fa-table-list"></i>
     </div>
@@ -24,7 +24,7 @@
   </a>
 
   <!-- Mawjood App Card -->
-  <a [routerLink]="['/mobile-and-app/mawjood-app']" class="card mawjood-app">
+  <a [routerLink]="['/mobile-and-app/mawjood-app']" class="card mawjood-app" *ngIf="hasPermission(2)">
     <div class="icon-container">
       <i class="fa fa-mobile-alt"></i>
     </div>
@@ -36,7 +36,7 @@
   </a>
 
   <!-- Reports Card -->
-  <a [routerLink]="['/reports']" class="card reports">
+  <a [routerLink]="['/reports']" class="card reports" *ngIf="hasPermission(99)">
     <div class="icon-container">
       <i class="fa fa-print"></i>
     </div>
@@ -48,7 +48,7 @@
   </a>
 
   <!-- Attendance Data Card -->
-  <a [routerLink]="['/attendance']" class="card attendance-data">
+  <a [routerLink]="['/attendance']" class="card attendance-data" *ngIf="hasAnyChildPermission([33, 70, 111])">
     <div class="icon-container">
       <i class="fas fa-clock"></i>
     </div>
@@ -60,7 +60,7 @@
   </a>
 
   <!-- Shifts Card -->
-  <a [routerLink]="['/shifts-section']" class="card shifts">
+  <a [routerLink]="['/shifts-section']" class="card shifts" *ngIf="hasAnyChildPermission([78, 39, 23, 121, 259])">
     <div class="icon-container">
       <i class="fas fa-business-time"></i>
     </div>
@@ -72,7 +72,7 @@
   </a>
 
   <!-- Vacation and Tasks Card -->
-  <a [routerLink]="['/vacation-tasks']" class="card vacation-tasks">
+  <a [routerLink]="['/vacation-tasks']" class="card vacation-tasks" *ngIf="hasAnyChildPermission([113, 11, 43, 65, 117, 205])">
     <div class="icon-container">
       <i class="fas fa-calendar-days"></i>
     </div>
@@ -84,7 +84,7 @@
   </a>
 
   <!-- Requests and Approvals Card -->
-  <a [routerLink]="['/requests-and-approvals']" class="card requests-approvals">
+  <a [routerLink]="['/requests-and-approvals']" class="card requests-approvals" *ngIf="hasAnyChildPermission([41, 51, 132, 97, 102, 108])">
     <div class="icon-container">
       <i class="fas fa-file-signature"></i>
     </div>
@@ -96,7 +96,7 @@
   </a>
 
   <!-- Tracking Locations Card -->
-  <a [routerLink]="['/tracking-locations']" class="card tracking-locations">
+  <a [routerLink]="['/tracking-locations']" class="card tracking-locations" *ngIf="hasAnyChildPermission([145, 146])">
     <div class="icon-container">
       <i class="fas fa-map-marker-alt"></i>
     </div>
@@ -108,7 +108,7 @@
   </a>
 
   <!-- Mobile and App Card -->
-  <a [routerLink]="['/mobile-and-app']" class="card mobile-app">
+  <a [routerLink]="['/mobile-and-app']" class="card mobile-app" *ngIf="hasAnyChildPermission([133, 13, 29, 122, 130, 96])">
     <div class="icon-container">
       <i class="fas fa-mobile-screen"></i>
     </div>
@@ -120,7 +120,7 @@
   </a>
 
   <!-- Salaries Card -->
-  <a [routerLink]="['/salaries']" class="card salaries">
+  <a [routerLink]="['/salaries']" class="card salaries" *ngIf="hasAnyChildPermission([103, 105, 119, 131, 120])">
     <div class="icon-container">
       <i class="fas fa-money-bill-wave"></i>
     </div>
@@ -132,7 +132,7 @@
   </a>
 
   <!-- Primary Data Card -->
-  <a [routerLink]="['/primary-data']" class="card primary-data">
+  <a [routerLink]="['/primary-data']" class="card primary-data" *ngIf="hasAnyChildPermission([53, 75, 83, 128, 106, 156, 160, 164, 95, 104, 107, 151, 153, 155, 157, 158, 159, 161, 163, 165, 166, 167, 168, 169, 170, 253, 263, 269, 279, 188, 195, 187, 196, 197, 198, 211])">
     <div class="icon-container">
       <i class="fas fa-database"></i>
     </div>
@@ -144,7 +144,7 @@
   </a>
 
   <!-- Messages and Notifications Card -->
-  <a [routerLink]="['/messages-and-notifications']" class="card messages-notifications">
+  <a [routerLink]="['/messages-and-notifications']" class="card messages-notifications" *ngIf="hasAnyChildPermission([27, 101, 124, 98, 126])">
     <div class="icon-container">
       <i class="fas fa-envelope"></i>
     </div>
@@ -156,7 +156,7 @@
   </a>
 
   <!-- Permission Management Card -->
-  <a [routerLink]="['/permission-managements']" class="card permission-management">
+  <a [routerLink]="['/permission-managements']" class="card permission-management" *ngIf="hasAnyChildPermission([77, 81, 85, 89, 91, 59, 73, 92, 93, 3, 5, 37, 136])">
     <div class="icon-container">
       <i class="fa-solid fa-users"></i>
     </div>
@@ -168,7 +168,7 @@
   </a>
 
   <!-- Audit and Tracing Card -->
-  <a [routerLink]="['/audit-and-tracing']" class="card audit-tracing">
+  <a [routerLink]="['/audit-and-tracing']" class="card audit-tracing" *ngIf="hasAnyChildPermission([115, 63, 114, 109])">
     <div class="icon-container">
       <i class="fa-regular fa-rectangle-list"></i>
     </div>
@@ -180,7 +180,7 @@
   </a>
 
   <!-- System Management Card -->
-  <a [routerLink]="['/system-management']" class="card system-management">
+  <a [routerLink]="['/system-management']" class="card system-management" *ngIf="hasAnyChildPermission([19, 49, 55, 125, 123])">
     <div class="icon-container">
       <i class="fas fa-cogs"></i>
     </div>
@@ -192,7 +192,7 @@
   </a>
 
   <!-- Consorship Card -->
-  <a [routerLink]="['/consorship']" class="card consorship">
+  <a [routerLink]="['/consorship']" class="card consorship" *ngIf="hasAnyChildPermission([230, 232, 233])">
     <div class="icon-container">
       <i class="fas fa-shield-alt"></i>
     </div>

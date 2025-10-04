@@ -6,7 +6,8 @@ import { CensorshipTourUnavailableComponent } from './components/censorship-tour
 import { AlarmComponent } from './components/alarm/alarm.component';
 
 const routes: Routes = [
-  { path: '', component: CorsorshipComponent },
+  { path: '', redirectTo: 'consorship', pathMatch: 'full' },
+  { path: 'consorship', component: CorsorshipComponent },
   { path: 'tour-available', component: CensorshipTourAvaibaleComponent },
   { path: 'tour-unavailable', component: CensorshipTourUnavailableComponent },
   { path: 'alarms', component: AlarmComponent }

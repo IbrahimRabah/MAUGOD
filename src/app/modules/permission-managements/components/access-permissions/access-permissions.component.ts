@@ -81,7 +81,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     { column: 'note', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.NOTE' },
   ];
 
-  selectedColumnHandleRequest: string | null = null;
+  selectedColumnHandleRequest: string | null = this.searchColumnsHandleRequest[0].column;
   selectedColumnLabelHandleRequest: string = this.searchColumnsHandleRequest[0].label;
   searchTerm:string | null = null;
 
@@ -291,23 +291,6 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
     this.selectAll = false;
     this.searchTerm = '';
     this.selectedColumnHandleRequest = '';
-    this.loadData();
-  }
-
-  onSearchHandleRequest() {
-    this.currentPageHandleRequest = 1;
-    this.currentPage = 1;
-    this.loadData();
-  }
-
-  selectColumnHandleRequest(col: any) {
-    this.selectedColumnHandleRequest = col.column;
-  }
-
-  // Data Loading Methods
-  loadData() {
-    this.loading = true;
-    
     switch (this.selectedTable) {
       case 'access':
           this.searchColumnsHandleRequest = [
@@ -329,7 +312,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
           { column: 'endDate', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.END_DATE' },
           { column: 'note', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.NOTE' },
         ];
-        this.loadAccessPermissions();
+        this.selectedColumnHandleRequest = this.searchColumnsHandleRequest[0].column;
         break;
       case 'directManagers':
         this.searchColumnsHandleRequest = [
@@ -338,7 +321,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
           { column: 'directMgrPermissionLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DIRECT_MANAGERS_PERMISSIONS_SEARCH.DIRECT_MGR_PERMISSION' },
           { column: 'accessEmpChildrenLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DIRECT_MANAGERS_PERMISSIONS_SEARCH.ACCESS_EMPLOYEE_CHILDREN' }
         ];
-        this.loadDirectManagersPermissions();
+        this.selectedColumnHandleRequest = this.searchColumnsHandleRequest[0].column;
         break;
       case 'departments':
         this.searchColumnsHandleRequest = [
@@ -347,7 +330,7 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
           { column: 'mgrAccessPermissionLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH.MANAGER_ACCESS_PERMISSIONS' },
           { column: 'accessDeptChildrenLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.DEPARTMENT_MANAGERS_PERMISSIONS_SEARCH.ACCESS_DEPARTMENT_CHILDREN' }
         ];
-        this.loadDepartmentsPermissions();
+        this.selectedColumnHandleRequest = this.searchColumnsHandleRequest[0].column;
         break;
       case 'branches':
         this.searchColumnsHandleRequest = [
@@ -356,6 +339,41 @@ export class AccessPermissionsComponent implements OnInit, OnDestroy {
           { column: 'mgrAccessPermissionLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.BRANCHES_MANAGERS_PERMISSIONS_SEARCH.MANAGER_ACCESS_PERMISSIONS' },
           { column: 'accessBranchChildrenLabel', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.BRANCHES_MANAGERS_PERMISSIONS_SEARCH.ACCESS_BRANCH_CHILDREN' }
         ];
+        this.selectedColumnHandleRequest = this.searchColumnsHandleRequest[0].column;
+        break;
+      default:
+        this.loading = false;
+    }
+
+    this.loadData();
+  }
+
+  onSearchHandleRequest() {
+    this.currentPageHandleRequest = 1;
+    this.currentPage = 1;
+    this.loadData();
+  }
+
+  selectColumnHandleRequest(col: any) {
+    this.selectedColumnHandleRequest = col.column;
+    console.log(this.selectedColumnHandleRequest)
+  }
+
+  // Data Loading Methods
+  loadData() {
+    this.loading = true;
+    
+    switch (this.selectedTable) {
+      case 'access':
+        this.loadAccessPermissions();
+        break;
+      case 'directManagers':
+        this.loadDirectManagersPermissions();
+        break;
+      case 'departments':
+        this.loadDepartmentsPermissions();
+        break;
+      case 'branches':
         this.loadBranchesPermissions();
         break;
       default:

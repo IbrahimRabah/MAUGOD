@@ -435,12 +435,14 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       // Determine empId based on forEveryone selection
       let empId: number | null;
       if (formValue.forEveryone === 0) {
-        // For group option - use selected employee
-        empId = parseInt(formValue.empId) || 0;
-        if (empId === 0) {
+
+        if (formValue.empId === null ) {
           this.showErrorMessage('Please select an employee');
           return;
         }
+        // For group option - use selected employee
+        empId = parseInt(formValue.empId) || 0;
+        
       } else {
         empId = null;
       }
@@ -473,10 +475,10 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       });
 
       // Call appropriate service method based on mode
-      const response = this.isEditMode 
-        ? await this.stepsService.updateTimeTransactionApproval(dto, this.currentLang).toPromise()
-        : await this.stepsService.createTimeTransactionApproval(dto, this.currentLang).toPromise();
-      
+        const response = this.isEditMode
+          ? await this.stepsService.updateTimeTransactionApproval(dto, this.currentLang).toPromise()
+          : await this.stepsService.createTimeTransactionApproval(dto, this.currentLang).toPromise();
+    
       if (response?.isSuccess) {
         const messageKey = this.isEditMode 
           ? 'CREATE_TIME_TRANSACTION_APPROVAL.UPDATE_SUCCESS_MESSAGE'
@@ -487,9 +489,9 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       } else {
         this.showErrorMessage(response?.message || this.translateService.instant('CREATE_TIME_TRANSACTION_APPROVAL.ERROR_MESSAGE'));
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error saving time transaction approval:', error);
-      this.showErrorMessage(this.translateService.instant('CREATE_TIME_TRANSACTION_APPROVAL.ERROR_MESSAGE'));
+      this.showErrorMessage(error.error?.message || this.translateService.instant('CREATE_TIME_TRANSACTION_APPROVAL.ERROR_MESSAGE'));
     } finally {
       this.loading = false;
     }

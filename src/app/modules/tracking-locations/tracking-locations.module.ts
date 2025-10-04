@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { TrackingLocationsRoutingModule } from './tracking-locations-routing.module';
 import { TrackingLocationsComponent } from './components/tracking-locations/tracking-locations.component';
@@ -15,6 +16,7 @@ import { LocationTrackingTransactionComponent } from './components/location-trac
   ],
   imports: [
     CommonModule,
+    TranslateModule,
     TrackingLocationsRoutingModule
   ]
 })

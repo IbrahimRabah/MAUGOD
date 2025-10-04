@@ -188,7 +188,7 @@ private formatDate(date: Date): string {
 
     this.attendanceAdjustmentRequest ={
       empId: this.getStoredEmpId(),
-      sDate: this.formatDate(this.getDateMonthsAgo(10)),
+      sDate: this.formatDate(new Date()),
       eDate: this.formatDate(new Date()),
       pageNumber: 1,
       pageSize: 10,
@@ -198,7 +198,7 @@ private formatDate(date: Date): string {
 
     this.TimeTransactionApprovalRequest = {
       empId: this.getStoredEmpId(),
-      sDate: this.formatDate(this.getDateMonthsAgo(10)),
+      sDate: this.formatDate(new Date()),
       eDate: this.formatDate(new Date()),
       pageNumber: 1,
       pageSize: 10,
