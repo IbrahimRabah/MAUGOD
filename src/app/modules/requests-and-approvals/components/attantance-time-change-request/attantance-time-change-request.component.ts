@@ -390,67 +390,71 @@ export class AttantanceTimeChangeRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmitCreateRequest() {
-    if (this.createRequestForm.valid) {
-      const formValue = this.createRequestForm.value;
-      
-      // Convert date and time to ISO format
-      const signDate = new Date(formValue.signDate);
-      const inTime = new Date();
-      const outTime = new Date();
-      
-      // Set time for in and out using today's date
-      const [inHours, inMinutes] = formValue.inTime.split(':');
-      inTime.setHours(parseInt(inHours), parseInt(inMinutes), 0, 0);
-      
-      const [outHours, outMinutes] = formValue.outTime.split(':');
-      outTime.setHours(parseInt(outHours), parseInt(outMinutes), 0, 0);
+    onSubmitCreateRequest() {
+      if (this.createRequestForm.valid) {
+        const formValue = this.createRequestForm.value;
+        
+        // Convert date and time to ISO format
+        const signDate = new Date(formValue.signDate);
+const pad = (num: number) => num.toString().padStart(2, '0');
 
-      // Get base64 without data URL prefix
-      let fileBase64 = '';
-      let fileType = '';
-      let fileName = '';
-      
-      if (this.selectedFileBase64) {
-        const base64Data = this.selectedFileBase64.split(',')[1];
-        fileBase64 = base64Data;
-        fileType = this.selectedFile?.type || 'application/octet-stream';
-        fileName = this.selectedFile?.name || 'attachment';
-      }
+// Extract hours and minutes from form
+const [inHours, inMinutes] = formValue.inTime.split(':').map(Number);
+const [outHours, outMinutes] = formValue.outTime.split(':').map(Number);
 
-      const dto: TimeTransactionApprovalRequestCreateDto = {
-        empId: parseInt(formValue.empId),
-        reqByEmpId: this.authService.getEmpIdAsNumber() || 0,
-        signDate: signDate.toISOString(),
-        in: inTime.toISOString(),
-        out: outTime.toISOString(),
-        note: formValue.note || '',
-        file: fileBase64,
-        fileType: fileType,
-        filePath: fileName,
-        noteAttach: formValue.attachmentNote || ''
-      };
+// Use today's date
+const year = signDate.getFullYear();
+const month = pad(signDate.getMonth() + 1);
+const day = pad(signDate.getDate());
 
-      this.attendanceTimeService.createTimeTransactionApprovalRequest(dto, this.currentLang)
-        .subscribe({
-          next: (response) => {
-            if (response.isSuccess) {
-              this.showSuccessMessage('ATTENDANCE_TIME_CHANGE.CREATE_SUCCESS');
-              this.onCloseCreateRequestModal();
-              this.loadTimeTransactionRequests();
-            } else {
-              this.showErrorMessage(response.message);
+const inTimeStr = `${year}-${month}-${day}T${pad(inHours)}:${pad(inMinutes)}:00.000Z`;
+const outTimeStr = `${year}-${month}-${day}T${pad(outHours)}:${pad(outMinutes)}:00.000Z`;
+
+        // Get base64 without data URL prefix
+        let fileBase64 = '';
+        let fileType = '';
+        let fileName = '';
+        
+        if (this.selectedFileBase64) {
+          const base64Data = this.selectedFileBase64.split(',')[1];
+          fileBase64 = base64Data;
+          fileType = this.selectedFile?.type || 'application/octet-stream';
+          fileName = this.selectedFile?.name || 'attachment';
+        }
+
+        const dto: TimeTransactionApprovalRequestCreateDto = {
+          empId: parseInt(formValue.empId),
+          reqByEmpId: this.authService.getEmpIdAsNumber() || 0,
+          signDate: signDate.toISOString(),
+          in: inTimeStr,
+          out: outTimeStr,
+          note: formValue.note || '',
+          file: fileBase64,
+          fileType: fileType,
+          filePath: fileName,
+          noteAttach: formValue.attachmentNote || ''
+        };
+
+        this.attendanceTimeService.createTimeTransactionApprovalRequest(dto, this.currentLang)
+          .subscribe({
+            next: (response) => {
+              if (response.isSuccess) {
+                this.showSuccessMessage('ATTENDANCE_TIME_CHANGE.CREATE_SUCCESS');
+                this.onCloseCreateRequestModal();
+                this.loadTimeTransactionRequests();
+              } else {
+                this.showErrorMessage(response.message);
+              }
+            },
+            error: (error) => {
+              console.error('Error creating request:', error);
+              this.showErrorMessage(error.error.message);
             }
-          },
-          error: (error) => {
-            console.error('Error creating request:', error);
-            this.showErrorMessage(error.error.message);
-          }
-        });
-    } else {
-      this.showWarningMessage('ATTENDANCE_TIME_CHANGE.INVALID_FORM');
+          });
+      } else {
+        this.showWarningMessage('ATTENDANCE_TIME_CHANGE.INVALID_FORM');
+      }
     }
-  }
 
   manualAttendance() {
     this.showInfoMessage('ATTENDANCE_TIME_CHANGE.MANUAL_ATTENDANCE_NOT_IMPLEMENTED');
