@@ -215,6 +215,51 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export interface RequestApprovalRouteDetails {
+  curlLevel: number;
+
+  dynDirectMgr: number | null;
+  dynDirectMgrLevel: number | null;
+  dynDirectMgrDaysLimits: number | null;
+  dynDirectMgrAfterLimitAction: number | null;
+
+  dynMgrOfDept: number | null;
+  dynMgrOfDeptLevel: number | null;
+  dynMgrOfDeptDaysLimits: number | null;
+  dynMgrOfDeptAfterLimitAction: number | null;
+
+  dynMgrOfBranch: number | null;
+  dynMgrOfBranchLevel: number | null;
+  dynMgrOfBranchDaysLimits: number | null;
+  dynMgrOfBranchAfterLimitAction: number | null;
+
+  mgrId: number | null;
+  mgrIdDaysLimits: number | null;
+  mgrIdAfterLimitAction: number | null;
+
+  mgrOfDeptId: number | null;
+  mgrOfDeptIdDaysLimits: number | null;
+  mgrOfDeptIdAfterLimitAction: number | null;
+
+  mgrOfBranchId: number | null;
+  mgrOfBranchIdDaysLimits: number | null;
+  mgrOfBranchIdAfterLimitAction: number | null;
+
+  deptId: number | null;
+  deptIdDaysLimits: number | null;
+  deptIdAfterLimitAction: number | null;
+
+  branchId: number | null;
+  branchIdDaysLimits: number | null;
+  branchIdAfterLimitAction: number | null;
+
+  roleId: number | null;
+  roleIdDaysLimits: number | null;
+  roleIdAfterLimitAction: number | null;
+
+  noteDetails: string | null;
+}
+
 // One route row
 export interface RequestApprovalRouteItem {
   routeId: number;
@@ -255,6 +300,17 @@ export interface RequestApprovalRouteItem {
   det: string;
   str: string;
   del: string;
+
+  // Details for levels 1-9
+  detailsLevel1?: RequestApprovalRouteDetails;
+  detailsLevel2?: RequestApprovalRouteDetails;
+  detailsLevel3?: RequestApprovalRouteDetails;
+  detailsLevel4?: RequestApprovalRouteDetails;
+  detailsLevel5?: RequestApprovalRouteDetails;
+  detailsLevel6?: RequestApprovalRouteDetails;
+  detailsLevel7?: RequestApprovalRouteDetails;
+  detailsLevel8?: RequestApprovalRouteDetails;
+  detailsLevel9?: RequestApprovalRouteDetails;
 }
 
 // The `data` object

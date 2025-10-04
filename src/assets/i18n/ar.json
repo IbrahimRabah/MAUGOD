@@ -2761,7 +2761,7 @@
     "NEXT_PAGE": "الصفحة التالية",
     "PREVIOUS_PAGE": "الصفحة السابقة",
     "NOT_IMPLEMENTED": "هذه الميزة غير مطبقة بعد",
-    "DELETE_CONFIRMATION_MESSAGE": "هل أنت متأكد من حذف الخطة هذه؟",
+    "DELETE_CONFIRMATION_MESSAGE": "هل أنت متأكد من حذف الخارطة هذه؟",
     "DELETE_SUCCESS": "تم حذف الخارطة بنجاح",
     "DELETE_ERROR": "خطأ في حذف الخارطة",
     "LOAD_ERROR": "خطأ في تحميل خطوات الموافقة",
