@@ -577,19 +577,19 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
             // Safely patch each field, converting null to appropriate default values
             levelControl.patchValue({
               // Dynamic Direct Manager
-              dynDirectMgr: levelData.dynDirectMgr ?? 0,
+              dynDirectMgr: levelData.dynDirectMgr,
               dynDirectMgrLevel: convertForLevelField(levelData.dynDirectMgrLevel),
               dynDirectMgrDaysLimits: convertForLevelField(levelData.dynDirectMgrDaysLimits),
               dynDirectMgrAfterLimitAction: convertForLevelField(levelData.dynDirectMgrAfterLimitAction),
               
               // Dynamic Manager of Department
-              dynMgrOfDept: levelData.dynMgrOfDept ?? 0,
+              dynMgrOfDept: levelData.dynMgrOfDept,
               dynMgrOfDeptLevel: convertForLevelField(levelData.dynMgrOfDeptLevel),
               dynMgrOfDeptDaysLimits: convertForLevelField(levelData.dynMgrOfDeptDaysLimits),
               dynMgrOfDeptAfterLimitAction: convertForLevelField(levelData.dynMgrOfDeptAfterLimitAction),
               
               // Dynamic Manager of Branch
-              dynMgrOfBranch: levelData.dynMgrOfBranch ?? 0,
+              dynMgrOfBranch: levelData.dynMgrOfBranch,
               dynMgrOfBranchLevel: convertForLevelField(levelData.dynMgrOfBranchLevel),
               dynMgrOfBranchDaysLimits: convertForLevelField(levelData.dynMgrOfBranchDaysLimits),
               dynMgrOfBranchAfterLimitAction: convertForLevelField(levelData.dynMgrOfBranchAfterLimitAction),
@@ -1037,37 +1037,37 @@ onForEveryoneChange() {
     formValue.levelDetails.forEach((levelDetail: any, index: number) => {
       const levelKey = `detailsLevel${index + 1}` as keyof RequestApprovalRouteUpdateDto;
       (updateDto as any)[levelKey] = {
-        dynDirectMgr: levelDetail.dynDirectMgr || 0,
-        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) || 0,
-        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) || 0,
-        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction) || 0,
-        dynMgrOfDept: levelDetail.dynMgrOfDept || 0,
-        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel) || 0,
-        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits) || 0,
-        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction) || 0,
-        dynMgrOfBranch: levelDetail.dynMgrOfBranch || 0,
-        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel) || 0,
-        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits) || 0,
-        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction) || 0,
-        mgrId: parseInt(levelDetail.mgrId) || 0,
-        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits) || 0,
-        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction) || 0,
-        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId) || 0,
-        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits) || 0,
-        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction) || 0,
-        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId) || 0,
-        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits) || 0,
-        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction) || 0,
-        deptId: parseInt(levelDetail.deptId) || 0,
-        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits) || 0,
-        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction) || 0,
-        branchId: parseInt(levelDetail.branchId) || 0,
-        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits) || 0,
-        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction) || 0,
-        roleId: parseInt(levelDetail.roleId) || 0,
-        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits) || 0,
-        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction) || 0,
-        noteDetails: levelDetail.noteDetails || ''
+        dynDirectMgr: levelDetail.dynDirectMgr,
+        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel),
+        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits),
+        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction),
+        dynMgrOfDept: levelDetail.dynMgrOfDept,
+        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel),
+        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits),
+        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction),
+        dynMgrOfBranch: levelDetail.dynMgrOfBranch,
+        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel),
+        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits),
+        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction),
+        mgrId: parseInt(levelDetail.mgrId),
+        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits),
+        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction),
+        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId),
+        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits),
+        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction),
+        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId),
+        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits),
+        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction),
+        deptId: parseInt(levelDetail.deptId),
+        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits),
+        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction),
+        branchId: parseInt(levelDetail.branchId),
+        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits),
+        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction),
+        roleId: parseInt(levelDetail.roleId),
+        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits),
+        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction),
+        noteDetails: levelDetail.noteDetails
       } as RouteDetailsLevel;
     });
 
@@ -1107,7 +1107,6 @@ onForEveryoneChange() {
           console.error('Error with request approval route:', error);
           this.showErrorMessage(error.error?.message || 'CREATE_REQUEST_APPROVAL_ROUTE.ERROR_MESSAGE');
           this.submitting = false;
-          this.onClose();
         }
       });
   }

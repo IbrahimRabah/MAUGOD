@@ -187,6 +187,51 @@ export type CreateTimeTransactionApprovalResponse =
   ApiResponse<TimeTransactionApprovalDto | boolean>;
 
 
+export interface TimeTransactionApprovalDetails {
+  curlLevel: number;
+
+  dynDirectMgr: number | null;
+  dynDirectMgrLevel: number | null;
+  dynDirectMgrDaysLimits: number | null;
+  dynDirectMgrAfterLimitAction: number | null;
+
+  dynMgrOfDept: number | null;
+  dynMgrOfDeptLevel: number | null;
+  dynMgrOfDeptDaysLimits: number | null;
+  dynMgrOfDeptAfterLimitAction: number | null;
+
+  dynMgrOfBranch: number | null;
+  dynMgrOfBranchLevel: number | null;
+  dynMgrOfBranchDaysLimits: number | null;
+  dynMgrOfBranchAfterLimitAction: number | null;
+
+  mgrId: number | null;
+  mgrIdDaysLimits: number | null;
+  mgrIdAfterLimitAction: number | null;
+
+  mgrOfDeptId: number | null;
+  mgrOfDeptIdDaysLimits: number | null;
+  mgrOfDeptIdAfterLimitAction: number | null;
+
+  mgrOfBranchId: number | null;
+  mgrOfBranchIdDaysLimits: number | null;
+  mgrOfBranchIdAfterLimitAction: number | null;
+
+  deptId: number | null;
+  deptIdDaysLimits: number | null;
+  deptIdAfterLimitAction: number | null;
+
+  branchId: number | null;
+  branchIdDaysLimits: number | null;
+  branchIdAfterLimitAction: number | null;
+
+  roleId: number | null;
+  roleIdDaysLimits: number | null;
+  roleIdAfterLimitAction: number | null;
+
+  noteDetails: string | null;
+}
+
 
 // An approval item (one row)
 export interface TimeTransactionApprovalItem {
@@ -224,6 +269,17 @@ export interface TimeTransactionApprovalItem {
   det: string;
   str: string;
   del: string;
+
+   // Details for levels 1-9
+ detailsLevel1?: TimeTransactionApprovalDetails;
+ detailsLevel2?: TimeTransactionApprovalDetails;
+ detailsLevel3?: TimeTransactionApprovalDetails;
+ detailsLevel4?: TimeTransactionApprovalDetails;
+ detailsLevel5?: TimeTransactionApprovalDetails;
+ detailsLevel6?: TimeTransactionApprovalDetails;
+ detailsLevel7?: TimeTransactionApprovalDetails;
+ detailsLevel8?: TimeTransactionApprovalDetails;
+ detailsLevel9?: TimeTransactionApprovalDetails;
 }
 
 // Data object inside `data`

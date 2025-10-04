@@ -441,7 +441,7 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
           return;
         }
         // For group option - use selected employee
-        empId = parseInt(formValue.empId) || 0;
+        empId = parseInt(formValue.empId);
         
       } else {
         empId = null;

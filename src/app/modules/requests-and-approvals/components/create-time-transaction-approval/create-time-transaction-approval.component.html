@@ -467,7 +467,7 @@
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrId')?.value && getLevelFormControl(levelNumber, 'mgrId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrId')?.value">
                 <label [for]="'mgrIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -476,7 +476,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'mgrIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrId')?.value && getLevelFormControl(levelNumber, 'mgrId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrId')?.value">
                 <label [for]="'mgrIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'mgrIdAfterLimitAction_' + levelNumber"
@@ -511,7 +511,7 @@
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_DEPARTMENT' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value && getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value">
                 <label [for]="'mgrOfDeptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -520,7 +520,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'mgrOfDeptIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value && getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfDeptId')?.value">
                 <label [for]="'mgrOfDeptIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'mgrOfDeptIdAfterLimitAction_' + levelNumber"
@@ -555,7 +555,7 @@
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_MANAGER_OF_BRANCH' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value && getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value">
                 <label [for]="'mgrOfBranchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -564,7 +564,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'mgrOfBranchIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value && getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'mgrOfBranchId')?.value">
                 <label [for]="'mgrOfBranchIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'mgrOfBranchIdAfterLimitAction_' + levelNumber"
@@ -599,7 +599,7 @@
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_DEPARTMENT' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'deptId')?.value && getLevelFormControl(levelNumber, 'deptId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'deptId')?.value">
                 <label [for]="'deptIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -608,7 +608,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'deptIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'deptId')?.value && getLevelFormControl(levelNumber, 'deptId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'deptId')?.value">
                 <label [for]="'deptIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'deptIdAfterLimitAction_' + levelNumber"
@@ -643,7 +643,7 @@
                   placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_BRANCH' | translate }}">
                 </p-dropdown>
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'branchId')?.value && getLevelFormControl(levelNumber, 'branchId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'branchId')?.value">
                 <label [for]="'branchIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -687,7 +687,7 @@
                 placeholder="{{ 'CREATE_TIME_TRANSACTION_APPROVAL.SELECT_ROLE' | translate }}">
               </p-dropdown>
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'roleId')?.value && getLevelFormControl(levelNumber, 'roleId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'roleId')?.value">
                 <label [for]="'roleIdDaysLimits_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.DAYS_LIMITS' | translate }}</label>
                 <input 
                   type="number" 
@@ -696,7 +696,7 @@
                   [formControl]="getLevelFormControl(levelNumber, 'roleIdDaysLimits')"
                   min="0">
               </div>
-              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'roleId')?.value && getLevelFormControl(levelNumber, 'roleId')?.value > 0">
+              <div class="form-group" *ngIf="getLevelFormControl(levelNumber, 'roleId')?.value">
                 <label [for]="'roleIdAfterLimitAction_' + levelNumber" class="field-label">{{ 'CREATE_TIME_TRANSACTION_APPROVAL.AFTER_LIMIT_ACTIONS' | translate }}</label>
                 <select 
                   [id]="'roleIdAfterLimitAction_' + levelNumber"
