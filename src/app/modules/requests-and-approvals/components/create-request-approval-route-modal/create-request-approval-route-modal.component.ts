@@ -12,6 +12,7 @@ import {
   RequestApprovalRouteCreateDto,
   RouteDetailsLevel,
   RequestApprovalRouteItem,
+  RequestApprovalRouteDetails,
   UpdateRequestApprovalRouteRequest,
   RequestApprovalRouteUpdateDto
 } from '../../../../core/models/requestRoute';
@@ -400,32 +401,44 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   }
 
   private loadRouteForEdit() {
-  if (!this.editRouteId) return;
-  
-  this.loadingEditData = true;
-  console.log('Loading route for edit, ID:', this.editRouteId);
-  
-  this.requestRouteService.getRequestApprovalRouteById({
-    routeId: this.editRouteId,
-    lang: this.currentLang
-  }).subscribe({
-    next: (response) => {
-      console.log('Edit route response:', response);
-      if (response.isSuccess && response.data.requestApprovalRoutes.length > 0) {
-        const routeData = response.data.requestApprovalRoutes[0];
-          this.populateFormWithRouteData(routeData);
-      } else {
-        this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.FAILED_LOAD_ROUTE');
-      }
-      this.loadingEditData = false;
-    },
-    error: (error) => {
-      console.error('Error loading route for edit:', error);
-      this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.ERROR_LOADING_DATA');
-      this.loadingEditData = false;
-    }
-  });
-}
+    if (!this.editRouteId) return;
+    
+    this.loadingEditData = true;
+    console.log('Loading route for edit, ID:', this.editRouteId);
+    
+    // Wait a bit to ensure dropdown data is loaded before loading route data
+    setTimeout(() => {
+      this.requestRouteService.getRequestApprovalRouteById({
+        routeId: this.editRouteId!,
+        lang: this.currentLang
+      }).subscribe({
+        next: (response) => {
+          console.log('Edit route response:', response);
+          if (response.isSuccess && response.data.requestApprovalRoutes.length > 0) {
+            const routeData = response.data.requestApprovalRoutes[0];
+            
+            // Check if dropdown data is loaded, if not wait a bit more
+            if (this.employees.length === 0 || this.departmentsOrManagers.length === 0) {
+              console.log('Dropdown data not ready, waiting...');
+              setTimeout(() => {
+                this.populateFormWithRouteData(routeData);
+              }, 500);
+            } else {
+              this.populateFormWithRouteData(routeData);
+            }
+          } else {
+            this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.FAILED_LOAD_ROUTE');
+          }
+          this.loadingEditData = false;
+        },
+        error: (error) => {
+          console.error('Error loading route for edit:', error);
+          this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.ERROR_LOADING_DATA');
+          this.loadingEditData = false;
+        }
+      });
+    }, 200); // Initial delay to let dropdown loading start
+  }
 
   private populateFormWithRouteData(routeData: RequestApprovalRouteItem) {
     console.log('Populating form with route data:', routeData);
@@ -433,25 +446,221 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
     // Update selectedForEveryone based on route data
     this.selectedForEveryone = routeData.forEveryoneId;
 
-    // Patch form values
+    // Helper function to convert values for dropdowns (most dropdowns expect string values)
+    const convertToDropdownValue = (value: any): string => {
+      if (value === null || value === undefined) return '';
+      return String(value);
+    };
+
+    // Patch main form values
     this.createForm.patchValue({
       forEveryoneId: routeData.forEveryoneId,
-      stsId: routeData.stsId || null,
+      stsId: convertToDropdownValue(routeData.stsId),
       reqLevelId: routeData.reqLevelId,
-      note: routeData.note || null,
-      empId: routeData.empId || null,
-      mgrOfDeptId: routeData.deptIdMgr || null,
-      mgrOfBranchId: routeData.branchIdMgr || null,
-      deptId: routeData.deptId || null,
-      branchId: routeData.branchId || null,
-      roleId: routeData.roleId || null,
+      note: routeData.note || '',
+      // For "For a given group" option - these are the main fields that appear in the second form section
+      empId: convertToDropdownValue(routeData.empId),
+      mgrOfDeptId: convertToDropdownValue(routeData.deptIdMgr),
+      mgrOfBranchId: convertToDropdownValue(routeData.branchIdMgr),
+      deptId: convertToDropdownValue(routeData.deptId),
+      branchId: convertToDropdownValue(routeData.branchId),
+      roleId: convertToDropdownValue(routeData.roleId),
       isActive: routeData.isActive ?? true
     });
 
+    console.log('Form patched with main values:', {
+      forEveryoneId: routeData.forEveryoneId,
+      empId: routeData.empId,
+      empIdConverted: convertToDropdownValue(routeData.empId),
+      mgrOfDeptId: routeData.deptIdMgr,
+      mgrOfDeptIdConverted: convertToDropdownValue(routeData.deptIdMgr),
+      mgrOfBranchId: routeData.branchIdMgr,
+      mgrOfBranchIdConverted: convertToDropdownValue(routeData.branchIdMgr),
+      deptId: routeData.deptId,
+      deptIdConverted: convertToDropdownValue(routeData.deptId),
+      branchId: routeData.branchId,
+      branchIdConverted: convertToDropdownValue(routeData.branchId),
+      roleId: routeData.roleId,
+      roleIdConverted: convertToDropdownValue(routeData.roleId),
+      stsId: routeData.stsId,
+      stsIdConverted: convertToDropdownValue(routeData.stsId),
+      reqLevelId: routeData.reqLevelId,
+      note: routeData.note,
+      isActive: routeData.isActive
+    });
+
+    // Verify dropdown options contain the values we're trying to set
+    this.verifyDropdownValues(routeData);
+
+    // Trigger the forEveryoneChange logic to update validators and UI state
+    this.onForEveryoneChange();
+
+    // Force form control updates for PrimeNG dropdowns
+    setTimeout(() => {
+      this.forceFormControlUpdates();
+    }, 50);
+  }
+
+  private verifyDropdownValues(routeData: RequestApprovalRouteItem) {
+    console.log('Verifying dropdown values...');
+    
+    // Helper to check if value exists in dropdown options
+    const checkValue = (value: any, options: DropdownItem[], fieldName: string) => {
+      if (!value && value !== 0) return; // Skip null/empty values
+      
+      const stringValue = String(value);
+      const found = options.find(option => option.value === stringValue);
+      
+      if (!found && options.length > 0) {
+        console.warn(`Value "${stringValue}" not found in ${fieldName} dropdown options:`, options.map(o => o.value));
+      } else if (found) {
+        console.log(`✓ Value "${stringValue}" found in ${fieldName} dropdown as "${found.label}"`);
+      }
+    };
+
+    // Check main dropdown values
+    if (routeData.empId) checkValue(routeData.empId, this.employees, 'employees');
+    if (routeData.deptIdMgr) checkValue(routeData.deptIdMgr, this.departmentsOrManagers, 'departmentsOrManagers (mgrOfDept)');
+    if (routeData.branchIdMgr) checkValue(routeData.branchIdMgr, this.branchesOrManagers, 'branchesOrManagers (mgrOfBranch)');
+    if (routeData.deptId) checkValue(routeData.deptId, this.departmentsOrManagers, 'departmentsOrManagers (dept)');
+    if (routeData.branchId) checkValue(routeData.branchId, this.branchesOrManagers, 'branchesOrManagers (branch)');
+    if (routeData.roleId) checkValue(routeData.roleId, this.roles, 'roles');
+    if (routeData.stsId) checkValue(routeData.stsId, this.statuses, 'statuses');
+    
+    console.log('Current dropdown data lengths:', {
+      employees: this.employees.length,
+      departmentsOrManagers: this.departmentsOrManagers.length,
+      branchesOrManagers: this.branchesOrManagers.length,
+      roles: this.roles.length,
+      statuses: this.statuses.length,
+      managers: this.managers.length
+    });
 
     // Set selected request levels and recreate level details
     this.selectedRequestLevels = routeData.reqLevelId;
     this.onRequestLevelsChange();
+
+    // Use setTimeout to ensure the form array is fully initialized before populating
+    // Also wait a bit longer to ensure all dropdown data is loaded
+    setTimeout(() => {
+      this.populateLevelDetails(routeData);
+    }, 100);
+  }
+
+  private populateLevelDetails(routeData: RequestApprovalRouteItem) {
+    console.log('Populating level details with route data:', routeData);
+    console.log('Level details array length:', this.levelDetailsArray.length);
+    
+    // Array of level detail properties in the route data
+    const levelDetailProperties = [
+      'detailsLevel1', 'detailsLevel2', 'detailsLevel3', 
+      'detailsLevel4', 'detailsLevel5', 'detailsLevel6', 
+      'detailsLevel7', 'detailsLevel8', 'detailsLevel9'
+    ];
+
+    levelDetailProperties.forEach((levelProperty, index) => {
+      const levelData = routeData[levelProperty as keyof RequestApprovalRouteItem] as RequestApprovalRouteDetails;
+      
+      console.log(`Processing ${levelProperty} (index ${index}):`, levelData);
+      
+      if (levelData && index < this.levelDetailsArray.length) {
+        const levelControl = this.levelDetailsArray.at(index);
+        
+        if (levelControl) {
+          try {
+            // Helper function to convert values for level details
+            const convertForLevelField = (value: any): string => {
+              if (value === null || value === undefined) return '';
+              return String(value);
+            };
+
+            // Safely patch each field, converting null to appropriate default values
+            levelControl.patchValue({
+              // Dynamic Direct Manager
+              dynDirectMgr: levelData.dynDirectMgr ?? 0,
+              dynDirectMgrLevel: convertForLevelField(levelData.dynDirectMgrLevel),
+              dynDirectMgrDaysLimits: convertForLevelField(levelData.dynDirectMgrDaysLimits),
+              dynDirectMgrAfterLimitAction: convertForLevelField(levelData.dynDirectMgrAfterLimitAction),
+              
+              // Dynamic Manager of Department
+              dynMgrOfDept: levelData.dynMgrOfDept ?? 0,
+              dynMgrOfDeptLevel: convertForLevelField(levelData.dynMgrOfDeptLevel),
+              dynMgrOfDeptDaysLimits: convertForLevelField(levelData.dynMgrOfDeptDaysLimits),
+              dynMgrOfDeptAfterLimitAction: convertForLevelField(levelData.dynMgrOfDeptAfterLimitAction),
+              
+              // Dynamic Manager of Branch
+              dynMgrOfBranch: levelData.dynMgrOfBranch ?? 0,
+              dynMgrOfBranchLevel: convertForLevelField(levelData.dynMgrOfBranchLevel),
+              dynMgrOfBranchDaysLimits: convertForLevelField(levelData.dynMgrOfBranchDaysLimits),
+              dynMgrOfBranchAfterLimitAction: convertForLevelField(levelData.dynMgrOfBranchAfterLimitAction),
+              
+              // Static Manager
+              mgrId: convertForLevelField(levelData.mgrId),
+              mgrIdDaysLimits: convertForLevelField(levelData.mgrIdDaysLimits),
+              mgrIdAfterLimitAction: convertForLevelField(levelData.mgrIdAfterLimitAction),
+              
+              // Manager of Department
+              mgrOfDeptId: convertForLevelField(levelData.mgrOfDeptId),
+              mgrOfDeptIdDaysLimits: convertForLevelField(levelData.mgrOfDeptIdDaysLimits),
+              mgrOfDeptIdAfterLimitAction: convertForLevelField(levelData.mgrOfDeptIdAfterLimitAction),
+              
+              // Manager of Branch
+              mgrOfBranchId: convertForLevelField(levelData.mgrOfBranchId),
+              mgrOfBranchIdDaysLimits: convertForLevelField(levelData.mgrOfBranchIdDaysLimits),
+              mgrOfBranchIdAfterLimitAction: convertForLevelField(levelData.mgrOfBranchIdAfterLimitAction),
+              
+              // Department
+              deptId: convertForLevelField(levelData.deptId),
+              deptIdDaysLimits: convertForLevelField(levelData.deptIdDaysLimits),
+              deptIdAfterLimitAction: convertForLevelField(levelData.deptIdAfterLimitAction),
+              
+              // Branch
+              branchId: convertForLevelField(levelData.branchId),
+              branchIdDaysLimits: convertForLevelField(levelData.branchIdDaysLimits),
+              branchIdAfterLimitAction: convertForLevelField(levelData.branchIdAfterLimitAction),
+              
+              // Role
+              roleId: convertForLevelField(levelData.roleId),
+              roleIdDaysLimits: convertForLevelField(levelData.roleIdDaysLimits),
+              roleIdAfterLimitAction: convertForLevelField(levelData.roleIdAfterLimitAction),
+              
+              // Note Details
+              noteDetails: levelData.noteDetails ?? ''
+            });
+            
+            console.log(`Successfully populated level ${index + 1} with data:`, levelControl.value);
+          } catch (error) {
+            console.error(`Error populating level ${index + 1}:`, error);
+          }
+        } else {
+          console.warn(`Level control not found for index ${index}`);
+        }
+      } else {
+        if (!levelData) {
+          console.log(`No level data found for ${levelProperty}`);
+        }
+        if (index >= this.levelDetailsArray.length) {
+          console.warn(`Index ${index} exceeds form array length ${this.levelDetailsArray.length}`);
+        }
+      }
+    });
+  }
+
+  private forceFormControlUpdates() {
+    // Force all form controls to update their value and validity
+    // This helps with PrimeNG dropdowns that sometimes don't update properly
+    const controlNames = ['empId', 'mgrOfDeptId', 'mgrOfBranchId', 'deptId', 'branchId', 'roleId', 'stsId'];
+    
+    controlNames.forEach(controlName => {
+      const control = this.createForm.get(controlName);
+      if (control) {
+        const currentValue = control.value;
+        control.updateValueAndValidity();
+        
+        // Log for debugging
+        console.log(`Force updated ${controlName}: ${currentValue}`);
+      }
+    });
   }
 
   // Getters for form arrays
