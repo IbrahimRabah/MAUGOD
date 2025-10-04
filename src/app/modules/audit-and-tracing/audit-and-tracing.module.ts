@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AuditAndTracingRoutingModule } from './audit-and-tracing-routing.module';
 import { AuditAndTracingComponent } from './components/audit-and-tracing/audit-and-tracing.component';
@@ -19,6 +20,7 @@ import { TablesTraceSettingsComponent } from './components/tables-trace-settings
   ],
   imports: [
     CommonModule,
+    TranslateModule,
     AuditAndTracingRoutingModule
   ]
 })

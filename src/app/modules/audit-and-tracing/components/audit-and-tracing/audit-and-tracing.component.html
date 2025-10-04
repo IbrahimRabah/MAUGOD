@@ -1,1 +1,49 @@
-<p>audit-and-tracing works!</p>
+<div class="cards-container">
+  <!-- Track Changes Card -->
+  <a [routerLink]="['/audit-and-tracing/track-changes']" class="card track-changes">
+    <div class="icon-container">
+      <i class="fas fa-history"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_OPEN_DOCUMENT' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Login Trace Card -->
+  <a [routerLink]="['/audit-and-tracing/login-trace']" class="card login-trace">
+    <div class="icon-container">
+      <i class="fas fa-sign-in-alt"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.AUDIT_TRACING_SECTIONS.TRACK_OPEN_DOCUMENT_TRANSACTION' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Error Logs Card -->
+  <a [routerLink]="['/audit-and-tracing/error-logs']" class="card error-logs">
+    <div class="icon-container">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.AUDIT_TRACING_SECTIONS.ERROR_LOGS' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+
+  <!-- Tables Trace Settings Card -->
+  <a [routerLink]="['/audit-and-tracing/tables-trace-settings']" class="card tables-trace-settings">
+    <div class="icon-container">
+      <i class="fas fa-table"></i>
+    </div>
+    <h2 class="card-title">{{ 'MENU.AUDIT_TRACING_SECTIONS.LOGIN_TRACE' | translate }}</h2>
+    <div class="visit-indicator">
+      <i class="fa-solid fa-eye"></i>
+      <span>{{ 'VISIT' | translate }}</span>
+    </div>
+  </a>
+</div>

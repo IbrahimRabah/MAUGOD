@@ -400,32 +400,32 @@ export class CreateRequestApprovalRouteModalComponent implements OnInit, OnDestr
   }
 
   private loadRouteForEdit() {
-    if (!this.editRouteId) return;
-    
-    this.loadingEditData = true;
-    console.log('Loading route for edit, ID:', this.editRouteId);
-    
-    this.requestRouteService.getRequestApprovalRouteById({
-      routeId: this.editRouteId,
-      lang: this.currentLang
-    }).subscribe({
-      next: (response) => {
-        console.log('Edit route response:', response);
-        if (response.isSuccess && response.data.requestApprovalRoutes.length > 0) {
-          const routeData = response.data.requestApprovalRoutes[0];
+  if (!this.editRouteId) return;
+  
+  this.loadingEditData = true;
+  console.log('Loading route for edit, ID:', this.editRouteId);
+  
+  this.requestRouteService.getRequestApprovalRouteById({
+    routeId: this.editRouteId,
+    lang: this.currentLang
+  }).subscribe({
+    next: (response) => {
+      console.log('Edit route response:', response);
+      if (response.isSuccess && response.data.requestApprovalRoutes.length > 0) {
+        const routeData = response.data.requestApprovalRoutes[0];
           this.populateFormWithRouteData(routeData);
-        } else {
-          this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.FAILED_LOAD_ROUTE');
-        }
-        this.loadingEditData = false;
-      },
-      error: (error) => {
-        console.error('Error loading route for edit:', error);
-        this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.ERROR_LOADING_DATA');
-        this.loadingEditData = false;
+      } else {
+        this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.FAILED_LOAD_ROUTE');
       }
-    });
-  }
+      this.loadingEditData = false;
+    },
+    error: (error) => {
+      console.error('Error loading route for edit:', error);
+      this.showErrorMessage('CREATE_REQUEST_APPROVAL_ROUTE.ERROR_LOADING_DATA');
+      this.loadingEditData = false;
+    }
+  });
+}
 
   private populateFormWithRouteData(routeData: RequestApprovalRouteItem) {
     console.log('Populating form with route data:', routeData);

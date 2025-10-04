@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { SystemManagementRoutingModule } from './system-management-routing.module';
 import { SystemManagementComponent } from './components/system-management/system-management.component';
@@ -21,6 +22,7 @@ import { SessionsManagementComponent } from './components/sessions-management/se
   ],
   imports: [
     CommonModule,
+    TranslateModule,
     SystemManagementRoutingModule
   ]
 })

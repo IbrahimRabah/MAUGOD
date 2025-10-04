@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { ConsorshipRoutingModule } from './consorship-routing.module';
 import { CorsorshipComponent } from './components/corsorship/corsorship.component';
@@ -17,6 +18,7 @@ import { AlarmComponent } from './components/alarm/alarm.component';
   ],
   imports: [
     CommonModule,
+    TranslateModule,
     ConsorshipRoutingModule
   ]
 })

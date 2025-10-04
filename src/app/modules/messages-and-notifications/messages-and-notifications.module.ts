@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { MessagesAndNotificationsRoutingModule } from './messages-and-notifications-routing.module';
 import { MasseagesAndNotificationsComponent } from './components/masseages-and-notifications/masseages-and-notifications.component';
@@ -21,6 +22,7 @@ import { NotificationsSettingsComponent } from './components/notifications-setti
   ],
   imports: [
     CommonModule,
+    TranslateModule,
     MessagesAndNotificationsRoutingModule
   ]
 })

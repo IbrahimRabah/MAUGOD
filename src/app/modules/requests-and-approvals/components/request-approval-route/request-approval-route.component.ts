@@ -266,9 +266,11 @@ export class RequestApprovalRouteComponent implements OnInit, OnDestroy {
 
   deleteRoute(route: RequestApprovalRoute) {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this approval route?',
-      header: 'Confirm Deletion',
+      message: this.translateService.instant('REQUEST_APPROVAL_ROUTE.DELETE_CONFIRMATION'),
+      header: this.translateService.instant('CONFIRM_DELE'),
       icon: 'fa fa-exclamation-triangle',
+      acceptLabel: this.translateService.instant('COMMON.YES'),
+      rejectLabel: this.translateService.instant('COMMON.NO'),
       accept: () => {
         this.performDelete(route);
       }
