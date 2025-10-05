@@ -116,8 +116,6 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       note: [''],
       requestLevel: [0, Validators.required],
       isActive: [true, Validators.required],
-      // Always include empId since it's needed for both modes
-      empId: [0]
     });
 
     // Set initial state
@@ -128,10 +126,10 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       console.log('forEveryone changed to:', value); // Debug log
       this.selectedForEveryone = parseInt(value);
       if (this.selectedForEveryone === 0) {
-        // For group - add additional controls (empId already exists)
+        // For group - add additional controls
         this.addGroupControls();
       } else {
-        // For everyone - remove group controls but keep empId
+        // For everyone - remove group controls
         this.removeGroupControls();
       }
     });
@@ -146,7 +144,9 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
   }
 
   private addGroupControls() {
-    // Don't add empId since it's already in the main form
+    if (!this.createForm.get('empId')) {
+      this.createForm.addControl('empId', this.fb.control(0));
+    }
     if (!this.createForm.get('managerId')) {
       this.createForm.addControl('managerId', this.fb.control(0));
     }
@@ -168,7 +168,7 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
   }
 
   private removeGroupControls() {
-    // Don't remove empId since it's needed for both modes
+    this.createForm.removeControl('empId');
     this.createForm.removeControl('managerId');
     this.createForm.removeControl('mgrOfDeptId');
     this.createForm.removeControl('mgrOfBranchId');
@@ -448,12 +448,12 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
     });
 
     // Check if we have any group-related data that needs to be preserved
-    const hasGroupData = (approvalData.empId && approvalData.empId > 0) || 
-                        (approvalData.deptIdMgr && approvalData.deptIdMgr > 0) || 
-                        (approvalData.branchIdMgr && approvalData.branchIdMgr > 0) || 
-                        (approvalData.deptId && approvalData.deptId > 0) || 
-                        (approvalData.branchId && approvalData.branchId > 0) || 
-                        (approvalData.roleId && approvalData.roleId > 0);
+    const hasGroupData = (approvalData.empId) || 
+                        (approvalData.deptIdMgr) || 
+                        (approvalData.branchIdMgr) || 
+                        (approvalData.deptId) || 
+                        (approvalData.branchId) || 
+                        (approvalData.roleId);
     
     console.log('Checking group data:', {
       forEveryoneId: approvalData.forEveryoneId,
@@ -609,27 +609,28 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       if (levelData && this.levelForms[levelNumber]) {
         try {
           // Helper function to convert values for level details
-          const convertForLevelField = (value: any): string => {
-            if (value === null || value === undefined) return '';
-            return String(value);
+          const convertForLevelField = (value: any): number | null => {
+            if (value === null || value === undefined || value === '') return null;
+            return isNaN(Number(value)) ? null : Number(value);
           };
+
 
           // Safely patch each field in the level form
           this.levelForms[levelNumber].patchValue({
             // Dynamic Direct Manager
-            dynDirectMgr: levelData.dynDirectMgr ?? 0,
+            dynDirectMgr: levelData.dynDirectMgr,
             dynDirectMgrLevel: convertForLevelField(levelData.dynDirectMgrLevel),
             dynDirectMgrDaysLimits: convertForLevelField(levelData.dynDirectMgrDaysLimits),
             dynDirectMgrAfterLimitAction: convertForLevelField(levelData.dynDirectMgrAfterLimitAction),
             
             // Dynamic Manager of Department
-            dynMgrOfDept: levelData.dynMgrOfDept ?? 0,
+            dynMgrOfDept: levelData.dynMgrOfDept,
             dynMgrOfDeptLevel: convertForLevelField(levelData.dynMgrOfDeptLevel),
             dynMgrOfDeptDaysLimits: convertForLevelField(levelData.dynMgrOfDeptDaysLimits),
             dynMgrOfDeptAfterLimitAction: convertForLevelField(levelData.dynMgrOfDeptAfterLimitAction),
             
             // Dynamic Manager of Branch
-            dynMgrOfBranch: levelData.dynMgrOfBranch ?? 0,
+            dynMgrOfBranch: levelData.dynMgrOfBranch,
             dynMgrOfBranchLevel: convertForLevelField(levelData.dynMgrOfBranchLevel),
             dynMgrOfBranchDaysLimits: convertForLevelField(levelData.dynMgrOfBranchDaysLimits),
             dynMgrOfBranchAfterLimitAction: convertForLevelField(levelData.dynMgrOfBranchAfterLimitAction),
@@ -660,7 +661,7 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
             roleIdDaysLimits: convertForLevelField(levelData.roleIdDaysLimits),
             roleIdAfterLimitAction: convertForLevelField(levelData.roleIdAfterLimitAction),
             
-            noteDetails: levelData.noteDetails ?? ''
+            noteDetails: levelData.noteDetails ?? null
           });
           
           console.log(`Successfully populated level ${levelNumber} with data:`, this.levelForms[levelNumber].value);

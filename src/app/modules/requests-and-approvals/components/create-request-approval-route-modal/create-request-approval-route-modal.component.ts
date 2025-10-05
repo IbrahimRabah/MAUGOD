@@ -999,37 +999,37 @@ onForEveryoneChange() {
     formValue.levelDetails.forEach((levelDetail: any, index: number) => {
       const levelKey = `detailsLevel${index + 1}` as keyof RequestApprovalRouteCreateDto;
       (createDto as any)[levelKey] = {
-        dynDirectMgr: levelDetail.dynDirectMgr || null,
-        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) || null,
-        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) || null,
-        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction) || null,
-        dynMgrOfDept: levelDetail.dynMgrOfDept || null,
-        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel) || null,
-        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits) || null,
-        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction) || null,
-        dynMgrOfBranch: levelDetail.dynMgrOfBranch || null,
-        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel) || null,
-        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits) || null,
-        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction) || null,
-        mgrId: parseInt(levelDetail.mgrId) || null,
-        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits) || null,
-        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction) || null,
-        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId) || null,
-        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits) || null,
-        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction) || null,
-        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId) || null,
-        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits) || null,
-        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction) || null,
-        deptId: parseInt(levelDetail.deptId) || null,
-        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits) || null,
-        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction) || null,
-        branchId: parseInt(levelDetail.branchId) || null,
-        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits) || null,
-        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction) || null,
-        roleId: parseInt(levelDetail.roleId) || null,
-        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits) || null,
-        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction) || null,
-        noteDetails: levelDetail.noteDetails || ''
+        dynDirectMgr: levelDetail.dynDirectMgr ?? null,
+        dynDirectMgrLevel: parseInt(levelDetail.dynDirectMgrLevel) ?? null,
+        dynDirectMgrDaysLimits: parseInt(levelDetail.dynDirectMgrDaysLimits) ?? null,
+        dynDirectMgrAfterLimitAction: parseInt(levelDetail.dynDirectMgrAfterLimitAction) ?? null,
+        dynMgrOfDept: levelDetail.dynMgrOfDept ?? null,
+        dynMgrOfDeptLevel: parseInt(levelDetail.dynMgrOfDeptLevel) ?? null,
+        dynMgrOfDeptDaysLimits: parseInt(levelDetail.dynMgrOfDeptDaysLimits) ?? null,
+        dynMgrOfDeptAfterLimitAction: parseInt(levelDetail.dynMgrOfDeptAfterLimitAction) ?? null,
+        dynMgrOfBranch: levelDetail.dynMgrOfBranch ?? null,
+        dynMgrOfBranchLevel: parseInt(levelDetail.dynMgrOfBranchLevel) ?? null,
+        dynMgrOfBranchDaysLimits: parseInt(levelDetail.dynMgrOfBranchDaysLimits) ?? null,
+        dynMgrOfBranchAfterLimitAction: parseInt(levelDetail.dynMgrOfBranchAfterLimitAction) ?? null,
+        mgrId: parseInt(levelDetail.mgrId) ?? null,
+        mgrIdDaysLimits: parseInt(levelDetail.mgrIdDaysLimits) ?? null,
+        mgrIdAfterLimitAction: parseInt(levelDetail.mgrIdAfterLimitAction) ?? null,
+        mgrOfDeptId: parseInt(levelDetail.mgrOfDeptId) ?? null,
+        mgrOfDeptIdDaysLimits: parseInt(levelDetail.mgrOfDeptIdDaysLimits) ?? null,
+        mgrOfDeptIdAfterLimitAction: parseInt(levelDetail.mgrOfDeptIdAfterLimitAction) ?? null,
+        mgrOfBranchId: parseInt(levelDetail.mgrOfBranchId) ?? null,
+        mgrOfBranchIdDaysLimits: parseInt(levelDetail.mgrOfBranchIdDaysLimits) ?? null,
+        mgrOfBranchIdAfterLimitAction: parseInt(levelDetail.mgrOfBranchIdAfterLimitAction) ?? null,
+        deptId: parseInt(levelDetail.deptId) ?? null,
+        deptIdDaysLimits: parseInt(levelDetail.deptIdDaysLimits) ?? null,
+        deptIdAfterLimitAction: parseInt(levelDetail.deptIdAfterLimitAction) ?? null,
+        branchId: parseInt(levelDetail.branchId) ?? null,
+        branchIdDaysLimits: parseInt(levelDetail.branchIdDaysLimits) ?? null,
+        branchIdAfterLimitAction: parseInt(levelDetail.branchIdAfterLimitAction) ?? null,
+        roleId: parseInt(levelDetail.roleId) ?? null,
+        roleIdDaysLimits: parseInt(levelDetail.roleIdDaysLimits) ?? null,
+        roleIdAfterLimitAction: parseInt(levelDetail.roleIdAfterLimitAction) ?? null,
+        noteDetails: levelDetail.noteDetails ?? null
       } as RouteDetailsLevel;
     });
 
@@ -1169,7 +1169,7 @@ onForEveryoneChange() {
     this.translateService.get(messageKey).subscribe(translatedMessage => {
       this.messageService.add({
         severity: 'success',
-        summary: 'Success',
+        summary: this.translateService.instant('SUCCESS'),
         detail: translatedMessage,
         life: 3000
       });
@@ -1180,7 +1180,7 @@ onForEveryoneChange() {
     this.translateService.get(messageKey).subscribe(translatedMessage => {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
+        summary: this.translateService.instant('ERROR'),
         detail: translatedMessage,
         life: 5000
       });

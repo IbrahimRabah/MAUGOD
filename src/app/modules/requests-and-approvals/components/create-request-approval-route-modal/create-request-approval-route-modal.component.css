@@ -708,3 +708,8 @@
   left: auto !important;
   right: 0.5rem !important;
 }
+
+:host ::ng-deep .p-toast {
+  z-index: 100000 !important; /* higher than modal-backdrop (99999) */
+}
+
