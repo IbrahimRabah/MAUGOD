@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- System Messages Card -->
-  <a [routerLink]="['/messages-and-notifications/system-messages']" class="card system-messages">
+  <a [routerLink]="['/messages-and-notifications/system-messages']" class="card system-messages" *ngIf="hasPermission(27)">
     <div class="icon-container">
       <i class="fas fa-message"></i>
     </div>
@@ -12,7 +12,7 @@
   </a>
 
   <!-- Notifications Text Card -->
-  <a [routerLink]="['/messages-and-notifications/notifications-text']" class="card notifications-text">
+  <a [routerLink]="['/messages-and-notifications/notifications-text']" class="card notifications-text" *ngIf="hasPermission(101)">
     <div class="icon-container">
       <i class="fas fa-bell-concierge"></i>
     </div>
@@ -24,7 +24,7 @@
   </a>
 
   <!-- News Card -->
-  <a [routerLink]="['/messages-and-notifications/news']" class="card news">
+  <a [routerLink]="['/messages-and-notifications/news']" class="card news" *ngIf="hasPermission(124)">
     <div class="icon-container">
       <i class="fas fa-newspaper"></i>
     </div>
@@ -36,7 +36,7 @@
   </a>
 
   <!-- Send Notifications Card -->
-  <a [routerLink]="['/messages-and-notifications/send-notifications']" class="card send-notifications">
+  <a [routerLink]="['/messages-and-notifications/send-notifications']" class="card send-notifications" *ngIf="hasPermission(98)">
     <div class="icon-container">
       <i class="fas fa-paper-plane"></i>
     </div>
@@ -48,7 +48,7 @@
   </a>
 
   <!-- Notifications Settings Card -->
-  <a [routerLink]="['/messages-and-notifications/notifications-settings']" class="card notifications-settings">
+  <a [routerLink]="['/messages-and-notifications/notifications-settings']" class="card notifications-settings" *ngIf="hasPermission(126)">
     <div class="icon-container">
       <i class="fas fa-gear"></i>
     </div>

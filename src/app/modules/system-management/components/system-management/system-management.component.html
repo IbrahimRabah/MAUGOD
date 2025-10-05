@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- System Setup Card -->
-  <a [routerLink]="['/system-management/system-setup']" class="card system-setup">
+  <a [routerLink]="['/system-management/system-setup']" class="card system-setup" *ngIf="hasPermission(19)">
     <div class="icon-container">
       <i class="fas fa-sliders-h"></i>
     </div>
@@ -12,7 +12,7 @@
   </a>
 
   <!-- Hijri Data Card -->
-  <a [routerLink]="['/system-management/hijri-data']" class="card hijri-data">
+  <a [routerLink]="['/system-management/hijri-data']" class="card hijri-data" *ngIf="hasPermission(49)">
     <div class="icon-container">
       <i class="fas fa-calendar-alt"></i>
     </div>
@@ -24,7 +24,7 @@
   </a>
 
   <!-- Language Data Card -->
-  <a [routerLink]="['/system-management/language-data']" class="card language-data">
+  <a [routerLink]="['/system-management/language-data']" class="card language-data" *ngIf="hasPermission(55)">
     <div class="icon-container">
       <i class="fas fa-language"></i>
     </div>
@@ -36,7 +36,7 @@
   </a>
 
   <!-- User Profile Card -->
-  <a [routerLink]="['/system-management/user-profile']" class="card user-profile">
+  <a [routerLink]="['/system-management/user-profile']" class="card user-profile" *ngIf="hasPermission(125)">
     <div class="icon-container">
       <i class="fas fa-user-circle"></i>
     </div>
@@ -48,7 +48,7 @@
   </a>
 
   <!-- Sessions Management Card -->
-  <a [routerLink]="['/system-management/sessions-management']" class="card sessions-management">
+  <a [routerLink]="['/system-management/sessions-management']" class="card sessions-management" *ngIf="hasPermission(123)">
     <div class="icon-container">
       <i class="fas fa-clock"></i>
     </div>

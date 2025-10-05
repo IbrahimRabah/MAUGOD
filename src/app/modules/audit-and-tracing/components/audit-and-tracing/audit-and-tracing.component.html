@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- Track Changes Card -->
-  <a [routerLink]="['/audit-and-tracing/track-changes']" class="card track-changes">
+  <a [routerLink]="['/audit-and-tracing/track-changes']" class="card track-changes" *ngIf="hasPermission(115)">
     <div class="icon-container">
       <i class="fas fa-history"></i>
     </div>
@@ -12,7 +12,7 @@
   </a>
 
   <!-- Login Trace Card -->
-  <a [routerLink]="['/audit-and-tracing/login-trace']" class="card login-trace">
+  <a [routerLink]="['/audit-and-tracing/login-trace']" class="card login-trace" *ngIf="hasPermission(63)">
     <div class="icon-container">
       <i class="fas fa-sign-in-alt"></i>
     </div>
@@ -24,7 +24,7 @@
   </a>
 
   <!-- Error Logs Card -->
-  <a [routerLink]="['/audit-and-tracing/error-logs']" class="card error-logs">
+  <a [routerLink]="['/audit-and-tracing/error-logs']" class="card error-logs" *ngIf="hasPermission(114)">
     <div class="icon-container">
       <i class="fas fa-exclamation-triangle"></i>
     </div>
@@ -36,7 +36,7 @@
   </a>
 
   <!-- Tables Trace Settings Card -->
-  <a [routerLink]="['/audit-and-tracing/tables-trace-settings']" class="card tables-trace-settings">
+  <a [routerLink]="['/audit-and-tracing/tables-trace-settings']" class="card tables-trace-settings" *ngIf="hasPermission(109)">
     <div class="icon-container">
       <i class="fas fa-table"></i>
     </div>

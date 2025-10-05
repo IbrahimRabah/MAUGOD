@@ -394,20 +394,6 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
         currentEmpId: this.authService.getEmpIdAsNumber() || 0
       };
 
-      // Console.log values before submission
-      console.log('=== USER ROLE ASSIGNMENT SUBMISSION ===');
-      console.log('Selected Employees:', this.selectedEmployeeIds);
-      console.log('Selected Departments:', this.selectedDepartmentIds);
-      console.log('Selected Department Managers:', this.selectedDepartmentManagerIds);
-      console.log('Selected Branches:', this.selectedBranchIds);
-      console.log('Selected Branch Managers:', this.selectedBranchManagerIds);
-      console.log('Selected Roles:', this.selectedRoleIds);
-      console.log('Start Date:', formData.startDate);
-      console.log('End Date:', formData.endDate);
-      console.log('Current Employee ID:', this.authService.getEmpIdAsNumber());
-      console.log('Complete Payload:', payload);
-      console.log('=======================================');
-
       // Call the assignUserRoles endpoint
       this.roleAssignmentService.assignUserRoles(this.langService.getLangValue(), payload).subscribe({
         next: (response) => {

@@ -72,6 +72,18 @@ export class LoginComponent {
       localStorage.setItem('empName', response.data.empName || '');
       localStorage.setItem('loginId', response.data.loginId || '');
     }
+        
+    if(response.data.menuList.length === 0){
+      response.data.menuList.push({
+        "id":1,
+        "levelValue":0,
+        "labelValue":"الرئيسية",
+        "targetValue":"f?p=100:1:a32908c4-0864-4349-9da5-2adddf",
+        "isCurrent":false,
+        "imageValue":"fa-home"
+      });
+    }
+
      localStorage.setItem('menuList', JSON.stringify(response.data.menuList));
      
      // Set user permissions in the permissions service

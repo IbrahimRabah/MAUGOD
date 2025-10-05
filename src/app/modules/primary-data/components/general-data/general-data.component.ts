@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-general-data',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class GeneralDataComponent {
 
+  constructor(public permissionsService: PermissionsService) {}
+
+  hasPermission(menuId: number): boolean {
+    return this.permissionsService.hasPermission(menuId);
+  }
 }

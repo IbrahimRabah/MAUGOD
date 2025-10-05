@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-premissions-manaagement',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrl: './premissions-manaagement.component.css'
 })
 export class PremissionsManaagementComponent {
-
+  
+  constructor(public permissionsService: PermissionsService) {}
+  
+  hasAnyChildPermission(menuIds: number[]): boolean {
+    return this.permissionsService.hasAnyPermission(menuIds);
+  }
 }

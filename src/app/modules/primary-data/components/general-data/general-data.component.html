@@ -1,6 +1,6 @@
 <div class="cards-container">
     <!-- Branches Card -->
-    <a [routerLink]="['/primary-data/branches']" class="card branches">
+    <a [routerLink]="['/primary-data/branches']" class="card branches"  *ngIf="hasPermission(53)">
         <div class="icon-container">
             <i class="fas fa-code-branch"></i>
         </div>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Departments Card -->
-    <a [routerLink]="['/primary-data/departments']" class="card departments">
+    <a [routerLink]="['/primary-data/departments']" class="card departments" *ngIf="hasPermission(75)">
         <div class="icon-container">
             <i class="fas fa-sitemap"></i>
         </div>
@@ -24,7 +24,7 @@
     </a>
 
     <!-- Employees Card -->
-    <a [routerLink]="['/primary-data/employees']" class="card employees">
+    <a [routerLink]="['/primary-data/employees']" class="card employees" *ngIf="hasPermission(83)">
         <div class="icon-container">
             <i class="fas fa-users"></i>
         </div>
@@ -36,7 +36,7 @@
     </a>
 
     <!-- Nationalities Card -->
-    <a [routerLink]="['/primary-data/nationalities']" class="card nationalities">
+    <a [routerLink]="['/primary-data/nationalities']" class="card nationalities" *ngIf="hasPermission(128)">
         <div class="icon-container">
             <i class="fas fa-globe"></i>
         </div>
@@ -48,7 +48,7 @@
     </a>
 
     <!-- Banks Card -->
-    <a [routerLink]="['/primary-data/banks']" class="card banks">
+    <a [routerLink]="['/primary-data/banks']" class="card banks" *ngIf="hasPermission(106)">
         <div class="icon-container">
             <i class="fas fa-university"></i>
         </div>
@@ -60,7 +60,7 @@
     </a>
 
     <!-- Cities Card -->
-    <a [routerLink]="['/primary-data/cities']" class="card cities">
+    <a [routerLink]="['/primary-data/cities']" class="card cities" *ngIf="hasPermission(156)">
         <div class="icon-container">
             <i class="fas fa-city"></i>
         </div>
@@ -72,7 +72,7 @@
     </a>
 
     <!-- Organization Card -->
-    <a [routerLink]="['/primary-data/organization']" class="card organization">
+    <a [routerLink]="['/primary-data/organization']" class="card organization" *ngIf="hasPermission(160)">
         <div class="icon-container">
             <i class="fas fa-building"></i>
         </div>
@@ -84,7 +84,7 @@
     </a>
 
     <!-- Province Card -->
-    <a [routerLink]="['/primary-data/province']" class="card province">
+    <a [routerLink]="['/primary-data/province']" class="card province" *ngIf="hasPermission(164)">
         <div class="icon-container">
             <i class="fas fa-map-marked-alt"></i>
         </div>
