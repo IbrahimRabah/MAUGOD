@@ -6,7 +6,7 @@
   <div class="cards-grid">
     <!-- Charts List Card -->
     <div class="system-card" 
-         [routerLink]="['../charts-list']">
+         [routerLink]="['../charts-list']" *ngIf="hasPermission(59)">
       <div class="card-icon charts-list">
         <i class="fas fa-chart-line"></i>
       </div>
@@ -17,7 +17,7 @@
 
     <!-- Reports List Card -->
     <div class="system-card" 
-         [routerLink]="['../report-list']">
+         [routerLink]="['../report-list']" *ngIf="hasPermission(73)">
       <div class="card-icon reports-list">
         <i class="fas fa-file-alt"></i>
       </div>
@@ -28,7 +28,7 @@
 
     <!-- System Menus Card -->
     <div class="system-card" 
-         [routerLink]="['../system-menus']">
+         [routerLink]="['../system-menus']" *ngIf="hasPermission(92)">
       <div class="card-icon system-menus">
         <i class="fas fa-bars"></i>
       </div>
@@ -39,7 +39,7 @@
 
     <!-- System Modules Card -->
     <div class="system-card" 
-         [routerLink]="['../system-modules']">
+         [routerLink]="['../system-modules']" *ngIf="hasPermission(93)">
       <div class="card-icon system-modules">
         <i class="fas fa-th-large"></i>
       </div>

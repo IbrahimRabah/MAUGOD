@@ -93,7 +93,12 @@ const routes: Routes = [
     path: 'consorship',
     loadChildren: () => import('./modules/consorship/consorship.module').then(m => m.ConsorshipModule),
     canActivate: [authGuard] // Protect consorship route
+  },
+  { path: '**', 
+    loadComponent: () => import('./shared/components/notfound/notfound.component').then(m => m.NotfoundComponent) 
   }
+// or a "Not Found" page
+
 ];
 
 @NgModule({

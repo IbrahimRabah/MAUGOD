@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { NotfoundComponent } from './components/notfound/notfound.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -12,7 +11,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
   declarations: [
     NavbarComponent,
     FooterComponent,
-    NotfoundComponent,
     SpinnerComponent,
     SidebarComponent,
   ],
@@ -24,7 +22,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
   exports: [
     NavbarComponent,
     FooterComponent,
-    NotfoundComponent,
     SpinnerComponent,
     SidebarComponent,
     TranslateModule

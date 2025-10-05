@@ -1,5 +1,5 @@
 <div class="cards-container"> <!-- General Data Card -->
-    <a [routerLink]="['general-data']" class="card general-data">
+    <a [routerLink]="['general-data']" class="card general-data" *ngIf="hasAnyChildPermission([53, 75, 83, 128, 106, 156, 160, 164])">
         <div class="icon-container">
             <i class="fas fa-database"></i>
         </div>
@@ -11,7 +11,7 @@
     </a>
 
     <!-- Mawjood Data Card -->
-    <a [routerLink]="['mawjood-data']" class="card mawjood-data">
+    <a [routerLink]="['mawjood-data']" class="card mawjood-data" *ngIf="hasAnyChildPermission([95, 104, 107])">
         <div class="icon-container">
             <i class="fas fa-fingerprint"></i>
         </div>
@@ -23,7 +23,7 @@
     </a>
 
     <!-- CTS Data Card -->
-    <a [routerLink]="['cts-data']" class="card cts-data">
+    <a [routerLink]="['cts-data']" class="card cts-data" *ngIf="hasAnyChildPermission([151, 153, 155, 157, 158, 159, 161, 163, 165, 166, 167, 168, 169, 170, 253, 263, 269, 279])">
         <div class="icon-container">
             <i class="fas fa-envelope"></i>
         </div>
@@ -35,7 +35,7 @@
     </a>
 
     <!-- Committees Data Card -->
-    <a [routerLink]="['committees-data']" class="card committees-data">
+    <a [routerLink]="['committees-data']" class="card committees-data" *ngIf="hasAnyChildPermission([188, 195, 187, 196, 197, 198, 211])">
         <div class="icon-container">
             <i class="fas fa-users"></i>
         </div>

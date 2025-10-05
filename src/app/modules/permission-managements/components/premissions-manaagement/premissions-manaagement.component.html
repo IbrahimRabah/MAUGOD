@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- Permissions on System Card -->
-  <a [routerLink]="['/permission-managements/premissions-on-system']" class="card permissions-system">
+  <a [routerLink]="['/permission-managements/premissions-on-system']" class="card permissions-system"  *ngIf="hasAnyChildPermission([77, 81, 85, 89, 91])">
     <div class="icon-container">
       <i class="fas fa-user-shield"></i>
     </div>
@@ -10,7 +10,7 @@
   </a>
 
   <!-- Basic System Items Card -->
-  <a [routerLink]="['/permission-managements/basic-system-items']" class="card basic-system">
+  <a [routerLink]="['/permission-managements/basic-system-items']" class="card basic-system" *ngIf="hasAnyChildPermission([59, 73, 92, 93])">
     <div class="icon-container">
       <i class="fas fa-cogs"></i>
     </div>
@@ -20,7 +20,7 @@
   </a>
 
   <!-- Permissions on Data Card -->
-  <a [routerLink]="['/permission-managements/permission-on-data']" class="card permissions-data">
+  <a [routerLink]="['/permission-managements/permission-on-data']" class="card permissions-data" *ngIf="hasAnyChildPermission([3, 5, 37, 136])">
     <div class="icon-container">
       <i class="fas fa-database"></i>
     </div>
