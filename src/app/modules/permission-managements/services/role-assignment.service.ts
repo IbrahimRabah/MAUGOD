@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { PaginationRequest } from '../../../core/models/pagination';
 import { Observable } from 'rxjs';
 import { AssignUserRolesRequest, UserRoleAssignment, UserRoleAssignmentsResponse } from '../../../core/models/roleAssignment';
@@ -12,7 +12,17 @@ export class RoleAssignmentService {
 private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
    
   constructor(private http:HttpClient) { }
-  getAllUserRoleAssignments(pagination:PaginationRequest): Observable<UserRoleAssignmentsResponse> {
+  getAllUserRoleAssignments(pagination:PaginationRequest,
+                  colunmSearchName: string | null,
+                  colunmSearchValue: string | null): Observable<UserRoleAssignmentsResponse> {
+    let params = new HttpParams();
+    console.log("before adding columns" + colunmSearchName+ " " + colunmSearchValue)
+
+    if(colunmSearchName && colunmSearchValue){
+      console.log("adding columns" + colunmSearchName+ " " + colunmSearchValue)
+      params = params.set(colunmSearchName, colunmSearchValue);
+    }
+
     const headers  =  new HttpHeaders({
       'lang': pagination.lang,
       'pageNumber': pagination.pageNumber,
@@ -20,8 +30,9 @@ private apiUrl = `${environment.apiUrl}/SystemPermissions`  ;
       'empId': pagination.empId ? pagination.empId: 0
     });
 
-    return this.http.get<UserRoleAssignmentsResponse>(`${this.apiUrl}/GetUserRoleAssignment`, { headers });
+    return this.http.get<UserRoleAssignmentsResponse>(`${this.apiUrl}/GetUserRoleAssignment`, { headers, params });
   }
+
   getUserRoleAssignmentById(id: number,lang:number): Observable<UserRoleAssignmentsResponse> {
     const headers = new HttpHeaders({
       'lang': lang.toString(),

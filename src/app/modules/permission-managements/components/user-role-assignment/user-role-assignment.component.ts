@@ -35,7 +35,6 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   totalRecords: number = 0;
   currentPage: number = 1;
-  searchTerm: string = '';
   showAddModal: boolean = false;
   selectedRoleAssignment: UserRoleAssignment | null = null;
   isEditMode: boolean = false;
@@ -100,6 +99,28 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
   selectedDepartmentManagerIds: number[] = [];
   selectedBranchManagerIds: number[] = [];
 
+
+
+  searchColumnsHandleRequest = [
+    { column: 'allFields', label: 'All Columns' }, // all columns option
+    { column: 'fromEmployeeName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.EMPLOYEE' },
+    { column: 'fromDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.DEPARTMENT' },
+    { column: 'fromManagerOfDepartmentName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.DEPARTMENT_MGR' },
+    { column: 'fromBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.BRANCH' },
+    { column: 'fromManagerOfBranchName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.BRANCH_MGR' },
+    { column: 'fromRoleName', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.ROLE' },
+    { column: 'startDate', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.START_DATE' },
+    { column: 'endDate', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.END_DATE' },
+    { column: 'note', label: 'MENU.PERMISSION_MANAGEMENT.DATA_PERMISSIONS.ACCESS_PERMISSIONS_DETAILS.ACCESS_PERMISSIONS_SEARCH.NOTE' }
+    
+  ];
+
+  selectedColumnHandleRequest: string | null = this.searchColumnsHandleRequest[0].column;
+  selectedColumnLabelHandleRequest: string = this.searchColumnsHandleRequest[0].label;
+  searchTerm:string | null = null;
+
+
+  
   paginationRequest: PaginationRequest = {
     pageNumber: 1,
     pageSize: 10,
@@ -425,6 +446,17 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
     return Number(empId);
   }
 
+  selectColumnHandleRequest(col: any) {
+    this.selectedColumnHandleRequest = col.column;
+    console.log(this.selectedColumnHandleRequest)
+  }
+
+  onSearchHandleRequest() {
+    this.paginationRequest.pageNumber = 1;
+    this.currentPage = 1;
+    this.loadUserRoleAssignments();
+  }
+
   async loadDropdownData() {
     await this.loadDropdownDataIfNeeded();
   }
@@ -616,7 +648,7 @@ private async loadDropdownDataIfNeeded(): Promise<void> {
     
     // Set empId from authentication service
     this.paginationRequest.empId = this.authService.getEmpIdAsNumber();
-    this.roleAssignmentService.getAllUserRoleAssignments(this.paginationRequest).subscribe({
+    this.roleAssignmentService.getAllUserRoleAssignments(this.paginationRequest, this.selectedColumnHandleRequest, this.searchTerm).subscribe({
       next: (response) => {
         if (response.isSuccess) {
           this.userRoleAssignments = response.data.userRoleAssignments;

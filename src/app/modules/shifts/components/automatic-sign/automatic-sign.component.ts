@@ -134,7 +134,19 @@ export class AutomaticSignComponent implements OnInit, OnDestroy {
       this.preloadDropdownData();
     });
 
+  this.createForm.get('autoIn')?.valueChanges.subscribe(value => {
+    if (value === 0) { // when false
+      this.createForm.get('inRandomBfor')?.setValue(0);
+      this.createForm.get('inRandomAftr')?.setValue(0);
+    }
+  });
 
+  this.createForm.get('autoOut')?.valueChanges.subscribe(value => {
+    if (value === 0) { // when false
+      this.createForm.get('outRandomBfor')?.setValue(0);
+      this.createForm.get('outRandomAftr')?.setValue(0);
+    }
+  });
     // Preload dropdown data immediately
     this.preloadDropdownData();
   }
