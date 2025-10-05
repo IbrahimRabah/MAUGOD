@@ -72,6 +72,30 @@
           </div>
         </div>
 
+        <!-- Employee Selection for "For Everyone" mode -->
+        <div *ngIf="selectedForEveryone === 1" class="form-section">
+          <div class="form-group">
+            <label class="form-label">{{ 'USER_ROLE_ASSIGNMENT.EMPLOYEE' | translate }}</label>
+            <p-dropdown
+              formControlName="empId"
+              [options]="employees"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [showClear]="true"
+              [virtualScroll]="true"
+              [virtualScrollItemSize]="38"
+              [lazy]="false"
+              appendTo="body"
+              class="custom-dropdown w-100">
+            </p-dropdown>
+            <div *ngIf="loadingEmployees" class="loading-indicator">
+              <i class="fas fa-spinner fa-spin"></i>
+              {{ 'CREATE_TIME_TRANSACTION_APPROVAL.LOADING_DATA' | translate }}
+            </div>
+          </div>
+        </div>
+
         <!-- Group Selection Section (only shown when For Group is selected) -->
         <div *ngIf="selectedForEveryone === 0" class="group-selection-section">
           

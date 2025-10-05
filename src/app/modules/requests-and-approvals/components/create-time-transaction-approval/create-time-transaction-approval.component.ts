@@ -115,7 +115,9 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       forEveryone: [1, Validators.required],
       note: [''],
       requestLevel: [0, Validators.required],
-      isActive: [true, Validators.required]
+      isActive: [true, Validators.required],
+      // Always include empId since it's needed for both modes
+      empId: [0]
     });
 
     // Set initial state
@@ -126,10 +128,10 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       console.log('forEveryone changed to:', value); // Debug log
       this.selectedForEveryone = parseInt(value);
       if (this.selectedForEveryone === 0) {
-        // For group - add additional controls
+        // For group - add additional controls (empId already exists)
         this.addGroupControls();
       } else {
-        // For everyone - remove group controls
+        // For everyone - remove group controls but keep empId
         this.removeGroupControls();
       }
     });
@@ -144,17 +146,29 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
   }
 
   private addGroupControls() {
-    this.createForm.addControl('empId', this.fb.control(0));
-    this.createForm.addControl('managerId', this.fb.control(0));
-    this.createForm.addControl('mgrOfDeptId', this.fb.control(0));
-    this.createForm.addControl('mgrOfBranchId', this.fb.control(0));
-    this.createForm.addControl('deptId', this.fb.control(0));
-    this.createForm.addControl('branchId', this.fb.control(0));
-    this.createForm.addControl('roleId', this.fb.control(0));
+    // Don't add empId since it's already in the main form
+    if (!this.createForm.get('managerId')) {
+      this.createForm.addControl('managerId', this.fb.control(0));
+    }
+    if (!this.createForm.get('mgrOfDeptId')) {
+      this.createForm.addControl('mgrOfDeptId', this.fb.control(0));
+    }
+    if (!this.createForm.get('mgrOfBranchId')) {
+      this.createForm.addControl('mgrOfBranchId', this.fb.control(0));
+    }
+    if (!this.createForm.get('deptId')) {
+      this.createForm.addControl('deptId', this.fb.control(0));
+    }
+    if (!this.createForm.get('branchId')) {
+      this.createForm.addControl('branchId', this.fb.control(0));
+    }
+    if (!this.createForm.get('roleId')) {
+      this.createForm.addControl('roleId', this.fb.control(0));
+    }
   }
 
   private removeGroupControls() {
-    this.createForm.removeControl('empId');
+    // Don't remove empId since it's needed for both modes
     this.createForm.removeControl('managerId');
     this.createForm.removeControl('mgrOfDeptId');
     this.createForm.removeControl('mgrOfBranchId');
@@ -367,46 +381,353 @@ export class CreateTimeTransactionApprovalComponent implements OnInit, OnDestroy
       
       if (response?.isSuccess && response.data?.timeTransactionApprovals?.length > 0) {
         const approvalData = response.data.timeTransactionApprovals[0];
+        console.log('Loading existing time transaction approval data:', approvalData);
         
-          // Patch main form values
-          this.createForm.patchValue({
-            forEveryone: approvalData.forEveryoneId,
-            note: approvalData.note,
-            requestLevel: approvalData.reqLevelId,
-            isActive: approvalData.isActive});
-
-
-          // Set selected values
-          this.selectedForEveryone = approvalData.forEveryoneId;
-          this.selectedRequestLevel = approvalData.reqLevelId;
-
-          // If it's for group (0), add group controls and set their values
-          if (approvalData.forEveryoneId === 0) {
-            this.addGroupControls();
-            
-            // Wait a bit more for group controls to be added, then patch their values
-              this.createForm.patchValue({
-                empId: approvalData.empId ? approvalData.empId.toString() : null,
-                mgrOfDeptId: approvalData.deptIdMgr ? approvalData.deptIdMgr.toString() : null,
-                mgrOfBranchId: approvalData.branchIdMgr ? approvalData.branchIdMgr.toString() : null,
-                deptId: approvalData.deptId ? approvalData.deptId.toString() : null,
-                branchId: approvalData.branchId ? approvalData.branchId.toString() : null,
-                roleId: approvalData.roleId ? approvalData.roleId.toString() : null
-              });
-            
-          }
-
-          // Update active levels to create level forms
-          this.updateActiveLevels();
-
-        // Note: Level-specific data mapping would need additional API response structure
-        // that includes the detailed level configurations
+        // Wait a bit to ensure dropdown data is loaded
+        await this.waitForDropdownData();
+        
+        // Populate the form with existing data
+        this.populateFormWithApprovalData(approvalData);
       }
     } catch (error) {
       console.error('Error loading existing approval data:', error);
       this.showErrorMessage(this.translateService.instant('CREATE_TIME_TRANSACTION_APPROVAL.ERROR_LOADING_DATA'));
     } finally {
       this.loading = false;
+    }
+  }
+
+  private async waitForDropdownData(maxWait = 2000): Promise<void> {
+    const startTime = Date.now();
+    
+    while (Date.now() - startTime < maxWait) {
+      console.log('Waiting for dropdown data...', {
+        employees: this.employees.length,
+        departmentsOrMgr: this.departmentsOrMgr.length,
+        managers: this.managers.length,
+        branchesOrMgr: this.branchesOrMgr.length,
+        roles: this.roles.length
+      });
+      
+      if (this.employees.length > 0 && this.departmentsOrMgr.length > 0 && this.managers.length > 0) {
+        console.log('Dropdown data loaded successfully');
+        return;
+      }
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    console.warn('Timeout waiting for dropdown data to load');
+  }
+
+  private populateFormWithApprovalData(approvalData: any) {
+    console.log('Populating form with approval data:', approvalData);
+    
+    // Helper function to convert values for dropdowns
+    const convertToDropdownValue = (value: any): string => {
+      if (value === null || value === undefined) return '';
+      // Don't treat 0 as empty - it might be a valid ID
+      return String(value);
+    };
+
+    // Set selected values first
+    this.selectedForEveryone = approvalData.forEveryoneId;
+    this.selectedRequestLevel = approvalData.reqLevelId;
+
+    // Patch main form values
+    this.createForm.patchValue({
+      forEveryone: approvalData.forEveryoneId,
+      note: approvalData.note || '',
+      requestLevel: approvalData.reqLevelId,
+      isActive: approvalData.isActive ?? true
+    });
+
+    console.log('Main form values patched:', {
+      forEveryone: approvalData.forEveryoneId,
+      note: approvalData.note,
+      requestLevel: approvalData.reqLevelId,
+      isActive: approvalData.isActive
+    });
+
+    // Check if we have any group-related data that needs to be preserved
+    const hasGroupData = (approvalData.empId && approvalData.empId > 0) || 
+                        (approvalData.deptIdMgr && approvalData.deptIdMgr > 0) || 
+                        (approvalData.branchIdMgr && approvalData.branchIdMgr > 0) || 
+                        (approvalData.deptId && approvalData.deptId > 0) || 
+                        (approvalData.branchId && approvalData.branchId > 0) || 
+                        (approvalData.roleId && approvalData.roleId > 0);
+    
+    console.log('Checking group data:', {
+      forEveryoneId: approvalData.forEveryoneId,
+      hasGroupData,
+      empId: approvalData.empId,
+      deptIdMgr: approvalData.deptIdMgr,
+      branchIdMgr: approvalData.branchIdMgr,
+      deptId: approvalData.deptId,
+      branchId: approvalData.branchId,
+      roleId: approvalData.roleId
+    });
+    
+    // Handle empId field (always patch since it's always available)
+    this.createForm.patchValue({
+      empId: convertToDropdownValue(approvalData.empId)
+    });
+
+    console.log('Employee ID patched:', {
+      rawEmpId: approvalData.empId,
+      convertedEmpId: convertToDropdownValue(approvalData.empId)
+    });
+
+    // Handle different scenarios for additional group controls
+    if (approvalData.forEveryoneId === 0) {
+      // "For Group" mode - UI will show additional group controls, so add them and patch values
+      console.log('For Group mode - adding additional group controls and patching values');
+      this.addGroupControls();
+      
+      setTimeout(() => {
+        this.patchGroupControlValues(approvalData, convertToDropdownValue);
+      }, 50);
+      
+    } else if (this.isEditMode && hasGroupData) {
+      // "For Everyone" mode but in edit mode with existing group data
+      // Add controls silently to preserve data for form submission, even though UI won't show them
+      console.log('For Everyone mode with existing group data - adding hidden controls to preserve data');
+      this.addGroupControls();
+      
+      setTimeout(() => {
+        this.patchGroupControlValues(approvalData, convertToDropdownValue);
+      }, 50);
+    } else {
+      console.log('For Everyone mode - only empId control needed (already patched)');
+    }
+
+    // Update active levels to create level forms
+    this.updateActiveLevels();
+  }
+
+  private patchGroupControlValues(approvalData: any, convertToDropdownValue: (value: any) => string) {
+    // Don't include empId here since it's already patched in the main form
+    const groupValues = {
+      mgrOfDeptId: convertToDropdownValue(approvalData.deptIdMgr),
+      mgrOfBranchId: convertToDropdownValue(approvalData.branchIdMgr),
+      deptId: convertToDropdownValue(approvalData.deptId),
+      branchId: convertToDropdownValue(approvalData.branchId),
+      roleId: convertToDropdownValue(approvalData.roleId)
+    };
+    
+    // Log form structure before patching
+    console.log('Form controls before patching:', Object.keys(this.createForm.controls));
+    console.log('Form has empId control:', this.createForm.get('empId') !== null);
+    
+    this.createForm.patchValue(groupValues);
+    
+    // Log form values after patching
+    console.log('Group form values patched:', groupValues);
+    console.log('Form values after patching:', this.createForm.value);
+    console.log('Raw approval data values:', {
+      empId: approvalData.empId,
+      deptIdMgr: approvalData.deptIdMgr,
+      branchIdMgr: approvalData.branchIdMgr,
+      deptId: approvalData.deptId,
+      branchId: approvalData.branchId,
+      roleId: approvalData.roleId
+    });
+
+    // Verify dropdown values
+    this.verifyTimeTransactionDropdownValues(approvalData);
+
+    // Force form control updates for PrimeNG dropdowns
+    setTimeout(() => {
+      this.forceFormControlUpdates();
+      
+      // Final verification - check what the form actually contains after all patching
+      this.logFinalFormState();
+    }, 200);
+
+    // Populate level details after level forms are created
+    setTimeout(() => {
+      this.populateTimeTransactionLevelDetails(approvalData);
+    }, 100);
+  }
+
+  private verifyTimeTransactionDropdownValues(approvalData: any) {
+    console.log('Verifying time transaction dropdown values...');
+    
+    // Helper to check if value exists in dropdown options
+    const checkValue = (value: any, options: DropdownItem[], fieldName: string) => {
+      if (value === null || value === undefined) return; // Skip null/undefined values
+      
+      const stringValue = String(value);
+      const found = options.find(option => option.value === stringValue);
+      
+      if (!found && options.length > 0) {
+        console.warn(`Value "${stringValue}" not found in ${fieldName} dropdown options. Available options:`, 
+                     options.slice(0, 5).map(o => `${o.value}:"${o.label}"`));
+      } else if (found) {
+        console.log(`✓ Value "${stringValue}" found in ${fieldName} dropdown as "${found.label}"`);
+      } else if (options.length === 0) {
+        console.warn(`No options loaded yet for ${fieldName} dropdown`);
+      }
+    };
+
+    // Check main dropdown values - check all values, even 0
+    console.log('=== DROPDOWN VALUE VERIFICATION ===');
+    checkValue(approvalData.empId, this.employees, 'employees');
+    checkValue(approvalData.deptIdMgr, this.departmentsOrMgr, 'departmentsOrMgr (mgrOfDept)');
+    checkValue(approvalData.branchIdMgr, this.branchesOrMgr, 'branchesOrMgr (mgrOfBranch)');
+    checkValue(approvalData.deptId, this.departmentsOrMgr, 'departmentsOrMgr (dept)');
+    checkValue(approvalData.branchId, this.branchesOrMgr, 'branchesOrMgr (branch)');
+    checkValue(approvalData.roleId, this.roles, 'roles');
+    console.log('=== END DROPDOWN VERIFICATION ===');
+    
+    console.log('Current dropdown data lengths:', {
+      employees: this.employees.length,
+      departmentsOrMgr: this.departmentsOrMgr.length,
+      branchesOrMgr: this.branchesOrMgr.length,
+      roles: this.roles.length,
+      managers: this.managers.length,
+      requestLevels: this.requestLevels.length,
+      afterLimitActions: this.afterLimitActions.length,
+      levels: this.levels.length
+    });
+  }
+
+  private populateTimeTransactionLevelDetails(approvalData: any) {
+    console.log('Populating time transaction level details:', approvalData);
+    
+    // Array of level detail properties in the approval data
+    const levelDetailProperties = [
+      'detailsLevel1', 'detailsLevel2', 'detailsLevel3', 
+      'detailsLevel4', 'detailsLevel5', 'detailsLevel6', 
+      'detailsLevel7', 'detailsLevel8', 'detailsLevel9'
+    ];
+
+    levelDetailProperties.forEach((levelProperty, index) => {
+      const levelData = approvalData[levelProperty];
+      const levelNumber = index + 1;
+      
+      console.log(`Processing ${levelProperty} (level ${levelNumber}):`, levelData);
+      
+      if (levelData && this.levelForms[levelNumber]) {
+        try {
+          // Helper function to convert values for level details
+          const convertForLevelField = (value: any): string => {
+            if (value === null || value === undefined) return '';
+            return String(value);
+          };
+
+          // Safely patch each field in the level form
+          this.levelForms[levelNumber].patchValue({
+            // Dynamic Direct Manager
+            dynDirectMgr: levelData.dynDirectMgr ?? 0,
+            dynDirectMgrLevel: convertForLevelField(levelData.dynDirectMgrLevel),
+            dynDirectMgrDaysLimits: convertForLevelField(levelData.dynDirectMgrDaysLimits),
+            dynDirectMgrAfterLimitAction: convertForLevelField(levelData.dynDirectMgrAfterLimitAction),
+            
+            // Dynamic Manager of Department
+            dynMgrOfDept: levelData.dynMgrOfDept ?? 0,
+            dynMgrOfDeptLevel: convertForLevelField(levelData.dynMgrOfDeptLevel),
+            dynMgrOfDeptDaysLimits: convertForLevelField(levelData.dynMgrOfDeptDaysLimits),
+            dynMgrOfDeptAfterLimitAction: convertForLevelField(levelData.dynMgrOfDeptAfterLimitAction),
+            
+            // Dynamic Manager of Branch
+            dynMgrOfBranch: levelData.dynMgrOfBranch ?? 0,
+            dynMgrOfBranchLevel: convertForLevelField(levelData.dynMgrOfBranchLevel),
+            dynMgrOfBranchDaysLimits: convertForLevelField(levelData.dynMgrOfBranchDaysLimits),
+            dynMgrOfBranchAfterLimitAction: convertForLevelField(levelData.dynMgrOfBranchAfterLimitAction),
+            
+            // Static assignments
+            empId: convertForLevelField(levelData.empId),
+            mgrId: convertForLevelField(levelData.mgrId),
+            mgrIdDaysLimits: convertForLevelField(levelData.mgrIdDaysLimits),
+            mgrIdAfterLimitAction: convertForLevelField(levelData.mgrIdAfterLimitAction),
+            
+            mgrOfDeptId: convertForLevelField(levelData.mgrOfDeptId),
+            mgrOfDeptIdDaysLimits: convertForLevelField(levelData.mgrOfDeptIdDaysLimits),
+            mgrOfDeptIdAfterLimitAction: convertForLevelField(levelData.mgrOfDeptIdAfterLimitAction),
+            
+            mgrOfBranchId: convertForLevelField(levelData.mgrOfBranchId),
+            mgrOfBranchIdDaysLimits: convertForLevelField(levelData.mgrOfBranchIdDaysLimits),
+            mgrOfBranchIdAfterLimitAction: convertForLevelField(levelData.mgrOfBranchIdAfterLimitAction),
+            
+            deptId: convertForLevelField(levelData.deptId),
+            deptIdDaysLimits: convertForLevelField(levelData.deptIdDaysLimits),
+            deptIdAfterLimitAction: convertForLevelField(levelData.deptIdAfterLimitAction),
+            
+            branchId: convertForLevelField(levelData.branchId),
+            branchIdDaysLimits: convertForLevelField(levelData.branchIdDaysLimits),
+            branchIdAfterLimitAction: convertForLevelField(levelData.branchIdAfterLimitAction),
+            
+            roleId: convertForLevelField(levelData.roleId),
+            roleIdDaysLimits: convertForLevelField(levelData.roleIdDaysLimits),
+            roleIdAfterLimitAction: convertForLevelField(levelData.roleIdAfterLimitAction),
+            
+            noteDetails: levelData.noteDetails ?? ''
+          });
+          
+          console.log(`Successfully populated level ${levelNumber} with data:`, this.levelForms[levelNumber].value);
+        } catch (error) {
+          console.error(`Error populating level ${levelNumber}:`, error);
+        }
+      } else {
+        if (!levelData) {
+          console.log(`No level data found for ${levelProperty}`);
+        }
+        if (!this.levelForms[levelNumber]) {
+          console.warn(`Level form not found for level ${levelNumber}`);
+        }
+      }
+    });
+  }
+
+  private logFinalFormState() {
+    console.log('=== FINAL FORM STATE ===');
+    console.log('Main form values:', this.createForm.value);
+    console.log('Selected states:', {
+      selectedForEveryone: this.selectedForEveryone,
+      selectedRequestLevel: this.selectedRequestLevel
+    });
+    
+    // Check if dropdown values are actually displayed correctly
+    const empIdControl = this.createForm.get('empId');
+    if (empIdControl) {
+      const empIdValue = empIdControl.value;
+      const empFound = this.employees.find(emp => emp.value === empIdValue);
+      console.log(`Employee Control Status:`);
+      console.log(`  - Value: ${empIdValue}`);
+      console.log(`  - Found in dropdown: ${empFound ? empFound.label : 'NOT FOUND'}`);
+      console.log(`  - Control exists: ${empIdControl !== null}`);
+      console.log(`  - Control enabled: ${empIdControl.enabled}`);
+      console.log(`  - For Everyone mode: ${this.selectedForEveryone === 1}`);
+      console.log(`  - Employee dropdown should be visible: ${this.selectedForEveryone === 1}`);
+    }
+    
+    console.log('Available employees count:', this.employees.length);
+    console.log('First 3 employees:', this.employees.slice(0, 3));
+    
+    console.log('=== END FINAL FORM STATE ===');
+  }
+
+  private forceFormControlUpdates() {
+    // Force all form controls to update their value and validity
+    // This helps with PrimeNG dropdowns that sometimes don't update properly
+    const controlNames = ['empId', 'mgrOfDeptId', 'mgrOfBranchId', 'deptId', 'branchId', 'roleId'];
+    
+    controlNames.forEach(controlName => {
+      const control = this.createForm.get(controlName);
+      if (control) {
+        const currentValue = control.value;
+        control.updateValueAndValidity();
+        
+        // Log for debugging
+        console.log(`Force updated ${controlName}: ${currentValue}`);
+      }
+    });
+
+    // Special handling for empId since it's always available
+    const empIdControl = this.createForm.get('empId');
+    if (empIdControl) {
+      empIdControl.markAsTouched();
+      empIdControl.updateValueAndValidity();
+      console.log('EmpId control specially updated:', empIdControl.value);
     }
   }
 
