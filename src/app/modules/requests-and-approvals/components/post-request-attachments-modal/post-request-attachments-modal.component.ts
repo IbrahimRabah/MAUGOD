@@ -255,7 +255,12 @@ export class PostRequestAttachmentsModalComponent implements OnChanges {
     if (attachment.m_File) {
       if (attachment.m_File_Type === 'txt') {
         const decodedText = this.base64ToUtf8(attachment.m_File);
-        alert(decodedText); // Or bind to a component property
+
+        // Create a Blob for the text file
+        const blob = new Blob([decodedText], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+
       } else {
         const byteCharacters = atob(attachment.m_File);
         const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
