@@ -1,6 +1,6 @@
 <div class="cards-container">
     <!-- Shifts Card -->
-    <a [routerLink]="['/shifts-section/shifts']" class="card shifts">
+    <a [routerLink]="['/shifts-section/shifts']" class="card shifts" *ngIf="hasPermission(78)">
         <div class="icon-container">
             <i class="fas fa-clock"></i>
         </div>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Automatic Sign Card -->
-    <a [routerLink]="['/shifts-section/automatic-sign']" class="card automatic-sign">
+    <a [routerLink]="['/shifts-section/automatic-sign']" class="card automatic-sign" *ngIf="hasPermission(39)">
         <div class="icon-container">
             <i class="fas fa-signature"></i>
         </div>
@@ -24,7 +24,7 @@
     </a>
 
     <!-- Shifts Assign Card -->
-    <a [routerLink]="['/shifts-section/shifts-assign']" class="card shifts-assign">
+    <a [routerLink]="['/shifts-section/shifts-assign']" class="card shifts-assign" *ngIf="hasPermission(23)">
         <div class="icon-container">
             <i class="fas fa-user-check"></i>
         </div>
@@ -36,7 +36,7 @@
     </a>
 
     <!-- Missing Days Card -->
-    <a [routerLink]="['/shifts-section/missing-days']" class="card missing-days">
+    <a [routerLink]="['/shifts-section/missing-days']" class="card missing-days" *ngIf="hasPermission(121)">
         <div class="icon-container">
             <i class="fas fa-calendar-times"></i>
         </div>
@@ -48,7 +48,7 @@
     </a>
 
     <!-- Time Transaction Lock Card -->
-    <a [routerLink]="['/shifts-section/timtran-lock']" class="card timtran-lock">
+    <a [routerLink]="['/shifts-section/timtran-lock']" class="card timtran-lock" *ngIf="hasPermission(259)">
         <div class="icon-container">
             <i class="fas fa-lock"></i>
         </div>

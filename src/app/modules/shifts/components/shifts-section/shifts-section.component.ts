@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-shifts-section',
@@ -7,5 +8,9 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrl: './shifts-section.component.css'
 })
 export class ShiftsSectionComponent {
-  constructor(private translateService: TranslateService) {}
+  constructor(public permissionsService: PermissionsService) {}
+
+  hasPermission(menuId: number): boolean {
+    return this.permissionsService.hasPermission(menuId);
+  }
 }

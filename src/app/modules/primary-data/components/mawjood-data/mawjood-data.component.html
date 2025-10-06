@@ -1,6 +1,6 @@
 <div class="cards-container">
     <!-- Employee Statuses Card -->
-    <a [routerLink]="['/primary-data/employees-statuses']" class="card employee-statuses">
+    <a [routerLink]="['/primary-data/employees-statuses']" class="card employee-statuses" *ngIf="hasPermission(95)">
         <div class="icon-container">
             <i class="fas fa-user-check"></i>
         </div>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Jobs Card -->
-    <a [routerLink]="['/primary-data/jobs']" class="card jobs">
+    <a [routerLink]="['/primary-data/jobs']" class="card jobs" *ngIf="hasPermission(104)">
         <div class="icon-container">
             <i class="fas fa-briefcase"></i>
         </div>
@@ -24,7 +24,7 @@
     </a>
 
     <!-- Employee Documents Card -->
-    <a [routerLink]="['/primary-data/employees-documents']" class="card employee-documents">
+    <a [routerLink]="['/primary-data/employees-documents']" class="card employee-documents" *ngIf="hasPermission(107)">
         <div class="icon-container">
             <i class="fas fa-file-alt"></i>
         </div>

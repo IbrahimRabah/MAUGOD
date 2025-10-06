@@ -1,6 +1,6 @@
 <div class="cards-container">
     <!-- Time Change Approval Steps Card -->
-    <a [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" class="card time-change-approval">
+    <a [routerLink]="['/requests-and-approvals/steps-to-approve-changing-time']" class="card time-change-approval" *ngIf="hasPermission(41)">
         <div class="icon-container">
             <i class="fas fa-clock"></i>
         </div>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Attendance Time Change Request Card -->
-    <a [routerLink]="['/requests-and-approvals/attendance-time-change-request']" class="card attendance-time-change">
+    <a [routerLink]="['/requests-and-approvals/attendance-time-change-request']" class="card attendance-time-change" *ngIf="hasPermission(51)">
         <div class="icon-container">
             <i class="fas fa-calendar-alt"></i>
         </div>
@@ -24,7 +24,7 @@
     </a>
 
     <!-- Post Request Card -->
-    <a [routerLink]="['/requests-and-approvals/post-request']" class="card post-request">
+    <a [routerLink]="['/requests-and-approvals/post-request']" class="card post-request"*ngIf="hasPermission(132)">
         <div class="icon-container">
             <i class="fas fa-paper-plane"></i>
         </div>
@@ -36,7 +36,7 @@
     </a>
 
     <!-- Request Approval Route Card -->
-    <a [routerLink]="['/requests-and-approvals/request-approval-route']" class="card approval-route">
+    <a [routerLink]="['/requests-and-approvals/request-approval-route']" class="card approval-route" *ngIf="hasPermission(97)">
         <div class="icon-container">
             <i class="fas fa-route"></i>
         </div>
@@ -48,7 +48,7 @@
     </a>
 
     <!-- Request Approval Vacations Card -->
-    <a [routerLink]="['/requests-and-approvals/request-approval-vacations']" class="card approval-vacations">
+    <a [routerLink]="['/requests-and-approvals/request-approval-vacations']" class="card approval-vacations" *ngIf="hasPermission(102)">
         <div class="icon-container">
             <i class="fas fa-umbrella-beach"></i>
         </div>
@@ -60,7 +60,7 @@
     </a>
 
     <!-- Delete Completed Requests Card -->
-    <a [routerLink]="['/requests-and-approvals/delete-completed-request']" class="card delete-requests">
+    <a [routerLink]="['/requests-and-approvals/delete-completed-request']" class="card delete-requests" *ngIf="hasPermission(108)">
         <div class="icon-container">
             <i class="fas fa-trash-alt"></i>
         </div>

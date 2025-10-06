@@ -1,6 +1,6 @@
 <div class="cards-container">
     <!-- Committees Card -->
-    <a [routerLink]="['/primary-data/committees']" class="card committees">
+    <a [routerLink]="['/primary-data/committees']" class="card committees" *ngIf="hasPermission(188)">
         <div class="icon-container">
             <i class="fas fa-users-gear"></i>
         </div>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Committee Members Card -->
-    <a [routerLink]="['/primary-data/committee-members']" class="card committee-members">
+    <a [routerLink]="['/primary-data/committee-members']" class="card committee-members" *ngIf="hasPermission(195)">
         <div class="icon-container">
             <i class="fas fa-user-group"></i>
         </div>
@@ -24,7 +24,7 @@
     </a>
 
     <!-- Committee Invitations Card -->
-    <a [routerLink]="['/primary-data/committee-invitations']" class="card committee-invitations">
+    <a [routerLink]="['/primary-data/committee-invitations']" class="card committee-invitations" *ngIf="hasPermission(187)">
         <div class="icon-container">
             <i class="fas fa-envelope-open-text"></i>
         </div>
@@ -36,7 +36,7 @@
     </a>
 
     <!-- Committee Route Card -->
-    <a [routerLink]="['/primary-data/committee-route']" class="card committee-route">
+    <a [routerLink]="['/primary-data/committee-route']" class="card committee-route" *ngIf="hasPermission(196)">
         <div class="icon-container">
             <i class="fas fa-route"></i>
         </div>
@@ -48,7 +48,7 @@
     </a>
 
     <!-- Committee Subject Classes Card -->
-    <a [routerLink]="['/primary-data/committee-subject-classes']" class="card subject-classes">
+    <a [routerLink]="['/primary-data/committee-subject-classes']" class="card subject-classes" *ngIf="hasPermission(197)">
         <div class="icon-container">
             <i class="fas fa-layer-group"></i>
         </div>
@@ -60,7 +60,7 @@
     </a>
 
     <!-- Voting Types Card -->
-    <a [routerLink]="['/primary-data/voting-types']" class="card voting-types">
+    <a [routerLink]="['/primary-data/voting-types']" class="card voting-types" *ngIf="hasPermission(198)">
         <div class="icon-container">
             <i class="fas fa-check-to-slot"></i>
         </div>
@@ -72,7 +72,7 @@
     </a>
 
     <!-- Meeting and Subjects Card -->
-    <a [routerLink]="['/primary-data/meeting-and-subjects']" class="card meeting-subjects">
+    <a [routerLink]="['/primary-data/meeting-and-subjects']" class="card meeting-subjects" *ngIf="hasPermission(211)">
         <div class="icon-container">
             <i class="fas fa-file-lines"></i>
         </div>

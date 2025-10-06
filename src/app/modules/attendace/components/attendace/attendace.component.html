@@ -1,6 +1,6 @@
 <div class="cards-container">
     <!-- Branches Card -->
-    <a [routerLink]="['/attendance/punch-in-transactions']" class="card branches">
+    <a [routerLink]="['/attendance/punch-in-transactions']" class="card branches" *ngIf="hasPermission(33)">
         <div class="icon-container">
             <i class="fas fa-code-branch"></i>
         </div>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Departments Card -->
-    <a [routerLink]="['/attendance']" class="card departments">
+    <a [routerLink]="['/attendance/view-attendance']" class="card departments"  *ngIf="hasPermission(70)">
         <div class="icon-container">
             <i class="fas fa-sitemap"></i>
         </div>
@@ -24,7 +24,7 @@
     </a>
 
     <!-- Employees Card -->
-    <a [routerLink]="['/attendance/change-attendance-time']" class="card employees">
+    <a [routerLink]="['/attendance/change-attendance-time']" class="card employees" *ngIf="hasPermission(111)">
         <div class="icon-container">
             <i class="fas fa-users"></i>
         </div>

@@ -105,7 +105,7 @@ export class DaysHandleComponent {
     { column: 'note', label: 'DAYS_HANDLE.NOTE' }
   ];
 
-  selectedColumn: string = '';
+  selectedColumn: string = this.searchColumns[0].column;
   selectedColumnLabel: string = this.searchColumns[0].label;
   searchTerm: string = '';
   

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-vacations-tasks',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class VacationsTasksComponent {
 
+  constructor(public permissionsService: PermissionsService) {}
+  hasPermission(menuId: number): boolean {
+    return this.permissionsService.hasPermission(menuId);
+  }
 }

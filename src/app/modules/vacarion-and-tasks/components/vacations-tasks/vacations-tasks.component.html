@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- Attendance Status Classifications Card -->
-  <a [routerLink]="['/vacation-tasks/attendance-status-classifications']" class="card attendance-status-classifications">
+  <a [routerLink]="['/vacation-tasks/attendance-status-classifications']" class="card attendance-status-classifications" *ngIf="hasPermission(113)">
     <div class="icon-container">
       <i class="fas fa-list-ul"></i>
     </div>
@@ -12,7 +12,7 @@
   </a>
 
   <!-- Attendance Statuses Card -->
-  <a [routerLink]="['/vacation-tasks/attendance-statuses']" class="card attendance-statuses">
+  <a [routerLink]="['/vacation-tasks/attendance-statuses']" class="card attendance-statuses" *ngIf="hasPermission(11)">
     <div class="icon-container">
       <i class="fas fa-user-clock"></i>
     </div>
@@ -24,7 +24,7 @@
   </a>
 
   <!-- Status Priority Order Card -->
-  <a [routerLink]="['/vacation-tasks/handle-statuses-priority']" class="card status-priority">
+  <a [routerLink]="['/vacation-tasks/handle-statuses-priority']" class="card status-priority" *ngIf="hasPermission(43)">
     <div class="icon-container">
       <i class="fas fa-sort-amount-up"></i>
     </div>
@@ -36,7 +36,7 @@
   </a>
 
   <!-- Days Handle Card -->
-  <a [routerLink]="['/vacation-tasks/days-handle']" class="card days-handle">
+  <a [routerLink]="['/vacation-tasks/days-handle']" class="card days-handle" *ngIf="hasPermission(65)">
     <div class="icon-container">
       <i class="fas fa-calendar-check"></i>
     </div>
@@ -48,7 +48,7 @@
   </a>
 
   <!-- Employee Balances Card -->
-  <a [routerLink]="['/vacation-tasks/handle-statuses-employee-balance']" class="card employee-balances">
+  <a [routerLink]="['/vacation-tasks/handle-statuses-employee-balance']" class="card employee-balances" *ngIf="hasPermission(117)">
     <div class="icon-container">
       <i class="fas fa-balance-scale"></i>
     </div>
@@ -60,7 +60,7 @@
   </a>
 
   <!-- My Balance Card -->
-  <a [routerLink]="['/vacation-tasks/my-balance']" class="card my-balance">
+  <a [routerLink]="['/vacation-tasks/my-balance']" class="card my-balance"*ngIf="hasPermission(205)">
     <div class="icon-container">
       <i class="fas fa-user-check"></i>
     </div>

@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- Mawjood App Card -->
-  <a [routerLink]="['mawjood-app']" class="card mawjood-app">
+  <a [routerLink]="['mawjood-app']" class="card mawjood-app" *ngIf="hasAnyChildPermission([2, 133])">
     <div class="icon-container">
       <i class="fas fa-mobile-alt"></i>
     </div>
@@ -12,7 +12,7 @@
   </a>
 
   <!-- Send App QR Code Card -->
-  <a [routerLink]="['send-app-qr-code']" class="card qr-code">
+  <a [routerLink]="['send-app-qr-code']" class="card qr-code" *ngIf="hasPermission(13)">
     <div class="icon-container">
       <i class="fas fa-qrcode"></i>
     </div>
@@ -24,7 +24,7 @@
   </a>
 
   <!-- App Devices Card -->
-  <a [routerLink]="['app-devices']" class="card app-devices">
+  <a [routerLink]="['app-devices']" class="card app-devices" *ngIf="hasPermission(29)">
     <div class="icon-container">
       <i class="fas fa-tablet-alt"></i>
     </div>
@@ -36,7 +36,7 @@
   </a>
 
   <!-- Mobile Sign Location Assign Card -->
-  <a [routerLink]="['mobile-sign-location-assign']" class="card location-assign">
+  <a [routerLink]="['mobile-sign-location-assign']" class="card location-assign" *ngIf="hasPermission(122)">
     <div class="icon-container">
       <i class="fas fa-map-marker-alt"></i>
     </div>
@@ -48,7 +48,7 @@
   </a>
 
   <!-- Mobile Sign Transaction Card -->
-  <a [routerLink]="['mobile-sign-transaction']" class="card sign-transaction">
+  <a [routerLink]="['mobile-sign-transaction']" class="card sign-transaction" *ngIf="hasPermission(130)">
     <div class="icon-container">
       <i class="fas fa-exchange-alt"></i>
     </div>
@@ -60,7 +60,7 @@
   </a>
 
   <!-- Mobile Sign Locations Card -->
-  <a [routerLink]="['mobile-sign-locations']" class="card sign-locations">
+  <a [routerLink]="['mobile-sign-locations']" class="card sign-locations" *ngIf="hasPermission(96)">
     <div class="icon-container">
       <i class="fas fa-location-arrow"></i>
     </div>

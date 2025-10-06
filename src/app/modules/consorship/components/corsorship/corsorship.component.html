@@ -1,6 +1,6 @@
 <div class="cards-container">
   <!-- Tour Available Card -->
-  <a [routerLink]="['/consorship/tour-available']" class="card tour-available">
+  <a [routerLink]="['/consorship/tour-available']" class="card tour-available" *ngIf="hasPermission(230)">
     <div class="icon-container">
       <i class="fas fa-check-circle"></i>
     </div>
@@ -12,7 +12,7 @@
   </a>
 
   <!-- Tour Unavailable Card -->
-  <a [routerLink]="['/consorship/tour-unavailable']" class="card tour-unavailable">
+  <a [routerLink]="['/consorship/tour-unavailable']" class="card tour-unavailable" *ngIf="hasPermission(232)">
     <div class="icon-container">
       <i class="fas fa-times-circle"></i>
     </div>
@@ -24,7 +24,7 @@
   </a>
 
   <!-- Alarms Card -->
-  <a [routerLink]="['/consorship/alarms']" class="card alarms">
+  <a [routerLink]="['/consorship/alarms']" class="card alarms" *ngIf="hasPermission(233)">
     <div class="icon-container">
       <i class="fas fa-bell"></i>
     </div>

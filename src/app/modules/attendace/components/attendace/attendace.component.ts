@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-attendace',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrl: './attendace.component.css'
 })
 export class AttendaceComponent {
+  constructor(public permissionsService: PermissionsService) {}
 
+  hasPermission(menuId: number): boolean {
+    return this.permissionsService.hasPermission(menuId);
+  }
 }

@@ -1,6 +1,6 @@
 <div class="cards-container">
     <!-- Salary Add Deducts Card -->
-    <a [routerLink]="['/salaries/salary-add-deducts']" class="card salary-add-deducts">
+    <a [routerLink]="['/salaries/salary-add-deducts']" class="card salary-add-deducts" *ngIf="hasPermission(103)">
         <div class="icon-container">
             <i class="fas fa-plus-circle"></i>
         </div>
@@ -12,7 +12,7 @@
     </a>
 
     <!-- Salary Add-ons Deducts Card -->
-    <a [routerLink]="['/salaries/salary-add-ons-deducts']" class="card salary-add-ons-deducts">
+    <a [routerLink]="['/salaries/salary-add-ons-deducts']" class="card salary-add-ons-deducts" *ngIf="hasPermission(105)">
         <div class="icon-container">
             <i class="fas fa-calculator"></i>
         </div>
@@ -24,7 +24,7 @@
     </a>
 
     <!-- Salaries Calculation Card -->
-    <a [routerLink]="['/salaries/salaries-calculation']" class="card salaries-calculation">
+    <a [routerLink]="['/salaries/salaries-calculation']" class="card salaries-calculation" *ngIf="hasPermission(119)">
         <div class="icon-container">
             <i class="fas fa-chart-line"></i>
         </div>
@@ -36,7 +36,7 @@
     </a>
 
     <!-- My Salary Card -->
-    <a [routerLink]="['/salaries/my-salary']" class="card my-salary">
+    <a [routerLink]="['/salaries/my-salary']" class="card my-salary" *ngIf="hasPermission(131)">
         <div class="icon-container">
             <i class="fas fa-user-circle"></i>
         </div>
@@ -48,7 +48,7 @@
     </a>
 
     <!-- Salaries Details Card -->
-    <a [routerLink]="['/salaries/salaries-details']" class="card salaries-details">
+    <a [routerLink]="['/salaries/salaries-details']" class="card salaries-details" *ngIf="hasPermission(120)">
         <div class="icon-container">
             <i class="fas fa-file-invoice-dollar"></i>
         </div>

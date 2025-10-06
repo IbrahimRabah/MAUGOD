@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-committees-data',
@@ -7,5 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./committees-data.component.css']
 })
 export class CommitteesDataComponent {
-  constructor(public translate: TranslateService) {}
+  constructor(public permissionsService: PermissionsService) {}
+
+  hasPermission(menuId: number): boolean {
+    return this.permissionsService.hasPermission(menuId);
+  }
 }

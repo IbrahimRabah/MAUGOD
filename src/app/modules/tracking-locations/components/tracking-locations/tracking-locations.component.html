@@ -1,7 +1,7 @@
 
 <div class="cards-container">
   <!-- Location Tracking Details Card -->
-  <a [routerLink]="['/tracking-locations/location-tracking-details']" class="card location-tracking-details">
+  <a [routerLink]="['/tracking-locations/location-tracking-details']" class="card location-tracking-details" *ngIf="hasPermission(145)">
     <div class="icon-container">
       <i class="fas fa-map-marked-alt"></i>
     </div>
@@ -13,7 +13,7 @@
   </a>
 
   <!-- Location Tracking Transactions Card -->
-  <a [routerLink]="['/tracking-locations/location-tracking-transactions']" class="card location-tracking-transactions">
+  <a [routerLink]="['/tracking-locations/location-tracking-transactions']" class="card location-tracking-transactions" *ngIf="hasPermission(146)">
     <div class="icon-container">
       <i class="fas fa-route"></i>
     </div>
