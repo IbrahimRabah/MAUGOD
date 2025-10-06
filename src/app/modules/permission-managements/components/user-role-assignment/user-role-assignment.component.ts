@@ -159,8 +159,8 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
 
   initializeForms() {
     this.userRoleAssignmentForm = this.fb.group({
-      startDate: ['', [Validators.required]],
-      endDate: ['', [Validators.required]],
+      startDate: [''],
+      endDate: [''],
       notes: ['']
     }, { validators: this.dateRangeValidator });
   }
@@ -409,8 +409,8 @@ export class UserRoleAssignmentComponent implements OnInit, OnDestroy {
         mgrOfBranchIds: this.selectedBranchManagerIds,
         branchIds: this.selectedBranchIds,
         roleIds: this.selectedRoleIds,
-        fromDate: formData.startDate ? new Date(formData.startDate).toISOString() : '',
-        toDate: formData.endDate ? new Date(formData.endDate).toISOString() : '',
+        fromDate: formData.startDate ? new Date(formData.startDate).toISOString() : null,
+        toDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
         notes: formData.notes || '',
         currentEmpId: this.authService.getEmpIdAsNumber() || 0
       };

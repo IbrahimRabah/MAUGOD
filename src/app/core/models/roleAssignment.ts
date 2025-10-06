@@ -25,8 +25,8 @@ export interface AssignUserRolesRequest {
   mgrOfBranchIds: number[];
   branchIds: number[];
   roleIds: number[];
-  fromDate: string;   // ISO string: new Date().toISOString()
-  toDate: string;     // ISO string
+  fromDate: string | null;   // ISO string: new Date().toISOString() or null
+  toDate: string | null;     // ISO string or null
   notes: string;
   currentEmpId: number;
 }
