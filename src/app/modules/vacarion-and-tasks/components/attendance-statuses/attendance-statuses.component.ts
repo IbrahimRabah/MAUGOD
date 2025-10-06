@@ -562,5 +562,14 @@ console.log("test" + this.createEditForm.value)
     const currentValue = this.createEditForm.get(fieldName)?.value;
     const newValue = currentValue === 1 ? 0 : 1;
     this.createEditForm.patchValue({ [fieldName]: newValue });
+
+    // Handle mutual exclusivity between vacation toggles
+    if (newValue === 1) {
+      if (fieldName === 'isVacationWhenCalcSalary') {
+        this.createEditForm.patchValue({ isPaidVacationWhenCalcSalary: 0 });
+      } else if (fieldName === 'isPaidVacationWhenCalcSalary') {
+        this.createEditForm.patchValue({ isVacationWhenCalcSalary: 0 });
+      }
+    }
   }
 }
