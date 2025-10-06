@@ -16,6 +16,12 @@ export const authGuard: CanActivateFn = (route, state) => {
   } 
 
   const currentUrl = state.url.split('?')[0]; 
+  
+  // Allow access to /home for all authenticated users
+  if (currentUrl === '/home') {
+    return true;
+  }
+
   const matchedKey = Object.keys(routePermissionMap)
     .find(path => currentUrl.startsWith(path));
   const permissionIds = matchedKey ? routePermissionMap[matchedKey] : [];

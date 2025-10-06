@@ -1,5 +1,5 @@
 export const routePermissionMap: { [key: string]: number[] } = {
-  '/home': [1],
+  // Note: /home is accessible to all authenticated users (handled in auth.guard.ts)
   '/dashboard': [100],
   '/mobile-and-app/mawjood-app': [2, 133],
   '/reports': [99],
